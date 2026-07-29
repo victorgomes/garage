@@ -195,7 +195,7 @@ Source Position Table (size = 0)
      [7]: [weak] 0x09b80101e24d <JSFunction big (sfi = 0x9b80101e0d9)>
      [8]: 3208
   }
-[90m[ML:63988] [0m[92m⚡ INLINE [0m[96msmall                         [0m Small function, skipping max-depth[0m
+[90m[ML:10740] [0m[92m⚡ INLINE [0m[96msmall                         [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e0a9 <SharedFunctionInfo small> with bytecode -----
 Parameter count 3
@@ -245,7 +245,7 @@ Source Position Table (size = 0)
      [5]: [weak] 0x09b80101e1e5 <JSFunction tiny (sfi = 0x9b80101e079)>
      [6]: 3208
   }
-[90m[ML:63988] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
+[90m[ML:10740] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e079 <SharedFunctionInfo tiny> with bytecode -----
 Parameter count 2
@@ -272,7 +272,7 @@ Source Position Table (size = 0)
  - slot #0 BinaryOp BinaryOp:SignedSmall {
      [0]: 1
   }
-[90m[ML:63988] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
+[90m[ML:10740] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e079 <SharedFunctionInfo tiny> with bytecode -----
 Parameter count 2
@@ -299,7 +299,7 @@ Source Position Table (size = 0)
  - slot #0 BinaryOp BinaryOp:SignedSmall {
      [0]: 1
   }
-[90m[ML:63988] [0m[91m❌ SKIP   [0m[96mbig                           [0m big function, size (192) >= max-size (100)[0m
+[90m[ML:10740] [0m[91m❌ SKIP   [0m[96mbig                           [0m big function, size (192) >= max-size (100)[0m
 
 ----- After graph building -----
 Graph
@@ -1621,7 +1621,7 @@ Source Position Table (size = 0)
      [12]: 0x09b800000e95 <Symbol: (uninitialized_symbol)>
      [13]: 0
   }
-[90m[ML:2352] [0m[92m⚡ INLINE [0m[96mouter                         [0m Small function, skipping max-depth[0m
+[90m[ML:18736] [0m[92m⚡ INLINE [0m[96mouter                         [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e109 <SharedFunctionInfo outer> with bytecode -----
 Parameter count 3
@@ -1677,7 +1677,7 @@ Source Position Table (size = 0)
      [7]: [weak] 0x09b80101e24d <JSFunction big (sfi = 0x9b80101e0d9)>
      [8]: 3208
   }
-[90m[ML:2352] [0m[92m⚡ INLINE [0m[96msmall                         [0m Small function, skipping max-depth[0m
+[90m[ML:18736] [0m[92m⚡ INLINE [0m[96msmall                         [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e0a9 <SharedFunctionInfo small> with bytecode -----
 Parameter count 3
@@ -1727,7 +1727,7 @@ Source Position Table (size = 0)
      [5]: [weak] 0x09b80101e1e5 <JSFunction tiny (sfi = 0x9b80101e079)>
      [6]: 3208
   }
-[90m[ML:2352] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
+[90m[ML:18736] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e079 <SharedFunctionInfo tiny> with bytecode -----
 Parameter count 2
@@ -1754,7 +1754,7 @@ Source Position Table (size = 0)
  - slot #0 BinaryOp BinaryOp:SignedSmall {
      [0]: 1
   }
-[90m[ML:2352] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
+[90m[ML:18736] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e079 <SharedFunctionInfo tiny> with bytecode -----
 Parameter count 2
@@ -1781,8 +1781,8 @@ Source Position Table (size = 0)
  - slot #0 BinaryOp BinaryOp:SignedSmall {
      [0]: 1
   }
-[90m[ML:2352] [0m[91m❌ SKIP   [0m[96mbig                           [0m big function, size (192) >= max-size (100)[0m
-[90m[ML:2352] [0m[92m⚡ INLINE [0m[96mouter                         [0m Small function, skipping max-depth[0m
+[90m[ML:18736] [0m[91m❌ SKIP   [0m[96mbig                           [0m big function, size (192) >= max-size (100)[0m
+[90m[ML:18736] [0m[92m⚡ INLINE [0m[96mouter                         [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e109 <SharedFunctionInfo outer> with bytecode -----
 Parameter count 3
@@ -1838,7 +1838,7 @@ Source Position Table (size = 0)
      [7]: [weak] 0x09b80101e24d <JSFunction big (sfi = 0x9b80101e0d9)>
      [8]: 3208
   }
-[90m[ML:2352] [0m[92m⚡ INLINE [0m[96msmall                         [0m Small function, skipping max-depth[0m
+[90m[ML:18736] [0m[92m⚡ INLINE [0m[96msmall                         [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e0a9 <SharedFunctionInfo small> with bytecode -----
 Parameter count 3
@@ -1888,7 +1888,7 @@ Source Position Table (size = 0)
      [5]: [weak] 0x09b80101e1e5 <JSFunction tiny (sfi = 0x9b80101e079)>
      [6]: 3208
   }
-[90m[ML:2352] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
+[90m[ML:18736] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e079 <SharedFunctionInfo tiny> with bytecode -----
 Parameter count 2
@@ -1915,7 +1915,7 @@ Source Position Table (size = 0)
  - slot #0 BinaryOp BinaryOp:SignedSmall {
      [0]: 1
   }
-[90m[ML:2352] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
+[90m[ML:18736] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e079 <SharedFunctionInfo tiny> with bytecode -----
 Parameter count 2
@@ -1942,7 +1942,7 @@ Source Position Table (size = 0)
  - slot #0 BinaryOp BinaryOp:SignedSmall {
      [0]: 1
   }
-[90m[ML:2352] [0m[91m❌ SKIP   [0m[96mbig                           [0m big function, size (192) >= max-size (100)[0m
+[90m[ML:18736] [0m[91m❌ SKIP   [0m[96mbig                           [0m big function, size (192) >= max-size (100)[0m
 
 ----- After graph building -----
 Graph

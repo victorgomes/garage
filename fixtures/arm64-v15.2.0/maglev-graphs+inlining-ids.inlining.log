@@ -215,7 +215,7 @@ Source Position Table (size = 0)
      [6]: [weak] 0x09b80101e4e5 <JSFunction big (sfi = 0x9b80101e375)>
      [7]: 3208
   }
-[90m[ML:5828] [0m[92m⚡ INLINE [0m[96msmall                         [0m Small function, skipping max-depth[0m
+[90m[ML:38612] [0m[92m⚡ INLINE [0m[96msmall                         [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e345 <SharedFunctionInfo small> with bytecode -----
 Parameter count 3
@@ -262,7 +262,7 @@ Source Position Table (size = 0)
      [4]: [weak] 0x09b80101e47d <JSFunction tiny (sfi = 0x9b80101e315)>
      [5]: 3208
   }
-[90m[ML:5828] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
+[90m[ML:38612] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode -----
 Parameter count 2
@@ -277,7 +277,7 @@ Source Position Table (size = 0)
 0x9b80101e691: [FeedbackVector] in OldSpace
  - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
  - length: 0 (empty)
-[90m[ML:5828] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
+[90m[ML:38612] [0m[92m⚡ INLINE [0m[96mtiny                          [0m Small function, skipping max-depth[0m
 
 ----- Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode -----
 Parameter count 2
@@ -292,7 +292,7 @@ Source Position Table (size = 0)
 0x9b80101e691: [FeedbackVector] in OldSpace
  - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
  - length: 0 (empty)
-[90m[ML:5828] [0m[91m❌ SKIP   [0m[96mbig                           [0m big function, size (174) >= max-size (100)[0m
+[90m[ML:38612] [0m[91m❌ SKIP   [0m[96mbig                           [0m big function, size (174) >= max-size (100)[0m
 
 ----- Maglev graph building -----
 Graph

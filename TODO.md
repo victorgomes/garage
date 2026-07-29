@@ -89,6 +89,17 @@ spanning every feature in the plan.
     ranges, `→ (x)` vs `, N uses`). Phase 0.3 §5.
   - Deopt frames (`↱ eager @2 (5 live vars)`, `│` depth = inlining depth) are a
     node-attached structural type, *not* annotations. Phase 0.3 §6.
+  - `DeoptFrame` is its own **interned** type with identity, referenced by nodes
+    — not a per-node string. Under `--print-maglev-deopt-verbose` frames carry a
+    `(addr:0x…)` host pointer; frames are heavily shared (215 rendered lines →
+    39 distinct frames), so interning on it collapses the display and recovers
+    sharing structure nothing else exposes. Phase 0.3 §12.
+  - The frame payload has **three** syntaxes, flag- and phase-dependent:
+    `(N live vars)` / `{reg:node:loc, …}` / `{reg:node}` for `↳ throw`; the
+    `loc` field varies by phase exactly as node lines do (empty → `(x)` →
+    `[stack:-6|t]`), and may be *empty*, not absent. Parse `↳ throw` as its own
+    arm — its `bN` catch-block id is the only place the exception edge appears.
+    Phase 0.3 §12.
   - `RawSection` keeps both the original byte range (ANSI preserved, for the raw
     view) and a stripped view (for matching). d8 colorizes piped output.
 - [ ] **2.2. Section indexer**: single streaming pass that finds section
@@ -109,6 +120,10 @@ spanning every feature in the plan.
 - [ ] **2.6. Fallback raw sections** for anything unmatched, with `[unparsed]`
   status; malformed input must never panic (fuzz test, see 5.4).
 - [ ] **2.7. Golden-file tests** over the Phase 0 corpus for everything above.
+  - Key off `manifest.json`'s `"reproducible"` flag (0.7). Note the
+    `+deoptverbose` fixtures are `false` **only** because of the `(addr:0x…)`
+    host pointer — masking it makes them exact, so they are still usable as
+    goldens through the canonicalizer. Phase 0.3 §12.
 - [ ] **2.8. Annotation attachment rule (minimal)** (PLAN §6.1): unmatched lines
   inside an open compilation attach to the enclosing phase/transition as
   positioned annotations — never dropped, never exiled to an orphan raw

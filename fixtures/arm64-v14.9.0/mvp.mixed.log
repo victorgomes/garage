@@ -1364,7 +1364,7 @@ Graph
    [0m     [0m80: GapMove([x1|R|t] → [x0|R|t])
    [0m  [0m64/71: Return [v22/n19:[x0|R|t]]
    [0m
-[bailout (kind: deopt-eager, reason: not a Smi): begin. deoptimizing 0x09b80101e43d <JSFunction flipflop (sfi = 0x9b80101e2ed)>, 0x031a01000869 <Code MAGLEV>, opt id 1, bytecode offset 2, deopt exit 0, FP to SP delta 32, caller SP 0x00016f831720, pc 0x000150000654]
+[bailout (kind: deopt-eager, reason: not a Smi): begin. deoptimizing 0x09b80101e43d <JSFunction flipflop (sfi = 0x9b80101e2ed)>, 0x031a01000869 <Code MAGLEV>, opt id 1, bytecode offset 2, deopt exit 0, FP to SP delta 32, caller SP 0x00016fa31720, pc 0x000158640654]
 Compiling 0x09b80101e43d <JSFunction flipflop (sfi = 0x9b80101e2ed)> with Maglev
 ----- Bytecode array -----
 Parameter count 2
@@ -4306,5 +4306,5 @@ Graph
 [m      [0m           ↱ eager @181 (2 live vars)
       [0m  [0m196/220: Deopt(Insufficient type feedback for generic global access)
       [0m
-[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begin. deoptimizing 0x09b80101e35d <JSFunction (sfi = 0x9b80101e20d)>, 0x031a01002e71 <Code MAGLEV>, opt id 7, bytecode offset 181, deopt exit 44, FP to SP delta 128, caller SP 0x00016f8317b8, pc 0x000150003c50]
+[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begin. deoptimizing 0x09b80101e35d <JSFunction (sfi = 0x9b80101e20d)>, 0x031a01002e71 <Code MAGLEV>, opt id 7, bytecode offset 181, deopt exit 44, FP to SP delta 128, caller SP 0x00016fa317b8, pc 0x000158643c30]
 68235400

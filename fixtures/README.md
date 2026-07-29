@@ -36,6 +36,7 @@ raw view have to cope with. Use `sed 's/\x1b\[[0-9;]*m//g'` when eyeballing.
 | `truncation.js` | float64 arithmetic behind `\| 0`; the truncation phases |
 | `gc.js` | allocation churn for `--trace-gc` |
 | `mixed.js` | several functions tiering at different times, one flip-flopping |
+| `throw.js` | exception handlers: both `↳ throw` deopt-frame forms (see [spike-findings.md](../docs/spike-findings.md) §12) |
 
 ## Naming
 
@@ -51,6 +52,11 @@ wall-clock timings, native pointers, PIDs or thread interleaving. Prefer the
 stable ones for golden tests, and see
 [../docs/spike-findings.md](../docs/spike-findings.md) §10 for what varies and
 why.
+
+Two caveats. A `true` only means "did not differ across two runs" — it cannot
+prove stability, so golden tests should still go through the canonicalizer. And
+the `+deoptverbose` fixtures are `false` for one narrow reason only, the
+`(addr:0x…)` host pointer (§12); mask it and they are exact.
 
 ## Regenerating
 

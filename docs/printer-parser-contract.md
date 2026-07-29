@@ -18,6 +18,7 @@ the file paths and the symbol names are the durable part.
 | Maglev phase banner (`----- <phase> -----`) | `--print-maglev-graph[s]` | `src/maglev/maglev-compiler.cc`, `PrintGraph()` |
 | **Maglev phase names** | — | `src/maglev/maglev-phase.h`, `PhaseName()` — the authoritative table, see §3 |
 | Maglev graph body (blocks, nodes, deopt frames, registers) | `--print-maglev-graph[s]` | `src/maglev/maglev-graph-printer.cc` |
+| Maglev deopt frame state (`↱ eager`, `↳ lazy`, `↳ throw`, `VOs`) | `--print-maglev-graph[s]`, verbosity via `--print-maglev-deopt-verbose` / `--trace-deopt-verbose` | `src/maglev/maglev-graph-printer.cc`, `PrintSingleDeoptFrame` / `PrintVirtualObjects` / `PrintExceptionHandlerPoint` |
 | Maglev inlining trace (`[ML:id] ⚡ INLINE …`) | `--trace-maglev-inlining` | `src/maglev/maglev-inlining.cc`, `.h` |
 | Maglev JSON (roadmap, Tier C) | `--trace-maglev` | `src/maglev/maglev-graph-serializer.cc` |
 | Deopt events (`[bailout (kind: …)]`) | `--trace-deopt[-verbose]` | `src/deoptimizer/deoptimizer.cc` (~L873 header, ~L934 code invalidation) |
@@ -41,6 +42,23 @@ corrected in PLAN.md:
 | :-- | :-- |
 | `--trace-ic` | **Does not exist.** IC state transitions go to `v8.log` via `--log-ic` (for `tools/ic-processor`), not to stdout. IC visibility is therefore a `v8.log` ingestion feature — already far-term in PLAN §13 — not a day-one text format. |
 | `--trace-prototypes` | **Misnamed.** The flag is `--trace-prototype-users` (`flag-definitions.h`, "Trace updates to prototype user tracking"). |
+
+One flag PLAN.md *omitted* turns out to matter:
+
+- **`--print-maglev-deopt-verbose`** expands `↱ eager @2 (5 live vars)` into the
+  full register→node→location frame state. This is the payload journey J3 asks
+  for, and it was missing from the plan entirely
+  ([spike-findings.md](spike-findings.md) §12).
+
+**Flag implications are not inert.** `flag-definitions.h:854` declares
+`DEFINE_WEAK_IMPLICATION(trace_deopt_verbose, print_maglev_deopt_verbose)`, so
+`--trace-deopt-verbose` changes the *graph* grammar as a side effect, and adds
+`VOs : { … }` lines on top. Any statement of the form "flag X selects format Y"
+has to be checked against the implication graph in `flag-definitions.h`, not
+just the flag's own definition. Others already relied on:
+`--print-maglev-graphs → --print-maglev-graph`, and
+`--print-maglev-graph`/`--trace-maglev-phi-untagging`/`--trace-maglev-regalloc`
+→ `--maglev-print-bytecode` (all weak).
 
 Everything else in PLAN §4 verified present: `--print-maglev-graph[s]`,
 `--print-turbolev-frontend`, `--trace-turbo-graph`, `--print-opt-code`,
@@ -117,6 +135,11 @@ The corpus deliberately spans three builds so the two axes are separable:
 is randomized per run. Wall-clock timings, native pointers, PIDs and isolate
 addresses stay volatile regardless — see [spike-findings.md](spike-findings.md)
 §10 for the full list, which doubles as the canonicalizer's work list.
+
+The sandbox only covers V8 heap objects: the `(addr:0x…)` host `DeoptFrame*` in
+verbose deopt output escapes it and stays volatile even under `clean`, which is
+why the `+deoptverbose` fixtures are `"reproducible": false` while their plain
+counterparts are not (§12).
 
 ## 6. When a printer changes
 

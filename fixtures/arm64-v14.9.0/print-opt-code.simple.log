@@ -47,8 +47,8 @@ Instructions (size = 288)
 0x170000218    78  d10043ff       sub sp, sp, #0x10 (16)
 0x17000021c    7c  f90007ff       str xzr, [sp, #8]
 0x170000220    80  f90003e2       str x2, [sp]
-0x170000224    84  d294b701       movz x1, #0xa5b8
-0x170000228    88  f2a09f01       movk x1, #0x4f8, lsl #16
+0x170000224    84  d29cb701       movz x1, #0xe5b8
+0x170000228    88  f2a0a461       movk x1, #0x523, lsl #16
 0x17000022c    8c  f2c00021       movk x1, #0x1, lsl #32
 0x170000230    90  d2800020       movz x0, #0x1
 0x170000234    94  5800033b       ldr cp, pc+100 (addr 0x0000000170000298)    ;; object: 0x09b8010049d9 <NativeContext[307]>
@@ -187,8 +187,8 @@ Instructions (size = 364)
 0x170000cb8    f8  d10043ff       sub sp, sp, #0x10 (16)
 0x170000cbc    fc  f90007ff       str xzr, [sp, #8]
 0x170000cc0   100  f90003e2       str x2, [sp]
-0x170000cc4   104  d294b701       movz x1, #0xa5b8
-0x170000cc8   108  f2a09f01       movk x1, #0x4f8, lsl #16
+0x170000cc4   104  d29cb701       movz x1, #0xe5b8
+0x170000cc8   108  f2a0a461       movk x1, #0x523, lsl #16
 0x170000ccc   10c  f2c00021       movk x1, #0x1, lsl #32
 0x170000cd0   110  d2800020       movz x0, #0x1
 0x170000cd4   114  580001bb       ldr cp, pc+52 (addr 0x0000000170000d08)    ;; object: 0x09b8010049d9 <NativeContext[307]>

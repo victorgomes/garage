@@ -42,7 +42,18 @@ FIXTURES=(
   "maglev-graphs.inlining|clean|inlining.js|--print-maglev-graphs"
   "maglev-graphs.poly|clean|poly.js|--print-maglev-graphs"
   "maglev-graphs.mixed|clean|mixed.js|--print-maglev-graphs"
+  "maglev-graphs.throw|clean|throw.js|--print-maglev-graphs"
   "maglev-graph.simple|clean|simple.js|--print-maglev-graph"
+
+  # --- Verbose deopt frames (spike-findings.md 12) --------------------------
+  # --print-maglev-deopt-verbose swaps "(N live vars)" for the full register
+  # map, changing the deopt sub-grammar. --trace-deopt-verbose *weakly implies*
+  # it, so the flag correlation-keys.md recommends silently changes the graph
+  # format too -- and adds "VOs : { … }" lines on top. Both are in the corpus
+  # so the parser is tested against all three renderings.
+  "maglev-graphs+deoptverbose.deopt|clean|deopt-eager.js|--print-maglev-graphs --print-maglev-deopt-verbose"
+  "maglev-graphs+deoptverbose.throw|clean|throw.js|--print-maglev-graphs --print-maglev-deopt-verbose"
+  "maglev-graphs+tracedeoptverbose.deopt|clean|deopt-eager.js|--print-maglev-graphs --trace-deopt-verbose"
 
   # --- Interleaved pass tracing (PLAN 6.1 annotation attachment) ------------
   # --trace-maglev-inlining is the exemplar: free-form lines printed *inside* a

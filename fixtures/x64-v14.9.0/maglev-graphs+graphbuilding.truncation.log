@@ -49,50 +49,50 @@ Source Position Table (size = 0)
  - slot #5 BinaryOp BinaryOp:Number {
      [5]: 15
   }
-[32m+ 0x13400f7a908  n1: InitialValue(<this>), 0 uses 🪦[0m[0m
-[32m+ 0x13400f7a9d0  n2: InitialValue(a0), 0 uses 🪦[0m[0m
-[32m+ 0x13400f7aa20  n3: InitialValue(a1), 0 uses 🪦[0m[0m
-[32m+ 0x13400f7ac80  n4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 0 uses 🪦[0m[0m
-[32m+ 0x13400f7acd0  n5: Constant(0x09b80101e0dd <ScriptContext[3]>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0338  n6: RootConstant(undefined_value), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa03c8  n7: FunctionEntryStackCheck[0m[0m
-[32m+ 0x13400fa0468  n8: Jump[0m[0m
+[32m+ 0x12c00f7a908  n1: InitialValue(<this>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00f7a9d0  n2: InitialValue(a0), 0 uses 🪦[0m[0m
+[32m+ 0x12c00f7aa20  n3: InitialValue(a1), 0 uses 🪦[0m[0m
+[32m+ 0x12c00f7ac80  n4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00f7acd0  n5: Constant(0x09b80101e0dd <ScriptContext[3]>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0338  n6: RootConstant(undefined_value), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa03c8  n7: FunctionEntryStackCheck[0m[0m
+[32m+ 0x12c00fa0468  n8: Jump[0m[0m
 [36m   0 : 0b 04             Ldar a1[0m
-[33mNew block (merge @0x13400fa04c8) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
+[33mNew block (merge @0x12c00fa04c8) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
   Constant context slots:
   Non-constant context slots:
 [0m
-[37mCopying frame state from merge @0x13400fa04c8[0m
+[37mCopying frame state from merge @0x12c00fa04c8[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
 [36m   2 : 44 03 00          Mul a0, FBV[0][0m
-[32m+ 0x13400fa09a0  n9: CheckedNumberToFloat64 [n2], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
-[32m+ 0x13400fa0b10  n10: CheckedNumberToFloat64 [n3], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
-[32m+ 0x13400fa0b70  n11: Float64Multiply [n9, n10], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa09a0  n9: CheckedNumberToFloat64 [n2], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa0b10  n10: CheckedNumberToFloat64 [n3], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa0b70  n11: Float64Multiply [n9, n10], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m   5 : d4                Star0[0m
 [36m   6 : 0b 03             Ldar a0[0m
 [36m   8 : 42 f9 01          Add r0, FBV[1][0m
-[32m+ 0x13400fa0be0  n12: Float64Add [n9, n11], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa0be0  n12: Float64Add [n9, n11], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  11 : d3                Star1[0m
 [36m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3][0m
-[32m+ 0x13400fa0cb0  n13: TruncateFloat64ToInt32 [n12], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fa0cb0  n13: TruncateFloat64ToInt32 [n12], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  15 : d2                Star2[0m
 [36m  16 : 0b f9             Ldar r0[0m
 [36m  18 : 51 02 05          MulSmi [2], FBV[5][0m
-[32m+ 0x13400fa0d00  n14: Float64Constant(2), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0d60  n15: Float64Multiply [n11, n14], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa0d00  n14: Float64Constant(2), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0d60  n15: Float64Multiply [n11, n14], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4][0m
-[32m+ 0x13400fa0e30  n16: TruncateFloat64ToInt32 [n15], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fa0e30  n16: TruncateFloat64ToInt32 [n15], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  24 : 42 f7 02          Add r2, FBV[2][0m
-[32m+ 0x13400fa0ec8  n17: Int32AddWithOverflow [n13, n16], 0 uses, but required, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fa0ec8  n17: Int32AddWithOverflow [n13, n16], 0 uses, but required, cannot truncate to int32[0m[0m
 [36m  27 : b9                Return[0m
-[32m+ 0x13400fa0f18  n18: Constant(0x09b80101e0bd <FeedbackCell[one closure]>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0f78  n19: ReduceInterruptBudgetForReturn(27) [n18][0m[0m
-[32m+ 0x13400fa1028  n20: Int32ToNumber[kCanonicalizeSmi] [n17], 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0f98  n21: Return [n20][0m[0m
+[32m+ 0x12c00fa0f18  n18: Constant(0x09b80101e0bd <FeedbackCell[one closure]>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0f78  n19: ReduceInterruptBudgetForReturn(27) [n18][0m[0m
+[32m+ 0x12c00fa1028  n20: Int32ToNumber[kCanonicalizeSmi] [n17], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0f98  n21: Return [n20][0m[0m
 
 ----- After graph building -----
 Graph
@@ -455,38 +455,38 @@ Source Position Table (size = 0)
      [13]: 0
   }
 - Non-standard entrypoint @16 by OSR from @65[0m
-[32m+ 0x13400fa0628  n1: InitialValue(<this>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa06f0  n2: InitialValue(<context>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0740  n3: InitialValue(<closure>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0860  n4: InitialValue(r0), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa08c0  n5: InitialValue(r1), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0910  n6: InitialValue(r2), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0980  n7: InitialValue(r3), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa09d0  n8: InitialValue(r4), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0a60  n9: InitialValue(r5), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0af8  n10: FunctionEntryStackCheck[0m[0m
-[32m+ 0x13400fa0bb8  n11: CheckpointedJump[0m[0m
+[32m+ 0x12c00fa0628  n1: InitialValue(<this>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa06f0  n2: InitialValue(<context>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0740  n3: InitialValue(<closure>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0860  n4: InitialValue(r0), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa08c0  n5: InitialValue(r1), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0910  n6: InitialValue(r2), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0980  n7: InitialValue(r3), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa09d0  n8: InitialValue(r4), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0a60  n9: InitialValue(r5), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0af8  n10: FunctionEntryStackCheck[0m[0m
+[32m+ 0x12c00fa0bb8  n11: CheckpointedJump[0m[0m
   * Begin loop peeling....[0m
 [36m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000][0m
-[33mNew block (merge @0x13400fa0c48) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
+[33mNew block (merge @0x12c00fa0c48) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
   Constant context slots:
   Non-constant context slots:
 [0m
-[37mCopying frame state from merge @0x13400fa0c48[0m
+[37mCopying frame state from merge @0x12c00fa0c48[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
-[32m+ 0x13400fa22f8  n12: SmiConstant(100000), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa22f8  n12: SmiConstant(100000), 0 uses 🪦[0m[0m
 [36m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1][0m
-[32m+ 0x13400fa23f0  n13: CheckedSmiUntag [n5], 0 uses, but required, cannot truncate to int32[0m[0m
-[32m+ 0x13400fa24e8  n14: Int32Constant(100000), 0 uses 🪦, cannot truncate to int32[0m[0m
-[32m+ 0x13400fa2540  n15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa23f0  n13: CheckedSmiUntag [n5], 0 uses, but required, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fa24e8  n14: Int32Constant(100000), 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fa2540  n15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦[0m[0m
 [36m  26 : a8 2b             JumpIfFalse [43][0m
-[32m+ 0x13400fa25a0  n16: BranchIfInt32Compare(LessThan) [n13, n14][0m[0m
-[32m+ 0x13400fa25e0  n17: RootConstant(false_value), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa2cb0  n18: RootConstant(true_value), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa25a0  n16: BranchIfInt32Compare(LessThan) [n13, n14][0m[0m
+[32m+ 0x12c00fa25e0  n17: RootConstant(false_value), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa2cb0  n18: RootConstant(true_value), 0 uses 🪦[0m[0m
 [33mNew block (single fallthrough) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
   VOs (IFS): 
   Constant properties:
@@ -495,28 +495,28 @@ Source Position Table (size = 0)
   Non-constant context slots:
 [0m
 [36m  28 : 18 02             LdaCurrentContextSlot [2][0m
-[32m+ 0x13400fa2d98  n19: LoadContextSlot(0x10, mutable) [n2], 0 uses, but required[0m[0m
+[32m+ 0x12c00fa2d98  n19: LoadContextSlot(0x10, mutable) [n2], 0 uses, but required[0m[0m
 [36m  30 : d2                Star2[0m
 [36m  31 : 23 01 02          LdaGlobal [1:"trunc"], FBV[2][0m
-[32m+ 0x13400fa35d8  n20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa35d8  n20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 0 uses 🪦[0m[0m
 [36m  34 : d1                Star3[0m
 [36m  35 : 13 02             LdaConstant [2:0x09b80101e061 <HeapNumber 1.5>][0m
-[32m+ 0x13400fa3638  n21: Constant(0x09b80101e061 <HeapNumber 1.5>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3638  n21: Constant(0x09b80101e061 <HeapNumber 1.5>), 0 uses 🪦[0m[0m
 [36m  37 : 44 f8 04          Mul r1, FBV[4][0m
-[32m+ 0x13400fa3690  n22: ChangeInt32ToFloat64 [n13], 0 uses 🪦[0m[0m
-[32m+ 0x13400fa36e0  n23: Float64Constant(1.5), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa3740  n24: Float64Multiply [n22, n23], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa3690  n22: ChangeInt32ToFloat64 [n13], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa36e0  n23: Float64Constant(1.5), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3740  n24: Float64Multiply [n22, n23], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  40 : d0                Star4[0m
 [36m  41 : 13 03             LdaConstant [3:0x09b80101e06d <HeapNumber 0.25>][0m
-[32m+ 0x13400fa37b0  n25: Constant(0x09b80101e06d <HeapNumber 0.25>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa37b0  n25: Constant(0x09b80101e06d <HeapNumber 0.25>), 0 uses 🪦[0m[0m
 [36m  43 : 44 f8 05          Mul r1, FBV[5][0m
-[32m+ 0x13400fa3800  n26: Float64Constant(0.25), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa3860  n27: Float64Multiply [n22, n26], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa3800  n26: Float64Constant(0.25), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3860  n27: Float64Multiply [n22, n26], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  46 : cf                Star5[0m
 [36m  47 : 6e f6 f5 f4 06    CallUndefinedReceiver2 r3, r4, r5, FBV[6][0m
-[32m+ 0x13400fa3938  n28: RootConstant(undefined_value), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa3980  n29: Constant(0x09b80101e0dd <ScriptContext[3]>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa3ac0  n30: Constant(0x09b801004925 <JSGlobalProxy>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3938  n28: RootConstant(undefined_value), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3980  n29: Constant(0x09b80101e0dd <ScriptContext[3]>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3ac0  n30: Constant(0x09b801004925 <JSGlobalProxy>), 0 uses 🪦[0m[0m
 
 ----- Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode -----
 Parameter count 3
@@ -568,9 +568,9 @@ Source Position Table (size = 0)
  - slot #5 BinaryOp BinaryOp:Number {
      [5]: 15
   }
-[32m+ 0x13400fcd738  n31: Jump[0m[0m
+[32m+ 0x12c00fcd738  n31: Jump[0m[0m
 [36m   0 : 0b 04             Ldar a1[0m
-[33mNew block (merge @0x13400fcd788) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
+[33mNew block (merge @0x12c00fcd788) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
@@ -578,57 +578,57 @@ Source Position Table (size = 0)
   Non-constant context slots:
     - @16: n19
 [0m
-[37mCopying frame state from merge @0x13400fcd788[0m
+[37mCopying frame state from merge @0x12c00fcd788[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
 [36m   2 : 44 03 00          Mul a0, FBV[0][0m
-[32m+ 0x13400fcdfd8  n32: Float64Multiply [n24, n27], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fcdfd8  n32: Float64Multiply [n24, n27], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m   5 : d4                Star0[0m
 [36m   6 : 0b 03             Ldar a0[0m
 [36m   8 : 42 f9 01          Add r0, FBV[1][0m
-[32m+ 0x13400fce048  n33: Float64Add [n24, n32], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fce048  n33: Float64Add [n24, n32], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  11 : d3                Star1[0m
 [36m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3][0m
-[32m+ 0x13400fce118  n34: TruncateFloat64ToInt32 [n33], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fce118  n34: TruncateFloat64ToInt32 [n33], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  15 : d2                Star2[0m
 [36m  16 : 0b f9             Ldar r0[0m
 [36m  18 : 51 02 05          MulSmi [2], FBV[5][0m
-[32m+ 0x13400fce168  n35: Float64Constant(2), 0 uses 🪦[0m[0m
-[32m+ 0x13400fce1c8  n36: Float64Multiply [n32, n35], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fce168  n35: Float64Constant(2), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fce1c8  n36: Float64Multiply [n32, n35], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4][0m
-[32m+ 0x13400fce298  n37: TruncateFloat64ToInt32 [n36], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fce298  n37: TruncateFloat64ToInt32 [n36], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  24 : 42 f7 02          Add r2, FBV[2][0m
-[32m+ 0x13400fce330  n38: Int32AddWithOverflow [n34, n37], 0 uses, but required, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fce330  n38: Int32AddWithOverflow [n34, n37], 0 uses, but required, cannot truncate to int32[0m[0m
 [36m  27 : b9                Return[0m
 == Finished inlining 0x09b80101e031 <SharedFunctionInfo trunc>[0m
 [36m  52 : 42 f7 01          Add r2, FBV[1][0m
-[32m+ 0x13400fce4d8  n39: CheckedNumberToFloat64 [n19], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
-[32m+ 0x13400fce668  n40: ChangeInt32ToFloat64 [n38], 0 uses 🪦[0m[0m
-[32m+ 0x13400fce6c8  n41: Float64Add [n39, n40], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fce4d8  n39: CheckedNumberToFloat64 [n19], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fce668  n40: ChangeInt32ToFloat64 [n38], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fce6c8  n41: Float64Add [n39, n40], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0][0m
-[32m+ 0x13400fce798  n42: TruncateFloat64ToInt32 [n41], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fce798  n42: TruncateFloat64ToInt32 [n41], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  58 : 29 02             StaCurrentContextSlot [2][0m
-[32m+ 0x13400fce8d0  n43: Int32ToNumber[kCanonicalizeSmi] [n42], 0 uses 🪦[0m[0m
-[32m+ 0x13400fce840  n44: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n43][0m[0m
+[32m+ 0x12c00fce8d0  n43: Int32ToNumber[kCanonicalizeSmi] [n42], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fce840  n44: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n43][0m[0m
   * Recording context slot store n2[16]: TruncateFloat64ToInt32 [n41], 1 uses, cannot truncate to int32[0m
 [36m  60 : 0b f8             Ldar r1[0m
 [36m  62 : 5b 08             Inc FBV[8][0m
-[32m+ 0x13400fcea58  n45: Int32IncrementWithOverflow [n13], 0 uses, but required, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fcea58  n45: Int32IncrementWithOverflow [n13], 0 uses, but required, cannot truncate to int32[0m[0m
 [36m  64 : d3                Star1[0m
 [36m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9][0m
-[32m+ 0x13400fceb10  n46: Constant(0x09b80101e0cd <FeedbackCell[one closure]>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fcebb0  n47: ReduceInterruptBudgetForLoop(39) [n46][0m[0m
-[32m+ 0x13400fceca8  n48: RootConstant(optimized_out), 0 uses 🪦[0m[0m
-[32m+ 0x13400fceec8  n49: Jump[0m[0m
+[32m+ 0x12c00fceb10  n46: Constant(0x09b80101e0cd <FeedbackCell[one closure]>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fcebb0  n47: ReduceInterruptBudgetForLoop(39) [n46][0m[0m
+[32m+ 0x12c00fceca8  n48: RootConstant(optimized_out), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fceec8  n49: Jump[0m[0m
 [37mInitializing optimistic loop state...[0m
   <this>: <unregistered node 0><> <- n1<>[0m
  => n1: InitialValue(<this>), 7 uses<JSReceiver>[0m
   <context>: <unregistered node 0><> <- n2<>[0m
  => n2: InitialValue(<context>), 9 uses<Context>[0m
-  r1: <unregistered node 0x13400fcee90><> <- n45<>[0m
- => <unregistered node 0x13400fcee90>: Phi(r1) [n50, <unregistered node 0>], 0 uses 🪦<>[0m
+  r1: <unregistered node 0x12c00fcee90><> <- n45<>[0m
+ => <unregistered node 0x12c00fcee90>: Phi(r1) [n50, <unregistered node 0>], 0 uses 🪦<>[0m
 [36m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000][0m
-[33mNew block (loop header @0x13400fced00) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
+[33mNew block (loop header @0x12c00fced00) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
@@ -636,15 +636,15 @@ Source Position Table (size = 0)
   Non-constant context slots:
     - @16: n42
 [0m
-[37mCopying frame state from merge @0x13400fced00[0m
+[37mCopying frame state from merge @0x12c00fced00[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
-  0x13400fcee90  n51: Phi(r1) [n50, <unregistered node 0>], 0 uses 🪦[0m
+  0x12c00fcee90  n51: Phi(r1) [n50, <unregistered node 0>], 0 uses 🪦[0m
 [36m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1][0m
-[32m+ 0x13400fd0740  n52: CheckedSmiUntag [n51], 0 uses, but required, cannot truncate to int32[0m[0m
-[32m+ 0x13400fd0810  n53: Int32Compare[LessThan] [n52, n14], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fd0740  n52: CheckedSmiUntag [n51], 0 uses, but required, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fd0810  n53: Int32Compare[LessThan] [n52, n14], 0 uses 🪦[0m[0m
 [36m  26 : a8 2b             JumpIfFalse [43][0m
-[32m+ 0x13400fd0870  n54: BranchIfInt32Compare(LessThan) [n52, n14][0m[0m
+[32m+ 0x12c00fd0870  n54: BranchIfInt32Compare(LessThan) [n52, n14][0m[0m
 [37mMerging...[0m
   <this>: n1<JSReceiver> <- n1<JSReceiver>[0m
  => n1: InitialValue(<this>), 8 uses<JSReceiver>[0m
@@ -658,18 +658,18 @@ Source Position Table (size = 0)
   Non-constant context slots:
 [0m
 [36m  28 : 18 02             LdaCurrentContextSlot [2][0m
-[32m+ 0x13400fd09c0  n55: LoadContextSlot(0x10, mutable) [n2], 0 uses, but required[0m[0m
+[32m+ 0x12c00fd09c0  n55: LoadContextSlot(0x10, mutable) [n2], 0 uses, but required[0m[0m
 [36m  30 : d2                Star2[0m
 [36m  31 : 23 01 02          LdaGlobal [1:"trunc"], FBV[2][0m
 [36m  34 : d1                Star3[0m
 [36m  35 : 13 02             LdaConstant [2:0x09b80101e061 <HeapNumber 1.5>][0m
 [36m  37 : 44 f8 04          Mul r1, FBV[4][0m
-[32m+ 0x13400fd0a38  n56: ChangeInt32ToFloat64 [n52], 0 uses 🪦[0m[0m
-[32m+ 0x13400fd0a98  n57: Float64Multiply [n56, n23], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd0a38  n56: ChangeInt32ToFloat64 [n52], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fd0a98  n57: Float64Multiply [n56, n23], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  40 : d0                Star4[0m
 [36m  41 : 13 03             LdaConstant [3:0x09b80101e06d <HeapNumber 0.25>][0m
 [36m  43 : 44 f8 05          Mul r1, FBV[5][0m
-[32m+ 0x13400fd0b08  n58: Float64Multiply [n56, n26], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd0b08  n58: Float64Multiply [n56, n26], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  46 : cf                Star5[0m
 [36m  47 : 6e f6 f5 f4 06    CallUndefinedReceiver2 r3, r4, r5, FBV[6][0m
 
@@ -723,9 +723,9 @@ Source Position Table (size = 0)
  - slot #5 BinaryOp BinaryOp:Number {
      [5]: 15
   }
-[32m+ 0x13400fd35e8  n59: Jump[0m[0m
+[32m+ 0x12c00fd35e8  n59: Jump[0m[0m
 [36m   0 : 0b 04             Ldar a1[0m
-[33mNew block (merge @0x13400fd3618) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
+[33mNew block (merge @0x12c00fd3618) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
@@ -733,45 +733,45 @@ Source Position Table (size = 0)
   Non-constant context slots:
     - @16: n55
 [0m
-[37mCopying frame state from merge @0x13400fd3618[0m
+[37mCopying frame state from merge @0x12c00fd3618[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
 [36m   2 : 44 03 00          Mul a0, FBV[0][0m
-[32m+ 0x13400fd8530  n60: Float64Multiply [n57, n58], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd8530  n60: Float64Multiply [n57, n58], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m   5 : d4                Star0[0m
 [36m   6 : 0b 03             Ldar a0[0m
 [36m   8 : 42 f9 01          Add r0, FBV[1][0m
-[32m+ 0x13400fd85a0  n61: Float64Add [n57, n60], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd85a0  n61: Float64Add [n57, n60], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  11 : d3                Star1[0m
 [36m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3][0m
-[32m+ 0x13400fd8670  n62: TruncateFloat64ToInt32 [n61], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fd8670  n62: TruncateFloat64ToInt32 [n61], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  15 : d2                Star2[0m
 [36m  16 : 0b f9             Ldar r0[0m
 [36m  18 : 51 02 05          MulSmi [2], FBV[5][0m
-[32m+ 0x13400fd86d0  n63: Float64Multiply [n60, n35], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd86d0  n63: Float64Multiply [n60, n35], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4][0m
-[32m+ 0x13400fd87a0  n64: TruncateFloat64ToInt32 [n63], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fd87a0  n64: TruncateFloat64ToInt32 [n63], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  24 : 42 f7 02          Add r2, FBV[2][0m
-[32m+ 0x13400fd8838  n65: Int32AddWithOverflow [n62, n64], 0 uses, but required, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fd8838  n65: Int32AddWithOverflow [n62, n64], 0 uses, but required, cannot truncate to int32[0m[0m
 [36m  27 : b9                Return[0m
 == Finished inlining 0x09b80101e031 <SharedFunctionInfo trunc>[0m
 [36m  52 : 42 f7 01          Add r2, FBV[1][0m
-[32m+ 0x13400fd89e0  n66: CheckedNumberToFloat64 [n55], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
-[32m+ 0x13400fd8bb8  n67: ChangeInt32ToFloat64 [n65], 0 uses 🪦[0m[0m
-[32m+ 0x13400fd8c18  n68: Float64Add [n66, n67], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd89e0  n66: CheckedNumberToFloat64 [n55], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd8bb8  n67: ChangeInt32ToFloat64 [n65], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fd8c18  n68: Float64Add [n66, n67], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0][0m
-[32m+ 0x13400fd8ce8  n69: TruncateFloat64ToInt32 [n68], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fd8ce8  n69: TruncateFloat64ToInt32 [n68], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  58 : 29 02             StaCurrentContextSlot [2][0m
-[32m+ 0x13400fd8e20  n70: Int32ToNumber[kCanonicalizeSmi] [n69], 0 uses 🪦[0m[0m
-[32m+ 0x13400fd8d90  n71: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n70][0m[0m
+[32m+ 0x12c00fd8e20  n70: Int32ToNumber[kCanonicalizeSmi] [n69], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fd8d90  n71: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n70][0m[0m
   * Recording context slot store n2[16]: TruncateFloat64ToInt32 [n68], 1 uses, cannot truncate to int32[0m
 [36m  60 : 0b f8             Ldar r1[0m
 [36m  62 : 5b 08             Inc FBV[8][0m
-[32m+ 0x13400fd8f98  n72: Int32IncrementWithOverflow [n52], 0 uses, but required, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fd8f98  n72: Int32IncrementWithOverflow [n52], 0 uses, but required, cannot truncate to int32[0m[0m
 [36m  64 : d3                Star1[0m
 [36m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9][0m
-[32m+ 0x13400fd90a0  n73: ReduceInterruptBudgetForLoop(39) [n46][0m[0m
-[32m+ 0x13400fd9210  n74: JumpLoop[0m[0m
+[32m+ 0x12c00fd90a0  n73: ReduceInterruptBudgetForLoop(39) [n46][0m[0m
+[32m+ 0x12c00fd9210  n74: JumpLoop[0m[0m
 [91mNext peeling not needed due to compatible state.[0m
   <this>: n1<JSReceiver> <- n1<JSReceiver>[0m
  => n1: InitialValue(<this>), 13 uses<JSReceiver>[0m
@@ -780,7 +780,7 @@ Source Position Table (size = 0)
   r1: n51<> <- n72<>[0m
  => n51: Phi(r1) [n50, n75], 6 uses<>[0m
 [36m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10][0m
-[33mNew block (merge @0x13400fa2640) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
+[33mNew block (merge @0x12c00fa2640) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
@@ -788,7 +788,7 @@ Source Position Table (size = 0)
   Non-constant context slots:
     - @16: n69
 [0m
-[37mCopying frame state from merge @0x13400fa2640[0m
+[37mCopying frame state from merge @0x12c00fa2640[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
 [33mNew empty block [37m
@@ -798,7 +798,7 @@ Source Position Table (size = 0)
   Constant context slots:
   Non-constant context slots:
 [0m
-[32m+ 0x13400fd9418  n76: Jump[0m[0m
+[32m+ 0x12c00fd9418  n76: Jump[0m[0m
 [33mNew empty block [37m
   VOs (IFS): 
   Constant properties:
@@ -806,8 +806,8 @@ Source Position Table (size = 0)
   Constant context slots:
   Non-constant context slots:
 [0m
-[32m+ 0x13400fd9498  n77: Jump[0m[0m
-[32m+ 0x13400fd9638  n78: Deopt(Insufficient type feedback for generic global access)[0m[0m
+[32m+ 0x12c00fd9498  n77: Jump[0m[0m
+[32m+ 0x12c00fd9638  n78: Deopt(Insufficient type feedback for generic global access)[0m[0m
 [91mDEAD  : 23 04 0a          LdaGlobal [4:"print"], FBV[10][0m
 [36m  72 : d2                Star2[0m
 [91mDEAD  : d2                Star2[0m
@@ -1853,52 +1853,52 @@ Source Position Table (size = 0)
  - slot #5 BinaryOp BinaryOp:Number {
      [5]: 15
   }
-[32m+ 0x13400fae108  n1: InitialValue(<this>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fae1d0  n2: InitialValue(a0), 0 uses 🪦[0m[0m
-[32m+ 0x13400fae220  n3: InitialValue(a1), 0 uses 🪦[0m[0m
-[32m+ 0x13400fae480  n4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fae4d0  n5: Constant(0x09b80101e0dd <ScriptContext[3]>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0338  n6: RootConstant(undefined_value), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa03c8  n7: FunctionEntryStackCheck[0m[0m
-[32m+ 0x13400fa0468  n8: Jump[0m[0m
+[32m+ 0x12c00fae108  n1: InitialValue(<this>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fae1d0  n2: InitialValue(a0), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fae220  n3: InitialValue(a1), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fae480  n4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fae4d0  n5: Constant(0x09b80101e0dd <ScriptContext[3]>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0338  n6: RootConstant(undefined_value), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa03c8  n7: FunctionEntryStackCheck[0m[0m
+[32m+ 0x12c00fa0468  n8: Jump[0m[0m
 [36m   0 : 0b 04             Ldar a1[0m
-[33mNew block (merge @0x13400fa04c8) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
+[33mNew block (merge @0x12c00fa04c8) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
   Constant context slots:
   Non-constant context slots:
 [0m
-[37mCopying frame state from merge @0x13400fa04c8[0m
+[37mCopying frame state from merge @0x12c00fa04c8[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
 [36m   2 : 44 03 00          Mul a0, FBV[0][0m
-[32m+ 0x13400fa09a0  n9: CheckedNumberToFloat64 [n2], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
-[32m+ 0x13400fa0b10  n10: CheckedNumberToFloat64 [n3], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
-[32m+ 0x13400fa0b70  n11: Float64Multiply [n9, n10], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa09a0  n9: CheckedNumberToFloat64 [n2], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa0b10  n10: CheckedNumberToFloat64 [n3], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa0b70  n11: Float64Multiply [n9, n10], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m   5 : d4                Star0[0m
 [36m   6 : 0b 03             Ldar a0[0m
 [36m   8 : 42 f9 01          Add r0, FBV[1][0m
-[32m+ 0x13400fa0be0  n12: Float64Add [n9, n11], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa0be0  n12: Float64Add [n9, n11], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  11 : d3                Star1[0m
 [36m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3][0m
-[32m+ 0x13400fa0cb0  n13: TruncateFloat64ToInt32 [n12], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fa0cb0  n13: TruncateFloat64ToInt32 [n12], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  15 : d2                Star2[0m
 [36m  16 : 0b f9             Ldar r0[0m
 [36m  18 : 51 02 05          MulSmi [2], FBV[5][0m
-[32m+ 0x13400fa0d00  n14: Float64Constant(2), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0d60  n15: Float64Multiply [n11, n14], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa0d00  n14: Float64Constant(2), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0d60  n15: Float64Multiply [n11, n14], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4][0m
-[32m+ 0x13400fa0e30  n16: TruncateFloat64ToInt32 [n15], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fa0e30  n16: TruncateFloat64ToInt32 [n15], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  24 : 42 f7 02          Add r2, FBV[2][0m
-[32m+ 0x13400fa0ef0  n17: ChangeInt32ToFloat64 [n13], 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0fb0  n18: ChangeInt32ToFloat64 [n16], 0 uses 🪦[0m[0m
-[32m+ 0x13400fa1010  n19: Float64Add [n17, n18], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa0ef0  n17: ChangeInt32ToFloat64 [n13], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0fb0  n18: ChangeInt32ToFloat64 [n16], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa1010  n19: Float64Add [n17, n18], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  27 : b9                Return[0m
-[32m+ 0x13400fa1070  n20: Constant(0x09b80101e0bd <FeedbackCell[one closure]>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa10d0  n21: ReduceInterruptBudgetForReturn(27) [n20][0m[0m
-[32m+ 0x13400fa1180  n22: Float64ToTagged[kCanonicalizeSmi] [n19], 0 uses 🪦[0m[0m
-[32m+ 0x13400fa10f0  n23: Return [n22][0m[0m
+[32m+ 0x12c00fa1070  n20: Constant(0x09b80101e0bd <FeedbackCell[one closure]>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa10d0  n21: ReduceInterruptBudgetForReturn(27) [n20][0m[0m
+[32m+ 0x12c00fa1180  n22: Float64ToTagged[kCanonicalizeSmi] [n19], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa10f0  n23: Return [n22][0m[0m
 
 ----- After graph building -----
 Graph
@@ -2266,38 +2266,38 @@ Source Position Table (size = 0)
      [13]: 0
   }
 - Non-standard entrypoint @16 by OSR from @65[0m
-[32m+ 0x13400fa0628  n1: InitialValue(<this>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa06f0  n2: InitialValue(<context>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0740  n3: InitialValue(<closure>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0860  n4: InitialValue(r0), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa08c0  n5: InitialValue(r1), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0910  n6: InitialValue(r2), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0980  n7: InitialValue(r3), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa09d0  n8: InitialValue(r4), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0a60  n9: InitialValue(r5), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa0af8  n10: FunctionEntryStackCheck[0m[0m
-[32m+ 0x13400fa0bb8  n11: CheckpointedJump[0m[0m
+[32m+ 0x12c00fa0628  n1: InitialValue(<this>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa06f0  n2: InitialValue(<context>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0740  n3: InitialValue(<closure>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0860  n4: InitialValue(r0), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa08c0  n5: InitialValue(r1), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0910  n6: InitialValue(r2), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0980  n7: InitialValue(r3), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa09d0  n8: InitialValue(r4), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0a60  n9: InitialValue(r5), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa0af8  n10: FunctionEntryStackCheck[0m[0m
+[32m+ 0x12c00fa0bb8  n11: CheckpointedJump[0m[0m
   * Begin loop peeling....[0m
 [36m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000][0m
-[33mNew block (merge @0x13400fa0c48) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
+[33mNew block (merge @0x12c00fa0c48) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
   Constant context slots:
   Non-constant context slots:
 [0m
-[37mCopying frame state from merge @0x13400fa0c48[0m
+[37mCopying frame state from merge @0x12c00fa0c48[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
-[32m+ 0x13400fa22f8  n12: SmiConstant(100000), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa22f8  n12: SmiConstant(100000), 0 uses 🪦[0m[0m
 [36m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1][0m
-[32m+ 0x13400fa23f0  n13: CheckedSmiUntag [n5], 0 uses, but required, cannot truncate to int32[0m[0m
-[32m+ 0x13400fa24e8  n14: Int32Constant(100000), 0 uses 🪦, cannot truncate to int32[0m[0m
-[32m+ 0x13400fa2540  n15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa23f0  n13: CheckedSmiUntag [n5], 0 uses, but required, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fa24e8  n14: Int32Constant(100000), 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fa2540  n15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦[0m[0m
 [36m  26 : a8 2b             JumpIfFalse [43][0m
-[32m+ 0x13400fa25a0  n16: BranchIfInt32Compare(LessThan) [n13, n14][0m[0m
-[32m+ 0x13400fa25e0  n17: RootConstant(false_value), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa2cb0  n18: RootConstant(true_value), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa25a0  n16: BranchIfInt32Compare(LessThan) [n13, n14][0m[0m
+[32m+ 0x12c00fa25e0  n17: RootConstant(false_value), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa2cb0  n18: RootConstant(true_value), 0 uses 🪦[0m[0m
 [33mNew block (single fallthrough) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
   VOs (IFS): 
   Constant properties:
@@ -2306,28 +2306,28 @@ Source Position Table (size = 0)
   Non-constant context slots:
 [0m
 [36m  28 : 18 02             LdaCurrentContextSlot [2][0m
-[32m+ 0x13400fa2d98  n19: LoadContextSlot(0x10, mutable) [n2], 0 uses, but required[0m[0m
+[32m+ 0x12c00fa2d98  n19: LoadContextSlot(0x10, mutable) [n2], 0 uses, but required[0m[0m
 [36m  30 : d2                Star2[0m
 [36m  31 : 23 01 02          LdaGlobal [1:"trunc"], FBV[2][0m
-[32m+ 0x13400fa35d8  n20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa35d8  n20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 0 uses 🪦[0m[0m
 [36m  34 : d1                Star3[0m
 [36m  35 : 13 02             LdaConstant [2:0x09b80101e061 <HeapNumber 1.5>][0m
-[32m+ 0x13400fa3638  n21: Constant(0x09b80101e061 <HeapNumber 1.5>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3638  n21: Constant(0x09b80101e061 <HeapNumber 1.5>), 0 uses 🪦[0m[0m
 [36m  37 : 44 f8 04          Mul r1, FBV[4][0m
-[32m+ 0x13400fa3690  n22: ChangeInt32ToFloat64 [n13], 0 uses 🪦[0m[0m
-[32m+ 0x13400fa36e0  n23: Float64Constant(1.5), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa3740  n24: Float64Multiply [n22, n23], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa3690  n22: ChangeInt32ToFloat64 [n13], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa36e0  n23: Float64Constant(1.5), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3740  n24: Float64Multiply [n22, n23], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  40 : d0                Star4[0m
 [36m  41 : 13 03             LdaConstant [3:0x09b80101e06d <HeapNumber 0.25>][0m
-[32m+ 0x13400fa37b0  n25: Constant(0x09b80101e06d <HeapNumber 0.25>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa37b0  n25: Constant(0x09b80101e06d <HeapNumber 0.25>), 0 uses 🪦[0m[0m
 [36m  43 : 44 f8 05          Mul r1, FBV[5][0m
-[32m+ 0x13400fa3800  n26: Float64Constant(0.25), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa3860  n27: Float64Multiply [n22, n26], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fa3800  n26: Float64Constant(0.25), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3860  n27: Float64Multiply [n22, n26], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  46 : cf                Star5[0m
 [36m  47 : 6e f6 f5 f4 06    CallUndefinedReceiver2 r3, r4, r5, FBV[6][0m
-[32m+ 0x13400fa3938  n28: RootConstant(undefined_value), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa3980  n29: Constant(0x09b80101e0dd <ScriptContext[3]>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fa3ac0  n30: Constant(0x09b801004925 <JSGlobalProxy>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3938  n28: RootConstant(undefined_value), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3980  n29: Constant(0x09b80101e0dd <ScriptContext[3]>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fa3ac0  n30: Constant(0x09b801004925 <JSGlobalProxy>), 0 uses 🪦[0m[0m
 
 ----- Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode -----
 Parameter count 3
@@ -2379,9 +2379,9 @@ Source Position Table (size = 0)
  - slot #5 BinaryOp BinaryOp:Number {
      [5]: 15
   }
-[32m+ 0x13400fcd738  n31: Jump[0m[0m
+[32m+ 0x12c00fcd738  n31: Jump[0m[0m
 [36m   0 : 0b 04             Ldar a1[0m
-[33mNew block (merge @0x13400fcd788) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
+[33mNew block (merge @0x12c00fcd788) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
@@ -2389,58 +2389,58 @@ Source Position Table (size = 0)
   Non-constant context slots:
     - @16: n19
 [0m
-[37mCopying frame state from merge @0x13400fcd788[0m
+[37mCopying frame state from merge @0x12c00fcd788[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
 [36m   2 : 44 03 00          Mul a0, FBV[0][0m
-[32m+ 0x13400fcdfd8  n32: Float64Multiply [n24, n27], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fcdfd8  n32: Float64Multiply [n24, n27], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m   5 : d4                Star0[0m
 [36m   6 : 0b 03             Ldar a0[0m
 [36m   8 : 42 f9 01          Add r0, FBV[1][0m
-[32m+ 0x13400fce048  n33: Float64Add [n24, n32], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fce048  n33: Float64Add [n24, n32], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  11 : d3                Star1[0m
 [36m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3][0m
-[32m+ 0x13400fce118  n34: TruncateFloat64ToInt32 [n33], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fce118  n34: TruncateFloat64ToInt32 [n33], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  15 : d2                Star2[0m
 [36m  16 : 0b f9             Ldar r0[0m
 [36m  18 : 51 02 05          MulSmi [2], FBV[5][0m
-[32m+ 0x13400fce168  n35: Float64Constant(2), 0 uses 🪦[0m[0m
-[32m+ 0x13400fce1c8  n36: Float64Multiply [n32, n35], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fce168  n35: Float64Constant(2), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fce1c8  n36: Float64Multiply [n32, n35], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4][0m
-[32m+ 0x13400fce298  n37: TruncateFloat64ToInt32 [n36], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fce298  n37: TruncateFloat64ToInt32 [n36], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  24 : 42 f7 02          Add r2, FBV[2][0m
-[32m+ 0x13400fce358  n38: ChangeInt32ToFloat64 [n34], 0 uses 🪦[0m[0m
-[32m+ 0x13400fce418  n39: ChangeInt32ToFloat64 [n37], 0 uses 🪦[0m[0m
-[32m+ 0x13400fce478  n40: Float64Add [n38, n39], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fce358  n38: ChangeInt32ToFloat64 [n34], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fce418  n39: ChangeInt32ToFloat64 [n37], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fce478  n40: Float64Add [n38, n39], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  27 : b9                Return[0m
 == Finished inlining 0x09b80101e031 <SharedFunctionInfo trunc>[0m
 [36m  52 : 42 f7 01          Add r2, FBV[1][0m
-[32m+ 0x13400fce5c0  n41: CheckedNumberToFloat64 [n19], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
-[32m+ 0x13400fce698  n42: Float64Add [n40, n41], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fce5c0  n41: CheckedNumberToFloat64 [n19], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fce698  n42: Float64Add [n40, n41], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0][0m
-[32m+ 0x13400fce768  n43: TruncateFloat64ToInt32 [n42], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fce768  n43: TruncateFloat64ToInt32 [n42], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  58 : 29 02             StaCurrentContextSlot [2][0m
-[32m+ 0x13400fce8a0  n44: Int32ToNumber[kCanonicalizeSmi] [n43], 0 uses 🪦[0m[0m
-[32m+ 0x13400fce810  n45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44][0m[0m
+[32m+ 0x12c00fce8a0  n44: Int32ToNumber[kCanonicalizeSmi] [n43], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fce810  n45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44][0m[0m
   * Recording context slot store n2[16]: TruncateFloat64ToInt32 [n42], 1 uses, cannot truncate to int32[0m
 [36m  60 : 0b f8             Ldar r1[0m
 [36m  62 : 5b 08             Inc FBV[8][0m
-[32m+ 0x13400fcea28  n46: Int32IncrementWithOverflow [n13], 0 uses, but required, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fcea28  n46: Int32IncrementWithOverflow [n13], 0 uses, but required, cannot truncate to int32[0m[0m
 [36m  64 : d3                Star1[0m
 [36m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9][0m
-[32m+ 0x13400fceb38  n47: Constant(0x09b80101e0cd <FeedbackCell[one closure]>), 0 uses 🪦[0m[0m
-[32m+ 0x13400fcebd8  n48: ReduceInterruptBudgetForLoop(39) [n47][0m[0m
-[32m+ 0x13400fcecd0  n49: RootConstant(optimized_out), 0 uses 🪦[0m[0m
-[32m+ 0x13400fceef0  n50: Jump[0m[0m
+[32m+ 0x12c00fceb38  n47: Constant(0x09b80101e0cd <FeedbackCell[one closure]>), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fcebd8  n48: ReduceInterruptBudgetForLoop(39) [n47][0m[0m
+[32m+ 0x12c00fcecd0  n49: RootConstant(optimized_out), 0 uses 🪦[0m[0m
+[32m+ 0x12c00fceef0  n50: Jump[0m[0m
 [37mInitializing optimistic loop state...[0m
   <this>: <unregistered node 0><> <- n1<>[0m
  => n1: InitialValue(<this>), 7 uses<JSReceiver>[0m
   <context>: <unregistered node 0><> <- n2<>[0m
  => n2: InitialValue(<context>), 9 uses<Context>[0m
-  r1: <unregistered node 0x13400fceeb8><> <- n46<>[0m
- => <unregistered node 0x13400fceeb8>: Phi(r1) [n51, <unregistered node 0>], 0 uses 🪦<>[0m
+  r1: <unregistered node 0x12c00fceeb8><> <- n46<>[0m
+ => <unregistered node 0x12c00fceeb8>: Phi(r1) [n51, <unregistered node 0>], 0 uses 🪦<>[0m
 [36m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000][0m
-[33mNew block (loop header @0x13400fced28) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
+[33mNew block (loop header @0x12c00fced28) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
@@ -2448,15 +2448,15 @@ Source Position Table (size = 0)
   Non-constant context slots:
     - @16: n43
 [0m
-[37mCopying frame state from merge @0x13400fced28[0m
+[37mCopying frame state from merge @0x12c00fced28[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
-  0x13400fceeb8  n52: Phi(r1) [n51, <unregistered node 0>], 0 uses 🪦[0m
+  0x12c00fceeb8  n52: Phi(r1) [n51, <unregistered node 0>], 0 uses 🪦[0m
 [36m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1][0m
-[32m+ 0x13400fd07d8  n53: CheckedSmiUntag [n52], 0 uses, but required, cannot truncate to int32[0m[0m
-[32m+ 0x13400fd08a8  n54: Int32Compare[LessThan] [n53, n14], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fd07d8  n53: CheckedSmiUntag [n52], 0 uses, but required, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fd08a8  n54: Int32Compare[LessThan] [n53, n14], 0 uses 🪦[0m[0m
 [36m  26 : a8 2b             JumpIfFalse [43][0m
-[32m+ 0x13400fd0908  n55: BranchIfInt32Compare(LessThan) [n53, n14][0m[0m
+[32m+ 0x12c00fd0908  n55: BranchIfInt32Compare(LessThan) [n53, n14][0m[0m
 [37mMerging...[0m
   <this>: n1<JSReceiver> <- n1<JSReceiver>[0m
  => n1: InitialValue(<this>), 8 uses<JSReceiver>[0m
@@ -2470,18 +2470,18 @@ Source Position Table (size = 0)
   Non-constant context slots:
 [0m
 [36m  28 : 18 02             LdaCurrentContextSlot [2][0m
-[32m+ 0x13400fd0a58  n56: LoadContextSlot(0x10, mutable) [n2], 0 uses, but required[0m[0m
+[32m+ 0x12c00fd0a58  n56: LoadContextSlot(0x10, mutable) [n2], 0 uses, but required[0m[0m
 [36m  30 : d2                Star2[0m
 [36m  31 : 23 01 02          LdaGlobal [1:"trunc"], FBV[2][0m
 [36m  34 : d1                Star3[0m
 [36m  35 : 13 02             LdaConstant [2:0x09b80101e061 <HeapNumber 1.5>][0m
 [36m  37 : 44 f8 04          Mul r1, FBV[4][0m
-[32m+ 0x13400fd0ad0  n57: ChangeInt32ToFloat64 [n53], 0 uses 🪦[0m[0m
-[32m+ 0x13400fd0b30  n58: Float64Multiply [n57, n23], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd0ad0  n57: ChangeInt32ToFloat64 [n53], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fd0b30  n58: Float64Multiply [n57, n23], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  40 : d0                Star4[0m
 [36m  41 : 13 03             LdaConstant [3:0x09b80101e06d <HeapNumber 0.25>][0m
 [36m  43 : 44 f8 05          Mul r1, FBV[5][0m
-[32m+ 0x13400fd0ba0  n59: Float64Multiply [n57, n26], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd0ba0  n59: Float64Multiply [n57, n26], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  46 : cf                Star5[0m
 [36m  47 : 6e f6 f5 f4 06    CallUndefinedReceiver2 r3, r4, r5, FBV[6][0m
 
@@ -2535,9 +2535,9 @@ Source Position Table (size = 0)
  - slot #5 BinaryOp BinaryOp:Number {
      [5]: 15
   }
-[32m+ 0x13400fd3680  n60: Jump[0m[0m
+[32m+ 0x12c00fd3680  n60: Jump[0m[0m
 [36m   0 : 0b 04             Ldar a1[0m
-[33mNew block (merge @0x13400fd36b0) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
+[33mNew block (merge @0x12c00fd36b0) at 0x09b80101e031 <SharedFunctionInfo trunc>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
@@ -2545,46 +2545,46 @@ Source Position Table (size = 0)
   Non-constant context slots:
     - @16: n56
 [0m
-[37mCopying frame state from merge @0x13400fd36b0[0m
+[37mCopying frame state from merge @0x12c00fd36b0[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
 [36m   2 : 44 03 00          Mul a0, FBV[0][0m
-[32m+ 0x13400fd8678  n61: Float64Multiply [n58, n59], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd8678  n61: Float64Multiply [n58, n59], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m   5 : d4                Star0[0m
 [36m   6 : 0b 03             Ldar a0[0m
 [36m   8 : 42 f9 01          Add r0, FBV[1][0m
-[32m+ 0x13400fd86e8  n62: Float64Add [n58, n61], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd86e8  n62: Float64Add [n58, n61], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  11 : d3                Star1[0m
 [36m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3][0m
-[32m+ 0x13400fd87b8  n63: TruncateFloat64ToInt32 [n62], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fd87b8  n63: TruncateFloat64ToInt32 [n62], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  15 : d2                Star2[0m
 [36m  16 : 0b f9             Ldar r0[0m
 [36m  18 : 51 02 05          MulSmi [2], FBV[5][0m
-[32m+ 0x13400fd8818  n64: Float64Multiply [n61, n35], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd8818  n64: Float64Multiply [n61, n35], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4][0m
-[32m+ 0x13400fd88e8  n65: TruncateFloat64ToInt32 [n64], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fd88e8  n65: TruncateFloat64ToInt32 [n64], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  24 : 42 f7 02          Add r2, FBV[2][0m
-[32m+ 0x13400fd89a8  n66: ChangeInt32ToFloat64 [n63], 0 uses 🪦[0m[0m
-[32m+ 0x13400fd8a68  n67: ChangeInt32ToFloat64 [n65], 0 uses 🪦[0m[0m
-[32m+ 0x13400fd8ac8  n68: Float64Add [n66, n67], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd89a8  n66: ChangeInt32ToFloat64 [n63], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fd8a68  n67: ChangeInt32ToFloat64 [n65], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fd8ac8  n68: Float64Add [n66, n67], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  27 : b9                Return[0m
 == Finished inlining 0x09b80101e031 <SharedFunctionInfo trunc>[0m
 [36m  52 : 42 f7 01          Add r2, FBV[1][0m
-[32m+ 0x13400fd8c10  n69: CheckedNumberToFloat64 [n56], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
-[32m+ 0x13400fd8ce8  n70: Float64Add [n68, n69], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd8c10  n69: CheckedNumberToFloat64 [n56], 0 uses, but required, cannot truncate to int32 [-∞, +∞][0m[0m
+[32m+ 0x12c00fd8ce8  n70: Float64Add [n68, n69], 0 uses 🪦, cannot truncate to int32 [-∞, +∞][0m[0m
 [36m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0][0m
-[32m+ 0x13400fd8db8  n71: TruncateFloat64ToInt32 [n70], 0 uses 🪦, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fd8db8  n71: TruncateFloat64ToInt32 [n70], 0 uses 🪦, cannot truncate to int32[0m[0m
 [36m  58 : 29 02             StaCurrentContextSlot [2][0m
-[32m+ 0x13400fd8ef0  n72: Int32ToNumber[kCanonicalizeSmi] [n71], 0 uses 🪦[0m[0m
-[32m+ 0x13400fd8e60  n73: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n72][0m[0m
+[32m+ 0x12c00fd8ef0  n72: Int32ToNumber[kCanonicalizeSmi] [n71], 0 uses 🪦[0m[0m
+[32m+ 0x12c00fd8e60  n73: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n72][0m[0m
   * Recording context slot store n2[16]: TruncateFloat64ToInt32 [n70], 1 uses, cannot truncate to int32[0m
 [36m  60 : 0b f8             Ldar r1[0m
 [36m  62 : 5b 08             Inc FBV[8][0m
-[32m+ 0x13400fd9068  n74: Int32IncrementWithOverflow [n53], 0 uses, but required, cannot truncate to int32[0m[0m
+[32m+ 0x12c00fd9068  n74: Int32IncrementWithOverflow [n53], 0 uses, but required, cannot truncate to int32[0m[0m
 [36m  64 : d3                Star1[0m
 [36m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9][0m
-[32m+ 0x13400fd9170  n75: ReduceInterruptBudgetForLoop(39) [n47][0m[0m
-[32m+ 0x13400fd92e0  n76: JumpLoop[0m[0m
+[32m+ 0x12c00fd9170  n75: ReduceInterruptBudgetForLoop(39) [n47][0m[0m
+[32m+ 0x12c00fd92e0  n76: JumpLoop[0m[0m
 [91mNext peeling not needed due to compatible state.[0m
   <this>: n1<JSReceiver> <- n1<JSReceiver>[0m
  => n1: InitialValue(<this>), 13 uses<JSReceiver>[0m
@@ -2593,7 +2593,7 @@ Source Position Table (size = 0)
   r1: n52<> <- n74<>[0m
  => n52: Phi(r1) [n51, n77], 6 uses<>[0m
 [36m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10][0m
-[33mNew block (merge @0x13400fa2640) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
+[33mNew block (merge @0x12c00fa2640) at 0x09b80101dfc9 <SharedFunctionInfo>[37m
   VOs (IFS): 
   Constant properties:
   Non-constant properties:
@@ -2601,7 +2601,7 @@ Source Position Table (size = 0)
   Non-constant context slots:
     - @16: n71
 [0m
-[37mCopying frame state from merge @0x13400fa2640[0m
+[37mCopying frame state from merge @0x12c00fa2640[0m
 [37m  - VOs (IFS): [0m
 [37m  - VOs (merge): [0m
 [33mNew empty block [37m
@@ -2611,7 +2611,7 @@ Source Position Table (size = 0)
   Constant context slots:
   Non-constant context slots:
 [0m
-[32m+ 0x13400fd9418  n78: Jump[0m[0m
+[32m+ 0x12c00fd9418  n78: Jump[0m[0m
 [33mNew empty block [37m
   VOs (IFS): 
   Constant properties:
@@ -2619,8 +2619,8 @@ Source Position Table (size = 0)
   Constant context slots:
   Non-constant context slots:
 [0m
-[32m+ 0x13400fd9498  n79: Jump[0m[0m
-[32m+ 0x13400fd9638  n80: Deopt(Insufficient type feedback for generic global access)[0m[0m
+[32m+ 0x12c00fd9498  n79: Jump[0m[0m
+[32m+ 0x12c00fd9638  n80: Deopt(Insufficient type feedback for generic global access)[0m[0m
 [91mDEAD  : 23 04 0a          LdaGlobal [4:"print"], FBV[10][0m
 [36m  72 : d2                Star2[0m
 [91mDEAD  : d2                Star2[0m

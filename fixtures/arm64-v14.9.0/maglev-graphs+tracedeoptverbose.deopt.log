@@ -48,18 +48,21 @@ Graph
 [m[0m   [0m1: InitialValue(<this>), 2 uses
 [0m   [0m2: InitialValue(a0), 4 uses
 [0m   [0m6: FunctionEntryStackCheck
-[0m      ↳ lazy @-1 (3 live vars)
+[0m      ↳ lazy @-1 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x13400e40428)
+[0m      │       VOs : { }
 [0m   [0m7: Jump b1
 [0m   ↓
  [0mBlock b1
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:11)
-[m[0m      ↱ eager @0 (3 live vars)
+[m[0m      ↱ eager @0 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x13401140e30)
+[0m      │       VOs : { }
 [0m   [0m8: CheckMaps(0x09b80101e375 <Map[16](HOLEY_ELEMENTS)>, check heapobj) [n2]
 [0m   [0m9: LoadTaggedField(0xc: 0x09b8000034d5 <String[1]: #x>, compressed, is_const, Smi) [n2], 1 uses
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
 [m[0m  [0m10: UnsafeSmiUntag [n9], 1 uses, cannot truncate to int32
-[0m      ↱ eager @0 (3 live vars)
+[0m      ↱ eager @0 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x13401140e30)
+[0m      │       VOs : { }
 [0m  [0m11: Int32IncrementWithOverflow [n10], 1 uses, cannot truncate to int32
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:17)
 [m[0m[0;34m   7 : b9                Return
@@ -80,18 +83,21 @@ Graph
 [m[0m   [0m1: InitialValue(<this>) → (x)
 [0m   [0m2: InitialValue(a0) → (x)
 [0m   [0m6: FunctionEntryStackCheck
-[0m      ↳ lazy @-1 (3 live vars)
+[0m      ↳ lazy @-1 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x13400e40428)
+[0m      │       VOs : { }
 [0m   [0m7: Jump b1
 [0m   ↓
  [0mBlock b1
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:11)
-[m[0m      ↱ eager @0 (3 live vars)
+[m[0m      ↱ eager @0 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x13401140e30)
+[0m      │       VOs : { }
 [0m   [0m8: CheckMaps(0x09b80101e375 <Map[16](HOLEY_ELEMENTS)>, check heapobj) [v0/n2:(x)]
 [0m   [0m9: LoadTaggedField(0xc: 0x09b8000034d5 <String[1]: #x>, compressed, is_const, Smi) [v0/n2:(x)] → (x)
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
 [m[0m  [0m10: UnsafeSmiUntag [v0/n9:(x)] → (x)
-[0m      ↱ eager @0 (3 live vars)
+[0m      ↱ eager @0 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x13401140e30)
+[0m      │       VOs : { }
 [0m  [0m11: Int32IncrementWithOverflow [v0/n10:(x)] → (x)
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:17)
 [m[0m[0;34m   7 : b9                Return
@@ -112,18 +118,21 @@ Graph
 [m[0m    [0m4/1: InitialValue(<this>) → v-1(=-6S), live range: [4-11]
 [0m    [0m5/2: InitialValue(a0) → v-1(=-7S), live range: [5-11]
 [0m    [0m6/6: FunctionEntryStackCheck
-[0m         ↳ lazy @-1 (3 live vars)
+[0m         ↳ lazy @-1 : {<closure>:n3:(x), <this>:n1:(x), a0:n2:(x), <context>:n4:(x)} (addr:0x13400e40428)
+[0m         │       VOs : { }
 [0m    [0m7/7: Jump b1
 [0m      ↓
  [0mBlock b1
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:11)
-[m[0m         ↱ eager @0 (3 live vars)
+[m[0m         ↱ eager @0 : {<closure>:n3:(x), <this>:n1:(x), a0:n2:(x), <context>:n4:(x)} (addr:0x13401140e30)
+[0m         │       VOs : { }
 [0m    [0m8/8: CheckMaps(0x09b80101e375 <Map[16](HOLEY_ELEMENTS)>, check heapobj) [v5/n2:v-1(R)]
 [0m    [0m9/9: LoadTaggedField(0xc: 0x09b8000034d5 <String[1]: #x>, compressed, is_const, Smi) [v5/n2:v-1(R)] → v-1(R), live range: [9-10]
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
 [m[0m  [0m10/10: UnsafeSmiUntag [v9/n9:v-1(R)] → v-1(0), live range: [10-11]
-[0m         ↱ eager @0 (3 live vars)
+[0m         ↱ eager @0 : {<closure>:n3:(x), <this>:n1:(x), a0:n2:(x), <context>:n4:(x)} (addr:0x13401140e30)
+[0m         │       VOs : { }
 [0m  [0m11/11: Int32IncrementWithOverflow [v10/n10:v-1(R)] → v-1(R), live range: [11-13]
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:17)
 [m[0m[0;34m   7 : b9                Return
@@ -144,19 +153,22 @@ Graph
 [m[0m    [0m4/1: InitialValue(<this>) → [stack:-6|t], live range: [4-11]
 [0m    [0m5/2: InitialValue(a0) → [stack:-7|t], live range: [5-11]
 [0m    [0m6/6: FunctionEntryStackCheck
-[0m         ↳ lazy @-1 (3 live vars)
+[0m         ↳ lazy @-1 : {<closure>:n3:[constant:v-1], <this>:n1:[stack:-6|t], a0:n2:[stack:-7|t], <context>:n4:[constant:v-1]} (addr:0x13400e40428)
+[0m         │       VOs : { }
 [0m    [0m7/7: Jump b1
 [0m      ↓
  [0mBlock b1
 [0m     [0m16: GapMove([stack:-7|t] → [x0|R|t])
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:11)
-[m[0m         ↱ eager @0 (3 live vars)
+[m[0m         ↱ eager @0 : {<closure>:n3:[constant:v-1], <this>:n1:[stack:-6|t], a0:n2:[x0|R|t], <context>:n4:[constant:v-1]} (addr:0x13401140e30)
+[0m         │       VOs : { }
 [0m    [0m8/8: CheckMaps(0x09b80101e375 <Map[16](HOLEY_ELEMENTS)>, check heapobj) [v5/n2:[x0|R|t]]
 [0m    [0m9/9: LoadTaggedField(0xc: 0x09b8000034d5 <String[1]: #x>, compressed, is_const, Smi) [v5/n2:[x0|R|t]] → [x1|R|t], live range: [9-10]
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
 [m[0m  [0m10/10: UnsafeSmiUntag [v9/n9:[x1|R|t]] → [x1|R|w32], live range: [10-11]
-[0m         ↱ eager @0 (3 live vars)
+[0m         ↱ eager @0 : {<closure>:n3:[constant:v-1], <this>:n1:[stack:-6|t], a0:n2:[x0|R|t], <context>:n4:[constant:v-1]} (addr:0x13401140e30)
+[0m         │       VOs : { }
 [0m  [0m11/11: Int32IncrementWithOverflow [v10/n10:[x1|R|w32]] → [x2|R|w32], live range: [11-13]
 [0m     [0m17: ConstantGapMove(n12 → [x0|R|t])
 [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80104a8b5 <String[24]: "workloads/deopt-eager.js">:4:17)
@@ -427,14 +439,17 @@ Graph
    [0m   [0m8: InitialValue(r4), 0 uses 🪦
    [0m   [0m9: InitialValue(r5), 0 uses 🪦
    [0m  [0m10: FunctionEntryStackCheck
-   [0m      ↳ lazy @59 (3 live vars)
-   [0m      ↱ eager @59 (3 live vars)
+   [0m      ↳ lazy @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:} (addr:0x13401141970)
+   [0m      │       VOs : { }
+   [0m      ↱ eager @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:} (addr:0x13401141970)
+   [0m      │       VOs : { }
    [0m  [0m11: CheckpointedJump b1
    [0m   ↓
     [0mBlock b1
    [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:18)
 [m   [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
-[m   [0m      ↱ eager @22 (4 live vars)
+[m   [0m      ↱ eager @22 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:, <accumulator>:n12:} (addr:0x13401143480)
+   [0m      │       VOs : { }
    [0m  [0m13: CheckedSmiUntag [n6], 3 uses, cannot truncate to int32
    [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
    [0m[0;34m  25 : a8 26             JumpIfFalse [38]
@@ -458,7 +473,8 @@ Graph
 [m[0;31m│  [0m  [0m32: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034d5 <String[1]: #x>, mutable) [n27, n6]
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:9:10)
 [m[0;31m│  [0m[0;34m  45 : 6d f5 f4 06       CallUndefinedReceiver1 r4, r5, FBV[6]
-[m[0;31m│  [0m      ↱ eager @45 (6 live vars)
+[m[0;31m│  [0m      ↱ eager @45 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:, r3:n19:, r4:n21:, r5:n27:} (addr:0x13401145df8)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m33: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [n21]
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│  [0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -467,12 +483,15 @@ Graph
 [0;31m│   [0mBlock b3
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│  [0m      ↱ eager @45 (4 live vars)
-[0;31m│  [0m      │       @4 (4 live vars)
+[m[0;31m│  [0m      ↱ eager @45 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:, r3:n19:} (addr:0x1340111a0f8)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
+[0;31m│  [0m      │       @4 : {<closure>:n34:, <this>:n36:, a0:n27:, <context>:n35:, <accumulator>:n6:} (addr:0x1340111d648)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m38: Int32IncrementWithOverflow [n13], 4 uses, cannot truncate to int32
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:9:10)
 [m[0;31m│  [0m[0;34m  49 : 42 f6 00          Add r3, FBV[0]
-[m[0;31m│  [0m      ↱ eager @49 (5 live vars)
+[m[0;31m│  [0m      ↱ eager @49 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:, r3:n19:, <accumulator>:n38:} (addr:0x1340111d818)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m39: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
 [0;31m│  [0m  [0m40: ChangeInt32ToFloat64 [n38], 1 uses
 [0;31m│  [0m  [0m41: Float64Add [n39, n40], 1 uses, cannot truncate to int32 [-∞, +∞]
@@ -480,11 +499,13 @@ Graph
 [m[0;31m│  [0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│  [0m  [0m42: Float64ToTagged[kCanonicalizeSmi] [n41], 1 uses
 [0;31m│  [0m  [0m43: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n42]
-[0;31m│  [0m      ↳ lazy @52 (3 live vars)
+[0;31m│  [0m      ↳ lazy @52 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:} (addr:0x1340111db30)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:0)
 [m[0;31m│  [0m[0;34m  59 : 97 2b 00 09       JumpLoop [43], [0], FBV[9]
 [m[0;31m│  [0m  [0m45: ReduceInterruptBudgetForLoop(34) [n44]
-[0;31m│  [0m      ↳ lazy @59 (3 live vars)
+[0;31m│  [0m      ↳ lazy @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n38:} (addr:0x1340111dcf0)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m48: Int32ToNumber[kCanonicalizeSmi] [n38], 1 uses
 [0;31m│  [0m  [0m47: Jump b4
 [0;31m│  [0m   │  with gap moves:
@@ -493,7 +514,8 @@ Graph
 [0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
 [0;31m│[0;32m│ [0m  [0m49: φᵀⁱ r2 (n48, n73), 11 uses
 [0;31m│[0;32m│ [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
-[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:, <accumulator>:n12:} (addr:0x1340111f4f8)
+[0;31m│[0;32m│ [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│ [0m  [0m50: CheckedSmiUntag [n49], 3 uses, cannot truncate to int32
 [0;31m│[0;32m│ [0m  [0m51: Int32Compare[LessThan] [n50, n14], 0 uses 🪦
 [0;31m│[0;32m│ [0m[0;34m  25 : a8 26             JumpIfFalse [38]
@@ -512,11 +534,13 @@ Graph
 [0;31m│[0;32m│[0;33m│[0m  [0m59: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [n56, n23]
 [0;31m│[0;32m│[0;33m│[0m  [0m60: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [n56, n25]
 [0;31m│[0;32m│[0;33m│[0m[0;34m  41 : 3b f4 03 04       DefineNamedOwnProperty r5, [3:"x"], FBV[4]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @41 (7 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @41 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:, r3:n53:, r4:n54:, r5:n56:, <accumulator>:n49:} (addr:0x13401120250)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m61: CheckSmi [n49]
 [0;31m│[0;32m│[0;33m│[0m  [0m62: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034d5 <String[1]: #x>, mutable) [n56, n49]
 [0;31m│[0;32m│[0;33m│[0m[0;34m  45 : 6d f5 f4 06       CallUndefinedReceiver1 r4, r5, FBV[6]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 (6 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:, r3:n53:, r4:n54:, r5:n56:} (addr:0x13401120470)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m63: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [n54]
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -525,24 +549,30 @@ Graph
 [0;31m│[0;32m│[0;33m│ [0mBlock b6
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 (4 live vars)
-[0;31m│[0;32m│[0;33m│[0m      │       @4 (4 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:, r3:n53:} (addr:0x134011205b8)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
+[0;31m│[0;32m│[0;33m│[0m      │       @4 : {<closure>:n34:, <this>:n36:, a0:n56:, <context>:n35:, <accumulator>:n49:} (addr:0x13401123a78)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m65: Int32IncrementWithOverflow [n50], 5 uses, cannot truncate to int32
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:0)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 42 f6 00          Add r3, FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @49 (5 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @49 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:, r3:n53:, <accumulator>:n65:} (addr:0x13401123bf8)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m66: CheckedNumberToFloat64 [n53], 1 uses, cannot truncate to int32 [-∞, +∞]
 [0;31m│[0;32m│[0;33m│[0m  [0m67: ChangeInt32ToFloat64 [n65], 1 uses
 [0;31m│[0;32m│[0;33m│[0m  [0m68: Float64Add [n66, n67], 1 uses, cannot truncate to int32 [-∞, +∞]
 [0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m69: Float64ToTagged[kCanonicalizeSmi] [n68], 1 uses
 [0;31m│[0;32m│[0;33m│[0m  [0m70: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n69]
-[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @52 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @52 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:} (addr:0x13401123f10)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m[0;34m  59 : 97 2b 00 09       JumpLoop [43], [0], FBV[9]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m71: ReduceInterruptBudgetForLoop(34) [n44]
-[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n65:} (addr:0x134011240e0)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m73: Int32ToNumber[kCanonicalizeSmi] [n65], 1 uses
-[0;31m│[0;32m│[0;33m│[0m      ↱ eager @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n65:} (addr:0x134011241d0)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m╰─◄─[0m72: JumpLoop b4
 [0;31m│ [0;33m│[0m      with gap moves:
 [0;31m│ [0;33m│[0m        - n73 → 49: φᵀⁱ r2
@@ -560,7 +590,8 @@ Graph
    [0m[0;34m  66 : 23 01 01          LdaGlobal [1:"read"], FBV[1]
 [m   [0m  [0m77: LoadTaggedField(0xc, compressed) [n20], 1 uses
    [0m[0;34m  70 : 89 04 0b 29       CreateObjectLiteral [4:0x09b80101e21d <ObjectBoilerplateDescription[4]>], FBV[11], #29
-[m   [0m      ↱ eager @70 (4 live vars)
+[m   [0m      ↱ eager @70 : {<closure>:n3:, <this>:n1:, <context>:n2:, r3:n76:, r4:n77:} (addr:0x13401124778)
+   [0m      │       VOs : { }
    [0m  [0m78: Deopt(Insufficient type feedback for object literal)
    [0m
 
@@ -584,14 +615,17 @@ Graph
    [0m   [0m3: InitialValue(<closure>) → (x)
    [0m   [0m6: InitialValue(r2) → (x)
    [0m  [0m10: FunctionEntryStackCheck
-   [0m      ↳ lazy @59 (3 live vars)
-   [0m      ↱ eager @59 (3 live vars)
+   [0m      ↳ lazy @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:} (addr:0x13401141970)
+   [0m      │       VOs : { }
+   [0m      ↱ eager @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:} (addr:0x13401141970)
+   [0m      │       VOs : { }
    [0m  [0m11: CheckpointedJump b1
    [0m   ↓
     [0mBlock b1
    [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:18)
 [m   [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
-[m   [0m      ↱ eager @22 (4 live vars)
+[m   [0m      ↱ eager @22 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:, <accumulator>:n12:} (addr:0x13401143480)
+   [0m      │       VOs : { }
    [0m  [0m13: CheckedSmiUntag [v0/n6:(x)] → (x)
    [0m[0;34m  25 : a8 26             JumpIfFalse [38]
 [m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [v0/n13:(x), v0/n14:(x)] b2 b8
@@ -614,7 +648,8 @@ Graph
 [m[0;31m│  [0m  [0m32: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034d5 <String[1]: #x>, mutable) [v0/n27:(x), v0/n6:(x)]
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:9:10)
 [m[0;31m│  [0m[0;34m  45 : 6d f5 f4 06       CallUndefinedReceiver1 r4, r5, FBV[6]
-[m[0;31m│  [0m      ↱ eager @45 (6 live vars)
+[m[0;31m│  [0m      ↱ eager @45 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:, r3:n19:, r4:n21:, r5:n27:} (addr:0x13401145df8)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m33: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v0/n21:(x)]
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│  [0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -623,12 +658,15 @@ Graph
 [0;31m│   [0mBlock b3
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│  [0m      ↱ eager @45 (4 live vars)
-[0;31m│  [0m      │       @4 (4 live vars)
+[m[0;31m│  [0m      ↱ eager @45 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:, r3:n19:} (addr:0x1340111a0f8)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
+[0;31m│  [0m      │       @4 : {<closure>:n34:, <this>:n36:, a0:n27:, <context>:n35:, <accumulator>:n6:} (addr:0x1340111d648)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m38: Int32IncrementWithOverflow [v0/n13:(x)] → (x)
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:9:10)
 [m[0;31m│  [0m[0;34m  49 : 42 f6 00          Add r3, FBV[0]
-[m[0;31m│  [0m      ↱ eager @49 (5 live vars)
+[m[0;31m│  [0m      ↱ eager @49 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:, r3:n19:, <accumulator>:n38:} (addr:0x1340111d818)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m39: CheckedNumberToFloat64 [v0/n19:(x)] → (x)
 [0;31m│  [0m  [0m40: ChangeInt32ToFloat64 [v0/n38:(x)] → (x)
 [0;31m│  [0m  [0m41: Float64Add [v0/n39:(x), v0/n40:(x)] → (x)
@@ -636,11 +674,13 @@ Graph
 [m[0;31m│  [0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│  [0m  [0m42: Float64ToTagged[kCanonicalizeSmi] [v0/n41:(x)] → (x)
 [0;31m│  [0m  [0m43: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n42:(x)]
-[0;31m│  [0m      ↳ lazy @52 (3 live vars)
+[0;31m│  [0m      ↳ lazy @52 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:} (addr:0x1340111db30)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:0)
 [m[0;31m│  [0m[0;34m  59 : 97 2b 00 09       JumpLoop [43], [0], FBV[9]
 [m[0;31m│  [0m  [0m45: ReduceInterruptBudgetForLoop(34) [v0/n44:(x)]
-[0;31m│  [0m      ↳ lazy @59 (3 live vars)
+[0;31m│  [0m      ↳ lazy @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n38:} (addr:0x1340111dcf0)
+[0;31m│  [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m48: Int32ToNumber[kCanonicalizeSmi] [v0/n38:(x)] → (x)
 [0;31m│  [0m  [0m47: Jump b4
 [0;31m│  [0m   │  with gap moves:
@@ -649,7 +689,8 @@ Graph
 [0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
 [0;31m│[0;32m│ [0m  [0m49: φᵀⁱ r2 (n48, n73) (compressed) → (x)
 [0;31m│[0;32m│ [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
-[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:, <accumulator>:n12:} (addr:0x1340111f4f8)
+[0;31m│[0;32m│ [0m      │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│ [0m  [0m50: CheckedSmiUntag [v0/n49:(x)] → (x)
 [0;31m│[0;32m│ [0m[0;34m  25 : a8 26             JumpIfFalse [38]
 [m[0;31m│[0;32m│[0;33m╭──[0m52: BranchIfInt32Compare(LessThan) [v0/n50:(x), v0/n14:(x)] b5 b7
@@ -667,11 +708,13 @@ Graph
 [0;31m│[0;32m│[0;33m│[0m  [0m59: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v0/n56:(x), v0/n23:(x)]
 [0;31m│[0;32m│[0;33m│[0m  [0m60: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v0/n56:(x), v0/n25:(x)]
 [0;31m│[0;32m│[0;33m│[0m[0;34m  41 : 3b f4 03 04       DefineNamedOwnProperty r5, [3:"x"], FBV[4]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @41 (7 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @41 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:, r3:n53:, r4:n54:, r5:n56:, <accumulator>:n49:} (addr:0x13401120250)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m61: CheckSmi [v0/n49:(x)]
 [0;31m│[0;32m│[0;33m│[0m  [0m62: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034d5 <String[1]: #x>, mutable) [v0/n56:(x), v0/n49:(x)]
 [0;31m│[0;32m│[0;33m│[0m[0;34m  45 : 6d f5 f4 06       CallUndefinedReceiver1 r4, r5, FBV[6]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 (6 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:, r3:n53:, r4:n54:, r5:n56:} (addr:0x13401120470)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m63: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v0/n54:(x)]
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -680,24 +723,30 @@ Graph
 [0;31m│[0;32m│[0;33m│ [0mBlock b6
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 (4 live vars)
-[0;31m│[0;32m│[0;33m│[0m      │       @4 (4 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:, r3:n53:} (addr:0x134011205b8)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
+[0;31m│[0;32m│[0;33m│[0m      │       @4 : {<closure>:n34:, <this>:n36:, a0:n56:, <context>:n35:, <accumulator>:n49:} (addr:0x13401123a78)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m65: Int32IncrementWithOverflow [v0/n50:(x)] → (x)
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:0)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 42 f6 00          Add r3, FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @49 (5 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @49 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:, r3:n53:, <accumulator>:n65:} (addr:0x13401123bf8)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m66: CheckedNumberToFloat64 [v0/n53:(x)] → (x)
 [0;31m│[0;32m│[0;33m│[0m  [0m67: ChangeInt32ToFloat64 [v0/n65:(x)] → (x)
 [0;31m│[0;32m│[0;33m│[0m  [0m68: Float64Add [v0/n66:(x), v0/n67:(x)] → (x)
 [0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m69: Float64ToTagged[kCanonicalizeSmi] [v0/n68:(x)] → (x)
 [0;31m│[0;32m│[0;33m│[0m  [0m70: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n69:(x)]
-[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @52 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @52 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n49:} (addr:0x13401123f10)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m[0;34m  59 : 97 2b 00 09       JumpLoop [43], [0], FBV[9]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m71: ReduceInterruptBudgetForLoop(34) [v0/n44:(x)]
-[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n65:} (addr:0x134011240e0)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m73: Int32ToNumber[kCanonicalizeSmi] [v0/n65:(x)] → (x)
-[0;31m│[0;32m│[0;33m│[0m      ↱ eager @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n65:} (addr:0x134011241d0)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m╰─◄─[0m72: JumpLoop b4
 [0;31m│ [0;33m│[0m      with gap moves:
 [0;31m│ [0;33m│[0m        - v0/n73:(x) → 49: φᵀⁱ r2 (x)
@@ -715,7 +764,8 @@ Graph
    [0m[0;34m  66 : 23 01 01          LdaGlobal [1:"read"], FBV[1]
 [m   [0m  [0m77: LoadTaggedField(0xc, compressed) [v0/n20:(x)] → (x)
    [0m[0;34m  70 : 89 04 0b 29       CreateObjectLiteral [4:0x09b80101e21d <ObjectBoilerplateDescription[4]>], FBV[11], #29
-[m   [0m      ↱ eager @70 (4 live vars)
+[m   [0m      ↱ eager @70 : {<closure>:n3:, <this>:n1:, <context>:n2:, r3:n76:, r4:n77:} (addr:0x13401124778)
+   [0m      │       VOs : { }
    [0m  [0m78: Deopt(Insufficient type feedback for object literal)
    [0m
 
@@ -739,14 +789,17 @@ Graph
    [0m   [0m12/3: InitialValue(<closure>) → v-1(=-2S), live range: [12-66]
    [0m   [0m13/6: InitialValue(r2) → v-1(=5S), live range: [13-34]
    [0m  [0m14/10: FunctionEntryStackCheck
-   [0m         ↳ lazy @59 (3 live vars)
-   [0m         ↱ eager @59 (3 live vars)
+   [0m         ↳ lazy @59 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n6:(x)} (addr:0x13401141970)
+   [0m         │       VOs : { }
+   [0m         ↱ eager @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:} (addr:0x13401141970)
+   [0m         │       VOs : { }
    [0m  [0m15/11: CheckpointedJump b1
    [0m      ↓
     [0mBlock b1
    [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:18)
 [m   [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
-[m   [0m         ↱ eager @22 (4 live vars)
+[m   [0m         ↱ eager @22 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n6:(x), <accumulator>:n12:(x)} (addr:0x13401143480)
+   [0m         │       VOs : { }
    [0m  [0m16/13: CheckedSmiUntag [v13/n6:v-1(R)] → v-1(0), live range: [16-29]
    [0m[0;34m  25 : a8 26             JumpIfFalse [38]
 [m[0;31m╭────[0m17/16: BranchIfInt32Compare(LessThan) [v16/n13:v-1(R), v9/n14:v-1(R)] b2 b8
@@ -769,7 +822,8 @@ Graph
 [m[0;31m│  [0m  [0m26/32: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034d5 <String[1]: #x>, mutable) [v21/n27:v-1(R), v13/n6:v-1(R)]
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:9:10)
 [m[0;31m│  [0m[0;34m  45 : 6d f5 f4 06       CallUndefinedReceiver1 r4, r5, FBV[6]
-[m[0;31m│  [0m         ↱ eager @45 (6 live vars)
+[m[0;31m│  [0m         ↱ eager @45 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n6:(x), r3:n19:(x), r4:n21:(x), r5:n27:(x)} (addr:0x13401145df8)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m27/33: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v19/n21:v-1(R)]
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│  [0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -778,12 +832,15 @@ Graph
 [0;31m│   [0mBlock b3
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│  [0m         ↱ eager @45 (4 live vars)
-[0;31m│  [0m         │       @4 (4 live vars)
+[m[0;31m│  [0m         ↱ eager @45 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n6:(x), r3:n19:(x)} (addr:0x1340111a0f8)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
+[0;31m│  [0m         │       @4 : {<closure>:n34:(x), <this>:n36:(x), a0:n27:(x), <context>:n35:(x), <accumulator>:n6:(x)} (addr:0x1340111d648)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m29/38: Int32IncrementWithOverflow [v16/n13:v-1(R)] → v-1(R), live range: [29-36]
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:9:10)
 [m[0;31m│  [0m[0;34m  49 : 42 f6 00          Add r3, FBV[0]
-[m[0;31m│  [0m         ↱ eager @49 (5 live vars)
+[m[0;31m│  [0m         ↱ eager @49 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n6:(x), r3:n19:(x), <accumulator>:n38:(x)} (addr:0x1340111d818)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m30/39: CheckedNumberToFloat64 [v18/n19:v-1(R)] → v-1(R), live range: [30-32]
 [0;31m│  [0m  [0m31/40: ChangeInt32ToFloat64 [v29/n38:v-1(R)] → v-1(R), live range: [31-32]
 [0;31m│  [0m  [0m32/41: Float64Add [v30/n39:v-1(R), v31/n40:v-1(R)] → v-1(R), live range: [32-33]
@@ -791,11 +848,13 @@ Graph
 [m[0;31m│  [0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│  [0m  [0m33/42: Float64ToTagged[kCanonicalizeSmi] [v32/n41:v-1(R)] → v-1(R), live range: [33-34]
 [0;31m│  [0m  [0m34/43: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:v-1(=x1), v33/n42:v-1(R)]
-[0;31m│  [0m         ↳ lazy @52 (3 live vars)
+[0;31m│  [0m         ↳ lazy @52 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n6:(x)} (addr:0x1340111db30)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:0)
 [m[0;31m│  [0m[0;34m  59 : 97 2b 00 09       JumpLoop [43], [0], FBV[9]
 [m[0;31m│  [0m  [0m35/45: ReduceInterruptBudgetForLoop(34) [v1/n44:v-1(R)]
-[0;31m│  [0m         ↳ lazy @59 (3 live vars)
+[0;31m│  [0m         ↳ lazy @59 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n38:(x)} (addr:0x1340111dcf0)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m36/48: Int32ToNumber[kCanonicalizeSmi] [v29/n38:v-1(R)] → v-1(R), live range: [36-37]
 [0;31m│  [0m  [0m37/47: Jump b4
 [0;31m│  [0m      │  with gap moves:
@@ -804,7 +863,8 @@ Graph
 [0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
 [0;31m│[0;32m│ [0m  [0m38/49: φᵀⁱ r2 (n48, n73) → v-1(*), live range: [38-58]
 [0;31m│[0;32m│ [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
-[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n49:(x), <accumulator>:n12:(x)} (addr:0x1340111f4f8)
+[0;31m│[0;32m│ [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│ [0m  [0m39/50: CheckedSmiUntag [v38/n49:v-1(R)] → v-1(0), live range: [39-53]
 [0;31m│[0;32m│ [0m[0;34m  25 : a8 26             JumpIfFalse [38]
 [m[0;31m│[0;32m│[0;33m╭──[0m40/52: BranchIfInt32Compare(LessThan) [v39/n50:v-1(R), v9/n14:v-1(R)] b5 b7
@@ -822,11 +882,13 @@ Graph
 [0;31m│[0;32m│[0;33m│[0m  [0m47/59: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v44/n56:v-1(R), v6/n23:v-1(R)]
 [0;31m│[0;32m│[0;33m│[0m  [0m48/60: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v44/n56:v-1(R), v7/n25:v-1(R)]
 [0;31m│[0;32m│[0;33m│[0m[0;34m  41 : 3b f4 03 04       DefineNamedOwnProperty r5, [3:"x"], FBV[4]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @41 (7 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @41 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n49:(x), r3:n53:(x), r4:n54:(x), r5:n56:(x), <accumulator>:n49:(x)} (addr:0x13401120250)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m49/61: CheckSmi [v38/n49:v-1(R)]
 [0;31m│[0;32m│[0;33m│[0m  [0m50/62: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034d5 <String[1]: #x>, mutable) [v44/n56:v-1(R), v38/n49:v-1(R)]
 [0;31m│[0;32m│[0;33m│[0m[0;34m  45 : 6d f5 f4 06       CallUndefinedReceiver1 r4, r5, FBV[6]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 (6 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n49:(x), r3:n53:(x), r4:n54:(x), r5:n56:(x)} (addr:0x13401120470)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m51/63: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v42/n54:v-1(R)]
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -835,24 +897,30 @@ Graph
 [0;31m│[0;32m│[0;33m│ [0mBlock b6
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 (4 live vars)
-[0;31m│[0;32m│[0;33m│[0m         │       @4 (4 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n49:(x), r3:n53:(x)} (addr:0x134011205b8)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
+[0;31m│[0;32m│[0;33m│[0m         │       @4 : {<closure>:n34:(x), <this>:n36:(x), a0:n56:(x), <context>:n35:(x), <accumulator>:n49:(x)} (addr:0x13401123a78)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m53/65: Int32IncrementWithOverflow [v39/n50:v-1(R)] → v-1(R), live range: [53-60]
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:0)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 42 f6 00          Add r3, FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @49 (5 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @49 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n49:(x), r3:n53:(x), <accumulator>:n65:(x)} (addr:0x13401123bf8)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m54/66: CheckedNumberToFloat64 [v41/n53:v-1(R)] → v-1(R), live range: [54-56]
 [0;31m│[0;32m│[0;33m│[0m  [0m55/67: ChangeInt32ToFloat64 [v53/n65:v-1(R)] → v-1(R), live range: [55-56]
 [0;31m│[0;32m│[0;33m│[0m  [0m56/68: Float64Add [v54/n66:v-1(R), v55/n67:v-1(R)] → v-1(R), live range: [56-57]
 [0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m57/69: Float64ToTagged[kCanonicalizeSmi] [v56/n68:v-1(R)] → v-1(R), live range: [57-58]
 [0;31m│[0;32m│[0;33m│[0m  [0m58/70: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:v-1(=x1), v57/n69:v-1(R)]
-[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @52 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @52 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n49:(x)} (addr:0x13401123f10)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m[0;34m  59 : 97 2b 00 09       JumpLoop [43], [0], FBV[9]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m59/71: ReduceInterruptBudgetForLoop(34) [v1/n44:v-1(R)]
-[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @59 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r2:n65:(x)} (addr:0x134011240e0)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m60/73: Int32ToNumber[kCanonicalizeSmi] [v53/n65:v-1(R)] → v-1(R), live range: [60-61]
-[0;31m│[0;32m│[0;33m│[0m         ↱ eager @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n65:} (addr:0x134011241d0)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m╰─◄─[0m61/72: JumpLoop b4
 [0;31m│ [0;33m│[0m         with gap moves:
 [0;31m│ [0;33m│[0m           - v60/n73:v-1(*) → 49: φᵀⁱ r2 v-1(*)
@@ -870,7 +938,8 @@ Graph
    [0m[0;34m  66 : 23 01 01          LdaGlobal [1:"read"], FBV[1]
 [m   [0m  [0m65/77: LoadTaggedField(0xc, compressed) [v2/n20:v-1(R)] → v-1(R), live range: [65-66]
    [0m[0;34m  70 : 89 04 0b 29       CreateObjectLiteral [4:0x09b80101e21d <ObjectBoilerplateDescription[4]>], FBV[11], #29
-[m   [0m         ↱ eager @70 (4 live vars)
+[m   [0m         ↱ eager @70 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r3:n76:(x), r4:n77:(x)} (addr:0x13401124778)
+   [0m         │       VOs : { }
    [0m  [0m66/78: Deopt(Insufficient type feedback for object literal)
    [0m
 
@@ -894,15 +963,18 @@ Graph
    [0m   [0m12/3: InitialValue(<closure>) → [stack:-2|t], live range: [12-66]
    [0m   [0m13/6: InitialValue(r2) → [stack:5|t], live range: [13-34]
    [0m  [0m14/10: FunctionEntryStackCheck
-   [0m         ↳ lazy @59 (3 live vars)
-   [0m         ↱ eager @59 (3 live vars)
+   [0m         ↳ lazy @59 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r2:n6:[stack:5|t]} (addr:0x13401141970)
+   [0m         │       VOs : { }
+   [0m         ↱ eager @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n6:} (addr:0x13401141970)
+   [0m         │       VOs : { }
    [0m  [0m15/11: CheckpointedJump b1
    [0m      ↓
     [0mBlock b1
    [0m     [0m79: GapMove([stack:5|t] → [x0|R|t])
    [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:18)
 [m   [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
-[m   [0m         ↱ eager @22 (4 live vars)
+[m   [0m         ↱ eager @22 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r2:n6:[stack:5|t], <accumulator>:n12:[constant:v-1]} (addr:0x13401143480)
+   [0m         │       VOs : { }
    [0m  [0m16/13: CheckedSmiUntag [v13/n6:[x0|R|t]] → [x0|R|w32], live range: [16-29]
    [0m     [0m80: ConstantGapMove(n14 → [x1|R|w32])
    [0m[0;34m  25 : a8 26             JumpIfFalse [38]
@@ -932,7 +1004,8 @@ Graph
 [m[0;31m│  [0m  [0m26/32: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034d5 <String[1]: #x>, mutable) [v21/n27:[x1|R|t], v13/n6:[x9|R|t]]
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:9:10)
 [m[0;31m│  [0m[0;34m  45 : 6d f5 f4 06       CallUndefinedReceiver1 r4, r5, FBV[6]
-[m[0;31m│  [0m         ↱ eager @45 (6 live vars)
+[m[0;31m│  [0m         ↱ eager @45 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r2:n6:[x9|R|t], r3:n19:[x5|R|t], r4:n21:[x4|R|t], r5:n27:[x1|R|t]} (addr:0x13401145df8)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m27/33: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v19/n21:[x4|R|t]]
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│  [0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -941,13 +1014,16 @@ Graph
 [0;31m│   [0mBlock b3
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│  [0m         ↱ eager @45 (4 live vars)
-[0;31m│  [0m         │       @4 (4 live vars)
+[m[0;31m│  [0m         ↱ eager @45 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r2:n6:[x9|R|t], r3:n19:[x5|R|t]} (addr:0x1340111a0f8)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
+[0;31m│  [0m         │       @4 : {<closure>:n34:[constant:v-1], <this>:n36:[constant:v-1], a0:n27:[x1|R|t], <context>:n35:[constant:v-1], <accumulator>:n6:[x9|R|t]} (addr:0x1340111d648)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m29/38: Int32IncrementWithOverflow [v16/n13:[x0|R|w32]] → [x4|R|w32] (spilled: [stack:0|w32]), live range: [29-36]
 [0;31m│  [0m     [0m87: GapMove([x5|R|t] → [x0|R|t])
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:9:10)
 [m[0;31m│  [0m[0;34m  49 : 42 f6 00          Add r3, FBV[0]
-[m[0;31m│  [0m         ↱ eager @49 (5 live vars)
+[m[0;31m│  [0m         ↱ eager @49 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r2:n6:[x9|R|t], r3:n19:[x0|R|t], <accumulator>:n38:[x4|R|w32]} (addr:0x1340111d818)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m30/39: CheckedNumberToFloat64 [v18/n19:[x5|R|t]] → [v0|R|f64], live range: [30-32]
 [0;31m│  [0m  [0m31/40: ChangeInt32ToFloat64 [v29/n38:[x4|R|w32]] → [v1|R|f64], live range: [31-32]
 [0;31m│  [0m  [0m32/41: Float64Add [v30/n39:[v0|R|f64], v31/n40:[v1|R|f64]] → [v2|R|f64], live range: [32-33]
@@ -956,12 +1032,14 @@ Graph
 [m[0;31m│  [0m  [0m33/42: Float64ToTagged[kCanonicalizeSmi] [v32/n41:[v2|R|f64]] → [x0|R|t], live range: [33-34]
 [0;31m│  [0m     [0m88: GapMove([x2|R|t] → [x1|R|t])
 [0;31m│  [0m  [0m34/43: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:[x1|R|t], v33/n42:[x0|R|t]]
-[0;31m│  [0m         ↳ lazy @52 (3 live vars)
+[0;31m│  [0m         ↳ lazy @52 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r2:n6:[stack:5|t]} (addr:0x1340111db30)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m     [0m89: ConstantGapMove(n44 → [x0|R|t])
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:0)
 [m[0;31m│  [0m[0;34m  59 : 97 2b 00 09       JumpLoop [43], [0], FBV[9]
 [m[0;31m│  [0m  [0m35/45: ReduceInterruptBudgetForLoop(34) [v1/n44:[x0|R|t]]
-[0;31m│  [0m         ↳ lazy @59 (3 live vars)
+[0;31m│  [0m         ↳ lazy @59 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r2:n38:[stack:0|w32]} (addr:0x1340111dcf0)
+[0;31m│  [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│  [0m  [0m36/48: Int32ToNumber[kCanonicalizeSmi] [v29/n38:[x4|R|w32]] → [x5|R|t], live range: [36-37]
 [0;31m│  [0m     [0m90: ConstantGapMove(n14 → [x4|R|w32])
 [0;31m│  [0m  [0m37/47: Jump b4
@@ -973,7 +1051,8 @@ Graph
 [0;31m│[0;32m│ [0m  [0m38/49: φᵀⁱ r2 (n48, n73) (compressed) → [x5|R|t] (spilled: [stack:5|t]), live range: [38-58]
 [0;31m│[0;32m│ [0m     [0m91: GapMove([x5|R|t] → [x6|R|t])
 [0;31m│[0;32m│ [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
-[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x1|R|t], r2:n49:[x6|R|t], <accumulator>:n12:[constant:v-1]} (addr:0x1340111f4f8)
+[0;31m│[0;32m│ [0m         │       VOs : { VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│ [0m  [0m39/50: CheckedSmiUntag [v38/n49:[x5|R|t]] → [x5|R|w32], live range: [39-53]
 [0;31m│[0;32m│ [0m[0;34m  25 : a8 26             JumpIfFalse [38]
 [m[0;31m│[0;32m│[0;33m╭──[0m40/52: BranchIfInt32Compare(LessThan) [v39/n50:[x5|R|w32], v9/n14:[x4|R|w32]] b5 b7
@@ -992,11 +1071,13 @@ Graph
 [0;31m│[0;32m│[0;33m│[0m  [0m47/59: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v44/n56:[x1|R|t], v6/n23:[x7|R|t]]
 [0;31m│[0;32m│[0;33m│[0m  [0m48/60: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v44/n56:[x1|R|t], v7/n25:[x8|R|t]]
 [0;31m│[0;32m│[0;33m│[0m[0;34m  41 : 3b f4 03 04       DefineNamedOwnProperty r5, [3:"x"], FBV[4]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @41 (7 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @41 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r2:n49:[x6|R|t], r3:n53:[x11|R|t], r4:n54:[x9|R|t], r5:n56:[x1|R|t], <accumulator>:n49:[x6|R|t]} (addr:0x13401120250)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m49/61: CheckSmi [v38/n49:[x6|R|t]]
 [0;31m│[0;32m│[0;33m│[0m  [0m50/62: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034d5 <String[1]: #x>, mutable) [v44/n56:[x1|R|t], v38/n49:[x6|R|t]]
 [0;31m│[0;32m│[0;33m│[0m[0;34m  45 : 6d f5 f4 06       CallUndefinedReceiver1 r4, r5, FBV[6]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 (6 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r2:n49:[x6|R|t], r3:n53:[x11|R|t], r4:n54:[x9|R|t], r5:n56:[x1|R|t]} (addr:0x13401120470)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m51/63: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v42/n54:[x9|R|t]]
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -1005,13 +1086,16 @@ Graph
 [0;31m│[0;32m│[0;33m│ [0mBlock b6
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 (4 live vars)
-[0;31m│[0;32m│[0;33m│[0m         │       @4 (4 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r2:n49:[x6|R|t], r3:n53:[x11|R|t]} (addr:0x134011205b8)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
+[0;31m│[0;32m│[0;33m│[0m         │       @4 : {<closure>:n34:[constant:v-1], <this>:n36:[constant:v-1], a0:n56:[x1|R|t], <context>:n35:[constant:v-1], <accumulator>:n49:[x6|R|t]} (addr:0x13401123a78)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m53/65: Int32IncrementWithOverflow [v39/n50:[x5|R|w32]] → [x9|R|w32] (spilled: [stack:1|w32]), live range: [53-60]
 [0;31m│[0;32m│[0;33m│[0m     [0m93: GapMove([x11|R|t] → [x1|R|t])
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b8011406c5 <String[24]: "workloads/deopt-eager.js">:8:0)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 42 f6 00          Add r3, FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @49 (5 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @49 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r2:n49:[x6|R|t], r3:n53:[x1|R|t], <accumulator>:n65:[x9|R|w32]} (addr:0x13401123bf8)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m54/66: CheckedNumberToFloat64 [v41/n53:[x11|R|t]] → [v0|R|f64], live range: [54-56]
 [0;31m│[0;32m│[0;33m│[0m  [0m55/67: ChangeInt32ToFloat64 [v53/n65:[x9|R|w32]] → [v1|R|f64], live range: [55-56]
 [0;31m│[0;32m│[0;33m│[0m  [0m56/68: Float64Add [v54/n66:[v0|R|f64], v55/n67:[v1|R|f64]] → [v2|R|f64], live range: [56-57]
@@ -1020,12 +1104,15 @@ Graph
 [0;31m│[0;32m│[0;33m│[0m     [0m94: GapMove([x1|R|t] → [x5|R|t])
 [0;31m│[0;32m│[0;33m│[0m     [0m95: GapMove([x2|R|t] → [x1|R|t])
 [0;31m│[0;32m│[0;33m│[0m  [0m58/70: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:[x1|R|t], v57/n69:[x5|R|t]]
-[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @52 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @52 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r2:n49:[stack:5|t]} (addr:0x13401123f10)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m[0;34m  59 : 97 2b 00 09       JumpLoop [43], [0], FBV[9]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m59/71: ReduceInterruptBudgetForLoop(34) [v1/n44:[x0|R|t]]
-[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @59 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r2:n65:[stack:1|w32]} (addr:0x134011240e0)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m│[0;33m│[0m  [0m60/73: Int32ToNumber[kCanonicalizeSmi] [v53/n65:[x9|R|w32]] → [x5|R|t], live range: [60-61]
-[0;31m│[0;32m│[0;33m│[0m         ↱ eager @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @59 : {<closure>:n3:, <this>:n1:, <context>:n2:, r2:n65:} (addr:0x134011241d0)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n56=[n22,n23,n23,n25];VO{0}:n27=[n22,n23,n23,n25];}
 [0;31m│[0;32m╰─◄─[0m61/72: JumpLoop b4
 [0;31m│ [0;33m│[0m         with gap moves:
 [0;31m│ [0;33m│[0m           - v60/n73:[x5|R|t] → 49: φᵀⁱ r2 [x5|R|t]
@@ -1044,11 +1131,66 @@ Graph
    [0m[0;34m  66 : 23 01 01          LdaGlobal [1:"read"], FBV[1]
 [m   [0m  [0m65/77: LoadTaggedField(0xc, compressed) [v2/n20:[x3|R|t]] → [x0|R|t], live range: [65-66]
    [0m[0;34m  70 : 89 04 0b 29       CreateObjectLiteral [4:0x09b80101e21d <ObjectBoilerplateDescription[4]>], FBV[11], #29
-[m   [0m         ↱ eager @70 (4 live vars)
+[m   [0m         ↱ eager @70 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x1|R|t], r3:n76:[x5|R|t], r4:n77:[x0|R|t]} (addr:0x13401124778)
+   [0m         │       VOs : { }
    [0m  [0m66/78: Deopt(Insufficient type feedback for object literal)
    [0m
-[bailout (kind: deopt-eager, reason: Insufficient type feedback for object literal): begin. deoptimizing 0x09b80101e289 <JSFunction (sfi = 0x9b80101e16d)>, 0x031a01000981 <Code MAGLEV>, opt id 2, bytecode offset 70, deopt exit 9, FP to SP delta 96, caller SP 0x00016b18d7a8, pc 0x000170000c40]
-[bailout (kind: deopt-eager, reason: wrong map): begin. deoptimizing 0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, 0x031a01000491 <Code TURBOFAN_JS>, opt id 1, bytecode offset 0, deopt exit 1, FP to SP delta 32, caller SP 0x00016b18d730, pc 0x0001700002e4]
+[bailout (kind: deopt-eager, reason: Insufficient type feedback for object literal): begin. deoptimizing 0x09b80101e289 <JSFunction (sfi = 0x9b80101e16d)>, 0x031a01000981 <Code MAGLEV>, opt id 2, bytecode offset 70, deopt exit 9, FP to SP delta 96, caller SP 0x00016b8197a8, pc 0x000170000c40]
+            ;;; deoptimize at <workloads/deopt-eager.js:14:1>
+  reading input frame  => bytecode_offset=70, args=1, height=6, retval=0(#0); inputs:
+      0: 0x09b80101e289 ;  [fp -  16]  0x09b80101e289 <JSFunction (sfi = 0x9b80101e16d)>
+      1: 0x09b801004979 ;  [fp +  16]  0x09b801004979 <JSGlobalProxy>
+      2: 0x09b80101e2c9 ; x1 0x09b80101e2c9 <ScriptContext[3]>
+      3: (optimized out)
+      4: (optimized out)
+      5: (optimized out)
+      6: 0x09b8010f937d ; x5 0x09b8010f937d <HeapNumber 5000050000.0>
+      7: 0x09b80101e2dd ; x0 0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>
+      8: (optimized out)
+      9: (optimized out)
+  translating interpreted frame  => bytecode_offset=70, variable_frame_size=64, frame_size=136
+    0x00016b8197a0: [top + 128] <- 0x09b801004979 <JSGlobalProxy> ;  stack parameter (input #1)
+    -------------------------
+    0x00016b819798: [top + 120] <- 0x000177e0b304 ;  bottommost caller's pc
+    0x00016b819790: [top + 112] <- 0x00016b8197c0 ;  caller's fp
+    0x00016b819788: [top + 104] <- 0x09b80101e2c9 <ScriptContext[3]> ;  context (input #2)
+    0x00016b819780: [top +  96] <- 0x09b80101e289 <JSFunction (sfi = 0x9b80101e16d)> ;  function (input #0)
+    0x00016b819778: [top +  88] <- 0x000000000001 ;  actual argument count
+    0x00016b819770: [top +  80] <- 0x031a010000a9 <BytecodeArray[146]> ;  bytecode array
+    0x00016b819768: [top +  72] <- 0x0000000000da <Smi 109> ;  bytecode offset
+    0x00016b819760: [top +  64] <- 0x09b8000cfffd <arguments_marker> ;  feedback vector    -------------------------
+    0x00016b819758: [top +  56] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #3)
+    0x00016b819750: [top +  48] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #4)
+    0x00016b819748: [top +  40] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #5)
+    0x00016b819740: [top +  32] <- 0x09b8010f937d <HeapNumber 5000050000.0> ;  stack parameter (input #6)
+    0x00016b819738: [top +  24] <- 0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)> ;  stack parameter (input #7)
+    0x00016b819730: [top +  16] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #8)
+    0x00016b819728: [top +   8] <- 0x09b80002fffd <the_hole_value> ;  padding
+    0x00016b819720: [top +   0] <- 0x09b80012fffd <optimized_out> ;  accumulator (input #9)
+[bailout end. code_invalidation: unaffected, took 0.034 ms]
+[bailout (kind: deopt-eager, reason: wrong map): begin. deoptimizing 0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, 0x031a01000491 <Code TURBOFAN_JS>, opt id 1, bytecode offset 0, deopt exit 1, FP to SP delta 32, caller SP 0x00016b819730, pc 0x0001700002e4]
+            ;;; deoptimize at <workloads/deopt-eager.js:5:12>
+  reading input frame read => bytecode_offset=0, args=2, height=0, retval=0(#0); inputs:
+      0: 0x09b80101e2dd ;  [fp -  16]  0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>
+      1: 0x09b801004979 ;  [fp +  16]  0x09b801004979 <JSGlobalProxy>
+      2: 0x09b8010f93d5 ; x2 0x09b8010f93d5 <Object map = 0x9b80124732d>
+      3: 0x09b80101e2c9 ;  [fp -  32]  0x09b80101e2c9 <ScriptContext[3]>
+      4: (optimized out)
+  translating interpreted frame read => bytecode_offset=0, variable_frame_size=16, frame_size=96
+    0x00016b819728: [top +  88] <- 0x09b8010f93d5 <Object map = 0x9b80124732d> ;  stack parameter (input #2)
+    0x00016b819720: [top +  80] <- 0x09b801004979 <JSGlobalProxy> ;  stack parameter (input #1)
+    -------------------------
+    0x00016b819718: [top +  72] <- 0x000177e0ef64 ;  bottommost caller's pc
+    0x00016b819710: [top +  64] <- 0x00016b819790 ;  caller's fp
+    0x00016b819708: [top +  56] <- 0x09b80101e2c9 <ScriptContext[3]> ;  context (input #3)
+    0x00016b819700: [top +  48] <- 0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)> ;  function (input #0)
+    0x00016b8196f8: [top +  40] <- 0x000000000002 ;  actual argument count
+    0x00016b8196f0: [top +  32] <- 0x031a010001b5 <BytecodeArray[8]> ;  bytecode array
+    0x00016b8196e8: [top +  24] <- 0x00000000004e <Smi 39> ;  bytecode offset
+    0x00016b8196e0: [top +  16] <- 0x09b8000cfffd <arguments_marker> ;  feedback vector    -------------------------
+    0x00016b8196d8: [top +   8] <- 0x09b80002fffd <the_hole_value> ;  padding
+    0x00016b8196d0: [top +   0] <- 0x09b80012fffd <optimized_out> ;  accumulator (input #4)
+[bailout end. code_invalidation: invalidated, took 0.008 ms]
 Compiling 0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)> with Maglev
 ----- Bytecode array -----
 Parameter count 2
@@ -1101,12 +1243,14 @@ Graph
 [m  [0m   [0m1: InitialValue(<this>), 4 uses
   [0m   [0m2: InitialValue(a0), 9 uses
   [0m   [0m6: FunctionEntryStackCheck
-  [0m      ↳ lazy @-1 (3 live vars)
+  [0m      ↳ lazy @-1 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x13401181428)
+  [0m      │       VOs : { }
   [0m   [0m7: Jump b1
   [0m   ↓
    [0mBlock b1
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:11)
-[m  [0m      ↱ eager @0 (3 live vars)
+[m  [0m      ↱ eager @0 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x13401141250)
+  [0m      │       VOs : { }
   [0m   [0m8: CheckHeapObject [n2]
   [0m   [0m9: LoadTaggedField(0x0, compressed) [n2], 1 uses
 [0;31m╭───[0m11: BranchIfReferenceEqual [n9, n10] b2 b3
@@ -1118,7 +1262,8 @@ Graph
 [0;31m│[0;32m│[0m        - n12 → 17: φᵀⁱ r0
 [0;31m│[0;32m│[0m
 [0;31m╰─►[0mBlock b3
- [0;32m│[0m      ↱ eager @0 (3 live vars)
+ [0;32m│[0m      ↱ eager @0 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x134011421a8)
+ [0;32m│[0m      │       VOs : { }
  [0;32m│[0m  [0m14: CheckMaps(0x09b80124732d <Map[20](HOLEY_ELEMENTS)>, no heapobj check) [n2]
  [0;32m│[0m  [0m15: LoadTaggedField(0x10: 0x09b8000034d5 <String[1]: #x>, compressed, is_const, Smi) [n2], 1 uses
  [0;32m│[0m  [0m16: Jump b4
@@ -1130,7 +1275,8 @@ Graph
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
 [m  [0m  [0m18: UnsafeSmiUntag [n17], 1 uses, cannot truncate to int32
-  [0m      ↱ eager @4 (4 live vars)
+  [0m      ↱ eager @4 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:, <accumulator>:n17:} (addr:0x13401142620)
+  [0m      │       VOs : { }
   [0m  [0m19: Int32IncrementWithOverflow [n18], 1 uses, cannot truncate to int32
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:17)
 [m  [0m[0;34m   7 : b9                Return
@@ -1152,12 +1298,14 @@ Graph
 [m  [0m   [0m1: InitialValue(<this>) → (x)
   [0m   [0m2: InitialValue(a0) → (x)
   [0m   [0m6: FunctionEntryStackCheck
-  [0m      ↳ lazy @-1 (3 live vars)
+  [0m      ↳ lazy @-1 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x13401181428)
+  [0m      │       VOs : { }
   [0m   [0m7: Jump b1
   [0m   ↓
    [0mBlock b1
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:11)
-[m  [0m      ↱ eager @0 (3 live vars)
+[m  [0m      ↱ eager @0 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x13401141250)
+  [0m      │       VOs : { }
   [0m   [0m8: CheckHeapObject [v0/n2:(x)]
   [0m   [0m9: LoadTaggedField(0x0, compressed) [v0/n2:(x)] → (x)
 [0;31m╭───[0m11: BranchIfReferenceEqual [v0/n9:(x), v0/n10:(x)] b2 b3
@@ -1169,7 +1317,8 @@ Graph
 [0;31m│[0;32m│[0m        - v0/n12:(x) → 17: φᵀⁱ r0 (x)
 [0;31m│[0;32m│[0m
 [0;31m╰─►[0mBlock b3
- [0;32m│[0m      ↱ eager @0 (3 live vars)
+ [0;32m│[0m      ↱ eager @0 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x134011421a8)
+ [0;32m│[0m      │       VOs : { }
  [0;32m│[0m  [0m14: CheckMaps(0x09b80124732d <Map[20](HOLEY_ELEMENTS)>, no heapobj check) [v0/n2:(x)]
  [0;32m│[0m  [0m15: LoadTaggedField(0x10: 0x09b8000034d5 <String[1]: #x>, compressed, is_const, Smi) [v0/n2:(x)] → (x)
  [0;32m│[0m  [0m16: Jump b4
@@ -1181,7 +1330,8 @@ Graph
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
 [m  [0m  [0m18: UnsafeSmiUntag [v0/n17:(x)] → (x)
-  [0m      ↱ eager @4 (4 live vars)
+  [0m      ↱ eager @4 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:, <accumulator>:n17:} (addr:0x13401142620)
+  [0m      │       VOs : { }
   [0m  [0m19: Int32IncrementWithOverflow [v0/n18:(x)] → (x)
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:17)
 [m  [0m[0;34m   7 : b9                Return
@@ -1203,12 +1353,14 @@ Graph
 [m  [0m    [0m5/1: InitialValue(<this>) → v-1(=-6S), live range: [5-19]
   [0m    [0m6/2: InitialValue(a0) → v-1(=-7S), live range: [6-19]
   [0m    [0m7/6: FunctionEntryStackCheck
-  [0m         ↳ lazy @-1 (3 live vars)
+  [0m         ↳ lazy @-1 : {<closure>:n3:(x), <this>:n1:(x), a0:n2:(x), <context>:n4:(x)} (addr:0x13401181428)
+  [0m         │       VOs : { }
   [0m    [0m8/7: Jump b1
   [0m      ↓
    [0mBlock b1
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:11)
-[m  [0m         ↱ eager @0 (3 live vars)
+[m  [0m         ↱ eager @0 : {<closure>:n3:(x), <this>:n1:(x), a0:n2:(x), <context>:n4:(x)} (addr:0x13401141250)
+  [0m         │       VOs : { }
   [0m    [0m9/8: CheckHeapObject [v6/n2:v-1(R)]
   [0m   [0m10/9: LoadTaggedField(0x0, compressed) [v6/n2:v-1(R)] → v-1(R), live range: [10-11]
 [0;31m╭───[0m11/11: BranchIfReferenceEqual [v10/n9:v-1(R), v1/n10:v-1(R)] b2 b3
@@ -1220,7 +1372,8 @@ Graph
 [0;31m│[0;32m│[0m           - v12/n12:v-1(*) → 17: φᵀⁱ r0 v-1(*)
 [0;31m│[0;32m│[0m
 [0;31m╰─►[0mBlock b3
- [0;32m│[0m         ↱ eager @0 (3 live vars)
+ [0;32m│[0m         ↱ eager @0 : {<closure>:n3:(x), <this>:n1:(x), a0:n2:(x), <context>:n4:(x)} (addr:0x134011421a8)
+ [0;32m│[0m         │       VOs : { }
  [0;32m│[0m  [0m14/14: CheckMaps(0x09b80124732d <Map[20](HOLEY_ELEMENTS)>, no heapobj check) [v6/n2:v-1(R)]
  [0;32m│[0m  [0m15/15: LoadTaggedField(0x10: 0x09b8000034d5 <String[1]: #x>, compressed, is_const, Smi) [v6/n2:v-1(R)] → v-1(R), live range: [15-16]
  [0;32m│[0m  [0m16/16: Jump b4
@@ -1232,7 +1385,8 @@ Graph
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
 [m  [0m  [0m18/18: UnsafeSmiUntag [v17/n17:v-1(R)] → v-1(0), live range: [18-19]
-  [0m         ↱ eager @4 (4 live vars)
+  [0m         ↱ eager @4 : {<closure>:n3:(x), <this>:n1:(x), a0:n2:(x), <context>:n4:(x), <accumulator>:n17:(x)} (addr:0x13401142620)
+  [0m         │       VOs : { }
   [0m  [0m19/19: Int32IncrementWithOverflow [v18/n18:v-1(R)] → v-1(R), live range: [19-21]
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:17)
 [m  [0m[0;34m   7 : b9                Return
@@ -1254,13 +1408,15 @@ Graph
 [m  [0m    [0m5/1: InitialValue(<this>) → [stack:-6|t], live range: [5-19]
   [0m    [0m6/2: InitialValue(a0) → [stack:-7|t], live range: [6-19]
   [0m    [0m7/6: FunctionEntryStackCheck
-  [0m         ↳ lazy @-1 (3 live vars)
+  [0m         ↳ lazy @-1 : {<closure>:n3:[constant:v-1], <this>:n1:[stack:-6|t], a0:n2:[stack:-7|t], <context>:n4:[constant:v-1]} (addr:0x13401181428)
+  [0m         │       VOs : { }
   [0m    [0m8/7: Jump b1
   [0m      ↓
    [0mBlock b1
   [0m     [0m24: GapMove([stack:-7|t] → [x0|R|t])
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:11)
-[m  [0m         ↱ eager @0 (3 live vars)
+[m  [0m         ↱ eager @0 : {<closure>:n3:[constant:v-1], <this>:n1:[stack:-6|t], a0:n2:[x0|R|t], <context>:n4:[constant:v-1]} (addr:0x13401141250)
+  [0m         │       VOs : { }
   [0m    [0m9/8: CheckHeapObject [v6/n2:[x0|R|t]]
   [0m   [0m10/9: LoadTaggedField(0x0, compressed) [v6/n2:[x0|R|t]] → [x1|R|t], live range: [10-11]
   [0m     [0m25: ConstantGapMove(n10 → [x2|R|t])
@@ -1274,7 +1430,8 @@ Graph
 [0;31m│[0;32m│[0m         with register merges:
 [0;31m│[0;32m│[0m
 [0;31m╰─►[0mBlock b3
- [0;32m│[0m         ↱ eager @0 (3 live vars)
+ [0;32m│[0m         ↱ eager @0 : {<closure>:n3:[constant:v-1], <this>:n1:[stack:-6|t], a0:n2:[x0|R|t], <context>:n4:[constant:v-1]} (addr:0x134011421a8)
+ [0;32m│[0m         │       VOs : { }
  [0;32m│[0m  [0m14/14: CheckMaps(0x09b80124732d <Map[20](HOLEY_ELEMENTS)>, no heapobj check) [v6/n2:[x0|R|t]]
  [0;32m│[0m  [0m15/15: LoadTaggedField(0x10: 0x09b8000034d5 <String[1]: #x>, compressed, is_const, Smi) [v6/n2:[x0|R|t]] → [x1|R|t], live range: [15-16]
  [0;32m│[0m  [0m16/16: Jump b4
@@ -1288,7 +1445,8 @@ Graph
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
 [m  [0m  [0m18/18: UnsafeSmiUntag [v17/n17:[x1|R|t]] → [x1|R|w32], live range: [18-19]
-  [0m         ↱ eager @4 (4 live vars)
+  [0m         ↱ eager @4 : {<closure>:n3:[constant:v-1], <this>:n1:[stack:-6|t], a0:n2:[x0|R|t], <context>:n4:[constant:v-1], <accumulator>:n17:[x2|R|t]} (addr:0x13401142620)
+  [0m         │       VOs : { }
   [0m  [0m19/19: Int32IncrementWithOverflow [v18/n18:[x1|R|w32]] → [x3|R|w32], live range: [19-21]
   [0m     [0m27: ConstantGapMove(n20 → [x0|R|t])
   [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:17)
@@ -1564,14 +1722,17 @@ Graph
    [0m   [0m8: InitialValue(r4), 0 uses 🪦
    [0m   [0m9: InitialValue(r5), 0 uses 🪦
    [0m  [0m10: FunctionEntryStackCheck
-   [0m      ↳ lazy @129 (3 live vars)
-   [0m      ↱ eager @129 (3 live vars)
+   [0m      ↳ lazy @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:} (addr:0x13401141970)
+   [0m      │       VOs : { }
+   [0m      ↱ eager @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:} (addr:0x13401141970)
+   [0m      │       VOs : { }
    [0m  [0m11: CheckpointedJump b1
    [0m   ↓
     [0mBlock b1
    [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:18)
 [m   [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
-[m   [0m      ↱ eager @92 (4 live vars)
+[m   [0m      ↱ eager @92 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:, <accumulator>:n12:} (addr:0x134011434e0)
+   [0m      │       VOs : { }
    [0m  [0m13: CheckedSmiUntag [n5], 3 uses, cannot truncate to int32
    [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
    [0m[0;34m  95 : a8 26             JumpIfFalse [38]
@@ -1596,7 +1757,8 @@ Graph
 [m[0;31m│  [0m  [0m34: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034d5 <String[1]: #x>, mutable) [n28, n5]
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:18:10)
 [m[0;31m│  [0m[0;34m 115 : 6d f5 f4 12       CallUndefinedReceiver1 r4, r5, FBV[18]
-[m[0;31m│  [0m      ↱ eager @115 (6 live vars)
+[m[0;31m│  [0m      ↱ eager @115 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:, r3:n19:, r4:n21:, r5:n28:} (addr:0x13401145f60)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m35: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [n21]
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│  [0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -1605,12 +1767,15 @@ Graph
 [0;31m│   [0mBlock b3
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│  [0m      ↱ eager @115 (4 live vars)
-[0;31m│  [0m      │       @4 (4 live vars)
+[m[0;31m│  [0m      ↱ eager @115 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:, r3:n19:} (addr:0x1340111a2b0)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
+[0;31m│  [0m      │       @4 : {<closure>:n36:, <this>:n38:, a0:n28:, <context>:n37:, <accumulator>:n5:} (addr:0x1340111d8a8)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m40: Int32IncrementWithOverflow [n13], 4 uses, cannot truncate to int32
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:18:10)
 [m[0;31m│  [0m[0;34m 119 : 42 f6 0e          Add r3, FBV[14]
-[m[0;31m│  [0m      ↱ eager @119 (5 live vars)
+[m[0;31m│  [0m      ↱ eager @119 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:, r3:n19:, <accumulator>:n40:} (addr:0x1340111da78)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m41: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
 [0;31m│  [0m  [0m42: ChangeInt32ToFloat64 [n40], 1 uses
 [0;31m│  [0m  [0m43: Float64Add [n41, n42], 1 uses, cannot truncate to int32 [-∞, +∞]
@@ -1618,11 +1783,13 @@ Graph
 [m[0;31m│  [0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│  [0m  [0m44: Float64ToTagged[kCanonicalizeSmi] [n43], 1 uses
 [0;31m│  [0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44]
-[0;31m│  [0m      ↳ lazy @122 (3 live vars)
+[0;31m│  [0m      ↳ lazy @122 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:} (addr:0x1340111dd90)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:0)
 [m[0;31m│  [0m[0;34m 129 : 97 2b 00 15       JumpLoop [43], [0], FBV[21]
 [m[0;31m│  [0m  [0m47: ReduceInterruptBudgetForLoop(34) [n46]
-[0;31m│  [0m      ↳ lazy @129 (3 live vars)
+[0;31m│  [0m      ↳ lazy @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n40:} (addr:0x1340111df50)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [n40], 1 uses
 [0;31m│  [0m  [0m49: Jump b4
 [0;31m│  [0m   │  with gap moves:
@@ -1631,7 +1798,8 @@ Graph
 [0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
 [0;31m│[0;32m│ [0m  [0m51: φᵀⁱ r1 (n50, n76), 11 uses
 [0;31m│[0;32m│ [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
-[m[0;31m│[0;32m│ [0m      ↱ eager @92 (4 live vars)
+[m[0;31m│[0;32m│ [0m      ↱ eager @92 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:, <accumulator>:n12:} (addr:0x1340111f828)
+[0;31m│[0;32m│ [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│ [0m  [0m52: CheckedSmiUntag [n51], 3 uses, cannot truncate to int32
 [0;31m│[0;32m│ [0m  [0m53: Int32Compare[LessThan] [n52, n14], 0 uses 🪦
 [0;31m│[0;32m│ [0m[0;34m  95 : a8 26             JumpIfFalse [38]
@@ -1651,11 +1819,13 @@ Graph
 [0;31m│[0;32m│[0;33m│[0m  [0m62: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [n58, n25]
 [0;31m│[0;32m│[0;33m│[0m  [0m63: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [n58, n26]
 [0;31m│[0;32m│[0;33m│[0m[0;34m 111 : 3b f4 03 10       DefineNamedOwnProperty r5, [3:"x"], FBV[16]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @111 (7 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @111 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:, r3:n55:, r4:n56:, r5:n58:, <accumulator>:n51:} (addr:0x134011205d0)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m64: CheckSmi [n51]
 [0;31m│[0;32m│[0;33m│[0m  [0m65: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034d5 <String[1]: #x>, mutable) [n58, n51]
 [0;31m│[0;32m│[0;33m│[0m[0;34m 115 : 6d f5 f4 12       CallUndefinedReceiver1 r4, r5, FBV[18]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 (6 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:, r3:n55:, r4:n56:, r5:n58:} (addr:0x134011207f0)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m66: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [n56]
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -1664,24 +1834,30 @@ Graph
 [0;31m│[0;32m│[0;33m│ [0mBlock b6
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 (4 live vars)
-[0;31m│[0;32m│[0;33m│[0m      │       @4 (4 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:, r3:n55:} (addr:0x13401120938)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
+[0;31m│[0;32m│[0;33m│[0m      │       @4 : {<closure>:n36:, <this>:n38:, a0:n58:, <context>:n37:, <accumulator>:n51:} (addr:0x13401123e68)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m68: Int32IncrementWithOverflow [n52], 5 uses, cannot truncate to int32
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:0)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m 119 : 42 f6 0e          Add r3, FBV[14]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @119 (5 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @119 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:, r3:n55:, <accumulator>:n68:} (addr:0x13401124018)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m69: CheckedNumberToFloat64 [n55], 1 uses, cannot truncate to int32 [-∞, +∞]
 [0;31m│[0;32m│[0;33m│[0m  [0m70: ChangeInt32ToFloat64 [n68], 1 uses
 [0;31m│[0;32m│[0;33m│[0m  [0m71: Float64Add [n69, n70], 1 uses, cannot truncate to int32 [-∞, +∞]
 [0;31m│[0;32m│[0;33m│[0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m72: Float64ToTagged[kCanonicalizeSmi] [n71], 1 uses
 [0;31m│[0;32m│[0;33m│[0m  [0m73: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n72]
-[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @122 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @122 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:} (addr:0x13401124330)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m[0;34m 129 : 97 2b 00 15       JumpLoop [43], [0], FBV[21]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m74: ReduceInterruptBudgetForLoop(34) [n46]
-[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n68:} (addr:0x13401124490)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m76: Int32ToNumber[kCanonicalizeSmi] [n68], 1 uses
-[0;31m│[0;32m│[0;33m│[0m      ↱ eager @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n68:} (addr:0x13401124580)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m╰─◄─[0m75: JumpLoop b4
 [0;31m│ [0;33m│[0m      with gap moves:
 [0;31m│ [0;33m│[0m        - n76 → 51: φᵀⁱ r1
@@ -1695,7 +1871,8 @@ Graph
  [0;32m│ [0m  [0m78: Jump b9
  [0;32m│ [0m   ↓
  [0;32m╰─►[0mBlock b9
-   [0m      ↱ eager @133 (2 live vars)
+   [0m      ↱ eager @133 : {<closure>:n3:, <this>:n1:, <context>:n2:} (addr:0x134011249f0)
+   [0m      │       VOs : { }
    [0m  [0m79: Deopt(Insufficient type feedback for generic global access)
    [0m
 
@@ -1720,14 +1897,17 @@ Graph
    [0m   [0m3: InitialValue(<closure>) → (x)
    [0m   [0m5: InitialValue(r1) → (x)
    [0m  [0m10: FunctionEntryStackCheck
-   [0m      ↳ lazy @129 (3 live vars)
-   [0m      ↱ eager @129 (3 live vars)
+   [0m      ↳ lazy @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:} (addr:0x13401141970)
+   [0m      │       VOs : { }
+   [0m      ↱ eager @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:} (addr:0x13401141970)
+   [0m      │       VOs : { }
    [0m  [0m11: CheckpointedJump b1
    [0m   ↓
     [0mBlock b1
    [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:18)
 [m   [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
-[m   [0m      ↱ eager @92 (4 live vars)
+[m   [0m      ↱ eager @92 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:, <accumulator>:n12:} (addr:0x134011434e0)
+   [0m      │       VOs : { }
    [0m  [0m13: CheckedSmiUntag [v0/n5:(x)] → (x)
    [0m[0;34m  95 : a8 26             JumpIfFalse [38]
 [m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [v0/n13:(x), v0/n14:(x)] b2 b8
@@ -1751,7 +1931,8 @@ Graph
 [m[0;31m│  [0m  [0m34: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034d5 <String[1]: #x>, mutable) [v0/n28:(x), v0/n5:(x)]
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:18:10)
 [m[0;31m│  [0m[0;34m 115 : 6d f5 f4 12       CallUndefinedReceiver1 r4, r5, FBV[18]
-[m[0;31m│  [0m      ↱ eager @115 (6 live vars)
+[m[0;31m│  [0m      ↱ eager @115 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:, r3:n19:, r4:n21:, r5:n28:} (addr:0x13401145f60)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m35: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v0/n21:(x)]
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│  [0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -1760,12 +1941,15 @@ Graph
 [0;31m│   [0mBlock b3
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│  [0m      ↱ eager @115 (4 live vars)
-[0;31m│  [0m      │       @4 (4 live vars)
+[m[0;31m│  [0m      ↱ eager @115 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:, r3:n19:} (addr:0x1340111a2b0)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
+[0;31m│  [0m      │       @4 : {<closure>:n36:, <this>:n38:, a0:n28:, <context>:n37:, <accumulator>:n5:} (addr:0x1340111d8a8)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m40: Int32IncrementWithOverflow [v0/n13:(x)] → (x)
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:18:10)
 [m[0;31m│  [0m[0;34m 119 : 42 f6 0e          Add r3, FBV[14]
-[m[0;31m│  [0m      ↱ eager @119 (5 live vars)
+[m[0;31m│  [0m      ↱ eager @119 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:, r3:n19:, <accumulator>:n40:} (addr:0x1340111da78)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m41: CheckedNumberToFloat64 [v0/n19:(x)] → (x)
 [0;31m│  [0m  [0m42: ChangeInt32ToFloat64 [v0/n40:(x)] → (x)
 [0;31m│  [0m  [0m43: Float64Add [v0/n41:(x), v0/n42:(x)] → (x)
@@ -1773,11 +1957,13 @@ Graph
 [m[0;31m│  [0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│  [0m  [0m44: Float64ToTagged[kCanonicalizeSmi] [v0/n43:(x)] → (x)
 [0;31m│  [0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n44:(x)]
-[0;31m│  [0m      ↳ lazy @122 (3 live vars)
+[0;31m│  [0m      ↳ lazy @122 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:} (addr:0x1340111dd90)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:0)
 [m[0;31m│  [0m[0;34m 129 : 97 2b 00 15       JumpLoop [43], [0], FBV[21]
 [m[0;31m│  [0m  [0m47: ReduceInterruptBudgetForLoop(34) [v0/n46:(x)]
-[0;31m│  [0m      ↳ lazy @129 (3 live vars)
+[0;31m│  [0m      ↳ lazy @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n40:} (addr:0x1340111df50)
+[0;31m│  [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [v0/n40:(x)] → (x)
 [0;31m│  [0m  [0m49: Jump b4
 [0;31m│  [0m   │  with gap moves:
@@ -1786,7 +1972,8 @@ Graph
 [0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
 [0;31m│[0;32m│ [0m  [0m51: φᵀⁱ r1 (n50, n76) (compressed) → (x)
 [0;31m│[0;32m│ [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
-[m[0;31m│[0;32m│ [0m      ↱ eager @92 (4 live vars)
+[m[0;31m│[0;32m│ [0m      ↱ eager @92 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:, <accumulator>:n12:} (addr:0x1340111f828)
+[0;31m│[0;32m│ [0m      │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│ [0m  [0m52: CheckedSmiUntag [v0/n51:(x)] → (x)
 [0;31m│[0;32m│ [0m[0;34m  95 : a8 26             JumpIfFalse [38]
 [m[0;31m│[0;32m│[0;33m╭──[0m54: BranchIfInt32Compare(LessThan) [v0/n52:(x), v0/n14:(x)] b5 b7
@@ -1805,11 +1992,13 @@ Graph
 [0;31m│[0;32m│[0;33m│[0m  [0m62: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v0/n58:(x), v0/n25:(x)]
 [0;31m│[0;32m│[0;33m│[0m  [0m63: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [v0/n58:(x), v0/n26:(x)]
 [0;31m│[0;32m│[0;33m│[0m[0;34m 111 : 3b f4 03 10       DefineNamedOwnProperty r5, [3:"x"], FBV[16]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @111 (7 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @111 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:, r3:n55:, r4:n56:, r5:n58:, <accumulator>:n51:} (addr:0x134011205d0)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m64: CheckSmi [v0/n51:(x)]
 [0;31m│[0;32m│[0;33m│[0m  [0m65: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034d5 <String[1]: #x>, mutable) [v0/n58:(x), v0/n51:(x)]
 [0;31m│[0;32m│[0;33m│[0m[0;34m 115 : 6d f5 f4 12       CallUndefinedReceiver1 r4, r5, FBV[18]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 (6 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:, r3:n55:, r4:n56:, r5:n58:} (addr:0x134011207f0)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m66: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v0/n56:(x)]
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -1818,24 +2007,30 @@ Graph
 [0;31m│[0;32m│[0;33m│ [0mBlock b6
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 (4 live vars)
-[0;31m│[0;32m│[0;33m│[0m      │       @4 (4 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:, r3:n55:} (addr:0x13401120938)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
+[0;31m│[0;32m│[0;33m│[0m      │       @4 : {<closure>:n36:, <this>:n38:, a0:n58:, <context>:n37:, <accumulator>:n51:} (addr:0x13401123e68)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m68: Int32IncrementWithOverflow [v0/n52:(x)] → (x)
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:0)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m 119 : 42 f6 0e          Add r3, FBV[14]
-[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @119 (5 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @119 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:, r3:n55:, <accumulator>:n68:} (addr:0x13401124018)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m69: CheckedNumberToFloat64 [v0/n55:(x)] → (x)
 [0;31m│[0;32m│[0;33m│[0m  [0m70: ChangeInt32ToFloat64 [v0/n68:(x)] → (x)
 [0;31m│[0;32m│[0;33m│[0m  [0m71: Float64Add [v0/n69:(x), v0/n70:(x)] → (x)
 [0;31m│[0;32m│[0;33m│[0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m72: Float64ToTagged[kCanonicalizeSmi] [v0/n71:(x)] → (x)
 [0;31m│[0;32m│[0;33m│[0m  [0m73: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n72:(x)]
-[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @122 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @122 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n51:} (addr:0x13401124330)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m[0;34m 129 : 97 2b 00 15       JumpLoop [43], [0], FBV[21]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m74: ReduceInterruptBudgetForLoop(34) [v0/n46:(x)]
-[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n68:} (addr:0x13401124490)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m76: Int32ToNumber[kCanonicalizeSmi] [v0/n68:(x)] → (x)
-[0;31m│[0;32m│[0;33m│[0m      ↱ eager @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n68:} (addr:0x13401124580)
+[0;31m│[0;32m│[0;33m│[0m      │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m╰─◄─[0m75: JumpLoop b4
 [0;31m│ [0;33m│[0m      with gap moves:
 [0;31m│ [0;33m│[0m        - v0/n76:(x) → 51: φᵀⁱ r1 (x)
@@ -1849,7 +2044,8 @@ Graph
  [0;32m│ [0m  [0m78: Jump b9
  [0;32m│ [0m   ↓
  [0;32m╰─►[0mBlock b9
-   [0m      ↱ eager @133 (2 live vars)
+   [0m      ↱ eager @133 : {<closure>:n3:, <this>:n1:, <context>:n2:} (addr:0x134011249f0)
+   [0m      │       VOs : { }
    [0m  [0m79: Deopt(Insufficient type feedback for generic global access)
    [0m
 
@@ -1874,14 +2070,17 @@ Graph
    [0m   [0m13/3: InitialValue(<closure>) → v-1(=-2S), live range: [13-67]
    [0m   [0m14/5: InitialValue(r1) → v-1(=4S), live range: [14-36]
    [0m  [0m15/10: FunctionEntryStackCheck
-   [0m         ↳ lazy @129 (3 live vars)
-   [0m         ↱ eager @129 (3 live vars)
+   [0m         ↳ lazy @129 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n5:(x)} (addr:0x13401141970)
+   [0m         │       VOs : { }
+   [0m         ↱ eager @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:} (addr:0x13401141970)
+   [0m         │       VOs : { }
    [0m  [0m16/11: CheckpointedJump b1
    [0m      ↓
     [0mBlock b1
    [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:18)
 [m   [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
-[m   [0m         ↱ eager @92 (4 live vars)
+[m   [0m         ↱ eager @92 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n5:(x), <accumulator>:n12:(x)} (addr:0x134011434e0)
+   [0m         │       VOs : { }
    [0m  [0m17/13: CheckedSmiUntag [v14/n5:v-1(R)] → v-1(0), live range: [17-31]
    [0m[0;34m  95 : a8 26             JumpIfFalse [38]
 [m[0;31m╭────[0m18/16: BranchIfInt32Compare(LessThan) [v17/n13:v-1(R), v10/n14:v-1(R)] b2 b8
@@ -1905,7 +2104,8 @@ Graph
 [m[0;31m│  [0m  [0m28/34: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034d5 <String[1]: #x>, mutable) [v22/n28:v-1(R), v14/n5:v-1(R)]
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:18:10)
 [m[0;31m│  [0m[0;34m 115 : 6d f5 f4 12       CallUndefinedReceiver1 r4, r5, FBV[18]
-[m[0;31m│  [0m         ↱ eager @115 (6 live vars)
+[m[0;31m│  [0m         ↱ eager @115 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n5:(x), r3:n19:(x), r4:n21:(x), r5:n28:(x)} (addr:0x13401145f60)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m29/35: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v20/n21:v-1(R)]
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│  [0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -1914,12 +2114,15 @@ Graph
 [0;31m│   [0mBlock b3
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│  [0m         ↱ eager @115 (4 live vars)
-[0;31m│  [0m         │       @4 (4 live vars)
+[m[0;31m│  [0m         ↱ eager @115 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n5:(x), r3:n19:(x)} (addr:0x1340111a2b0)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
+[0;31m│  [0m         │       @4 : {<closure>:n36:(x), <this>:n38:(x), a0:n28:(x), <context>:n37:(x), <accumulator>:n5:(x)} (addr:0x1340111d8a8)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m31/40: Int32IncrementWithOverflow [v17/n13:v-1(R)] → v-1(R), live range: [31-38]
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:18:10)
 [m[0;31m│  [0m[0;34m 119 : 42 f6 0e          Add r3, FBV[14]
-[m[0;31m│  [0m         ↱ eager @119 (5 live vars)
+[m[0;31m│  [0m         ↱ eager @119 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n5:(x), r3:n19:(x), <accumulator>:n40:(x)} (addr:0x1340111da78)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m32/41: CheckedNumberToFloat64 [v19/n19:v-1(R)] → v-1(R), live range: [32-34]
 [0;31m│  [0m  [0m33/42: ChangeInt32ToFloat64 [v31/n40:v-1(R)] → v-1(R), live range: [33-34]
 [0;31m│  [0m  [0m34/43: Float64Add [v32/n41:v-1(R), v33/n42:v-1(R)] → v-1(R), live range: [34-35]
@@ -1927,11 +2130,13 @@ Graph
 [m[0;31m│  [0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│  [0m  [0m35/44: Float64ToTagged[kCanonicalizeSmi] [v34/n43:v-1(R)] → v-1(R), live range: [35-36]
 [0;31m│  [0m  [0m36/45: StoreContextSlotWithWriteBarrier(2, mutable) [v12/n2:v-1(=x1), v35/n44:v-1(R)]
-[0;31m│  [0m         ↳ lazy @122 (3 live vars)
+[0;31m│  [0m         ↳ lazy @122 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n5:(x)} (addr:0x1340111dd90)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:0)
 [m[0;31m│  [0m[0;34m 129 : 97 2b 00 15       JumpLoop [43], [0], FBV[21]
 [m[0;31m│  [0m  [0m37/47: ReduceInterruptBudgetForLoop(34) [v5/n46:v-1(R)]
-[0;31m│  [0m         ↳ lazy @129 (3 live vars)
+[0;31m│  [0m         ↳ lazy @129 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n40:(x)} (addr:0x1340111df50)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m38/50: Int32ToNumber[kCanonicalizeSmi] [v31/n40:v-1(R)] → v-1(R), live range: [38-39]
 [0;31m│  [0m  [0m39/49: Jump b4
 [0;31m│  [0m      │  with gap moves:
@@ -1940,7 +2145,8 @@ Graph
 [0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
 [0;31m│[0;32m│ [0m  [0m40/51: φᵀⁱ r1 (n50, n76) → v-1(*), live range: [40-61]
 [0;31m│[0;32m│ [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
-[m[0;31m│[0;32m│ [0m         ↱ eager @92 (4 live vars)
+[m[0;31m│[0;32m│ [0m         ↱ eager @92 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n51:(x), <accumulator>:n12:(x)} (addr:0x1340111f828)
+[0;31m│[0;32m│ [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│ [0m  [0m41/52: CheckedSmiUntag [v40/n51:v-1(R)] → v-1(0), live range: [41-56]
 [0;31m│[0;32m│ [0m[0;34m  95 : a8 26             JumpIfFalse [38]
 [m[0;31m│[0;32m│[0;33m╭──[0m42/54: BranchIfInt32Compare(LessThan) [v41/n52:v-1(R), v10/n14:v-1(R)] b5 b7
@@ -1959,11 +2165,13 @@ Graph
 [0;31m│[0;32m│[0;33m│[0m  [0m50/62: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v46/n58:v-1(R), v8/n25:v-1(R)]
 [0;31m│[0;32m│[0;33m│[0m  [0m51/63: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [v46/n58:v-1(R), v7/n26:v-1(R)]
 [0;31m│[0;32m│[0;33m│[0m[0;34m 111 : 3b f4 03 10       DefineNamedOwnProperty r5, [3:"x"], FBV[16]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @111 (7 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @111 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n51:(x), r3:n55:(x), r4:n56:(x), r5:n58:(x), <accumulator>:n51:(x)} (addr:0x134011205d0)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m52/64: CheckSmi [v40/n51:v-1(R)]
 [0;31m│[0;32m│[0;33m│[0m  [0m53/65: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034d5 <String[1]: #x>, mutable) [v46/n58:v-1(R), v40/n51:v-1(R)]
 [0;31m│[0;32m│[0;33m│[0m[0;34m 115 : 6d f5 f4 12       CallUndefinedReceiver1 r4, r5, FBV[18]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 (6 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n51:(x), r3:n55:(x), r4:n56:(x), r5:n58:(x)} (addr:0x134011207f0)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m54/66: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v44/n56:v-1(R)]
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -1972,24 +2180,30 @@ Graph
 [0;31m│[0;32m│[0;33m│ [0mBlock b6
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 (4 live vars)
-[0;31m│[0;32m│[0;33m│[0m         │       @4 (4 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n51:(x), r3:n55:(x)} (addr:0x13401120938)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
+[0;31m│[0;32m│[0;33m│[0m         │       @4 : {<closure>:n36:(x), <this>:n38:(x), a0:n58:(x), <context>:n37:(x), <accumulator>:n51:(x)} (addr:0x13401123e68)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m56/68: Int32IncrementWithOverflow [v41/n52:v-1(R)] → v-1(R), live range: [56-63]
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:0)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m 119 : 42 f6 0e          Add r3, FBV[14]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @119 (5 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @119 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n51:(x), r3:n55:(x), <accumulator>:n68:(x)} (addr:0x13401124018)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m57/69: CheckedNumberToFloat64 [v43/n55:v-1(R)] → v-1(R), live range: [57-59]
 [0;31m│[0;32m│[0;33m│[0m  [0m58/70: ChangeInt32ToFloat64 [v56/n68:v-1(R)] → v-1(R), live range: [58-59]
 [0;31m│[0;32m│[0;33m│[0m  [0m59/71: Float64Add [v57/n69:v-1(R), v58/n70:v-1(R)] → v-1(R), live range: [59-60]
 [0;31m│[0;32m│[0;33m│[0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m60/72: Float64ToTagged[kCanonicalizeSmi] [v59/n71:v-1(R)] → v-1(R), live range: [60-61]
 [0;31m│[0;32m│[0;33m│[0m  [0m61/73: StoreContextSlotWithWriteBarrier(2, mutable) [v12/n2:v-1(=x1), v60/n72:v-1(R)]
-[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @122 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @122 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n51:(x)} (addr:0x13401124330)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m[0;34m 129 : 97 2b 00 15       JumpLoop [43], [0], FBV[21]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m62/74: ReduceInterruptBudgetForLoop(34) [v5/n46:v-1(R)]
-[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @129 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x), r1:n68:(x)} (addr:0x13401124490)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m63/76: Int32ToNumber[kCanonicalizeSmi] [v56/n68:v-1(R)] → v-1(R), live range: [63-64]
-[0;31m│[0;32m│[0;33m│[0m         ↱ eager @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n68:} (addr:0x13401124580)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m╰─◄─[0m64/75: JumpLoop b4
 [0;31m│ [0;33m│[0m         with gap moves:
 [0;31m│ [0;33m│[0m           - v63/n76:v-1(*) → 51: φᵀⁱ r1 v-1(*)
@@ -2003,7 +2217,8 @@ Graph
  [0;32m│ [0m  [0m66/78: Jump b9
  [0;32m│ [0m      ↓
  [0;32m╰─►[0mBlock b9
-   [0m         ↱ eager @133 (2 live vars)
+   [0m         ↱ eager @133 : {<closure>:n3:(x), <this>:n1:(x), <context>:n2:(x)} (addr:0x134011249f0)
+   [0m         │       VOs : { }
    [0m  [0m67/79: Deopt(Insufficient type feedback for generic global access)
    [0m
 
@@ -2028,15 +2243,18 @@ Graph
    [0m   [0m13/3: InitialValue(<closure>) → [stack:-2|t], live range: [13-67]
    [0m   [0m14/5: InitialValue(r1) → [stack:4|t], live range: [14-36]
    [0m  [0m15/10: FunctionEntryStackCheck
-   [0m         ↳ lazy @129 (3 live vars)
-   [0m         ↱ eager @129 (3 live vars)
+   [0m         ↳ lazy @129 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r1:n5:[stack:4|t]} (addr:0x13401141970)
+   [0m         │       VOs : { }
+   [0m         ↱ eager @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n5:} (addr:0x13401141970)
+   [0m         │       VOs : { }
    [0m  [0m16/11: CheckpointedJump b1
    [0m      ↓
     [0mBlock b1
    [0m     [0m80: GapMove([stack:4|t] → [x0|R|t])
    [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:18)
 [m   [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
-[m   [0m         ↱ eager @92 (4 live vars)
+[m   [0m         ↱ eager @92 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r1:n5:[stack:4|t], <accumulator>:n12:[constant:v-1]} (addr:0x134011434e0)
+   [0m         │       VOs : { }
    [0m  [0m17/13: CheckedSmiUntag [v14/n5:[x0|R|t]] → [x0|R|w32], live range: [17-31]
    [0m     [0m81: ConstantGapMove(n14 → [x1|R|w32])
    [0m[0;34m  95 : a8 26             JumpIfFalse [38]
@@ -2068,7 +2286,8 @@ Graph
 [m[0;31m│  [0m  [0m28/34: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034d5 <String[1]: #x>, mutable) [v22/n28:[x1|R|t], v14/n5:[x10|R|t]]
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:18:10)
 [m[0;31m│  [0m[0;34m 115 : 6d f5 f4 12       CallUndefinedReceiver1 r4, r5, FBV[18]
-[m[0;31m│  [0m         ↱ eager @115 (6 live vars)
+[m[0;31m│  [0m         ↱ eager @115 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r1:n5:[x10|R|t], r3:n19:[x5|R|t], r4:n21:[x4|R|t], r5:n28:[x1|R|t]} (addr:0x13401145f60)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m29/35: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v20/n21:[x4|R|t]]
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│  [0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -2077,13 +2296,16 @@ Graph
 [0;31m│   [0mBlock b3
 [0;31m│  [0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│  [0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│  [0m         ↱ eager @115 (4 live vars)
-[0;31m│  [0m         │       @4 (4 live vars)
+[m[0;31m│  [0m         ↱ eager @115 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r1:n5:[x10|R|t], r3:n19:[x5|R|t]} (addr:0x1340111a2b0)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
+[0;31m│  [0m         │       @4 : {<closure>:n36:[constant:v-1], <this>:n38:[constant:v-1], a0:n28:[x1|R|t], <context>:n37:[constant:v-1], <accumulator>:n5:[x10|R|t]} (addr:0x1340111d8a8)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m31/40: Int32IncrementWithOverflow [v17/n13:[x0|R|w32]] → [x4|R|w32] (spilled: [stack:0|w32]), live range: [31-38]
 [0;31m│  [0m     [0m89: GapMove([x5|R|t] → [x0|R|t])
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:18:10)
 [m[0;31m│  [0m[0;34m 119 : 42 f6 0e          Add r3, FBV[14]
-[m[0;31m│  [0m         ↱ eager @119 (5 live vars)
+[m[0;31m│  [0m         ↱ eager @119 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r1:n5:[x10|R|t], r3:n19:[x0|R|t], <accumulator>:n40:[x4|R|w32]} (addr:0x1340111da78)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m32/41: CheckedNumberToFloat64 [v19/n19:[x5|R|t]] → [v0|R|f64], live range: [32-34]
 [0;31m│  [0m  [0m33/42: ChangeInt32ToFloat64 [v31/n40:[x4|R|w32]] → [v1|R|f64], live range: [33-34]
 [0;31m│  [0m  [0m34/43: Float64Add [v32/n41:[v0|R|f64], v33/n42:[v1|R|f64]] → [v2|R|f64], live range: [34-35]
@@ -2092,12 +2314,14 @@ Graph
 [m[0;31m│  [0m  [0m35/44: Float64ToTagged[kCanonicalizeSmi] [v34/n43:[v2|R|f64]] → [x0|R|t], live range: [35-36]
 [0;31m│  [0m     [0m90: GapMove([x2|R|t] → [x1|R|t])
 [0;31m│  [0m  [0m36/45: StoreContextSlotWithWriteBarrier(2, mutable) [v12/n2:[x1|R|t], v35/n44:[x0|R|t]]
-[0;31m│  [0m         ↳ lazy @122 (3 live vars)
+[0;31m│  [0m         ↳ lazy @122 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r1:n5:[stack:4|t]} (addr:0x1340111dd90)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m     [0m91: ConstantGapMove(n46 → [x0|R|t])
 [0;31m│  [0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:0)
 [m[0;31m│  [0m[0;34m 129 : 97 2b 00 15       JumpLoop [43], [0], FBV[21]
 [m[0;31m│  [0m  [0m37/47: ReduceInterruptBudgetForLoop(34) [v5/n46:[x0|R|t]]
-[0;31m│  [0m         ↳ lazy @129 (3 live vars)
+[0;31m│  [0m         ↳ lazy @129 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r1:n40:[stack:0|w32]} (addr:0x1340111df50)
+[0;31m│  [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│  [0m  [0m38/50: Int32ToNumber[kCanonicalizeSmi] [v31/n40:[x4|R|w32]] → [x5|R|t], live range: [38-39]
 [0;31m│  [0m     [0m92: ConstantGapMove(n14 → [x4|R|w32])
 [0;31m│  [0m  [0m39/49: Jump b4
@@ -2109,7 +2333,8 @@ Graph
 [0;31m│[0;32m│ [0m  [0m40/51: φᵀⁱ r1 (n50, n76) (compressed) → [x5|R|t] (spilled: [stack:4|t]), live range: [40-61]
 [0;31m│[0;32m│ [0m     [0m93: GapMove([x5|R|t] → [x6|R|t])
 [0;31m│[0;32m│ [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
-[m[0;31m│[0;32m│ [0m         ↱ eager @92 (4 live vars)
+[m[0;31m│[0;32m│ [0m         ↱ eager @92 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x1|R|t], r1:n51:[x6|R|t], <accumulator>:n12:[constant:v-1]} (addr:0x1340111f828)
+[0;31m│[0;32m│ [0m         │       VOs : { VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│ [0m  [0m41/52: CheckedSmiUntag [v40/n51:[x5|R|t]] → [x5|R|w32], live range: [41-56]
 [0;31m│[0;32m│ [0m[0;34m  95 : a8 26             JumpIfFalse [38]
 [m[0;31m│[0;32m│[0;33m╭──[0m42/54: BranchIfInt32Compare(LessThan) [v41/n52:[x5|R|w32], v10/n14:[x4|R|w32]] b5 b7
@@ -2129,11 +2354,13 @@ Graph
 [0;31m│[0;32m│[0;33m│[0m  [0m50/62: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v46/n58:[x1|R|t], v8/n25:[x8|R|t]]
 [0;31m│[0;32m│[0;33m│[0m  [0m51/63: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [v46/n58:[x1|R|t], v7/n26:[x9|R|t]]
 [0;31m│[0;32m│[0;33m│[0m[0;34m 111 : 3b f4 03 10       DefineNamedOwnProperty r5, [3:"x"], FBV[16]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @111 (7 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @111 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r1:n51:[x6|R|t], r3:n55:[x12|R|t], r4:n56:[x10|R|t], r5:n58:[x1|R|t], <accumulator>:n51:[x6|R|t]} (addr:0x134011205d0)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m52/64: CheckSmi [v40/n51:[x6|R|t]]
 [0;31m│[0;32m│[0;33m│[0m  [0m53/65: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034d5 <String[1]: #x>, mutable) [v46/n58:[x1|R|t], v40/n51:[x6|R|t]]
 [0;31m│[0;32m│[0;33m│[0m[0;34m 115 : 6d f5 f4 12       CallUndefinedReceiver1 r4, r5, FBV[18]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 (6 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r1:n51:[x6|R|t], r3:n55:[x12|R|t], r4:n56:[x10|R|t], r5:n58:[x1|R|t]} (addr:0x134011207f0)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m54/66: CheckValue(0x09b80101e2dd <JSFunction read (sfi = 0x9b80101e1d5)>, wrong call target) [v44/n56:[x10|R|t]]
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:3:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 01       GetNamedProperty a0, [0:"x"], FBV[1]
@@ -2142,13 +2369,16 @@ Graph
 [0;31m│[0;32m│[0;33m│ [0mBlock b6
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e1d5 <SharedFunctionInfo read> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:4:13)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 00          AddSmi [1], FBV[0]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 (4 live vars)
-[0;31m│[0;32m│[0;33m│[0m         │       @4 (4 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r1:n51:[x6|R|t], r3:n55:[x12|R|t]} (addr:0x13401120938)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
+[0;31m│[0;32m│[0;33m│[0m         │       @4 : {<closure>:n36:[constant:v-1], <this>:n38:[constant:v-1], a0:n58:[x1|R|t], <context>:n37:[constant:v-1], <accumulator>:n51:[x6|R|t]} (addr:0x13401123e68)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m56/68: Int32IncrementWithOverflow [v41/n52:[x5|R|w32]] → [x10|R|w32] (spilled: [stack:1|w32]), live range: [56-63]
 [0;31m│[0;32m│[0;33m│[0m     [0m95: GapMove([x12|R|t] → [x1|R|t])
 [0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e16d <SharedFunctionInfo> (0x09b80101ebdd <String[24]: "workloads/deopt-eager.js">:17:0)
 [m[0;31m│[0;32m│[0;33m│[0m[0;34m 119 : 42 f6 0e          Add r3, FBV[14]
-[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @119 (5 live vars)
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @119 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x2|R|t], r1:n51:[x6|R|t], r3:n55:[x1|R|t], <accumulator>:n68:[x10|R|w32]} (addr:0x13401124018)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m57/69: CheckedNumberToFloat64 [v43/n55:[x12|R|t]] → [v0|R|f64], live range: [57-59]
 [0;31m│[0;32m│[0;33m│[0m  [0m58/70: ChangeInt32ToFloat64 [v56/n68:[x10|R|w32]] → [v1|R|f64], live range: [58-59]
 [0;31m│[0;32m│[0;33m│[0m  [0m59/71: Float64Add [v57/n69:[v0|R|f64], v58/n70:[v1|R|f64]] → [v2|R|f64], live range: [59-60]
@@ -2157,12 +2387,15 @@ Graph
 [0;31m│[0;32m│[0;33m│[0m     [0m96: GapMove([x1|R|t] → [x5|R|t])
 [0;31m│[0;32m│[0;33m│[0m     [0m97: GapMove([x2|R|t] → [x1|R|t])
 [0;31m│[0;32m│[0;33m│[0m  [0m61/73: StoreContextSlotWithWriteBarrier(2, mutable) [v12/n2:[x1|R|t], v60/n72:[x5|R|t]]
-[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @122 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @122 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r1:n51:[stack:4|t]} (addr:0x13401124330)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m[0;34m 129 : 97 2b 00 15       JumpLoop [43], [0], FBV[21]
 [m[0;31m│[0;32m│[0;33m│[0m  [0m62/74: ReduceInterruptBudgetForLoop(34) [v5/n46:[x0|R|t]]
-[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @129 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[stack:-3|t], r1:n68:[stack:1|w32]} (addr:0x13401124490)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m│[0;33m│[0m  [0m63/76: Int32ToNumber[kCanonicalizeSmi] [v56/n68:[x10|R|w32]] → [x5|R|t], live range: [63-64]
-[0;31m│[0;32m│[0;33m│[0m         ↱ eager @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @129 : {<closure>:n3:, <this>:n1:, <context>:n2:, r1:n68:} (addr:0x13401124580)
+[0;31m│[0;32m│[0;33m│[0m         │       VOs : { VO{1}:n58=[n22,n23,n23,n25,n26];VO{0}:n28=[n22,n23,n23,n25,n26];}
 [0;31m│[0;32m╰─◄─[0m64/75: JumpLoop b4
 [0;31m│ [0;33m│[0m         with gap moves:
 [0;31m│ [0;33m│[0m           - v63/n76:[x5|R|t] → 51: φᵀⁱ r1 [x5|R|t]
@@ -2177,8 +2410,41 @@ Graph
  [0;32m│ [0m  [0m66/78: Jump b9
  [0;32m│ [0m      ↓
  [0;32m╰─►[0mBlock b9
-   [0m         ↱ eager @133 (2 live vars)
+   [0m         ↱ eager @133 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], <context>:n2:[x1|R|t]} (addr:0x134011249f0)
+   [0m         │       VOs : { }
    [0m  [0m67/79: Deopt(Insufficient type feedback for generic global access)
    [0m
-[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begin. deoptimizing 0x09b80101e289 <JSFunction (sfi = 0x9b80101e16d)>, 0x031a01001031 <Code MAGLEV>, opt id 4, bytecode offset 133, deopt exit 9, FP to SP delta 96, caller SP 0x00016b18d7a8, pc 0x000170001768]
+[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begin. deoptimizing 0x09b80101e289 <JSFunction (sfi = 0x9b80101e16d)>, 0x031a01001031 <Code MAGLEV>, opt id 4, bytecode offset 133, deopt exit 9, FP to SP delta 96, caller SP 0x00016b8197a8, pc 0x000170001768]
+            ;;; deoptimize at <workloads/deopt-eager.js:21:1>
+  reading input frame  => bytecode_offset=133, args=1, height=6, retval=0(#0); inputs:
+      0: 0x09b80101e289 ;  [fp -  16]  0x09b80101e289 <JSFunction (sfi = 0x9b80101e16d)>
+      1: 0x09b801004979 ;  [fp +  16]  0x09b801004979 <JSGlobalProxy>
+      2: 0x09b80101e2c9 ; x1 0x09b80101e2c9 <ScriptContext[3]>
+      3: (optimized out)
+      4: (optimized out)
+      5: (optimized out)
+      6: (optimized out)
+      7: (optimized out)
+      8: (optimized out)
+      9: (optimized out)
+  translating interpreted frame  => bytecode_offset=133, variable_frame_size=64, frame_size=136
+    0x00016b8197a0: [top + 128] <- 0x09b801004979 <JSGlobalProxy> ;  stack parameter (input #1)
+    -------------------------
+    0x00016b819798: [top + 120] <- 0x000177e0b304 ;  bottommost caller's pc
+    0x00016b819790: [top + 112] <- 0x00016b8197c0 ;  caller's fp
+    0x00016b819788: [top + 104] <- 0x09b80101e2c9 <ScriptContext[3]> ;  context (input #2)
+    0x00016b819780: [top +  96] <- 0x09b80101e289 <JSFunction (sfi = 0x9b80101e16d)> ;  function (input #0)
+    0x00016b819778: [top +  88] <- 0x000000000001 ;  actual argument count
+    0x00016b819770: [top +  80] <- 0x031a010000a9 <BytecodeArray[146]> ;  bytecode array
+    0x00016b819768: [top +  72] <- 0x000000000158 <Smi 172> ;  bytecode offset
+    0x00016b819760: [top +  64] <- 0x09b8000cfffd <arguments_marker> ;  feedback vector    -------------------------
+    0x00016b819758: [top +  56] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #3)
+    0x00016b819750: [top +  48] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #4)
+    0x00016b819748: [top +  40] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #5)
+    0x00016b819740: [top +  32] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #6)
+    0x00016b819738: [top +  24] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #7)
+    0x00016b819730: [top +  16] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #8)
+    0x00016b819728: [top +   8] <- 0x09b80002fffd <the_hole_value> ;  padding
+    0x00016b819720: [top +   0] <- 0x09b80012fffd <optimized_out> ;  accumulator (input #9)
+[bailout end. code_invalidation: unaffected, took 0.021 ms]
 10000100003

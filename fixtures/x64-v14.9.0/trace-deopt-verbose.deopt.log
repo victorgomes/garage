@@ -1,13 +1,13 @@
 [marking 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> for optimization to MAGLEV, ConcurrencyMode::kConcurrent, reason: hot and stable]
 [compiling method 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> (target MAGLEV), mode: ConcurrencyMode::kSynchronous]
-[completed compiling 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> (target MAGLEV) - took 0.002, 0.376, 0.079 ms]
+[completed compiling 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> (target MAGLEV) - took 0.002, 0.359, 0.072 ms]
 [marking 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)> for optimization to MAGLEV, ConcurrencyMode::kConcurrent, reason: hot and stable]
 [marking 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> for optimization to TURBOFAN_JS, ConcurrencyMode::kConcurrent, reason: hot and stable]
 [compiling method 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> (target TURBOFAN_JS), mode: ConcurrencyMode::kSynchronous]
-[completed compiling 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> (target TURBOFAN_JS) - took 0.006, 1.476, 0.175 ms]
+[completed compiling 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> (target TURBOFAN_JS) - took 0.006, 1.422, 0.173 ms]
 [compiling method 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)> (target MAGLEV) OSR, mode: ConcurrencyMode::kSynchronous]
-[completed compiling 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)> (target MAGLEV) OSR - took 0.000, 0.359, 0.205 ms]
-[bailout (kind: deopt-eager, reason: Insufficient type feedback for object literal): begin. deoptimizing 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)>, 0x031a01000961 <Code MAGLEV>, opt id 2, bytecode offset 71, deopt exit 9, FP to SP delta 96, caller SP 0x000310b59898, pc 0x000166240bdb]
+[completed compiling 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)> (target MAGLEV) OSR - took 0.000, 0.386, 0.214 ms]
+[bailout (kind: deopt-eager, reason: Insufficient type feedback for object literal): begin. deoptimizing 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)>, 0x031a01000961 <Code MAGLEV>, opt id 2, bytecode offset 71, deopt exit 9, FP to SP delta 96, caller SP 0x00030cbb4898, pc 0x000164240bdb]
             ;;; deoptimize at <workloads/deopt-eager.js:14:1>
   reading input frame  => bytecode_offset=71, args=1, height=6, retval=0(#0); inputs:
       0: 0x09b80101e145 ;  [fp -  16]  0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)>
@@ -21,25 +21,25 @@
       8: (optimized out)
       9: (optimized out)
   translating interpreted frame  => bytecode_offset=71, variable_frame_size=56, frame_size=128
-    0x000310b59890: [top + 120] <- 0x09b801004925 <JSGlobalProxy> ;  stack parameter (input #1)
+    0x00030cbb4890: [top + 120] <- 0x09b801004925 <JSGlobalProxy> ;  stack parameter (input #1)
     -------------------------
-    0x000310b59888: [top + 112] <- 0x00010625949c ;  bottommost caller's pc
-    0x000310b59880: [top + 104] <- 0x000310b598a8 ;  caller's fp
-    0x000310b59878: [top +  96] <- 0x09b80101e185 <ScriptContext[3]> ;  context (input #2)
-    0x000310b59870: [top +  88] <- 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)> ;  function (input #0)
-    0x000310b59868: [top +  80] <- 0x000000000001 ;  actual argument count
-    0x000310b59860: [top +  72] <- 0x031a010000a9 <BytecodeArray[148]> ;  bytecode array
-    0x000310b59858: [top +  64] <- 0x0000000000dc <Smi 110> ;  bytecode offset
-    0x000310b59850: [top +  56] <- 0x09b8000cfffd <arguments_marker> ;  feedback vector    -------------------------
-    0x000310b59848: [top +  48] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #3)
-    0x000310b59840: [top +  40] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #4)
-    0x000310b59838: [top +  32] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #5)
-    0x000310b59830: [top +  24] <- 0x09b8010f745d <HeapNumber 5000050000.0> ;  stack parameter (input #6)
-    0x000310b59828: [top +  16] <- 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> ;  stack parameter (input #7)
-    0x000310b59820: [top +   8] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #8)
-    0x000310b59818: [top +   0] <- 0x09b80012fffd <optimized_out> ;  accumulator (input #9)
-[bailout end. code_invalidation: unaffected, took 0.070 ms]
-[bailout (kind: deopt-eager, reason: wrong map): begin. deoptimizing 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)>, 0x031a0100047d <Code TURBOFAN_JS>, opt id 1, bytecode offset 0, deopt exit 1, FP to SP delta 32, caller SP 0x000310b59820, pc 0x000166240265]
+    0x00030cbb4888: [top + 112] <- 0x00010428149c ;  bottommost caller's pc
+    0x00030cbb4880: [top + 104] <- 0x00030cbb48a8 ;  caller's fp
+    0x00030cbb4878: [top +  96] <- 0x09b80101e185 <ScriptContext[3]> ;  context (input #2)
+    0x00030cbb4870: [top +  88] <- 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)> ;  function (input #0)
+    0x00030cbb4868: [top +  80] <- 0x000000000001 ;  actual argument count
+    0x00030cbb4860: [top +  72] <- 0x031a010000a9 <BytecodeArray[148]> ;  bytecode array
+    0x00030cbb4858: [top +  64] <- 0x0000000000dc <Smi 110> ;  bytecode offset
+    0x00030cbb4850: [top +  56] <- 0x09b8000cfffd <arguments_marker> ;  feedback vector    -------------------------
+    0x00030cbb4848: [top +  48] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #3)
+    0x00030cbb4840: [top +  40] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #4)
+    0x00030cbb4838: [top +  32] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #5)
+    0x00030cbb4830: [top +  24] <- 0x09b8010f745d <HeapNumber 5000050000.0> ;  stack parameter (input #6)
+    0x00030cbb4828: [top +  16] <- 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> ;  stack parameter (input #7)
+    0x00030cbb4820: [top +   8] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #8)
+    0x00030cbb4818: [top +   0] <- 0x09b80012fffd <optimized_out> ;  accumulator (input #9)
+[bailout end. code_invalidation: unaffected, took 0.063 ms]
+[bailout (kind: deopt-eager, reason: wrong map): begin. deoptimizing 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)>, 0x031a0100047d <Code TURBOFAN_JS>, opt id 1, bytecode offset 0, deopt exit 1, FP to SP delta 32, caller SP 0x00030cbb4820, pc 0x000164240265]
             ;;; deoptimize at <workloads/deopt-eager.js:5:12>
   reading input frame read => bytecode_offset=0, args=2, height=0, retval=0(#0); inputs:
       0: 0x09b80101e199 ;  [fp -  16]  0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)>
@@ -48,25 +48,25 @@
       3: 0x09b80101e185 ;  [fp -  32]  0x09b80101e185 <ScriptContext[3]>
       4: (optimized out)
   translating interpreted frame read => bytecode_offset=0, variable_frame_size=8, frame_size=88
-    0x000310b59818: [top +  80] <- 0x09b8010f74b5 <Object map = 0x9b80124726d> ;  stack parameter (input #2)
-    0x000310b59810: [top +  72] <- 0x09b801004925 <JSGlobalProxy> ;  stack parameter (input #1)
+    0x00030cbb4818: [top +  80] <- 0x09b8010f74b5 <Object map = 0x9b80124726d> ;  stack parameter (input #2)
+    0x00030cbb4810: [top +  72] <- 0x09b801004925 <JSGlobalProxy> ;  stack parameter (input #1)
     -------------------------
-    0x000310b59808: [top +  64] <- 0x00010625c717 ;  bottommost caller's pc
-    0x000310b59800: [top +  56] <- 0x000310b59880 ;  caller's fp
-    0x000310b597f8: [top +  48] <- 0x09b80101e185 <ScriptContext[3]> ;  context (input #3)
-    0x000310b597f0: [top +  40] <- 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> ;  function (input #0)
-    0x000310b597e8: [top +  32] <- 0x000000000002 ;  actual argument count
-    0x000310b597e0: [top +  24] <- 0x031a010001b5 <BytecodeArray[8]> ;  bytecode array
-    0x000310b597d8: [top +  16] <- 0x00000000004e <Smi 39> ;  bytecode offset
-    0x000310b597d0: [top +   8] <- 0x09b8000cfffd <arguments_marker> ;  feedback vector    -------------------------
-    0x000310b597c8: [top +   0] <- 0x09b80012fffd <optimized_out> ;  accumulator (input #4)
-[bailout end. code_invalidation: invalidated, took 0.063 ms]
+    0x00030cbb4808: [top +  64] <- 0x000104284717 ;  bottommost caller's pc
+    0x00030cbb4800: [top +  56] <- 0x00030cbb4880 ;  caller's fp
+    0x00030cbb47f8: [top +  48] <- 0x09b80101e185 <ScriptContext[3]> ;  context (input #3)
+    0x00030cbb47f0: [top +  40] <- 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> ;  function (input #0)
+    0x00030cbb47e8: [top +  32] <- 0x000000000002 ;  actual argument count
+    0x00030cbb47e0: [top +  24] <- 0x031a010001b5 <BytecodeArray[8]> ;  bytecode array
+    0x00030cbb47d8: [top +  16] <- 0x00000000004e <Smi 39> ;  bytecode offset
+    0x00030cbb47d0: [top +   8] <- 0x09b8000cfffd <arguments_marker> ;  feedback vector    -------------------------
+    0x00030cbb47c8: [top +   0] <- 0x09b80012fffd <optimized_out> ;  accumulator (input #4)
+[bailout end. code_invalidation: invalidated, took 0.051 ms]
 [marking 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> for optimization to MAGLEV, ConcurrencyMode::kConcurrent, reason: hot and stable]
 [compiling method 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> (target MAGLEV), mode: ConcurrencyMode::kSynchronous]
-[completed compiling 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> (target MAGLEV) - took 0.000, 0.061, 0.006 ms]
+[completed compiling 0x09b80101e199 <JSFunction read (sfi = 0x9b80101e091)> (target MAGLEV) - took 0.000, 0.052, 0.005 ms]
 [compiling method 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)> (target MAGLEV) OSR, mode: ConcurrencyMode::kSynchronous]
-[completed compiling 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)> (target MAGLEV) OSR - took 0.001, 0.100, 0.027 ms]
-[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begin. deoptimizing 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)>, 0x031a01000ff9 <Code MAGLEV>, opt id 4, bytecode offset 135, deopt exit 9, FP to SP delta 96, caller SP 0x000310b59898, pc 0x0001662416b3]
+[completed compiling 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)> (target MAGLEV) OSR - took 0.000, 0.096, 0.022 ms]
+[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begin. deoptimizing 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)>, 0x031a01000ff9 <Code MAGLEV>, opt id 4, bytecode offset 135, deopt exit 9, FP to SP delta 96, caller SP 0x00030cbb4898, pc 0x0001642416b3]
             ;;; deoptimize at <workloads/deopt-eager.js:21:1>
   reading input frame  => bytecode_offset=135, args=1, height=6, retval=0(#0); inputs:
       0: 0x09b80101e145 ;  [fp -  16]  0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)>
@@ -80,22 +80,22 @@
       8: (optimized out)
       9: (optimized out)
   translating interpreted frame  => bytecode_offset=135, variable_frame_size=56, frame_size=128
-    0x000310b59890: [top + 120] <- 0x09b801004925 <JSGlobalProxy> ;  stack parameter (input #1)
+    0x00030cbb4890: [top + 120] <- 0x09b801004925 <JSGlobalProxy> ;  stack parameter (input #1)
     -------------------------
-    0x000310b59888: [top + 112] <- 0x00010625949c ;  bottommost caller's pc
-    0x000310b59880: [top + 104] <- 0x000310b598a8 ;  caller's fp
-    0x000310b59878: [top +  96] <- 0x09b80101e185 <ScriptContext[3]> ;  context (input #2)
-    0x000310b59870: [top +  88] <- 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)> ;  function (input #0)
-    0x000310b59868: [top +  80] <- 0x000000000001 ;  actual argument count
-    0x000310b59860: [top +  72] <- 0x031a010000a9 <BytecodeArray[148]> ;  bytecode array
-    0x000310b59858: [top +  64] <- 0x00000000015c <Smi 174> ;  bytecode offset
-    0x000310b59850: [top +  56] <- 0x09b8000cfffd <arguments_marker> ;  feedback vector    -------------------------
-    0x000310b59848: [top +  48] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #3)
-    0x000310b59840: [top +  40] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #4)
-    0x000310b59838: [top +  32] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #5)
-    0x000310b59830: [top +  24] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #6)
-    0x000310b59828: [top +  16] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #7)
-    0x000310b59820: [top +   8] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #8)
-    0x000310b59818: [top +   0] <- 0x09b80012fffd <optimized_out> ;  accumulator (input #9)
+    0x00030cbb4888: [top + 112] <- 0x00010428149c ;  bottommost caller's pc
+    0x00030cbb4880: [top + 104] <- 0x00030cbb48a8 ;  caller's fp
+    0x00030cbb4878: [top +  96] <- 0x09b80101e185 <ScriptContext[3]> ;  context (input #2)
+    0x00030cbb4870: [top +  88] <- 0x09b80101e145 <JSFunction (sfi = 0x9b80101e029)> ;  function (input #0)
+    0x00030cbb4868: [top +  80] <- 0x000000000001 ;  actual argument count
+    0x00030cbb4860: [top +  72] <- 0x031a010000a9 <BytecodeArray[148]> ;  bytecode array
+    0x00030cbb4858: [top +  64] <- 0x00000000015c <Smi 174> ;  bytecode offset
+    0x00030cbb4850: [top +  56] <- 0x09b8000cfffd <arguments_marker> ;  feedback vector    -------------------------
+    0x00030cbb4848: [top +  48] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #3)
+    0x00030cbb4840: [top +  40] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #4)
+    0x00030cbb4838: [top +  32] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #5)
+    0x00030cbb4830: [top +  24] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #6)
+    0x00030cbb4828: [top +  16] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #7)
+    0x00030cbb4820: [top +   8] <- 0x09b80012fffd <optimized_out> ;  stack parameter (input #8)
+    0x00030cbb4818: [top +   0] <- 0x09b80012fffd <optimized_out> ;  accumulator (input #9)
 [bailout end. code_invalidation: unaffected, took 0.028 ms]
 10000100003

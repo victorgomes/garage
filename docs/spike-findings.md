@@ -130,6 +130,10 @@ annotations, the folded-by-default rendering will hide real IR structure. Give
 them a node-attached type of their own before the generic annotation fallback.
 The `│` depth is also free inlining-tree data for `I` (PLAN §7.7).
 
+**`(N live vars)` is the collapsed form, not the only form** — see §12. The same
+sub-grammar has a third arrow, `↳ throw`, which the workloads above never
+produced; the corpus now covers both via `throw.js`.
+
 ## 7. `--trace-maglev-truncation` produces no interleaved lines
 
 PLAN §6.1 and journey J8 use `--trace-maglev-truncation` as the exemplar for
@@ -195,8 +199,8 @@ inlining-tree data, so the phase list stays a real phase list.
 ## 10. What varies between two identical runs
 
 Measured by generating the corpus twice and comparing (the generator records the
-result per fixture as `"reproducible"` in `manifest.json`; about half — 11 or 12
-of 23 per build — are byte-stable). Directly relevant to the canonicalizer in
+result per fixture as `"reproducible"` in `manifest.json`; roughly half of the
+27 per build are byte-stable). Directly relevant to the canonicalizer in
 PLAN §7.4 step 1:
 
 | Varies | Example | Canonicalize by |
@@ -219,6 +223,13 @@ This is why the dual-run diff (PLAN §7.4) should push
 a fuzzy structural-hash matching problem into an exact-address matching problem
 for most nodes.
 
+**`"reproducible": true` is weaker evidence than it looks.** Two runs can prove
+volatility but not stability. `maglev-graphs+graphbuilding.truncation.log`
+produced **4 distinct outputs in 6 runs**, so a double-run probe catches it
+easily — but a fixture that varies one run in fifty would be recorded as stable.
+Golden tests (2.7) should therefore run through the canonicalizer rather than
+trusting the flag as a raw-byte guarantee.
+
 ## 11. The toplevel script function has an empty name
 
 `Begin compiling method  using Maglev` (two spaces) and `<JSFunction (sfi =
@@ -228,3 +239,112 @@ compiled function — every fixture has one.
 **Consequence.** An empty function name is not a parse failure. The sidebar
 needs a display fallback (`<toplevel>`) and the grouped-by-function mode must
 key on the SFI address, not the name.
+
+## 12. `(N live vars)` is a *summary*; the deopt frame has a verbose form
+
+`--print-maglev-deopt-verbose` replaces the count in §6 with the actual frame
+state — every live register, the node producing it, and its location:
+
+```
+      ↱ eager @2 (5 live vars)                                        # default
+      ↱ eager @0 : {<closure>:n3:, <this>:n1:, a0:n2:, <context>:n4:} (addr:0x124011b0fb8)
+```
+
+This is the frame state journey J2 (deopt root-cause) ultimately wants — what
+the interpreter is actually resumed with — and PLAN.md did not know it existed. It
+roughly doubles the trace
+(1 498 → 2 801 lines on `deopt-eager.js`).
+
+**The trap: `--trace-deopt-verbose` turns this on implicitly.**
+`flag-definitions.h:854` is `DEFINE_WEAK_IMPLICATION(trace_deopt_verbose,
+print_maglev_deopt_verbose)`. So the flag [correlation-keys.md](correlation-keys.md)
+recommends for the `;;; deoptimize at` shortcut *silently changes the graph
+grammar too*, and adds a further line shape of its own — `VOs : { … }`, virtual
+objects, gated directly on `trace_deopt_verbose` (`PrintVirtualObjects`):
+
+```
+      │       VOs : { }
+```
+
+Three renderings of one sub-grammar, then, selected by flags the user is likely
+to combine without realising:
+
+| Flags | `↱ eager` payload | `VOs` lines | Lines (`deopt-eager.js`) |
+| :-- | :-- | :--: | --: |
+| `--print-maglev-graphs` | `(5 live vars)` | no | 1 498 |
+| `+ --print-maglev-deopt-verbose` | `{reg:node:loc, …} (addr:…)` | no | 2 801 |
+| `+ --trace-deopt-verbose` | `{reg:node:loc, …} (addr:…)` | yes | 4 154 |
+
+**The location field is phase-dependent**, exactly as in §5 — empty during graph
+building, `(x)` after AnyUseMarking, a real slot after register allocation:
+
+```
+Maglev graph building   ↳ lazy @-1 : {<closure>:n3:, <this>:n1:, a0:n2:, …}
+AnyUseMarking           ↳ lazy @-1 : {<closure>:n3:(x), <this>:n1:(x), a0:n2:(x), …}
+Register allocation     ↳ lazy @-1 : {<closure>:n3:[constant:v-1], <this>:n1:[stack:-6|t], a0:n2:[stack:-7|t], …}
+```
+
+So the frame-state parser cannot assume a fixed field syntax any more than the
+node parser can. Note the trailing `:` with nothing after it in the first form —
+an *empty* location, not a missing field.
+
+### `(addr:…)` is a frame identity key, and the only source of volatility
+
+The trailing `(addr:0x124011b0fb8)` is a raw host `DeoptFrame*` — outside the V8
+sandbox, so unlike the heap addresses in §10 it is **not** stabilised by
+`--predictable`. Masking it makes two runs byte-identical (measured: 430
+differing lines → 0), which is why the `+deoptverbose` fixtures are the only
+`clean`-profile graph fixtures marked `"reproducible": false`.
+
+It is also useful: frames are heavily shared. In
+`maglev-graphs+deoptverbose.deopt.log`, 215 rendered frame lines resolve to
+**39 distinct frames** (5.5:1). Keying on the address lets `garage` render a
+shared frame once and reference it, instead of repeating a 200-character line
+per node — and it recovers the frame-sharing structure, which no other output
+exposes.
+
+**Consequence.** Canonicalize `(addr:0x…)` per §10 *and* keep it as an
+intern key. `DeoptFrame` (TODO 2.1) is a first-class object with its own
+identity, referenced by nodes — not a string attached to a node.
+
+### `↳ throw`: the third arrow, printed unconditionally
+
+`PrintExceptionHandlerPoint` is gated on no flag at all, and has two forms
+depending on whether the handler block has phis:
+
+```
+      ↳ throw @26 (b2) : {<this>:n1, a0:n2, <context>:n4, r0:n10}   # phis
+      ↳ throw (b2)                                                   # no phis
+```
+
+Note the payload uses `reg:node` — **no location field**, unlike eager/lazy
+above. Same arrow glyph, third syntax.
+
+Getting one printed is fussy, which is why the original corpus had **zero**
+`↳ throw` lines across all 69 files. The handler must survive: the callee must
+not be inlined (or the throwing call node disappears) *and* the throw path must
+actually be taken (or the handler is swept). `fixtures/workloads/throw.js` now
+does both.
+
+And the form is *per phase*, a further instance of §5 — of the 8 throw sites in
+`maglev-graphs.throw.log`, all 8 print the `@26 (b2) : {…}` form through Phi
+untagging, then 5 drop to the bare `(b2)` form once their catch-block phis are
+swept:
+
+| Phase | `@N (bN) : {…}` | `(bN)` |
+| :-- | --: | --: |
+| Maglev graph building / AnyUseMarking / Phi untagging | 8 | 0 |
+| Dead nodes sweeping / Register allocation | 3 | 5 |
+
+**Consequence.** `↳ throw` needs its own parse arm, and the catch-block id `bN`
+is a real graph edge — worth drawing in the block navigation (PLAN §7.7), since
+it is the only place the exception edge appears.
+
+### The sub-grammar is stable across versions, unlike the banners
+
+All three arrow forms and the verbose frame payload are **byte-identical**
+between 14.9 and 15.2, and across arm64/x64 — the same comparison that found
+§3's total phase-banner rename finds no change here at all. So the marker TOML's
+version axis (§3) covers banners; the deopt frame parser can be a fixed grammar
+until evidence says otherwise. Worth re-checking on each corpus regeneration
+rather than assuming, which is what the golden tests are for.

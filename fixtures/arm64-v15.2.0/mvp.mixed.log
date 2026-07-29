@@ -1644,7 +1644,7 @@ Graph
    [0m
 ---------------------------------------------------
 Finished compiling method scale using Maglev
-[bailout (kind: deopt-eager, reason: not a Smi): begin. deoptimizing 0x09b80101e595 <JSFunction flipflop (sfi = 0x9b80101e445)>, 0x031a01000865 <Code MAGLEV>, opt id 1, bytecode offset 2, deopt exit 0, FP to SP delta 32, caller SP 0x00016bdc1770, pc 0x000170000554]
+[bailout (kind: deopt-eager, reason: not a Smi): begin. deoptimizing 0x09b80101e595 <JSFunction flipflop (sfi = 0x9b80101e445)>, 0x031a01000865 <Code MAGLEV>, opt id 1, bytecode offset 2, deopt exit 0, FP to SP delta 32, caller SP 0x00016bcd5770, pc 0x000170000554]
 ---------------------------------------------------
 Begin compiling method flipflop using Maglev
 Compiling 0x09b80101e595 <JSFunction flipflop (sfi = 0x9b80101e445)> with Maglev
@@ -5125,5 +5125,5 @@ Graph
       [0m
 ---------------------------------------------------
 Finished compiling method  using Maglev
-[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begin. deoptimizing 0x09b80101e4b5 <JSFunction (sfi = 0x9b80101e365)>, 0x031a01002e31 <Code MAGLEV>, opt id 7, bytecode offset 181, deopt exit 46, FP to SP delta 128, caller SP 0x00016bdc1808, pc 0x000170003560]
+[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begin. deoptimizing 0x09b80101e4b5 <JSFunction (sfi = 0x9b80101e365)>, 0x031a01002e31 <Code MAGLEV>, opt id 7, bytecode offset 181, deopt exit 46, FP to SP delta 128, caller SP 0x00016bcd5808, pc 0x000170003560]
 68235400

@@ -45,8 +45,8 @@ Stating these explicitly to keep scope honest:
 Auto-detect and categorize output from `d8` flags, including:
 
 - **Compiler graphs:** `--print-maglev-graphs`, `--print-maglev-graph`,
-  `--print-turbolev-frontend`, `--trace-turbo-graph`, `--print-opt-code`,
-  `--print-code`, `--print-bytecode`
+  `--print-maglev-deopt-verbose`, `--print-turbolev-frontend`,
+  `--trace-turbo-graph`, `--print-opt-code`, `--print-code`, `--print-bytecode`
 - **Tiering & lifecycle:** `--trace-opt`, `--trace-deopt`, `--trace-deopt-verbose`,
   `--trace-osr`, `--trace-prototype-users`, `--trace-gc`
 - **Pass tracing:** `--trace-maglev-inlining`, `--trace-maglev-graph-building`,
@@ -61,8 +61,16 @@ Auto-detect and categorize output from `d8` flags, including:
 > entries were wrong: `--trace-ic` does not exist (IC transitions go to `v8.log`
 > via `--log-ic`, which makes IC visibility a `v8.log`-ingestion feature, §13
 > far-term), and `--trace-prototypes` is really `--trace-prototype-users`.
+> One was **missing**: `--print-maglev-deopt-verbose`, which expands deopt
+> frames from `(N live vars)` to the full frame state (§6.1,
+> [docs/spike-findings.md](docs/spike-findings.md) §12).
 > Note also that the Maglev graph printer flags require a build with
 > `V8_ENABLE_MAGLEV_GRAPH_PRINTER`; without it they silently do nothing.
+>
+> Flags are not independent: `flag-definitions.h` weak-implications mean
+> `--trace-deopt-verbose` also turns on `--print-maglev-deopt-verbose`, so
+> "which flag selects which format" must be read off the implication graph, not
+> the flag definition alone.
 
 ### 4.1. Input sources & pitfalls
 
@@ -201,6 +209,14 @@ section — would destroy exactly the context that makes them useful. Instead:
 > `│` depth for inlining) are the *most common* non-node line in the corpus, and
 > they are IR structure, not annotations. They attach to the preceding node and
 > need their own type — folding them away by default would hide real content.
+>
+> And `(5 live vars)` is only a summary. `--print-maglev-deopt-verbose` prints
+> the whole frame state (`{<closure>:n3:[constant:v-1], a0:n2:[stack:-7|t], …}`),
+> which is the frame state J2 ultimately wants; `--trace-deopt-verbose` switches it on
+> implicitly and adds `VOs : { … }` lines. A third arrow, `↳ throw`, is printed
+> unconditionally with a *fourth* payload syntax. Frames are shared and carry an
+> address that interns them (5.5:1 in the corpus). See
+> [docs/spike-findings.md](docs/spike-findings.md) §12.
 
 **Scope now vs later:** only the attachment rule and folded rendering ship
 early — that part is structural and expensive to retrofit. Channels, `:trace`
@@ -295,6 +311,12 @@ comparison header (compilation counts, deopt counts, guard counts per function).
 
 - With `--trace-deopt-verbose`: render the reconstructed interpreter frame
   (registers, stack slots, materialized objects) for the selected deopt event.
+- The *compile-side* half of this is already in the graph: the same flag implies
+  `--print-maglev-deopt-verbose`, so each node's frame lists every live register
+  with its producing node and location, and `VOs : { … }` gives the virtual
+  objects that would be materialized. Showing the two side by side — what Maglev
+  said it would restore, next to what the deoptimizer actually restored — is the
+  real feature here, and it needs no new input format.
 
 > **§7.11–§7.15 are unscheduled roadmap ideas** — documented so the core design
 > (annotation model, canonicalizer, parser reuse) keeps them cheap to add later,
@@ -415,6 +437,11 @@ mode, Turboshaft/disassembly parsers — is post-MVP and sequenced in TODO.md.
 2. `Tab` → timeline; red `[DEOPT eager] processArray() @ app.js:88`.
 3. `Enter` shows reason (`wrong map @ bytecode offset 14`); `g` jumps to the
    corresponding compilation at that offset (via §5.1 correlation keys).
+4. The node at that offset carries its deopt frame. With
+   `--print-maglev-deopt-verbose` (or `--trace-deopt-verbose`, which implies it)
+   that frame lists every live register and where its value lives — the state
+   the interpreter resumes with. `garage` renders the shared frame once and
+   references it from each node.
 
 ### J3: Live iteration
 1. `garage -- d8 --print-maglev-graphs --trace-deopt test.js`
