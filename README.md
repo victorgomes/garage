@@ -76,6 +76,12 @@ Notes that save an afternoon:
 | `Tab` | next source (multi-file runs) |
 | `q`, `Esc` | quit / back |
 
+The mouse works too: the wheel scrolls the pane under the pointer, and a
+left click focuses a pane and places the selection or cursor — clicking a
+node line lights up its def-use highlighting. Mouse capture takes over the
+terminal's own text selection; use Shift-drag (Option-drag in Terminal.app)
+for native selection, or `y`/`Y`/`E` to copy through garage itself.
+
 Every binding is remappable in `~/.config/garage/config.toml` (or
 `--config <path>`):
 

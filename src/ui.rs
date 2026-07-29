@@ -43,10 +43,23 @@ pub fn render(frame: &mut Frame, app: &mut App) {
     let [sidebar, viewport] =
         Layout::horizontal([Constraint::Length(sidebar_width), Constraint::Min(1)]).areas(body);
 
-    // Heights recorded for paging: they are properties of the frame, and the
-    // frame is the only thing that knows them.
+    // Heights recorded for paging, rects for mouse routing: they are
+    // properties of the frame, and the frame is the only thing that knows
+    // them.
     app.sidebar_height = sidebar.height as usize;
     app.viewport_height = viewport.height as usize;
+    app.sidebar_rect = crate::app::PaneRect {
+        x: sidebar.x,
+        y: sidebar.y,
+        width: sidebar.width,
+        height: sidebar.height,
+    };
+    app.viewport_rect = crate::app::PaneRect {
+        x: viewport.x,
+        y: viewport.y,
+        width: viewport.width,
+        height: viewport.height,
+    };
 
     // One view model per frame: it drives the viewport, the status line, and
     // the follow pin.
@@ -742,7 +755,7 @@ fn status_line(app: &App, vm: &ViewModel) -> Paragraph<'static> {
 
 fn render_help(frame: &mut Frame, app: &App, screen: Rect) {
     let rows = app.keys.help_rows();
-    let height = (rows.len() as u16 + 4).min(screen.height.saturating_sub(2));
+    let height = (rows.len() as u16 + 5).min(screen.height.saturating_sub(2));
     let width = 58u16.min(screen.width.saturating_sub(4));
     let area = Rect::new(
         screen.x + (screen.width.saturating_sub(width)) / 2,
@@ -767,6 +780,10 @@ fn render_help(frame: &mut Frame, app: &App, screen: Rect) {
             Span::raw(action.describe().to_string()),
         ]));
     }
+    lines.push(Line::from(Span::styled(
+        " mouse: wheel scrolls · click places the cursor",
+        Style::new().fg(DIM),
+    )));
     lines.push(Line::from(Span::styled(
         " any key to close",
         Style::new().fg(DIM),

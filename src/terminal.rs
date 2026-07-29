@@ -16,6 +16,7 @@ use std::sync::Once;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use anyhow::{Context, Result};
+use crossterm::event::{DisableMouseCapture, EnableMouseCapture};
 use crossterm::{cursor, execute, terminal};
 use ratatui::Terminal;
 use ratatui::backend::CrosstermBackend;
@@ -46,11 +47,12 @@ impl Drop for TerminalGuard {
     }
 }
 
-/// Enters raw mode and the alternate screen.
+/// Enters raw mode and the alternate screen, with mouse capture.
 ///
-/// Mouse capture is deliberately *not* enabled. It would take over the
-/// terminal's own selection and break copy-paste, and PLAN §7.1 commits to a
-/// keyboard-driven UI where the mouse is never required.
+/// Mouse capture takes over the terminal's own selection; the keyboard-only
+/// stance Phase 1 took traded scroll-wheel support for native copy-paste.
+/// With `y`/`Y`/`E` covering copying, the wheel and click-to-place-cursor won
+/// (and terminals still offer native selection behind Shift- or Option-drag).
 pub fn enter() -> Result<TerminalGuard> {
     crate::tty::verify_keyboard()?;
 
@@ -59,8 +61,13 @@ pub fn enter() -> Result<TerminalGuard> {
     RESTORED.store(false, Ordering::SeqCst);
 
     // From here on any early return must restore, which the guard below cannot
-    // yet do — so failures go through `restore_on_error`.
-    if let Err(e) = execute!(screen, terminal::EnterAlternateScreen, cursor::Hide) {
+    // yet do — so failures go through `restore`.
+    if let Err(e) = execute!(
+        screen,
+        terminal::EnterAlternateScreen,
+        cursor::Hide,
+        EnableMouseCapture
+    ) {
         restore();
         return Err(e).context("cannot enter the alternate screen");
     }
@@ -98,7 +105,12 @@ pub fn restore() {
     // A fresh handle rather than the terminal's own: the panic hook does not
     // have access to it, and this way there is exactly one restore path.
     if let Ok(mut screen) = Screen::open() {
-        let _ = execute!(screen, terminal::LeaveAlternateScreen, cursor::Show);
+        let _ = execute!(
+            screen,
+            DisableMouseCapture,
+            terminal::LeaveAlternateScreen,
+            cursor::Show
+        );
         let _ = screen.flush();
     }
 }

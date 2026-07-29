@@ -16,7 +16,10 @@ use std::collections::HashSet;
 use std::sync::mpsc::Receiver;
 
 use anyhow::Result;
-use crossterm::event::{Event as CtEvent, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
+use crossterm::event::{
+    Event as CtEvent, KeyCode, KeyEvent, KeyEventKind, KeyModifiers, MouseButton, MouseEvent,
+    MouseEventKind,
+};
 use regex::Regex;
 
 use crate::config::{Action, Keymap};
@@ -54,6 +57,23 @@ pub struct Source {
 pub enum Pane {
     Sidebar,
     Viewport,
+}
+
+/// Screen-space rectangle of a pane, recorded at render time — the frame is
+/// the only thing that knows the layout, and mouse events arrive in screen
+/// coordinates.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct PaneRect {
+    pub x: u16,
+    pub y: u16,
+    pub width: u16,
+    pub height: u16,
+}
+
+impl PaneRect {
+    pub fn contains(&self, x: u16, y: u16) -> bool {
+        x >= self.x && x < self.x + self.width && y >= self.y && y < self.y + self.height
+    }
 }
 
 /// One sidebar row. Rebuilt per frame from the index — identity is positional
@@ -142,6 +162,10 @@ pub struct App {
     jumps: Vec<(usize, usize)>,
     jump_at: usize,
     cycle: Option<Cycle>,
+
+    /// Pane geometry from the last frame, for mouse routing.
+    pub sidebar_rect: PaneRect,
+    pub viewport_rect: PaneRect,
 }
 
 impl App {
@@ -186,6 +210,8 @@ impl App {
             jumps: Vec::new(),
             jump_at: 0,
             cycle: None,
+            sidebar_rect: PaneRect::default(),
+            viewport_rect: PaneRect::default(),
         }
     }
 
@@ -364,6 +390,7 @@ impl App {
     pub fn handle(&mut self, event: Event) {
         match event {
             Event::Input(CtEvent::Key(key)) => self.handle_key(key),
+            Event::Input(CtEvent::Mouse(mouse)) => self.handle_mouse(mouse),
             // Resize needs no state change; the redraw that follows is enough.
             Event::Input(_) => {}
             Event::Source(e) => self.handle_source(e),
@@ -371,6 +398,74 @@ impl App {
                 tracing::warn!("terminal input closed; quitting");
                 self.quit = true;
             }
+        }
+    }
+
+    /// Mouse: the wheel scrolls the pane under the pointer (three rows, like
+    /// vim's default), a left click focuses the pane and places the
+    /// selection/cursor — which is what lights up def-use highlighting on the
+    /// clicked node. Coordinates route through the pane rects the last frame
+    /// recorded. With wrap on, one logical row can occupy several screen
+    /// rows, so a click lands on the row *starting* at that screen line —
+    /// approximate, and documented as such.
+    fn handle_mouse(&mut self, mouse: MouseEvent) {
+        if self.help {
+            self.help = false;
+            return;
+        }
+        // The input line owns the interaction; a stray click must not move
+        // the cursor out from under an incremental search.
+        if self.input.is_some() {
+            return;
+        }
+
+        let at_pane = if self.sidebar_rect.contains(mouse.column, mouse.row) {
+            Some(Pane::Sidebar)
+        } else if self.viewport_rect.contains(mouse.column, mouse.row) {
+            Some(Pane::Viewport)
+        } else {
+            None
+        };
+
+        match mouse.kind {
+            MouseEventKind::ScrollUp | MouseEventKind::ScrollDown => {
+                let Some(pane) = at_pane else { return };
+                self.focus = pane;
+                let delta = if mouse.kind == MouseEventKind::ScrollUp {
+                    -3
+                } else {
+                    3
+                };
+                self.move_by(delta);
+            }
+            MouseEventKind::Down(MouseButton::Left) => match at_pane {
+                Some(Pane::Sidebar) => {
+                    self.focus = Pane::Sidebar;
+                    let offset = (mouse.row - self.sidebar_rect.y) as usize;
+                    let rows = self.rows().len();
+                    if rows == 0 {
+                        return;
+                    }
+                    let target = (self.sidebar_scroll + offset).min(rows - 1);
+                    if target != self.selected {
+                        self.selected = target;
+                        self.reset_view();
+                    }
+                }
+                Some(Pane::Viewport) => {
+                    self.focus = Pane::Viewport;
+                    let offset = (mouse.row - self.viewport_rect.y) as usize;
+                    let len = self.view_model().len();
+                    if len == 0 {
+                        return;
+                    }
+                    self.cursor = (self.top + offset).min(len - 1);
+                    self.follow = self.follow && self.cursor + 1 == len;
+                    self.cycle = None;
+                }
+                None => {}
+            },
+            _ => {}
         }
     }
 
@@ -1460,6 +1555,104 @@ Compiling 0x2 <JSFunction g (sfi = 0x20)> with Maglev
         assert!(!app.quit);
         key(&mut app, KeyCode::Esc);
         assert!(app.quit);
+    }
+
+    fn mouse(app: &mut App, kind: MouseEventKind, column: u16, row: u16) {
+        app.handle(Event::Input(CtEvent::Mouse(MouseEvent {
+            kind,
+            column,
+            row,
+            modifiers: KeyModifiers::NONE,
+        })));
+    }
+
+    /// Lay out panes the way a frame would: sidebar columns 0..30, viewport
+    /// 30..120, both rows 1..41.
+    fn with_layout(app: &mut App) {
+        app.sidebar_rect = PaneRect {
+            x: 0,
+            y: 1,
+            width: 30,
+            height: 40,
+        };
+        app.viewport_rect = PaneRect {
+            x: 30,
+            y: 1,
+            width: 90,
+            height: 40,
+        };
+        app.sidebar_height = 40;
+        app.viewport_height = 40;
+    }
+
+    #[test]
+    fn wheel_scrolls_the_pane_under_the_pointer() {
+        let mut app = app_with(TRACE);
+        app.follow = false;
+        app.selected = 1;
+        app.focus = Pane::Sidebar;
+        with_layout(&mut app);
+
+        // Wheel over the viewport moves the cursor, not the selection…
+        app.cursor = 0;
+        mouse(&mut app, MouseEventKind::ScrollDown, 60, 5);
+        assert_eq!(app.focus, Pane::Viewport);
+        assert_eq!(app.cursor, 3, "three rows per tick");
+        assert_eq!(app.selected, 1, "selection untouched");
+        mouse(&mut app, MouseEventKind::ScrollUp, 60, 5);
+        assert_eq!(app.cursor, 0);
+
+        // …and over the sidebar it moves the selection.
+        mouse(&mut app, MouseEventKind::ScrollUp, 5, 5);
+        assert_eq!(app.focus, Pane::Sidebar);
+        assert_eq!(app.selected, 0);
+
+        // Outside both panes: ignored.
+        let before = app.selected;
+        mouse(&mut app, MouseEventKind::ScrollDown, 60, 0);
+        assert_eq!(app.selected, before);
+    }
+
+    #[test]
+    fn click_places_selection_and_cursor() {
+        let mut app = app_with(TRACE);
+        app.follow = false;
+        with_layout(&mut app);
+
+        // Click the second sidebar row (screen row 2 = y 1 + offset 1).
+        mouse(&mut app, MouseEventKind::Down(MouseButton::Left), 5, 2);
+        assert_eq!(app.focus, Pane::Sidebar);
+        assert_eq!(app.selected, 1);
+
+        // Click viewport screen row 5 → display row top+4 → its node lights
+        // up as the cursor node.
+        mouse(&mut app, MouseEventKind::Down(MouseButton::Left), 60, 5);
+        assert_eq!(app.focus, Pane::Viewport);
+        assert_eq!(app.cursor, 4);
+        let vm = app.view_model();
+        assert_eq!(app.cursor_node(&vm).map(|n| n.id), Some(2), "clicked Bar");
+
+        // A click past the end of the section clamps to the last row.
+        mouse(&mut app, MouseEventKind::Down(MouseButton::Left), 60, 39);
+        let vm = app.view_model();
+        assert_eq!(app.cursor, vm.len() - 1);
+    }
+
+    #[test]
+    fn mouse_ignored_during_prompts_and_closes_help() {
+        let mut app = app_with(TRACE);
+        app.follow = false;
+        with_layout(&mut app);
+
+        key(&mut app, KeyCode::Char('?'));
+        mouse(&mut app, MouseEventKind::ScrollDown, 60, 5);
+        assert!(!app.help, "any mouse action closes the modal");
+
+        key(&mut app, KeyCode::Char('/'));
+        let cursor = app.cursor;
+        mouse(&mut app, MouseEventKind::Down(MouseButton::Left), 60, 20);
+        assert_eq!(app.cursor, cursor, "prompt owns the interaction");
+        assert!(app.input.is_some());
     }
 
     #[test]
