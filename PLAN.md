@@ -1,292 +1,462 @@
-# `garage` - Interactive TUI Tool for V8 Traces and Logs
+# `garage` — Interactive TUI Tool for V8 Traces and Logs
 
-## 1. Executive Summary & Vision
+## 1. Vision
 
-`garage` is a high-performance Terminal User Interface (TUI) designed for V8 engineers and JavaScript engine researchers to view, search, diff, and debug `d8` execution traces and compiler graphs (Maglev, Turboshaft, TurboFan, Ignition, Deopts, ICs, GC).
+`garage` is a terminal UI for V8 engineers to view, navigate, search, and diff `d8`
+trace output (Maglev, Turboshaft/Turbolev, TurboFan, Ignition, deopts, ICs, GC)
+without dumping megabytes of text into scrollback or switching to browser tools.
 
-Instead of dumping megabytes of text into stdout or relying on heavy browser-based tools like Turbolizer for quick CLI iterations, `garage` provides a keyboard-driven, syntax-aware, multi-pane TUI tool directly in the shell.
+**Target user, concretely:** a V8 compiler engineer who today pipes
+`--print-maglev-graphs` output into `less` twenty times a day. `garage` v0 must beat
+`less` for that workflow. Everything else builds on that.
 
----
+## 2. Non-Goals
 
-## 2. Supported Traces & Auto-Detection
+Stating these explicitly to keep scope honest:
 
-`garage` automatically detects and categorizes logs output by standard and developer `d8` flags, including:
+- **No 2D graph layout.** `garage` renders V8's textual output order, enriched with
+  navigation and highlighting. Turbolizer remains the tool for visual graph layout.
+- **Not a profiler.** No flamegraphs, no tick-sample aggregation UI (ingesting
+  `v8.log` for cross-referencing is a roadmap item, not a goal of the core tool).
+- **No Wasm support initially.** JS pipeline only until the JS experience is solid.
+- **No log mutation.** `garage` is a viewer; it never rewrites trace files.
 
-- **Compiler Graphs:**
-  - `--print-maglev-graphs`, `--print-maglev-graph`
-  - `--print-turbolev-frontend`
-  - `--trace-turbo-graph`
-  - `--print-opt-code`, `--print-code`
-- **Tiering & Lifecycle Events:**
-  - `--trace-opt`, `--trace-deopt`, `--trace-deopt-verbose`
-  - `--trace-ic`, `--trace-prototypes`
-  - `--trace-gc`, `--trace-alloc`
-- **Fallback / Raw Developer Flags:**
-  - Standard support for any developer flag defined in V8's `flag-definitions.h` via generic ANSI-preserving log streams.
+## 3. Design Principles
 
----
+1. **Never lose data.** Anything unparsed lands in a raw, searchable, foldable
+   fallback section. A parse failure degrades one compilation to raw text — never
+   the whole session.
+2. **The text output is the native input.** `--print-maglev-graphs` and friends
+   are what V8 engineers actually have in front of them — on any build, with no
+   extra flags — so first-class text parsing is the foundation of the tool.
+   Format drift is managed with fixtures, golden tests, and graceful degradation
+   (§6), and softened by the fact that the audience maintains the printers.
+3. **Fast on huge logs.** Traces reach hundreds of MB to GB (fuzzer bisects,
+   benchmark suites). Index sections on load; parse compilations lazily on first
+   view. Opening a 1 GB trace must feel instant.
+4. **Works over SSH.** The likely audience works on remote workstations. That
+   means: OSC 52 clipboard (native clipboard via `arboard` fails over SSH), fully
+   keyboard-driven (mouse optional), 256-color and 16-color fallback, tmux-safe.
+5. **One coherent, remappable keymap.** Vim-flavored, no double-bound keys,
+   user-overridable via config file.
 
-## 3. Data Model & Navigation Hierarchy
+## 4. Supported Inputs & Auto-Detection
 
-### 3.1. Primary Hierarchy: `Function * Tier` -> `Phase` -> `View`
+Auto-detect and categorize output from `d8` flags, including:
 
-Rather than nesting compilations inside function subtrees, `garage` flattens the top-level list into distinct **`Function * Tier` compilation instances**, sorted chronologically:
+- **Compiler graphs:** `--print-maglev-graphs`, `--print-maglev-graph`,
+  `--print-turbolev-frontend`, `--trace-turbo-graph`, `--print-opt-code`,
+  `--print-code`, `--print-bytecode`
+- **Tiering & lifecycle:** `--trace-opt`, `--trace-deopt`, `--trace-deopt-verbose`,
+  `--trace-osr`, `--trace-ic`, `--trace-prototypes`, `--trace-gc`
+- **Optional structured:** Turbolizer `.json` files from `--trace-turbo`
+  (roadmap; supplemental source, nothing in the core depends on it)
+- **Fallback:** any other flag from `flag-definitions.h` via the generic
+  ANSI-preserving raw stream view
+
+> **Task:** verify the exact flag list against current `flag-definitions.h` before
+> implementation; do not trust this document's flag names blindly.
+
+### 4.1. Input sources & pitfalls
+
+- **Piped stdin** (`d8 ... | garage`): when stdin is the data pipe, keyboard input
+  must be read from `/dev/tty`. This is a day-one requirement, not polish.
+- **Files** (`garage trace.log`, `garage a.log b.log` for dual-run mode).
+- **Wrapper mode** (`garage -- d8 flags... script.js`): spawn `d8`, capture stdout
+  and stderr with an explicit merge policy (tagged per-stream, ordered by arrival),
+  stream into the UI live.
+- **Interleaving is a day-one parsing problem, not a far-term feature.** With
+  concurrent recompilation, graph dumps and trace lines from multiple threads can
+  interleave. Strategy: (a) document that `--no-concurrent-recompilation
+  --predictable` yields clean traces and recommend it for graph work; (b)
+  best-effort demultiplexing by isolate/thread markers where present; (c) anything
+  un-demultiplexable degrades to raw sections per principle 1.
+
+## 5. Data Model & Navigation
+
+### 5.1. Primary hierarchy: `Function × Tier` → `Phase` → `View`
+
+Top level is a flat, chronologically sorted list of compilation instances (this is
+the right call — it matches how engineers think about tier-up sequences):
 
 ```
 [1] foo() @ script.js:12  [Ignition Bytecode]
-[2] foo() @ script.js:12  [Maglev Compilation #1]
-     ├── Phase 1: After graph building
-     ├── Phase 2: After SSA optimization
-     ├── Phase 3: After truncation
-     ├── Phase 4: After Phi untagging
-     ├── Phase 5: After register allocation
-     └── Phase 6: Code Generation (Disassembly)
-[3] bar() @ script.js:45  [Maglev Compilation #1]
-[4] foo() @ script.js:12  [Maglev Deopt → Eager]
-     └── Lifecycle & Deopt Reason
-[5] foo() @ script.js:12  [Turboshaft Compilation #2]
-     ├── Phase 1: BuildGraphPhase
-     ├── Phase 2: MachineOptimizationPhase
-     └── Phase 3: InstructionSelectionPhase
+[2] foo() @ script.js:12  [Maglev #1]
+     ├── Phase: After graph building
+     ├── Phase: After phi untagging
+     ├── Phase: After register allocation
+     └── Code generation (disassembly)
+[3] foo() @ script.js:12  [Maglev #1, OSR @ offset 132]
+[4] foo() @ script.js:12  [Deopt: eager]
+[5] foo() @ script.js:12  [Turboshaft #2]
 ```
 
-### 3.2. Timeline View (`[T] Chronological Event Log`)
-For events without compilation graphs (e.g. `--trace-opt`, `--trace-deopt`, IC updates), or to inspect the sequence of execution across time:
-- A global **Timeline View** lists all events sequentially with timestamp / relative ordinal steps (`#001`, `#002`, ...).
-- Selecting a Timeline event jumps directly to the corresponding `Function * Tier` phase or deopt report.
+Additions over the original model:
 
----
+- **OSR compilations are first-class.** They carry an OSR bytecode offset and must
+  be distinguishable from regular tier-up compilations in the sidebar.
+- **Grouping toggle.** Pure chronological order does not scale to thousands of
+  compilations. Provide a sidebar toggle: chronological ⇄ grouped-by-function.
+- **Correlation keys are an explicit design task.** Linking a `--trace-deopt` event
+  to the exact compilation instance requires matching on what the deopt line
+  actually contains (code address / optimization id / function + offset), not
+  wishful thinking. Specify this mapping precisely per V8 version before building
+  the deopt→graph jump.
+- **Source resolution strategy.** Traces contain source positions, not source text.
+  Load `.js` from disk when the script path resolves; otherwise degrade gracefully
+  (offsets still shown, source pane disabled) rather than failing.
 
-## 4. Key TUI Features & User Interactions
+### 5.2. Timeline view
 
-### 4.1. Graph View & Semantic Node Highlighting
-When viewing a compiler graph (e.g., Maglev IR or Turboshaft IR):
-- **Hover / Node Selection (e.g., `n55` / `v12`):** Selecting or placing the cursor on a node automatically highlights:
-  - **Node Definition:** The line where the node is produced.
-  - **Inputs / Predecessors (Def-Use):** Highlight all nodes referenced as inputs to `n55`.
-  - **Consumers / Successors (Use-Def):** Highlight all downstream nodes that consume `n55`.
-- **Node Jumping / Breadcrumbs:**
-  - Press `i` to jump to the input source node.
-  - Press `u` to cycle through downstream user nodes.
-  - Press `Ctrl+O` / `Ctrl+I` to jump back/forward in node history.
-- **Default Syntax Highlighting:**
-  - ANSI colors for opcodes (`Int32Add`, `GapMove`, `Phi`, `Branch`), register assignments (`rax`, `rdi`), type feedback annotations, and block labels (`b0`, `b1`).
+A global chronological event log (`--trace-opt`, `--trace-deopt`, IC updates, GC),
+with ordinals (`#001`, `#002`, …). Selecting an event jumps to the corresponding
+compilation/phase via the correlation keys above.
 
-### 4.2. Split-Screen & Structural Diff Mode
-- **Split Screen (`v` / `s`):** Split the terminal vertically or horizontally to view two compiler phases side-by-side (e.g., *Phase 1: Graph Building* vs *Phase 4: Register Allocation*).
-- **Phase Diff (`d`):** Compare Phase N with Phase N+1:
-  - Highlight newly inserted instructions/nodes in green.
-  - Highlight removed/folded nodes in red.
-  - Highlight modified annotations/registers in yellow.
+## 6. Parser Strategy & Resilience
 
-### 4.4. JS Source & Bytecode Alignment (Sparkplug & Maglev)
-- **Side-by-Side Source View (`S`):** Open a split pane displaying the original JavaScript source file or Ignition Bytecode stream.
-- **Cross-Highlighting:** Selecting a Maglev node (e.g., `n42 @ offset 18`) highlights the exact **Bytecode instruction** (`Ldar a0`) and the corresponding **JavaScript line** (`return a + b;`).
+Parsing V8's text output is the highest-risk area of the project — and, by
+design, it is also the point: `--print-maglev-graphs` output is what engineers
+have on any build with no extra flags, so `garage` treats it as the primary,
+first-class input rather than a stopgap.
 
-### 4.5. Graph Topology & Basic Block Controls
-- **Basic Block Folding (`Space`):** Expand or collapse basic block containers (e.g. `b0`, `b1 (Loop)`) to collapse noisy blocks and focus strictly on loop headers or function exits.
-- **Node Type Filtering:**
-  - Type `:phi` to hide standard arithmetic nodes and inspect only the control-flow & Phi node backbone.
-  - Type `:check` to highlight and count all map/type guards (`CheckMaps`, `CheckSmi`, `CheckBounds`).
-  - Type `:spill` to view register allocation spills and reloads.
+**Tier A — known text formats:** Maglev graphs first; then deopt/opt traces,
+Turboshaft, disassembly. Parsed by table-driven matchers (section markers in an
+embedded TOML). Honest caveat the original plan glossed over: a TOML table
+handles *renamed markers*, but new node syntax still requires code changes. The
+TOML is a maintenance aid, not magic. Two things keep this tractable: the
+fixture corpus below, and the fact that the audience maintains the printers —
+when Maglev output changes, the same people can update `garage` in the same
+breath (or keep the printer stable because a tool now depends on it).
 
-### 4.6. Summary Telemetry Header & Command Palette
-- **Engine Telemetry Bar:** Displayed at the top of the terminal viewport:
-  ```
-  ┌─ garage v8 trace ──────────────────────────────────────────────────────────┐
-  │ Compilations: 14 (Maglev: 10 | Turboshaft: 4) │ Deopts: 2 │ GC Events: 3  │
-  └────────────────────────────────────────────────────────────────────────────┘
-  ```
-- **Vim-style Command Palette (`:`):**
-  - `:deopts` — Jump directly to the next deoptimization.
-  - `:spills` — Highlight all register allocation spills.
-  - `:checks` — Highlight all type guard checks.
-  - `:copy` — Copy current phase snippet to system clipboard.
+**Tier B — raw fallback:** everything unrecognized. Searchable, foldable, never
+dropped.
 
-### 4.7. Dual-Run Diffing Mode (`garage baseline.log patched.log`)
-- Compare the output of **two separate `d8` trace files** (e.g., before and after a compiler optimization CL):
-  - **Compilation Count Diff:** Compare total compilations and deopts side-by-side.
-  - **Phase Output Diff:** Compare *Phase N* in `baseline.log` vs `patched.log` to verify if nodes were eliminated or transformed as expected.
+**Tier C — optional structured sources:** Turbolizer `--trace-turbo` JSON can be
+imported later behind the same parser trait (handy for cross-phase node identity
+in the diff engine), but nothing in the core design depends on it.
 
-### 4.8. Interactive Disassembly & Register Lifetime View (`A`)
-- **Assembly Inspection:** When viewing disassembly (`--print-opt-code` or CodeGen phases), hover over branch/jump instructions (`jmp .Lentry_1`, `b.eq 0x...`) to highlight target code labels.
-- **Register Lifetime Overlay:** Hovering over a register (e.g. `rax` on x64 or `x0` on ARM64) highlights all instructions in the phase where that register is read, written, or modified.
-- **Relocation Pointer Decoding:** Inline decoding of tagged memory addresses (e.g. `[rax+0x17]` decoded into `[Field: Map]`).
+**Resilience plan:**
 
-### 4.9. Inlining Hierarchy & Decision Tree (`I`)
-- **Visual Inlining Tree:** Press `I` to open a hierarchical tree view of all inlined function calls:
-  ```
-  main() @ script.js:5
-   ├── inlined helper() @ script.js:42 (Cost: 12, Inlined)
-   │    └── inlined clamp() @ utils.js:100 (Cost: 4, Inlined)
-   └── rejected heavyWorker() @ script.js:88 (Reason: target too large)
-  ```
-- **Inlined Subgraph Filtering:** Selecting an inlined callee filters the graph view to show only the basic blocks belonging to that specific inlined function.
+1. A checked-in **fixture corpus**: real `d8` outputs from tip-of-tree and at least
+   one stable branch, on x64 and arm64, for every supported flag. This exists
+   *before* the parsers do (see TODO Phase 0).
+2. Golden-file tests over the corpus; fuzz the parsers with garbage input (a
+   malformed trace must never panic the TUI).
+3. Per-section graceful degradation with a visible "unparsed" badge in the sidebar.
+4. CI job in V8 (or a cron against tip-of-tree) to catch format drift early.
 
-### 4.10. Feedback Vector Heatmap & Polymorphism Alerts
-- **Color-Coded IC Stability:** Annotate Inline Cache operations in Bytecode/Maglev views:
-  - 🟢 **Green (Monomorphic):** Fast single-map path.
-  - 🟡 **Yellow (Polymorphic):** Multi-map dispatch.
-  - 🔴 **Red (Megamorphic / Generic):** Slow path stub call / dictionary lookup.
-- **Query Filter:** `:megamorphic` filter to highlight all slow-path IC calls across the trace.
+### 6.1. Interleaved pass tracing (`--trace-maglev-truncation` & friends)
 
-### 4.11. Deopt Frame Unwinding Panel
-- **Reconstructed Stack Frame:** When inspecting an eager or soft deoptimization (`--trace-deopt-verbose`), `garage` renders the simulated Interpreter stack frame at the exact moment of deopt:
-  ```
-  ┌─ Deopt Frame #0: processArray() @ offset 14 ─────────┐
-  │ Register r0: 42 (Unboxed Int32)                      │
-  │ Register r1: HeapObject (Map 0x3f... HeapNumber)    │
-  │ Stack Slot 0: Undefined                              │
-  └──────────────────────────────────────────────────────┘
-  ```
+Pass-specific debug flags print free-form diagnostic lines *between and inside*
+graph dumps. Treating them as parse errors — or exiling them to an orphan raw
+section — would destroy exactly the context that makes them useful. Instead:
 
----
+- **The section model is a context tree, not a flat partition.** The indexer
+  assigns every line to the innermost open context: run → compilation → phase →
+  block → node. A line matching no structural grammar becomes a **positioned
+  annotation** attached to that context — truncation-trace lines land on the
+  phase transition where they were printed, or on the node line they follow.
+- **Annotation channels.** Annotations are classified by line prefix into
+  channels (`truncation`, `inlining`, `regalloc`, …) via an optional TOML prefix
+  map; unknown prefixes fall into a generic channel. No per-flag parser is
+  required — new `--trace-maglev-*` flags work on day one.
+- **Rendering.** Annotations render dimmed/italic like code comments, folded by
+  default (`[+] 12 trace lines (truncation)`); `t` toggles inline visibility,
+  `:trace <channel>` filters by channel.
+- **Node linking.** Any annotation mentioning a node ID (`n42`) is cross-linked:
+  cursor highlighting includes it, and it feeds the node biography view (§7.11).
 
-## 5. Keyboard & Interaction Map
+**Scope now vs later:** only the attachment rule and folded rendering ship
+early — that part is structural and expensive to retrofit. Channels, `:trace`
+filtering, and node linking are icebox items layered on top later.
+
+## 7. Key TUI Features
+
+### 7.1. Graph view & semantic node highlighting
+
+Cursor-based (not "hover" — this is a terminal; mouse is optional, never required):
+
+- Placing the cursor on a node (`n55`/`v12`) highlights its **definition**, its
+  **inputs** (def-use), and its **consumers** (use-def) in distinct styles.
+- `i` jumps to input definition; `u` cycles through consumers; `Ctrl+O`/`Ctrl+I`
+  navigate the jump history.
+- Syntax highlighting for opcodes, block labels, registers, node IDs, type
+  annotations.
+
+### 7.2. Basic block folding & node filtering
+
+- `Space` folds/unfolds basic blocks (`[+] b1 (loop) — 14 instructions hidden`).
+- Command-palette filters: `:phi` (control/phi backbone only), `:check` (highlight
+  and count guards: `CheckMaps`, `CheckSmi`, `CheckBounds`), `:spill` (regalloc
+  spills/reloads), `:megamorphic` (slow-path ICs).
+
+### 7.3. Split panes
+
+- `v` vertical split, `s` horizontal split, `Ctrl+W`+direction to move focus.
+- Typical use: Phase 1 vs Phase 4 of the same compilation side by side.
+
+### 7.4. Diff engine (intra-run and dual-run)
+
+**Design correction from v1:** raw Myers line diff will mark nearly everything as
+changed, because node IDs renumber between phases and runs. The diff pipeline is:
+
+1. **Canonicalize** both sides: strip/normalize memory addresses, timestamps,
+   compilation ids; renumber node IDs into a canonical space.
+2. **Match nodes by identity** where the format preserves IDs across phases
+   (Turbolizer JSON does; Maglev text partially does), else by structural hash
+   (opcode + canonicalized inputs).
+3. **Fall back to line diff** (`similar` crate) only for unmatched regions.
+
+Applies to both phase-vs-phase diff (`d`) and dual-run mode
+(`garage baseline.log patched.log`), which additionally shows a telemetry
+comparison header (compilation counts, deopt counts, guard counts per function).
+
+### 7.5. JS source & bytecode alignment
+
+- `S` opens JS source / Ignition bytecode panes aligned with the IR view.
+- Cursor on an IR node cross-highlights the bytecode instruction and JS line via
+  bytecode offsets; selecting a JS line highlights all IR nodes derived from it.
+- Subject to the source resolution strategy in §5.1.
+
+### 7.6. Disassembly view
+
+- For `--print-opt-code` / codegen phases: jump-target highlighting for branches,
+  and a register trace (cursor on `rax`/`x0` highlights all reads/writes in view).
+- **Feasibility note (new):** inline decoding of tagged addresses into field names
+  is only possible to the extent V8's disassembly comments already provide it; do
+  not promise decoding that requires heap metadata the log does not contain. The
+  same applies to IC timing values and exact register-pressure levels elsewhere in
+  this plan — features are tagged *[needs data not in text logs]* and gated on
+  structured input or V8-side changes.
+
+### 7.7. Inlining tree
+
+- `I` shows the inlining decision tree (inlined/rejected, reasons, costs) parsed
+  from trace output; selecting an inlined callee filters the graph view to its
+  blocks.
+
+### 7.8. Telemetry header & command palette
+
+- Top bar: compilation counts per tier, deopt count, GC events, source status
+  (file/stream/live).
+- `:` palette with completion: `:deopts`, `:checks`, `:spill`, `:phi`,
+  `:megamorphic`, `:copy`, `:export <file>`, `:function <name>`.
+
+### 7.9. Export & clipboard (moved up from "medium-term" — cheap and high value)
+
+- `:copy` copies the current selection/phase — via OSC 52 when running over
+  SSH/tmux, `arboard` locally.
+- `:export report.md` writes the current annotated view as Markdown for bug
+  tickets and Gerrit CL comments.
+
+### 7.10. Deopt frame unwinding panel
+
+- With `--trace-deopt-verbose`: render the reconstructed interpreter frame
+  (registers, stack slots, materialized objects) for the selected deopt event.
+
+> **§7.11–§7.15 are unscheduled roadmap ideas** — documented so the core design
+> (annotation model, canonicalizer, parser reuse) keeps them cheap to add later,
+> but deliberately absent from the TODO's build phases (see its icebox section).
+
+### 7.11. Node biography — "explain this node" (`e`)
+
+Press `e` on any node to see its chronological story across the compilation,
+assembled from its creation site, phase diffs, and every annotation (§6.1) that
+mentions it:
+
+```
+n42 [Phi]
+  Phase 1   created in b3 (loop header)
+  Phase 3   truncation: skipped — input n17 not truncatable   [trace:truncation]
+  Phase 4   untagged → Int32
+  regalloc  spilled at gap 118
+```
+
+This is the payoff of the annotation model: arbitrary `--trace-maglev-*` flags
+become per-node explanations of *why* a phase diff looks the way it does,
+without `garage` understanding each flag. Node IDs inside the panel are
+themselves navigable (`Enter` jumps to `n17`).
+
+### 7.12. Loop lens (`:loops`)
+
+Optimization work is loop work. `:loops` lists every loop across compilations
+with per-loop stats — node count, checks, spills, phis, deopt points inside the
+body — and jumps straight into loop bodies. Composes with `:check`/`:spill`.
+
+### 7.13. Deopt flip-flop detector
+
+From `--trace-opt`/`--trace-deopt` alone, flag functions caught in
+optimize → deopt → reoptimize cycles (N opts / M deopts) with a sidebar badge
+and a telemetry-bar count. One of the most common perf pathologies, essentially
+free to compute.
+
+### 7.14. Watch mode (`garage --watch -- d8 ...`)
+
+The daily compiler-dev loop: edit C++/JS, rebuild, rerun, eyeball the graph.
+`--watch` re-runs the wrapped command when inputs change and — the important
+part — **restores your position** (function → phase → nearest matching node) in
+the new trace, with a per-compilation `changed`/`unchanged` badge versus the
+previous run (reusing the dual-run canonicalizer, §7.4).
+
+### 7.15. Non-interactive mode (`garage stats|grep|diff`)
+
+The same parsers without the TUI, for scripts and CI:
+
+- `garage stats trace.log` — compilations per tier, deopts, flip-flops (JSON).
+- `garage grep --node CheckMaps --in-loops trace.log` — structural queries.
+- `garage diff --summary base.log patched.log` — non-zero exit on regressions
+  (guard counts, deopt counts), usable in presubmits and benchmark CI.
+
+## 8. Keyboard Map (fixed)
+
+Conflicts in v1 resolved: help is `?` only (`h` was double-bound); `s` added.
 
 | Key | Action |
-| :--- | :--- |
-| `?` / `h` | **Open Help Modal** (Displays interactive shortcut & command popup) |
-| `j` / `k` or `↑` / `↓` | Navigate list / scroll viewport |
-| `h` / `l` or `←` / `→` | Switch focus between Sidebar (List) and Main Viewport |
-| `Enter` | Select Function/Phase |
-| `Tab` | Switch between Phase List view and Global Timeline view |
-| `v` | Toggle Vertical Split Screen |
-| `d` | Toggle Side-by-Side Phase Diff Mode |
-| `S` | Toggle JavaScript / Bytecode Alignment Pane |
-| `A` | Toggle Disassembly & Register Lifetime View |
-| `I` | Toggle Inlining Tree & Decision Panel |
-| `Space` | Fold / Unfold Basic Block |
-| `i` / `u` | Jump to Node Inputs / Consumers |
-| `Ctrl+O` / `Ctrl+I` | Back / Forward in node navigation history |
-| `/` | Regex search in current view |
-| `:` | Open Command Palette (`:deopts`, `:phi`, `:check`, `:spill`, `:megamorphic`, `:copy`) |
-| `n` / `N` | Next / Previous search match |
-| `f` | Quick filter sidebar entries |
-| `q` / `Esc` | Exit view / Close modal overlay |
+| :-- | :-- |
+| `?` | Help modal (keys + commands) |
+| `j`/`k`, `↑`/`↓` | Move cursor / scroll |
+| `h`/`l`, `←`/`→` | Focus sidebar ⇄ viewport |
+| `Enter` | Select function / phase / event |
+| `Tab` | Toggle compilation list ⇄ timeline view |
+| `v` / `s` | Vertical / horizontal split |
+| `d` | Phase diff mode |
+| `S` | JS source / bytecode alignment pane |
+| `A` | Disassembly view |
+| `I` | Inlining tree |
+| `Space` | Fold / unfold basic block |
+| `i` / `u` | Jump to inputs / cycle consumers |
+| `e` | Node biography ("explain this node") |
+| `t` | Toggle inline trace annotations |
+| `Ctrl+O` / `Ctrl+I` | Back / forward in jump history |
+| `/`, `n`, `N` | Regex search, next, previous |
+| `f` | Filter sidebar entries |
+| `g` | (on deopt event) jump to guard/IR location |
+| `:` | Command palette |
+| `q` / `Esc` | Close / back / quit |
 
----
+All bindings remappable via config file (`~/.config/garage/config.toml`).
 
-## 6. Implementation Strategy & Technology Stack
+## 9. MVP Definition (explicit)
 
-### 6.1. Why Rust + `ratatui`?
-- **Performance & Memory Efficiency:** V8 compilation logs can easily grow to hundreds of megabytes. Rust's zero-cost abstractions and stream parsing allow `garage` to index logs at gigabytes-per-second with minimal memory footprint.
-- **Single Static Binary Distribution:** Compiles to a single zero-dependency static binary (`garage`) that developers can drop into `PATH` or depot tools.
-- **Ecosystem Standard:** `ratatui` (with `crossterm`) is the standard framework for modern, high-performance terminal applications (e.g. `yazi`, `zellij`, `gitui`).
+The MVP is deliberately narrow. It ships when:
 
-### 6.2. Phase Marker & Parser Maintenance Strategy
-To ensure `garage` remains resilient when V8 engineers add or rename compiler phases:
-1. **Structural Heuristics + Specific Regex:** `garage` uses hierarchical regexes (e.g., matching `--- <Pass Name> ---` or `== Phase: <Name> ==`). Even if a phase name changes, the visual banner format in V8 output is preserved.
-2. **Dynamic Grammar Configuration:** Phase markers and section delimiters are stored in an embedded configuration file (TOML format), allowing new flags and formats to be added without code refactoring.
-3. **Graceful Fallthrough View:** Unrecognized logs or phase titles are never lost; they are seamlessly placed into generic searchable sections without breaking the navigation tree.
-4. **CI Integration Tests:** Run `garage` against sample `d8` outputs in V8 CI to detect breaking parser changes early.
+`d8 --print-maglev-graphs --trace-deopt bench.js | garage` gives you:
 
----
+1. Sidebar of `Function × Tier` compilations (incl. OSR), chronological + grouped
+   toggle, quick filter.
+2. Phase view with syntax highlighting, block folding, def-use/use-def cursor
+   highlighting, `i`/`u`/history jumps.
+3. Regex search with match navigation.
+4. Raw fallback sections for everything unparsed, searchable.
+5. `:copy` (OSC 52 + local) and `:export`.
+6. Instant open on multi-hundred-MB files (indexed, lazy parse).
+7. Interleaved pass-trace lines (`--trace-maglev-*`) kept in place as folded,
+   dimmed annotations — never dropped or orphaned (§6.1, minimal form only:
+   attachment + folding, no channels or linking).
 
-## 7. User Journeys
+**Definition of done:** the author stops using `less` for daily Maglev work.
 
-### Journey 1: Investigating Maglev Graph Optimization Passes
-> **Goal:** Developer runs `d8 --print-maglev-graphs bench.js` and wants to see how phi untagging transformed a loop.
+Everything else — timeline, diffs, splits, source alignment, dual-run, wrapper
+mode, Turboshaft/disassembly parsers — is post-MVP and sequenced in TODO.md.
 
-1. **Invocation:** Developer runs `d8 --print-maglev-graphs bench.js | garage`.
-2. **Initial View:** `garage` opens with the left sidebar showing all `Function * Tier` compilations.
-3. **Selection:** Developer chooses `compute() [Maglev Comp #1]`.
-4. **Phase Selection:** Developer selects `Phase 4: After Phi untagging`.
-5. **Split View:** Developer presses `v` and selects `Phase 1: After graph building` on the left pane.
-6. **Diffing:** Developer presses `d` to highlight diffs; instantly sees which `Phi` nodes were untagged to `Int32` representations.
-7. **Node Trace:** Developer moves cursor over node `n32` (an untagged Phi). The TUI highlights all inputs to `n32` across loop header blocks.
+## 10. User Journeys
 
----
+### J1: Investigating Maglev optimization passes
+1. `d8 --print-maglev-graphs bench.js | garage`
+2. Select `compute() [Maglev #1]` → `After phi untagging`.
+3. `v` split against `After graph building`, `d` to diff.
+4. Canonicalized diff shows exactly which `Phi` nodes became `Int32`; cursor on
+   `n32` highlights its loop-header inputs.
 
-### Journey 2: Debugging a Sudden Performance Drop (Deopt Analysis)
-> **Goal:** A function `processArray` experienced an eager deoptimization. Developer wants to trace from Deopt back to Maglev IR.
+### J2: Deopt root-cause
+1. `d8 --trace-deopt --trace-opt --print-maglev-graphs app.js | garage`
+2. `Tab` → timeline; red `[DEOPT eager] processArray() @ app.js:88`.
+3. `Enter` shows reason (`wrong map @ bytecode offset 14`); `g` jumps to the
+   corresponding compilation at that offset (via §5.1 correlation keys).
 
-1. **Invocation:** Developer runs `d8 --trace-deopt --trace-opt --print-maglev-graphs app.js | garage`.
-2. **Timeline View:** Developer presses `Tab` to open the Global Timeline View.
-3. **Locating Deopt:** Developer sees a red `[DEOPT EAGER]` event for `processArray() @ app.js:88` at timestamp `42.1ms`.
-4. **Inspecting Deopt:** Developer presses `Enter` on the Deopt event. `garage` displays the deopt reason: `wrong map / eager deopt at bytecode offset 14`.
-5. **Jumping to IR:** Developer presses `g` ("Go to Graph"). `garage` jumps directly to `processArray() [Maglev Comp #1]` -> `Code Generation` at the exact instruction corresponding to bytecode offset 14.
+### J3: Live iteration
+1. `garage -- d8 --print-maglev-graphs --trace-deopt test.js`
+2. Sidebar populates as compilations finish; `:deopts` confirms whether the run
+   deopted; `r` (roadmap) edits flags and re-runs without leaving the TUI.
 
----
+### J4: Dual-run CL verification
+1. `garage baseline.trace patched.trace`
+2. Telemetry header compares counts; `:checks` on both sides shows `CheckMaps`
+   dropping 14 → 3 in the patched run, with per-function drill-down.
 
-### Journey 3: Streamed Live Iteration
-> **Goal:** Developer is tweaking a JS benchmark and wants live trace feedback as `d8` executes.
+### J5 (new): Parser breaks on a new V8 version
+1. Tip-of-tree renames a Maglev phase banner.
+2. `garage` still opens the trace; the affected compilation shows an `[unparsed]`
+   badge and its content is available as a raw, searchable section.
+3. User keeps working, then either edits the marker TOML or files an issue with
+   the offending fixture attached. Nothing is ever silently dropped.
 
-1. **Invocation:** Developer runs `garage -- d8 --print-maglev-graphs --trace-deopt test.js`.
-2. **Streaming:** As `d8` executes, `garage` populates the sidebar live with `Function * Tier` entries as compilations finish.
-3. **Live Filter:** Developer types `:deopt` to quickly verify if any deoptimizations occurred during the run.
+### J6 (new): 1.5 GB fuzzer trace
+1. `garage huge.trace` opens in seconds: sections are indexed, not parsed.
+2. `:function processArray` (or `garage --function processArray huge.trace`)
+   narrows the sidebar to one function's compilations; only viewed phases are
+   parsed.
 
----
+### J7 (new): Remote workstation over SSH
+1. Engineer works on a remote Linux box via SSH + tmux.
+2. Colors degrade correctly, no mouse needed, `:copy` uses OSC 52 so the snippet
+   lands in the *local* clipboard, `:export` writes Markdown pasted into a Gerrit
+   comment.
 
-### Journey 4: Dual-Run Optimization Verification (CL Comparison)
-> **Goal:** Developer wrote a V8 patch to eliminate redundant `CheckMaps` in Maglev and wants to compare baseline vs patched output.
+### J8 (new): Why wasn't this node truncated?
+1. `d8 --print-maglev-graphs --trace-maglev-truncation bench.js | garage`
+2. Diff `After truncation` against the previous phase: `n42` is unexpectedly
+   still tagged.
+3. `e` on `n42`: the biography panel shows the truncation trace line —
+   "skipped: input n17 not truncatable" — attached to exactly that phase
+   transition. `Enter` jumps to `n17` to continue the investigation.
 
-1. **Invocation:** Developer runs `garage baseline.trace patched.trace`.
-2. **Side-by-Side Comparison:** `garage` loads both trace files in a split view.
-3. **Command Filtering:** Developer types `:checks` on both sides.
-4. **Verification:** `garage` highlights that `CheckMaps` count dropped from 14 to 3 in `patched.trace`.
+## 11. Technology & Implementation Notes
 
----
+- **Rust + `ratatui` + `crossterm`.** Right choice: single static binary,
+  ecosystem standard, fast.
+- **Concurrency:** a reader/parser thread feeding the UI via channels is
+  sufficient; adopt `tokio` only if wrapper-mode process management genuinely
+  needs it. Don't cargo-cult the async runtime.
+- **Rendering:** event-driven redraw (on input / new data / resize), not a fixed
+  60 fps tick loop burning CPU in an idle terminal.
+- **Memory:** index + lazy parse (§3.3); intern opcode/register strings; drop the
+  v1 plan's unsubstantiated "gigabytes per second" claim and instead set a
+  measurable target: open 500 MB in < 2 s, cursor latency < 16 ms.
+- **Dependencies (MVP):** `ratatui`, `crossterm`, `clap`, `regex`, `memmap2`,
+  `anyhow`/`thiserror`, `similar` (later), `arboard` (later, with OSC 52 first).
+  Add the rest when a phase actually needs them.
 
-## 8. Future Roadmap
+## 12. Success Criteria
 
-### 8.1. Near-Term Future (Soon)
-- **IR Node Lineage & Ancestry Tree (`L`):**
-  - Turboshaft compilation graphs undergo 10–20 transformation passes (e.g. *BuildGraphPhase -> TypeInferencePhase -> MachineOptimizationPhase -> MachineLoweringPhase*).
-  - Pressing `L` on any node in Phase N renders a complete **Origin Lineage Tree** tracing node creation backward:
-    ```
-    Phase 15 (MachineLowering):     n105 [Int32Add]
-     └── Phase 8 (TypeInference):   n88  [TruncateFloat64ToInt32]
-          └── Phase 1 (BuildGraph): n12  [LoadField]
-               └── Bytecode Offset 18: Ldar a0 @ bench.js:24
-    ```
-  - Allows single-keypress navigation backward and forward through a node's historical transformations across phases.
-- **Deopt Guard Node 1-Click Jump (`g`):**
-  - When inspecting a Deopt event in the Timeline View (`Tab`), pressing `g` jumps directly to the exact failing IR Guard Node (`CheckMaps`, `DeoptimizeIf`) in Maglev or Turboshaft.
-  - Automatically displays the expected vs received Map ID mismatch (`Map 0x123...` vs `Map 0x567...`) and cross-highlights the JS source line that mutated the object shape.
-- **Representation Transition Visualizer (`T`):**
-  - Visualizes number representation unboxing and boxing (`Tagged -> Int32`, `Float64 -> Tagged`) across compiler passes.
-  - Automatically highlights **Boxing Ping-Pong** performance traps where a value is repeatedly boxed onto the heap and unboxed inside a loop block.
-- **Register Pressure Heatmap Bar (`R`):**
-  - Renders a color-coded Register Pressure Heatmap (level 1–10) next to basic blocks in Maglev disassembly/regalloc output.
-  - High-activity blocks are highlighted in red/orange, allowing developers to filter for `Spill` and `Reload` gap moves instantly.
-- **Inline Cache (IC) State Machine Visualizer:**
-  - Interactive progression timeline for property access IC slots:
-    ```
-    [Property: .x @ script.js:14]
-    Uninitialized ──► Monomorphic (Map A) ──► Polymorphic ({Map A, Map B}) ──► Megamorphic
-        (0.1ms)             (1.4ms)                    (5.2ms)                   (12.0ms)
-    ```
-- **Turboshaft Reducer Delta Inspector:**
-  - Highlights which specific Turboshaft Reducer (e.g. `CopyEliminationReducer`, `ValueNumberingReducer`, `MemoryLoweringReducer`) inserted, modified, or deleted a node within a phase.
+1. Author and ≥2 colleagues use it daily instead of `less` within a month of MVP.
+2. Opens a 500 MB trace in under 2 seconds; UI stays responsive while streaming.
+3. A V8 format change never crashes or blanks a session — worst case is a raw
+   section with an `[unparsed]` badge.
 
-### 8.2. Medium-Term Future
-- **Scriptable Filters & Custom Checks (`garage --check`):**
-  - Allows developers to pass custom JS/Lua rule scripts (e.g. `garage app.trace --check "find_nodes('CheckMaps').inside_loop()"`) to automatically audit trace files for performance anti-patterns.
-- **Terminal ASCII Graph Minimap & Search Radar Bar:**
-  - High-density Braille/ASCII minimap strip rendered on the right border of the terminal viewport for 1,000+ line graph dumps.
-  - Displays color-coded indicators for loop headers (blue), deopts (red), and active search match hits (yellow).
-- **Bookmarks, Sticky Notes & Markdown Export (`m` / `c`):**
-  - Bookmark nodes (`ma`), jump back (`'a`), add inline sticky notes (`c`), and export annotated sessions to formatted Markdown (`:export report.md`) for Buganizer tickets (`b/...`) or Gerrit CL comments.
-- **`v8.log` (`--log-**`) Support:**
-  - Ingest binary/csv profiler tick logs and event streams (`--log-all`, `--log-code`, `--prof`) to visualize tick samples and IC state changes alongside graph dumps.
-- **Turbolizer `.json` File Import:**
-  - Parse and render JSON graph files exported by `--trace-turbo` directly in terminal mode.
+## 13. Roadmap
 
-### 8.3. Far-Term Future
-- **Escape Analysis & Virtual Object Panel (`E`):**
-  - Displays escape analysis status for all heap allocations in a function:
-    - 🟢 **Scalar Replaced:** Allocations eliminated; fields kept in registers/stack.
-    - 🟡 **Materialized on Deopt:** Stays virtual unless an eager deopt occurs.
-    - 🔴 **Escaped:** Object allocated on heap (escaped scope or un-inlined call).
-- **Isolate & Multi-Thread Selector (`W`):**
-  - Un-tangles interleaved multi-threaded logs (Web Workers, main thread, background concurrent compiler threads) by filtering trace items by Isolate pointer (`0x5555...`) or Thread ID.
-- **Node Motion & LICM Hoisting Tracer (`M`):**
-  - Select a node in Phase N and trace where it originated, highlighting nodes moved across basic block boundaries during Loop Invariant Code Motion (e.g., *Node n18 moved from b2 [Loop Body] to b1 [Pre-Header] in Phase 3*).
-- **Graph Projection Modes (`P`):**
-  - Toggle graph viewport density:
-    - **Raw IR:** Full V8 output.
-    - **Simplified IR:** Hides constant loads (`Int32Constant`) and parameter definitions.
-    - **Dataflow-Only:** Hides control nodes (`Goto`, `Branch`, `Merge`) to focus on calculation flow.
-- **Interactive `d8` Flag Switcher & Live Re-runner (`r`):**
-  - When running in wrapper mode (`garage -- d8 script.js`), press `r` to open an in-TUI flag prompt, edit flags (e.g. `--no-maglev`), and re-run `d8` live without quitting to bash.
+### Near-term (post-MVP)
+- Timeline view + deopt→graph jump (needs correlation-key design, §5.1).
+- Split panes + canonicalizing phase diff (§7.4).
+- Turboshaft/Turbolev text parser; disassembly parser.
+- Inlining tree (`I`).
+- Node lineage/ancestry across phases (`L`) — scope after the diff canonicalizer
+  exists; needs origin info in the printed output (or Turbolizer JSON).
+
+### Medium-term
+- Dual-run diffing; wrapper/live mode with flag editing + re-run (`r`).
+- Icebox ideas as appetite allows: annotation channels + node biography (`e`),
+  loop lens, flip-flop detector, watch mode, non-interactive `stats`/`grep`/
+  `diff` (§7.11–§7.15).
+- JS source / bytecode alignment (`S`).
+- Deopt frame unwinding panel; representation-transition ("boxing ping-pong")
+  visualizer *[needs data audit]*.
+- Turbolizer JSON import as an optional supplemental source.
+- Bookmarks, notes, Markdown session export.
+
+### Far-term
+- IC state visualizer, register pressure heatmap *[both need extra data in the
+  trace output — small printer-side additions in V8]*.
+- Escape-analysis panel; isolate/thread selector UI; scriptable checks
+  (`garage --check '...'`); `v8.log` ingestion; graph projection modes; minimap.
