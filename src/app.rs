@@ -326,11 +326,17 @@ impl App {
 
     /// The sidebar rows for the active source, in display order.
     pub fn rows(&self) -> Vec<Row> {
+        self.rows_in(self.timeline)
+    }
+
+    /// The row list of either sidebar mode — parked selections (the other
+    /// mode's, the split's inactive pane's) re-locate through this.
+    fn rows_in(&self, timeline: bool) -> Vec<Row> {
         let source = &self.sources[self.active];
         let idx = &source.index;
         let mut rows = Vec::new();
 
-        if self.timeline {
+        if timeline {
             // Timeline mode (TODO 6.3): one row per event, ordinal order —
             // which is stream order, because the indexer records them in one
             // pass.
@@ -500,9 +506,15 @@ impl App {
         let Some(event) = idx.events.get(ev) else {
             return 0..self.sources[self.active].buffer.line_count();
         };
+        // A still-streaming source's open tail is not in the index yet
+        // (`close_all` only runs at the next boundary or EOF), so an event in
+        // the tail has no enclosing section — but it does have every line
+        // indexed so far, and capping at the event line itself would shrink
+        // the 6.5 panel to one line exactly when the user is watching a live
+        // deopt (found in review).
         let section = self
             .enclosing_section_range(event.line)
-            .unwrap_or(event.line..event.line + 1);
+            .unwrap_or_else(|| event.line..idx.lines_indexed().max(event.line + 1));
 
         if matches!(event.kind, EventKind::DeoptBegin { .. }) {
             let end = idx.events[ev + 1..]
@@ -875,7 +887,14 @@ impl App {
                                 .zip(name.chars())
                                 .take_while(|(a, b)| a == b)
                                 .count();
-                            prefix.truncate(common);
+                            // Truncate at a char boundary, not a char count:
+                            // the command table is ASCII today, but truncate()
+                            // takes bytes and would panic the day it isn't.
+                            let bytes = prefix
+                                .char_indices()
+                                .nth(common)
+                                .map_or(prefix.len(), |(b, _)| b);
+                            prefix.truncate(bytes);
                         }
                         input.buffer = prefix;
                     }
@@ -1213,7 +1232,25 @@ impl App {
             "timeline" => self.toggle_timeline(),
             "clear" => {
                 self.lens = None;
-                self.timeline_deopts_only = false;
+                if self.timeline_deopts_only {
+                    // Widening the timeline shifts every row; keep the same
+                    // *event* selected, not the same row index (found in
+                    // review).
+                    let kept = match self.rows().get(self.selected) {
+                        Some(Row::Event(i)) => Some(*i),
+                        _ => None,
+                    };
+                    self.timeline_deopts_only = false;
+                    if let Some(event) = kept
+                        && let Some(at) = self
+                            .rows()
+                            .iter()
+                            .position(|r| matches!(r, Row::Event(i) if *i == event))
+                    {
+                        self.selected = at;
+                    }
+                    self.reset_view();
+                }
                 self.status = "lens and timeline filter cleared".to_string();
             }
             other => self.status = format!("unknown command :{other} (Tab lists commands)"),
@@ -1274,17 +1311,18 @@ impl App {
         self.timeline_deopts_only = false;
         self.sidebar_scroll = 0;
         self.focus = Pane::Sidebar;
+        // Clamp *before* reset_view: sync_event_cursor bails on an
+        // out-of-range selection, and the clamp coming later left the panel
+        // cursor unsynced (found in review).
+        let n = self.rows().len();
+        self.selected = self.selected.min(n.saturating_sub(1));
         self.reset_view();
         if self.timeline {
-            let n = self.rows().len();
-            self.selected = self.selected.min(n.saturating_sub(1));
             self.status = match n {
                 0 => "timeline — no events (needs --trace-opt / --trace-deopt)".to_string(),
                 n => format!("timeline — {n} events · Enter jumps to the compilation"),
             };
         } else {
-            let n = self.rows().len();
-            self.selected = self.selected.min(n.saturating_sub(1));
             self.status = "compilation list".to_string();
         }
     }
@@ -1293,17 +1331,28 @@ impl App {
     /// docs/correlation-keys.md — `(sfi, tier)` + stream position, never a
     /// guess. Unresolvable events stay timeline entries with a message.
     fn event_jump(&mut self, ev: usize) {
+        /// Which way an event binds to its dump in stream order.
+        enum Bind {
+            /// Deopts: the code being torn down was compiled earlier, and a
+            /// forward guess would be an invented link (rule 2).
+            BackwardOnly,
+            /// Marking / compile-start: these *trigger* the dump, which
+            /// follows them — the indexer's own OSR binding relies on
+            /// exactly that. An earlier instance of the same key is the old,
+            /// possibly dead code (found in review: it used to win).
+            ForwardFirst,
+            /// Compile-done: follows its dump.
+            BackwardFirst,
+        }
+
         let event = self.sources[self.active].index.events[ev].clone();
-        // Deopts bind strictly backwards (the code being torn down was
-        // compiled earlier); marking/compile events may precede their dump,
-        // so they are allowed to bind forwards.
-        let (sfi, tier, offset, forward_ok) = match &event.kind {
+        let (sfi, tier, offset, bind) = match &event.kind {
             EventKind::DeoptBegin {
                 sfi: Some(sfi),
                 tier,
                 bytecode_offset,
                 ..
-            } => (*sfi, tier.clone(), *bytecode_offset, false),
+            } => (*sfi, tier.clone(), *bytecode_offset, Bind::BackwardOnly),
             EventKind::Marking {
                 sfi: Some(sfi),
                 target,
@@ -1313,12 +1362,12 @@ impl App {
                 sfi: Some(sfi),
                 target,
                 ..
-            }
-            | EventKind::CompileDone {
+            } => (*sfi, target.clone(), None, Bind::ForwardFirst),
+            EventKind::CompileDone {
                 sfi: Some(sfi),
                 target,
                 ..
-            } => (*sfi, target.clone(), None, true),
+            } => (*sfi, target.clone(), None, Bind::BackwardFirst),
             _ => {
                 self.status =
                     "this event has no SFI to correlate on — timeline entry only".to_string();
@@ -1330,31 +1379,60 @@ impl App {
         let matching = |c: &crate::model::CompilationSection| {
             c.key.sfi == sfi && c.key.tier == tier && !c.filtered_out
         };
-        // Most recent instance opened before the event line (rule 2).
-        let mut found = comps
-            .iter()
-            .enumerate()
-            .filter(|(_, c)| matching(c) && c.lines.start < event.line)
-            .map(|(i, _)| i)
-            .next_back();
-        if found.is_none() && forward_ok {
-            found = comps
+        // Most recent matching instance opened before the event line…
+        let backward = || {
+            comps
+                .iter()
+                .enumerate()
+                .filter(|(_, c)| matching(c) && c.lines.start < event.line)
+                .map(|(i, _)| i)
+                .next_back()
+        };
+        // …or the first one after it.
+        let forward = || {
+            comps
                 .iter()
                 .enumerate()
                 .filter(|(_, c)| matching(c) && c.lines.start >= event.line)
                 .map(|(i, _)| i)
-                .next();
-        }
+                .next()
+        };
+        let found = match bind {
+            Bind::BackwardOnly => backward(),
+            Bind::ForwardFirst => forward().or_else(backward),
+            Bind::BackwardFirst => backward().or_else(forward),
+        };
         let Some(comp) = found else {
-            self.status = format!(
-                "unresolved: no {} graph for sfi {sfi} in this trace — timeline entry only",
-                tier.label()
-            );
+            // Distinguish "not in the trace" from "hidden by --function":
+            // claiming absence when the dump is right there would be a lie.
+            let hidden = comps
+                .iter()
+                .any(|c| c.key.sfi == sfi && c.key.tier == tier && c.filtered_out);
+            self.status = if hidden {
+                format!(
+                    "the {} graph for sfi {sfi} is hidden by --function — timeline entry only",
+                    tier.label()
+                )
+            } else {
+                format!(
+                    "unresolved: no {} graph for sfi {sfi} in this trace — timeline entry only",
+                    tier.label()
+                )
+            };
             return;
         };
 
         self.push_history();
         self.open_compilation(comp);
+        {
+            let c = &self.sources[self.active].index.compilations[comp];
+            self.status = format!(
+                "jumped to {} · {} #{}",
+                c.display_name(),
+                c.key.tier.label(),
+                c.key.ordinal
+            );
+        }
         if let Some(offset) = offset {
             self.jump_to_bytecode_offset(comp, offset);
         }
@@ -1963,9 +2041,14 @@ impl App {
         }
         let jump = self.jumps[self.jump_at];
         // Restore the sidebar mode the entry was recorded in; the stored
-        // selection is only meaningful in that mode.
-        self.timeline = jump.timeline;
-        self.selected = jump.selected;
+        // selection is only meaningful in that mode. Park the selection
+        // being left, or the next Tab would interpret this mode's row index
+        // against the other mode's list (found in review).
+        if jump.timeline != self.timeline {
+            self.timeline_selected = self.selected;
+            self.timeline = jump.timeline;
+        }
+        self.selected = jump.selected.min(self.rows().len().saturating_sub(1));
         self.goto_line(jump.line);
         self.follow = false;
         self.cycle = None;
@@ -2129,10 +2212,22 @@ impl App {
             tracing::error!(index, "event for an unknown source");
             return;
         }
-        // Captured before ingest mutates the index, so the selection can be
-        // re-located by identity afterwards.
+        // Captured before ingest mutates the index, so the selections can be
+        // re-located by identity afterwards. The parked ones — the other
+        // sidebar mode's selection and the split's inactive pane — shift with
+        // the row list exactly like the live one (found in review).
         let prev_row = (index == self.active)
             .then(|| self.rows().get(self.selected).cloned())
+            .flatten();
+        let prev_parked = (index == self.active)
+            .then(|| {
+                self.rows_in(!self.timeline)
+                    .get(self.timeline_selected)
+                    .cloned()
+            })
+            .flatten();
+        let prev_pane = (index == self.active && self.split.is_some())
+            .then(|| self.rows().get(self.other_view.selected).cloned())
             .flatten();
         let target = &mut self.sources[index];
 
@@ -2171,6 +2266,23 @@ impl App {
                 }
             }
             self.selected = self.selected.min(rows.len().saturating_sub(1));
+
+            let other_rows = self.rows_in(!self.timeline);
+            if let Some(prev) = prev_parked
+                && let Some(at) = other_rows.iter().position(|r| same_row(r, &prev))
+            {
+                self.timeline_selected = at;
+            }
+            self.timeline_selected = self
+                .timeline_selected
+                .min(other_rows.len().saturating_sub(1));
+
+            if let Some(prev) = prev_pane
+                && let Some(at) = rows.iter().position(|r| same_row(r, &prev))
+            {
+                self.other_view.selected = at;
+            }
+            self.other_view.selected = self.other_view.selected.min(rows.len().saturating_sub(1));
             if self.follow && !self.grouped && !self.timeline {
                 // Streaming, chronological: the last row is the newest
                 // section (the merge is ordered by start line). The cursor
@@ -2855,14 +2967,90 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
 
     #[test]
     fn marking_event_jump_binds_forward_to_the_dump() {
+        // An *earlier* instance of the same (sfi, tier) exists — the stale
+        // code the marking event is about to replace. The jump must land on
+        // the dump the event triggers, not the dead one (review finding: the
+        // backward search used to win whenever an earlier instance existed).
+        let trace = "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+   1: Old
+[marking 0x09b8 <JSFunction f (sfi = 0x10)> for optimization to MAGLEV, ConcurrencyMode::kConcurrent, reason: hot and stable]
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+   1: New
+";
+        let mut app = app_with(trace);
+        app.follow = false;
+        key(&mut app, KeyCode::Tab);
+        assert_eq!(app.rows(), vec![Row::Event(0)]);
+        key(&mut app, KeyCode::Enter);
+        assert!(!app.timeline);
+        assert_eq!(
+            app.rows()[app.selected],
+            Row::Compilation(1),
+            "the dump the marking produced, not the stale instance"
+        );
+
+        // A deopt of the same key binds strictly backwards.
         let mut app = app_with(EVENTS_TRACE);
         app.follow = false;
         key(&mut app, KeyCode::Tab);
-        // Row 0 is the marking event at line 0, before the compilation.
+        key(&mut app, KeyCode::Char('j'));
         key(&mut app, KeyCode::Enter);
+        assert_eq!(app.rows()[app.selected], Row::Compilation(0));
+    }
+
+    #[test]
+    fn deopt_panel_has_its_full_extent_while_streaming() {
+        // No Eof: the tail raw section is not in the index yet, which used
+        // to shrink the panel to the single bailout line (review finding).
+        let sources = vec![LogSource::Stdin];
+        let keys = Keymap::build(&std::collections::HashMap::new()).unwrap();
+        let mut app = App::new(&sources, None, keys);
+        app.handle(Event::Source(SourceEvent::Chunk {
+            source: 0,
+            bytes: EVENTS_TRACE.as_bytes().to_vec(),
+        }));
+        app.follow = false;
+
+        key(&mut app, KeyCode::Tab);
+        key(&mut app, KeyCode::Char('j'));
+        assert_eq!(app.rows()[app.selected], Row::Event(1));
+        let vm = app.view_model();
+        match &vm {
+            ViewModel::Plain { range } => {
+                assert_eq!(
+                    range.clone(),
+                    6..11,
+                    "full bailout block, live tail included"
+                );
+            }
+            _ => panic!("event views are plain"),
+        }
+    }
+
+    #[test]
+    fn history_round_trip_preserves_the_left_mode_selection() {
+        let mut app = app_with(EVENTS_TRACE);
+        app.follow = false;
+        // Leave the compilation list parked on the compilation row.
+        app.selected = 1;
+        key(&mut app, KeyCode::Tab);
+        key(&mut app, KeyCode::Char('j'));
+        key(&mut app, KeyCode::Enter); // deopt jump into the compilation
+        ctrl(&mut app, 'o'); // back onto the event row
+        assert!(app.timeline);
+        assert_eq!(app.rows()[app.selected], Row::Event(1));
+        // Tab must return to a *compilation-list* selection, not interpret
+        // an event index against it (review finding: the parked selection
+        // was clobbered by the history restore).
+        key(&mut app, KeyCode::Tab);
         assert!(!app.timeline);
-        let rows = app.rows();
-        assert_eq!(rows[app.selected], Row::Compilation(0));
+        assert!(
+            matches!(app.rows()[app.selected], Row::Compilation(_)),
+            "left the timeline onto a compilation row"
+        );
     }
 
     /// Two graph phases with a replacement, an addition, and a deletion —

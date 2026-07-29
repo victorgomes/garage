@@ -400,6 +400,21 @@ impl Keymap {
         self.bindings.get(&Chord::from_event(key)).copied()
     }
 
+    /// One displayable chord for an action, for inline hints ("[1/2 …]").
+    /// Hints must come from the live keymap: a hard-coded key name goes
+    /// stale the moment the action is rebound (found in review — the
+    /// telemetry bar still said Tab after Tab became the timeline).
+    pub fn chord_hint(&self, action: Action) -> Option<String> {
+        let mut chords: Vec<String> = self
+            .bindings
+            .iter()
+            .filter(|(_, a)| **a == action)
+            .map(|(c, _)| c.display())
+            .collect();
+        chords.sort();
+        chords.into_iter().next()
+    }
+
     /// `(chords, action)` pairs for the help modal, in the stable order of
     /// [`Keymap::defaults`].
     pub fn help_rows(&self) -> Vec<(String, Action)> {

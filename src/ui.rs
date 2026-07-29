@@ -209,8 +209,12 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
     spans.push(Span::raw(stats));
 
     if app.sources.len() > 1 {
+        let hint = app
+            .keys
+            .chord_hint(crate::config::Action::NextSource)
+            .unwrap_or_default();
         spans.push(Span::styled(
-            format!("  [{}/{} Tab]", app.active + 1, app.sources.len()),
+            format!("  [{}/{} {hint}]", app.active + 1, app.sources.len()),
             Style::new().fg(DIM),
         ));
     }

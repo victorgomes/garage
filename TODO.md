@@ -433,6 +433,30 @@ the golden mask covers `[pid:isolate]` prefixes.
 
 ---
 
+### Phase 6 review pass  ✅ resolved
+
+An independent review of the Phase 6 commit (instructed to verify every
+finding by executing probes against the code and the fixture corpus)
+surfaced 11 findings (0 critical / 3 major / 8 minor); all fixed. The
+majors: the 6.5 deopt panel collapsed to one line on a *live* stream
+(the open tail raw section is not in the index until the next boundary,
+so the bailout-end search had no room — now falls back to
+`lines_indexed()`); marking/compile-start events bound *backwards* to a
+stale instance instead of forwards to the dump they trigger (binding
+direction is now per event kind: deopts backward-only, marking/start
+forward-first, done backward-first); and a history round-trip through a
+deopt jump clobbered the parked selection, so the next Tab interpreted
+an event index against the compilation list (history now parks the
+selection it leaves and clamps). Minors: parked selections (other mode,
+inactive split pane) now re-locate by identity on stream growth; the
+telemetry source hint reads the live keymap instead of a hard-coded
+"Tab"; event jumps always report where they landed; `--function`-hidden
+targets say "hidden", not "absent"; `:clear` keeps the same event
+selected as the timeline widens; timeline toggling clamps before the
+event-cursor sync; palette completion truncates at char boundaries; and
+the tests that were too weak to catch any of this were rewritten to
+pin the fixed behavior.
+
 ## Phase 7 (post-MVP): Splits & Diff Engine  ✅ done
 
 - [x] **7.1. Pane manager**: `v`/`s` splits (same key closes, other key flips

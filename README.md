@@ -176,7 +176,7 @@ error message — the alternate screen only opens once the config is valid.
 ## CLI
 
 ```
-garage [FILE...]              files (mmapped; several files = Tab to switch)
+garage [FILE...]              files (mmapped; several files = ] to switch)
 d8 ... | garage               piped stdin; keyboard input still works
 garage --function '^process'  index-time prefilter on function names
 garage --debug                write diagnostics to garage.log (--log-file)
