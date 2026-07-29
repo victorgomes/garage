@@ -1,0 +1,2566 @@
+V8 is running with developer-only features enabled. Stability and security will suffer.
+---------------------------------------------------
+Begin compiling method read using Maglev
+Compiling 0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)> with Maglev
+----- Bytecode array -----
+Parameter count 2
+Register count 0
+Frame size 0
+  269 S> 0x31a010001dc @    0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+  271 E> 0x31a010001e0 @    4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+  275 S> 0x31a010001e3 @    7 : b9                Return
+Constant pool (size = 1)
+0x31a010001a9: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 1
+           0: 0x09b8000034f5 <String[1]: #x>
+Handler Table (size = 0)
+Source Position Table (size = 9)
+0x031a010001e5 <Other heap object (TRUSTED_BYTE_ARRAY_TYPE)>
+0x9b80101e539: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 2
+ - shared function info: 0x09b80101e32d <SharedFunctionInfo read>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 503
+ - closure feedback cell array: 0x9b800002091: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 LoadProperty MONOMORPHIC
+   [weak] 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 3, descriptor index = 0) {
+     [0]: [weak] 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>
+     [1]: 131269
+  }
+
+----- Maglev graph building -----
+Graph
+
+[0m  [0m12: HeapConstant(0x09b80101e401 <FeedbackCell[one closure]>), 1 uses
+[0m   [0m3: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>), 2 uses
+[0m   [0m4: HeapConstant(0x09b80101e421 <ScriptContext[3]>), 2 uses
+[0m   [0m5: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 4 uses
+[0m   [0m6: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (3 live vars)
+[0m   [0m7: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:11)
+[m[0m      ↱ eager @0 (3 live vars)
+[0m   [0m8: CheckMaps(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, check heapobj) [n2]
+[0m   [0m9: LoadTaggedField(0xc: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [n2], 1 uses
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0m  [0m10: UnsafeSmiUntag [n9], 1 uses, cannot truncate to int32
+[0m      ↱ eager @0 (3 live vars)
+[0m  [0m11: Int32IncrementWithOverflow [n10], 1 uses, cannot truncate to int32
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:17)
+[m[0m[0;34m   7 : b9                Return
+[m[0m  [0m13: ReduceInterruptBudgetForReturn(7) [n12]
+[0m  [0m14: Int32ToNumber[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m15: Return [n14]
+[0m
+
+----- Phi untagging -----
+Graph
+
+[0m  [0m12: HeapConstant(0x09b80101e401 <FeedbackCell[one closure]>), 1 uses
+[0m   [0m3: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>), 2 uses
+[0m   [0m4: HeapConstant(0x09b80101e421 <ScriptContext[3]>), 2 uses
+[0m   [0m5: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 4 uses
+[0m   [0m6: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (3 live vars)
+[0m   [0m7: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:11)
+[m[0m      ↱ eager @0 (3 live vars)
+[0m   [0m8: CheckMaps(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, check heapobj) [n2]
+[0m   [0m9: LoadTaggedField(0xc: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [n2], 1 uses
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0m  [0m10: UnsafeSmiUntag [n9], 1 uses, cannot truncate to int32
+[0m      ↱ eager @0 (3 live vars)
+[0m  [0m11: Int32IncrementWithOverflow [n10], 1 uses, cannot truncate to int32
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:17)
+[m[0m[0;34m   7 : b9                Return
+[m[0m  [0m13: ReduceInterruptBudgetForReturn(7) [n12]
+[0m  [0m14: Int32ToNumber[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m15: Return [n14]
+[0m
+
+----- AnyUseMarking -----
+Graph
+
+[0m  [0m12: HeapConstant(0x09b80101e401 <FeedbackCell[one closure]>) → (x)
+[0m   [0m3: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → (x)
+[0m   [0m4: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → (x)
+ [0mBlock b0
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0m   [0m1: InitialValue(<this>) → (x)
+[0m   [0m2: InitialValue(a0) → (x)
+[0m   [0m6: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (3 live vars)
+[0m   [0m7: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:11)
+[m[0m      ↱ eager @0 (3 live vars)
+[0m   [0m8: CheckMaps(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, check heapobj) [v0/n2:(x)]
+[0m   [0m9: LoadTaggedField(0xc: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [v0/n2:(x)] → (x)
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0m  [0m10: UnsafeSmiUntag [v0/n9:(x)] → (x)
+[0m      ↱ eager @0 (3 live vars)
+[0m  [0m11: Int32IncrementWithOverflow [v0/n10:(x)] → (x)
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:17)
+[m[0m[0;34m   7 : b9                Return
+[m[0m  [0m13: ReduceInterruptBudgetForReturn(7) [v0/n12:(x)]
+[0m  [0m14: Int32ToNumber[kCanonicalizeSmi] [v0/n11:(x)] → (x)
+[0m  [0m15: Return [v0/n14:(x)]
+[0m
+
+----- Dead nodes sweeping -----
+Graph
+
+[0m   [0m1/12: HeapConstant(0x09b80101e401 <FeedbackCell[one closure]>) → v-1, live range: [1-12]
+[0m    [0m2/3: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → v-1, live range: [2-11]
+[0m    [0m3/4: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → v-1, live range: [3-11]
+ [0mBlock b0
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0m    [0m4/1: InitialValue(<this>) → v-1(=-6S), live range: [4-11]
+[0m    [0m5/2: InitialValue(a0) → v-1(=-7S), live range: [5-11]
+[0m    [0m6/6: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (3 live vars)
+[0m    [0m7/7: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:11)
+[m[0m         ↱ eager @0 (3 live vars)
+[0m    [0m8/8: CheckMaps(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, check heapobj) [v5/n2:v-1(R)]
+[0m    [0m9/9: LoadTaggedField(0xc: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [v5/n2:v-1(R)] → v-1(R), live range: [9-10]
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0m  [0m10/10: UnsafeSmiUntag [v9/n9:v-1(R)] → v-1(0), live range: [10-11]
+[0m         ↱ eager @0 (3 live vars)
+[0m  [0m11/11: Int32IncrementWithOverflow [v10/n10:v-1(R)] → v-1(R), live range: [11-13]
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:17)
+[m[0m[0;34m   7 : b9                Return
+[m[0m  [0m12/13: ReduceInterruptBudgetForReturn(7) [v1/n12:v-1(R)]
+[0m  [0m13/14: Int32ToNumber[kCanonicalizeSmi] [v11/n11:v-1(R)] → v-1(R), live range: [13-14]
+[0m  [0m14/15: Return [v13/n14:v-1(=x0)]
+[0m
+
+----- Register allocation -----
+Graph
+
+[0m   [0m1/12: HeapConstant(0x09b80101e401 <FeedbackCell[one closure]>) → v-1, live range: [1-12]
+[0m    [0m2/3: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → v-1, live range: [2-11]
+[0m    [0m3/4: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → v-1, live range: [3-11]
+ [0mBlock b0
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0m    [0m4/1: InitialValue(<this>) → [stack:-6|t], live range: [4-11]
+[0m    [0m5/2: InitialValue(a0) → [stack:-7|t], live range: [5-11]
+[0m    [0m6/6: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (3 live vars)
+[0m    [0m7/7: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m     [0m16: GapMove([stack:-7|t] → [x0|R|t])
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:11)
+[m[0m         ↱ eager @0 (3 live vars)
+[0m    [0m8/8: CheckMaps(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, check heapobj) [v5/n2:[x0|R|t]]
+[0m    [0m9/9: LoadTaggedField(0xc: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [v5/n2:[x0|R|t]] → [x1|R|t], live range: [9-10]
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0m  [0m10/10: UnsafeSmiUntag [v9/n9:[x1|R|t]] → [x1|R|w32], live range: [10-11]
+[0m         ↱ eager @0 (3 live vars)
+[0m  [0m11/11: Int32IncrementWithOverflow [v10/n10:[x1|R|w32]] → [x2|R|w32], live range: [11-13]
+[0m     [0m17: ConstantGapMove(n12 → [x0|R|t])
+[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80104a3e5 <String[24]: "workloads/deopt-eager.js">:4:17)
+[m[0m[0;34m   7 : b9                Return
+[m[0m  [0m12/13: ReduceInterruptBudgetForReturn(7) [v1/n12:[x0|R|t]]
+[0m  [0m13/14: Int32ToNumber[kCanonicalizeSmi] [v11/n11:[x2|R|w32]] → [x0|R|t], live range: [13-14]
+[0m  [0m14/15: Return [v13/n14:[x0|R|t]]
+[0m
+---------------------------------------------------
+Finished compiling method read using Maglev
+---------------------------------------------------
+Begin compiling method  using Maglev
+Compiling 0x09b80101e3e1 <JSFunction (sfi = 0x9b80101e2c5)> with Maglev
+----- Bytecode array -----
+Parameter count 1
+Register count 6
+Frame size 48
+         0x31a010000d0 @    0 : 13 00             LdaConstant [0:0x09b80101e31d <FixedArray[2]>]
+         0x31a010000d2 @    2 : d2                Star3
+         0x31a010000d3 @    3 : 1b fe f5          Mov <closure>, r4
+    0 E> 0x31a010000d6 @    6 : 70 77 01 f6 02    CallRuntime [DeclareGlobals], r3-r4
+  290 S> 0x31a010000db @   11 : 0c                LdaZero
+  290 E> 0x31a010000dc @   12 : 29 02             StaCurrentContextSlot [2]
+  306 S> 0x31a010000de @   14 : 0c                LdaZero
+         0x31a010000df @   15 : d3                Star2
+  311 S> 0x31a010000e0 @   16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+  311 E> 0x31a010000e6 @   22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+         0x31a010000e9 @   25 : a8 26             JumpIfFalse [38] (0x31a0100010f @ 63)
+  330 S> 0x31a010000eb @   27 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000ed @   29 : d2                Star3
+         0x31a010000ee @   30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+         0x31a010000f1 @   33 : d1                Star4
+         0x31a010000f2 @   34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+         0x31a010000f6 @   38 : d0                Star5
+         0x31a010000f7 @   39 : 0b f7             Ldar r2
+  347 E> 0x31a010000f9 @   41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+  338 E> 0x31a010000fd @   45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+         0x31a01000101 @   49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+  335 E> 0x31a01000104 @   52 : 29 02             StaCurrentContextSlot [2]
+  322 S> 0x31a01000106 @   54 : 0b f7             Ldar r2
+         0x31a01000108 @   56 : 5b 07             Inc FBV[7]
+         0x31a0100010a @   58 : d3                Star2
+  293 E> 0x31a0100010b @   59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8] (0x31a010000e0 @ 16)
+  414 S> 0x31a0100010f @   63 : 18 02             LdaCurrentContextSlot [2]
+         0x31a01000111 @   65 : d2                Star3
+         0x31a01000112 @   66 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+         0x31a01000115 @   69 : d1                Star4
+         0x31a01000116 @   70 : 89 04 0a 29       CreateObjectLiteral [4:0x09b80101e375 <ObjectBoilerplateDescription[4]>], FBV[10], #29
+         0x31a0100011a @   74 : d0                Star5
+  422 E> 0x31a0100011b @   75 : 6d f5 f4 0b       CallUndefinedReceiver1 r4, r5, FBV[11]
+         0x31a0100011f @   79 : 42 f6 00          Add r3, EmbeddedFeedback[0]
+  419 E> 0x31a01000122 @   82 : 29 02             StaCurrentContextSlot [2]
+  599 S> 0x31a01000124 @   84 : 0c                LdaZero
+         0x31a01000125 @   85 : d4                Star1
+  604 S> 0x31a01000126 @   86 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+  604 E> 0x31a0100012c @   92 : 79 f8 00          TestLessThan r1, EmbeddedFeedback[0]
+         0x31a0100012f @   95 : a8 26             JumpIfFalse [38] (0x31a01000155 @ 133)
+  623 S> 0x31a01000131 @   97 : 18 02             LdaCurrentContextSlot [2]
+         0x31a01000133 @   99 : d2                Star3
+         0x31a01000134 @  100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+         0x31a01000137 @  103 : d1                Star4
+         0x31a01000138 @  104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+         0x31a0100013c @  108 : d0                Star5
+         0x31a0100013d @  109 : 0b f8             Ldar r1
+  646 E> 0x31a0100013f @  111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+  631 E> 0x31a01000143 @  115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+         0x31a01000147 @  119 : 42 f6 00          Add r3, EmbeddedFeedback[0]
+  628 E> 0x31a0100014a @  122 : 29 02             StaCurrentContextSlot [2]
+  615 S> 0x31a0100014c @  124 : 0b f8             Ldar r1
+         0x31a0100014e @  126 : 5b 12             Inc FBV[18]
+         0x31a01000150 @  128 : d4                Star1
+  586 E> 0x31a01000151 @  129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19] (0x31a01000126 @ 86)
+  653 S> 0x31a01000155 @  133 : 23 06 15          LdaGlobal [6:"print"], FBV[21]
+         0x31a01000158 @  136 : d2                Star3
+         0x31a01000159 @  137 : 18 02             LdaCurrentContextSlot [2]
+         0x31a0100015b @  139 : d1                Star4
+  653 E> 0x31a0100015c @  140 : 6d f6 f5 17       CallUndefinedReceiver1 r3, r4, FBV[23]
+         0x31a01000160 @  144 : d5                Star0
+  666 S> 0x31a01000161 @  145 : b9                Return
+Constant pool (size = 7)
+0x31a01000085: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 7
+           0: 0x09b80101e31d <FixedArray[2]>
+           1: 0x09b8000051cd <String[4]: #read>
+           2: 0x09b80101e35d <ObjectBoilerplateDescription[2]>
+           3: 0x09b8000034f5 <String[1]: #x>
+           4: 0x09b80101e375 <ObjectBoilerplateDescription[4]>
+           5: 0x09b80101e395 <ObjectBoilerplateDescription[4]>
+           6: 0x09b801002e31 <String[5]: #print>
+Handler Table (size = 0)
+Source Position Table (size = 60)
+0x031a01000165 <Other heap object (TRUSTED_BYTE_ARRAY_TYPE)>
+0x9b80101e5e5: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 25
+ - shared function info: 0x09b80101e2c5 <SharedFunctionInfo>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1
+ - closure feedback cell array: 0x9b8011409a1: [ClosureFeedbackCellArray]
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 1
+ - elements:
+           0: 0x09b80101e401 <FeedbackCell[one closure]>
+
+ - slot #0 LoadGlobalNotInsideTypeof MONOMORPHIC
+   [weak] 0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>> {
+     [0]: [weak] 0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>
+     [1]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #2 Literal  {
+     [2]: 0x09b80101e665 <AllocationSite>
+  }
+ - slot #3 DefineNamedOwn MONOMORPHIC
+   0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>: StoreHandler(Smi)(kind = kField, descriptor = 0, is in object = 1, representation = s, storage offset in words = 3)
+ {
+     [3]: [weak] 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>
+     [4]: 3342336
+  }
+ - slot #5 Call MONOMORPHIC {
+     [5]: [weak] 0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>
+     [6]: 410064
+  }
+ - slot #7 BinaryOp BinaryOp:SignedSmall {
+     [7]: 1
+  }
+ - slot #8 JumpLoop JumpLoop {
+     [8]: [cleared]
+     [9]: 0
+  }
+ - slot #10 Literal  {
+     [10]: 0
+  }
+ - slot #11 Call UNINITIALIZED {
+     [11]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+     [12]: 0
+  }
+ - slot #13 Literal  {
+     [13]: 0
+  }
+ - slot #14 DefineNamedOwn UNINITIALIZED {
+     [14]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+     [15]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #16 Call UNINITIALIZED {
+     [16]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+     [17]: 0
+  }
+ - slot #18 BinaryOp BinaryOp:None {
+     [18]: 0
+  }
+ - slot #19 JumpLoop JumpLoop {
+     [19]: [cleared]
+     [20]: 0
+  }
+ - slot #21 LoadGlobalNotInsideTypeof UNINITIALIZED {
+     [21]: [cleared]
+     [22]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #23 Call UNINITIALIZED {
+     [23]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+     [24]: 0
+  }
+
+----- Inlining 0x09b80101e32d <SharedFunctionInfo read> with bytecode -----
+Parameter count 2
+Register count 0
+Frame size 0
+  269 S> 0x31a010001dc @    0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+  271 E> 0x31a010001e0 @    4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+  275 S> 0x31a010001e3 @    7 : b9                Return
+Constant pool (size = 1)
+0x31a010001a9: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 1
+           0: 0x09b8000034f5 <String[1]: #x>
+Handler Table (size = 0)
+Source Position Table (size = 9)
+0x031a010001e5 <Other heap object (TRUSTED_BYTE_ARRAY_TYPE)>
+0x9b80101e539: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 2
+ - shared function info: 0x09b80101e32d <SharedFunctionInfo read>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 503
+ - closure feedback cell array: 0x9b800002091: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 LoadProperty MONOMORPHIC
+   [weak] 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 3, descriptor index = 0) {
+     [0]: [weak] 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>
+     [1]: 131269
+  }
+
+----- Inlining 0x09b80101e32d <SharedFunctionInfo read> with bytecode -----
+Parameter count 2
+Register count 0
+Frame size 0
+  269 S> 0x31a010001dc @    0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+  271 E> 0x31a010001e0 @    4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+  275 S> 0x31a010001e3 @    7 : b9                Return
+Constant pool (size = 1)
+0x31a010001a9: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 1
+           0: 0x09b8000034f5 <String[1]: #x>
+Handler Table (size = 0)
+Source Position Table (size = 9)
+0x031a010001e5 <Other heap object (TRUSTED_BYTE_ARRAY_TYPE)>
+0x9b80101e539: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 2
+ - shared function info: 0x09b80101e32d <SharedFunctionInfo read>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 503
+ - closure feedback cell array: 0x9b800002091: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 LoadProperty MONOMORPHIC
+   [weak] 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 3, descriptor index = 0) {
+     [0]: [weak] 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>
+     [1]: 131269
+  }
+
+----- Maglev graph building -----
+Graph
+
+   [0m  [0m44: HeapConstant(0x09b80101e411 <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>), 3 uses
+   [0m  [0m34: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>), 2 uses
+   [0m  [0m35: HeapConstant(0x09b80101e421 <ScriptContext[3]>), 2 uses
+   [0m  [0m22: HeapConstant(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>), 0 uses 🪦
+   [0m  [0m36: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m24: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m18: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m17: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m23: RootConstant(empty_fixed_array), 4 uses
+   [0m  [0m46: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m25: RootConstant(uninitialized_value), 2 uses
+   [0m  [0m12: SmiConstant(100000), 2 uses
+   [0m  [0m14: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 15 uses
+   [0m   [0m2: InitialValue(<context>), 20 uses
+   [0m   [0m3: InitialValue(<closure>), 15 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 0 uses 🪦
+   [0m   [0m6: InitialValue(r2), 9 uses
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: InitialValue(r4), 0 uses 🪦
+   [0m   [0m9: InitialValue(r5), 0 uses 🪦
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @59 (3 live vars)
+   [0m      ↱ eager @59 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:18)
+[m   [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [n6], 3 uses, cannot truncate to int32
+   [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
+   [0m[0;34m  25 : a8 26             JumpIfFalse [38]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:2)
+[m[0;31m│  [0m[0;34m  27 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [n2], 4 uses
+[0;31m│  [0m[0;34m  30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│  [0m  [0m21: LoadTaggedField(0xc, compressed, JSFunction) [n20], 2 uses
+[0;31m│  [0m[0;34m  34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+[m[0;31m│  [0m  [0m26: AllocationBlock(Young), 1 uses
+[0;31m│  [0m  [0m27: InlinedAllocation(object 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) [n26], 7 uses (6 non escaping uses)
+[0;31m│  [0m  [0m28: StoreMap(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, InlinedAllocation) [n27]
+[0;31m│  [0m  [0m29: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [n27, n23]
+[0;31m│  [0m  [0m30: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [n27, n23]
+[0;31m│  [0m  [0m31: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [n27, n25]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:19)
+[m[0;31m│  [0m[0;34m  41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+[m[0;31m│  [0m  [0m32: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034f5 <String[1]: #x>, mutable) [n27, n6]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:10)
+[m[0;31m│  [0m[0;34m  45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+[m[0;31m│  [0m      ↱ eager @45 (6 live vars)
+[0;31m│  [0m  [0m33: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [n21]
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│  [0m  [0m37: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│  [0m      ↱ eager @45 (4 live vars)
+[0;31m│  [0m      │       @4 (4 live vars)
+[0;31m│  [0m  [0m38: Int32IncrementWithOverflow [n13], 4 uses, cannot truncate to int32
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:10)
+[m[0;31m│  [0m[0;34m  49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│  [0m      ↱ eager @49 (5 live vars)
+[0;31m│  [0m  [0m39: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m40: ChangeInt32ToFloat64 [n38], 1 uses
+[0;31m│  [0m  [0m41: Float64Add [n39, n40], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:7)
+[m[0;31m│  [0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m42: Float64ToTagged[kCanonicalizeSmi] [n41], 1 uses
+[0;31m│  [0m  [0m43: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n42]
+[0;31m│  [0m      ↳ lazy @52 (3 live vars)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:0)
+[m[0;31m│  [0m[0;34m  59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8]
+[m[0;31m│  [0m  [0m45: ReduceInterruptBudgetForLoop(34) [n44]
+[0;31m│  [0m      ↳ lazy @59 (3 live vars)
+[0;31m│  [0m  [0m48: Int32ToNumber[kCanonicalizeSmi] [n38], 1 uses
+[0;31m│  [0m  [0m47: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n48 → 49: φᵀ r2
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m49: φᵀ r2 (n48, n72), 8 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m50: CheckedSmiUntag [n49], 3 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m51: Int32Compare[LessThan] [n50, n14], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 26             JumpIfFalse [38]
+[m[0;31m│[0;32m│[0;33m╭──[0m52: BranchIfInt32Compare(LessThan) [n50, n14] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  27 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m53: LoadContextSlot(0x10, mutable) [n2], 4 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m54: LoadTaggedField(0xc, compressed, JSFunction) [n20], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55: AllocationBlock(Young), 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m56: InlinedAllocation(object 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) [n55], 7 uses (6 non escaping uses)
+[0;31m│[0;32m│[0;33m│[0m  [0m57: StoreMap(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, InlinedAllocation) [n56]
+[0;31m│[0;32m│[0;33m│[0m  [0m58: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [n56, n23]
+[0;31m│[0;32m│[0;33m│[0m  [0m59: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [n56, n23]
+[0;31m│[0;32m│[0;33m│[0m  [0m60: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [n56, n25]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034f5 <String[1]: #x>, mutable) [n56, n49]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m62: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [n54]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m63: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @4 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m64: Int32IncrementWithOverflow [n50], 5 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @49 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: CheckedNumberToFloat64 [n53], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m66: ChangeInt32ToFloat64 [n64], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m67: Float64Add [n65, n66], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m68: Float64ToTagged[kCanonicalizeSmi] [n67], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m69: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n68]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @52 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m70: ReduceInterruptBudgetForLoop(34) [n44]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m72: Int32ToNumber[kCanonicalizeSmi] [n64], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @59 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m71: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n72 → 49: φᵀ r2
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:13:0)
+[m[0;31m│  [0m[0;34m  63 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m╭───[0m73: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m74: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m  [0m75: LoadContextSlot(0x10, mutable) [n2], 1 uses
+   [0m[0;34m  66 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m   [0m  [0m76: LoadTaggedField(0xc, compressed, JSFunction) [n20], 1 uses
+   [0m[0;34m  70 : 89 04 0a 29       CreateObjectLiteral [4:0x09b80101e375 <ObjectBoilerplateDescription[4]>], FBV[10], #29
+[m   [0m      ↱ eager @70 (4 live vars)
+   [0m  [0m77: Deopt(Insufficient type feedback for object literal)
+   [0m
+
+----- Phi untagging -----
+Graph
+
+   [0m  [0m44: HeapConstant(0x09b80101e411 <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>), 3 uses
+   [0m  [0m34: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>), 2 uses
+   [0m  [0m35: HeapConstant(0x09b80101e421 <ScriptContext[3]>), 2 uses
+   [0m  [0m22: HeapConstant(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>), 0 uses 🪦
+   [0m  [0m36: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m24: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m18: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m17: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m23: RootConstant(empty_fixed_array), 4 uses
+   [0m  [0m46: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m25: RootConstant(uninitialized_value), 2 uses
+   [0m  [0m12: SmiConstant(100000), 2 uses
+   [0m  [0m14: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 15 uses
+   [0m   [0m2: InitialValue(<context>), 20 uses
+   [0m   [0m3: InitialValue(<closure>), 15 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 0 uses 🪦
+   [0m   [0m6: InitialValue(r2), 9 uses
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: InitialValue(r4), 0 uses 🪦
+   [0m   [0m9: InitialValue(r5), 0 uses 🪦
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @59 (3 live vars)
+   [0m      ↱ eager @59 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:18)
+[m   [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [n6], 3 uses, cannot truncate to int32
+   [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
+   [0m[0;34m  25 : a8 26             JumpIfFalse [38]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:2)
+[m[0;31m│  [0m[0;34m  27 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [n2], 4 uses
+[0;31m│  [0m[0;34m  30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│  [0m  [0m21: LoadTaggedField(0xc, compressed, JSFunction) [n20], 2 uses
+[0;31m│  [0m[0;34m  34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+[m[0;31m│  [0m  [0m26: AllocationBlock(Young), 1 uses
+[0;31m│  [0m  [0m27: InlinedAllocation(object 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) [n26], 7 uses (6 non escaping uses)
+[0;31m│  [0m  [0m28: StoreMap(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, InlinedAllocation) [n27]
+[0;31m│  [0m  [0m29: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [n27, n23]
+[0;31m│  [0m  [0m30: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [n27, n23]
+[0;31m│  [0m  [0m31: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [n27, n25]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:19)
+[m[0;31m│  [0m[0;34m  41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+[m[0;31m│  [0m  [0m32: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034f5 <String[1]: #x>, mutable) [n27, n6]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:10)
+[m[0;31m│  [0m[0;34m  45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+[m[0;31m│  [0m      ↱ eager @45 (6 live vars)
+[0;31m│  [0m  [0m33: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [n21]
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│  [0m  [0m37: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│  [0m      ↱ eager @45 (4 live vars)
+[0;31m│  [0m      │       @4 (4 live vars)
+[0;31m│  [0m  [0m38: Int32IncrementWithOverflow [n13], 5 uses, cannot truncate to int32
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:10)
+[m[0;31m│  [0m[0;34m  49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│  [0m      ↱ eager @49 (5 live vars)
+[0;31m│  [0m  [0m39: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m40: ChangeInt32ToFloat64 [n38], 1 uses
+[0;31m│  [0m  [0m41: Float64Add [n39, n40], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:7)
+[m[0;31m│  [0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m42: Float64ToTagged[kCanonicalizeSmi] [n41], 1 uses
+[0;31m│  [0m  [0m43: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n42]
+[0;31m│  [0m      ↳ lazy @52 (3 live vars)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:0)
+[m[0;31m│  [0m[0;34m  59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8]
+[m[0;31m│  [0m  [0m45: ReduceInterruptBudgetForLoop(34) [n44]
+[0;31m│  [0m      ↳ lazy @59 (3 live vars)
+[0;31m│  [0m  [0m48: Int32ToNumber[kCanonicalizeSmi] [n38], 0 uses 🪦
+[0;31m│  [0m  [0m47: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n38 → 49: φᴵ r2
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m49: φᴵ r2 (n38, n64), 8 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m50: CheckedSmiSizedInt32 [n49], 3 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m51: Int32Compare[LessThan] [n50, n14], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 26             JumpIfFalse [38]
+[m[0;31m│[0;32m│[0;33m╭──[0m52: BranchIfInt32Compare(LessThan) [n50, n14] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m  [0m78: Int32ToNumber[kCanonicalizeSmi] [n49], 1 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  27 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m53: LoadContextSlot(0x10, mutable) [n2], 4 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m54: LoadTaggedField(0xc, compressed, JSFunction) [n20], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55: AllocationBlock(Young), 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m56: InlinedAllocation(object 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) [n55], 7 uses (6 non escaping uses)
+[0;31m│[0;32m│[0;33m│[0m  [0m57: StoreMap(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, InlinedAllocation) [n56]
+[0;31m│[0;32m│[0;33m│[0m  [0m58: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [n56, n23]
+[0;31m│[0;32m│[0;33m│[0m  [0m59: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [n56, n23]
+[0;31m│[0;32m│[0;33m│[0m  [0m60: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [n56, n25]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034f5 <String[1]: #x>, mutable) [n56, n78]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m62: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [n54]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m63: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @4 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m64: Int32IncrementWithOverflow [n50], 6 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @49 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: CheckedNumberToFloat64 [n53], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m66: ChangeInt32ToFloat64 [n64], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m67: Float64Add [n65, n66], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m68: Float64ToTagged[kCanonicalizeSmi] [n67], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m69: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n68]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @52 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m70: ReduceInterruptBudgetForLoop(34) [n44]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m72: Int32ToNumber[kCanonicalizeSmi] [n64], 0 uses 🪦
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @59 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m71: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n64 → 49: φᴵ r2
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:13:0)
+[m[0;31m│  [0m[0;34m  63 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m╭───[0m73: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m74: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m  [0m75: LoadContextSlot(0x10, mutable) [n2], 1 uses
+   [0m[0;34m  66 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m   [0m  [0m76: LoadTaggedField(0xc, compressed, JSFunction) [n20], 1 uses
+   [0m[0;34m  70 : 89 04 0a 29       CreateObjectLiteral [4:0x09b80101e375 <ObjectBoilerplateDescription[4]>], FBV[10], #29
+[m   [0m      ↱ eager @70 (4 live vars)
+   [0m  [0m77: Deopt(Insufficient type feedback for object literal)
+   [0m
+
+----- AnyUseMarking -----
+Graph
+
+   [0m  [0m44: HeapConstant(0x09b80101e411 <FeedbackCell[one closure]>) → (x)
+   [0m  [0m20: HeapConstant(0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>) → (x)
+   [0m  [0m34: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → (x)
+   [0m  [0m35: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → (x)
+   [0m  [0m36: HeapConstant(0x09b801004999 <JSGlobalProxy>) → (x)
+   [0m  [0m23: RootConstant(empty_fixed_array) → (x)
+   [0m  [0m25: RootConstant(uninitialized_value) → (x)
+   [0m  [0m12: SmiConstant(100000) → (x)
+   [0m  [0m14: Int32Constant(100000) → (x)
+    [0mBlock b0
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>) → (x)
+   [0m   [0m2: InitialValue(<context>) → (x)
+   [0m   [0m3: InitialValue(<closure>) → (x)
+   [0m   [0m6: InitialValue(r2) → (x)
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @59 (3 live vars)
+   [0m      ↱ eager @59 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:18)
+[m   [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [v0/n6:(x)] → (x)
+   [0m[0;34m  25 : a8 26             JumpIfFalse [38]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [v0/n13:(x), v0/n14:(x)] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:2)
+[m[0;31m│  [0m[0;34m  27 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│  [0m[0;34m  30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│  [0m  [0m21: LoadTaggedField(0xc, compressed, JSFunction) [v0/n20:(x)] → (x)
+[0;31m│  [0m[0;34m  34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+[m[0;31m│  [0m  [0m26: AllocationBlock(Young) → (x)
+[0;31m│  [0m  [0m27: InlinedAllocation(object 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) [v0/n26:(x)] → (x)
+[0;31m│  [0m  [0m28: StoreMap(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, InlinedAllocation) [v0/n27:(x)]
+[0;31m│  [0m  [0m29: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v0/n27:(x), v0/n23:(x)]
+[0;31m│  [0m  [0m30: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v0/n27:(x), v0/n23:(x)]
+[0;31m│  [0m  [0m31: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v0/n27:(x), v0/n25:(x)]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:19)
+[m[0;31m│  [0m[0;34m  41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+[m[0;31m│  [0m  [0m32: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034f5 <String[1]: #x>, mutable) [v0/n27:(x), v0/n6:(x)]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:10)
+[m[0;31m│  [0m[0;34m  45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+[m[0;31m│  [0m      ↱ eager @45 (6 live vars)
+[0;31m│  [0m  [0m33: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v0/n21:(x)]
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│  [0m  [0m37: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│  [0m      ↱ eager @45 (4 live vars)
+[0;31m│  [0m      │       @4 (4 live vars)
+[0;31m│  [0m  [0m38: Int32IncrementWithOverflow [v0/n13:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:10)
+[m[0;31m│  [0m[0;34m  49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│  [0m      ↱ eager @49 (5 live vars)
+[0;31m│  [0m  [0m39: CheckedNumberToFloat64 [v0/n19:(x)] → (x)
+[0;31m│  [0m  [0m40: ChangeInt32ToFloat64 [v0/n38:(x)] → (x)
+[0;31m│  [0m  [0m41: Float64Add [v0/n39:(x), v0/n40:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:7)
+[m[0;31m│  [0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m42: Float64ToTagged[kCanonicalizeSmi] [v0/n41:(x)] → (x)
+[0;31m│  [0m  [0m43: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n42:(x)]
+[0;31m│  [0m      ↳ lazy @52 (3 live vars)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:0)
+[m[0;31m│  [0m[0;34m  59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8]
+[m[0;31m│  [0m  [0m45: ReduceInterruptBudgetForLoop(34) [v0/n44:(x)]
+[0;31m│  [0m      ↳ lazy @59 (3 live vars)
+[0;31m│  [0m  [0m47: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - v0/n38:(x) → 49: φᴵ r2 (x)
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m49: φᴵ r2 (n38, n64) → (x)
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m50: CheckedSmiSizedInt32 [v0/n49:(x)] → (x)
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 26             JumpIfFalse [38]
+[m[0;31m│[0;32m│[0;33m╭──[0m52: BranchIfInt32Compare(LessThan) [v0/n50:(x), v0/n14:(x)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m  [0m78: Int32ToNumber[kCanonicalizeSmi] [v0/n49:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  27 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m53: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m54: LoadTaggedField(0xc, compressed, JSFunction) [v0/n20:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55: AllocationBlock(Young) → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m56: InlinedAllocation(object 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) [v0/n55:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m57: StoreMap(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, InlinedAllocation) [v0/n56:(x)]
+[0;31m│[0;32m│[0;33m│[0m  [0m58: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v0/n56:(x), v0/n23:(x)]
+[0;31m│[0;32m│[0;33m│[0m  [0m59: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v0/n56:(x), v0/n23:(x)]
+[0;31m│[0;32m│[0;33m│[0m  [0m60: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v0/n56:(x), v0/n25:(x)]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034f5 <String[1]: #x>, mutable) [v0/n56:(x), v0/n78:(x)]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m62: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v0/n54:(x)]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m63: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @45 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @4 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m64: Int32IncrementWithOverflow [v0/n50:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @49 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: CheckedNumberToFloat64 [v0/n53:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m66: ChangeInt32ToFloat64 [v0/n64:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m67: Float64Add [v0/n65:(x), v0/n66:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m68: Float64ToTagged[kCanonicalizeSmi] [v0/n67:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m69: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n68:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @52 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m70: ReduceInterruptBudgetForLoop(34) [v0/n44:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @59 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m71: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - v0/n64:(x) → 49: φᴵ r2 (x)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:13:0)
+[m[0;31m│  [0m[0;34m  63 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m╭───[0m73: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m74: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m  [0m75: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+   [0m[0;34m  66 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m   [0m  [0m76: LoadTaggedField(0xc, compressed, JSFunction) [v0/n20:(x)] → (x)
+   [0m[0;34m  70 : 89 04 0a 29       CreateObjectLiteral [4:0x09b80101e375 <ObjectBoilerplateDescription[4]>], FBV[10], #29
+[m   [0m      ↱ eager @70 (4 live vars)
+   [0m  [0m77: Deopt(Insufficient type feedback for object literal)
+   [0m
+
+----- Dead nodes sweeping -----
+Graph
+
+   [0m   [0m1/44: HeapConstant(0x09b80101e411 <FeedbackCell[one closure]>) → v-1, live range: [1-59]
+   [0m   [0m2/20: HeapConstant(0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>) → v-1, live range: [2-63]
+   [0m   [0m3/34: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → v-1, live range: [3-59]
+   [0m   [0m4/35: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → v-1, live range: [4-59]
+   [0m   [0m5/36: HeapConstant(0x09b801004999 <JSGlobalProxy>) → v-1, live range: [5-59]
+   [0m   [0m6/23: RootConstant(empty_fixed_array) → v-1, live range: [6-59]
+   [0m   [0m7/25: RootConstant(uninitialized_value) → v-1, live range: [7-59]
+   [0m   [0m8/12: SmiConstant(100000) → v-1, live range: [8-59]
+   [0m   [0m9/14: Int32Constant(100000) → v-1, live range: [9-59]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m10/1: InitialValue(<this>) → v-1(=-6S), live range: [10-64]
+   [0m   [0m11/2: InitialValue(<context>) → v-1(=-3S), live range: [11-64]
+   [0m   [0m12/3: InitialValue(<closure>) → v-1(=-2S), live range: [12-64]
+   [0m   [0m13/6: InitialValue(r2) → v-1(=5S), live range: [13-34]
+   [0m  [0m14/10: FunctionEntryStackCheck
+   [0m         ↳ lazy @59 (3 live vars)
+   [0m         ↱ eager @59 (3 live vars)
+   [0m  [0m15/11: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:18)
+[m   [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m16/13: CheckedSmiUntag [v13/n6:v-1(R)] → v-1(0), live range: [16-29]
+   [0m[0;34m  25 : a8 26             JumpIfFalse [38]
+[m[0;31m╭────[0m17/16: BranchIfInt32Compare(LessThan) [v16/n13:v-1(R), v9/n14:v-1(R)] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:2)
+[m[0;31m│  [0m[0;34m  27 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18/19: LoadContextSlot(0x10, mutable) [v11/n2:v-1(R)] → v-1(R), live range: [18-30]
+[0;31m│  [0m[0;34m  30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│  [0m  [0m19/21: LoadTaggedField(0xc, compressed, JSFunction) [v2/n20:v-1(R)] → v-1(R), live range: [19-27]
+[0;31m│  [0m[0;34m  34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+[m[0;31m│  [0m  [0m20/26: AllocationBlock(Young) → v-1(R), live range: [20-21]
+[0;31m│  [0m  [0m21/27: InlinedAllocation(object 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) [v20/n26:v-1(R)] → v-1(0), live range: [21-29]
+[0;31m│  [0m  [0m22/28: StoreMap(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, InlinedAllocation) [v21/n27:v-1(=x1)]
+[0;31m│  [0m  [0m23/29: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v21/n27:v-1(R), v6/n23:v-1(R)]
+[0;31m│  [0m  [0m24/30: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v21/n27:v-1(R), v6/n23:v-1(R)]
+[0;31m│  [0m  [0m25/31: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v21/n27:v-1(R), v7/n25:v-1(R)]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:19)
+[m[0;31m│  [0m[0;34m  41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+[m[0;31m│  [0m  [0m26/32: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034f5 <String[1]: #x>, mutable) [v21/n27:v-1(R), v13/n6:v-1(R)]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:10)
+[m[0;31m│  [0m[0;34m  45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+[m[0;31m│  [0m         ↱ eager @45 (6 live vars)
+[0;31m│  [0m  [0m27/33: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v19/n21:v-1(R)]
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│  [0m  [0m28/37: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│  [0m         ↱ eager @45 (4 live vars)
+[0;31m│  [0m         │       @4 (4 live vars)
+[0;31m│  [0m  [0m29/38: Int32IncrementWithOverflow [v16/n13:v-1(R)] → v-1(R), live range: [29-36]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:10)
+[m[0;31m│  [0m[0;34m  49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│  [0m         ↱ eager @49 (5 live vars)
+[0;31m│  [0m  [0m30/39: CheckedNumberToFloat64 [v18/n19:v-1(R)] → v-1(R), live range: [30-32]
+[0;31m│  [0m  [0m31/40: ChangeInt32ToFloat64 [v29/n38:v-1(R)] → v-1(R), live range: [31-32]
+[0;31m│  [0m  [0m32/41: Float64Add [v30/n39:v-1(R), v31/n40:v-1(R)] → v-1(R), live range: [32-33]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:7)
+[m[0;31m│  [0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m33/42: Float64ToTagged[kCanonicalizeSmi] [v32/n41:v-1(R)] → v-1(R), live range: [33-34]
+[0;31m│  [0m  [0m34/43: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:v-1(=x1), v33/n42:v-1(R)]
+[0;31m│  [0m         ↳ lazy @52 (3 live vars)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:0)
+[m[0;31m│  [0m[0;34m  59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8]
+[m[0;31m│  [0m  [0m35/45: ReduceInterruptBudgetForLoop(34) [v1/n44:v-1(R)]
+[0;31m│  [0m         ↳ lazy @59 (3 live vars)
+[0;31m│  [0m  [0m36/47: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v29/n38:v-1(*) → 49: φᴵ r2 v-1(*)
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m37/49: φᴵ r2 (n38, n64) → v-1(*), live range: [37-57]
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m38/50: CheckedSmiSizedInt32 [v37/n49:v-1(R)] → v-1(0), live range: [38-52]
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 26             JumpIfFalse [38]
+[m[0;31m│[0;32m│[0;33m╭──[0m39/52: BranchIfInt32Compare(LessThan) [v38/n50:v-1(R), v9/n14:v-1(R)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m  [0m40/78: Int32ToNumber[kCanonicalizeSmi] [v37/n49:v-1(R)] → v-1(R), live range: [40-49]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  27 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m41/53: LoadContextSlot(0x10, mutable) [v11/n2:v-1(R)] → v-1(R), live range: [41-53]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m42/54: LoadTaggedField(0xc, compressed, JSFunction) [v2/n20:v-1(R)] → v-1(R), live range: [42-50]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+[m[0;31m│[0;32m│[0;33m│[0m  [0m43/55: AllocationBlock(Young) → v-1(R), live range: [43-44]
+[0;31m│[0;32m│[0;33m│[0m  [0m44/56: InlinedAllocation(object 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) [v43/n55:v-1(R)] → v-1(0), live range: [44-52]
+[0;31m│[0;32m│[0;33m│[0m  [0m45/57: StoreMap(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, InlinedAllocation) [v44/n56:v-1(=x1)]
+[0;31m│[0;32m│[0;33m│[0m  [0m46/58: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v44/n56:v-1(R), v6/n23:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m  [0m47/59: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v44/n56:v-1(R), v6/n23:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m  [0m48/60: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v44/n56:v-1(R), v7/n25:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m49/61: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034f5 <String[1]: #x>, mutable) [v44/n56:v-1(R), v40/n78:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m50/62: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v42/n54:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m51/63: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @4 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m52/64: Int32IncrementWithOverflow [v38/n50:v-1(R)] → v-1(R), live range: [52-59]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @49 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m53/65: CheckedNumberToFloat64 [v41/n53:v-1(R)] → v-1(R), live range: [53-55]
+[0;31m│[0;32m│[0;33m│[0m  [0m54/66: ChangeInt32ToFloat64 [v52/n64:v-1(R)] → v-1(R), live range: [54-55]
+[0;31m│[0;32m│[0;33m│[0m  [0m55/67: Float64Add [v53/n65:v-1(R), v54/n66:v-1(R)] → v-1(R), live range: [55-56]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56/68: Float64ToTagged[kCanonicalizeSmi] [v55/n67:v-1(R)] → v-1(R), live range: [56-57]
+[0;31m│[0;32m│[0;33m│[0m  [0m57/69: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:v-1(=x1), v56/n68:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @52 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m58/70: ReduceInterruptBudgetForLoop(34) [v1/n44:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @59 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m59/71: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v52/n64:v-1(*) → 49: φᴵ r2 v-1(*)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:13:0)
+[m[0;31m│  [0m[0;34m  63 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m╭───[0m60/73: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m61/74: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m  [0m62/75: LoadContextSlot(0x10, mutable) [v11/n2:v-1(R)] → v-1(R), live range: [62-64]
+   [0m[0;34m  66 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m   [0m  [0m63/76: LoadTaggedField(0xc, compressed, JSFunction) [v2/n20:v-1(R)] → v-1(R), live range: [63-64]
+   [0m[0;34m  70 : 89 04 0a 29       CreateObjectLiteral [4:0x09b80101e375 <ObjectBoilerplateDescription[4]>], FBV[10], #29
+[m   [0m         ↱ eager @70 (4 live vars)
+   [0m  [0m64/77: Deopt(Insufficient type feedback for object literal)
+   [0m
+
+----- Register allocation -----
+Graph
+
+   [0m   [0m1/44: HeapConstant(0x09b80101e411 <FeedbackCell[one closure]>) → v-1, live range: [1-59]
+   [0m   [0m2/20: HeapConstant(0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>) → v-1, live range: [2-63]
+   [0m   [0m3/34: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → v-1, live range: [3-59]
+   [0m   [0m4/35: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → v-1, live range: [4-59]
+   [0m   [0m5/36: HeapConstant(0x09b801004999 <JSGlobalProxy>) → v-1, live range: [5-59]
+   [0m   [0m6/23: RootConstant(empty_fixed_array) → v-1, live range: [6-59]
+   [0m   [0m7/25: RootConstant(uninitialized_value) → v-1, live range: [7-59]
+   [0m   [0m8/12: SmiConstant(100000) → v-1, live range: [8-59]
+   [0m   [0m9/14: Int32Constant(100000) → v-1, live range: [9-59]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m10/1: InitialValue(<this>) → [stack:-6|t], live range: [10-64]
+   [0m   [0m11/2: InitialValue(<context>) → [stack:-3|t], live range: [11-64]
+   [0m   [0m12/3: InitialValue(<closure>) → [stack:-2|t], live range: [12-64]
+   [0m   [0m13/6: InitialValue(r2) → [stack:5|t], live range: [13-34]
+   [0m  [0m14/10: FunctionEntryStackCheck
+   [0m         ↳ lazy @59 (3 live vars)
+   [0m         ↱ eager @59 (3 live vars)
+   [0m  [0m15/11: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m     [0m79: GapMove([stack:5|t] → [x0|R|t])
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:18)
+[m   [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m16/13: CheckedSmiUntag [v13/n6:[x0|R|t]] → [x0|R|w32], live range: [16-29]
+   [0m     [0m80: ConstantGapMove(n14 → [x1|R|w32])
+   [0m[0;34m  25 : a8 26             JumpIfFalse [38]
+[m[0;31m╭────[0m17/16: BranchIfInt32Compare(LessThan) [v16/n13:[x0|R|w32], v9/n14:[x1|R|w32]] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m     [0m81: GapMove([stack:-3|t] → [x2|R|t])
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:2)
+[m[0;31m│  [0m[0;34m  27 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18/19: LoadContextSlot(0x10, mutable) [v11/n2:[x2|R|t]] → [x5|R|t], live range: [18-30]
+[0;31m│  [0m     [0m82: ConstantGapMove(n20 → [x3|R|t])
+[0;31m│  [0m[0;34m  30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│  [0m  [0m19/21: LoadTaggedField(0xc, compressed, JSFunction) [v2/n20:[x3|R|t]] → [x4|R|t], live range: [19-27]
+[0;31m│  [0m[0;34m  34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+[m[0;31m│  [0m  [0m20/26: AllocationBlock(Young) → [x6|R|t], live range: [20-21]
+[0;31m│  [0m  [0m21/27: InlinedAllocation(object 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) [v20/n26:[x6|R|t]] → [x6|R|t], live range: [21-29]
+[0;31m│  [0m     [0m83: GapMove([x6|R|t] → [x1|R|t])
+[0;31m│  [0m  [0m22/28: StoreMap(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, InlinedAllocation) [v21/n27:[x1|R|t]]
+[0;31m│  [0m     [0m84: ConstantGapMove(n23 → [x7|R|t])
+[0;31m│  [0m  [0m23/29: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v21/n27:[x1|R|t], v6/n23:[x7|R|t]]
+[0;31m│  [0m  [0m24/30: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v21/n27:[x1|R|t], v6/n23:[x7|R|t]]
+[0;31m│  [0m     [0m85: ConstantGapMove(n25 → [x8|R|t])
+[0;31m│  [0m  [0m25/31: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v21/n27:[x1|R|t], v7/n25:[x8|R|t]]
+[0;31m│  [0m     [0m86: GapMove([stack:5|t] → [x9|R|t])
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:19)
+[m[0;31m│  [0m[0;34m  41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+[m[0;31m│  [0m  [0m26/32: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034f5 <String[1]: #x>, mutable) [v21/n27:[x1|R|t], v13/n6:[x9|R|t]]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:10)
+[m[0;31m│  [0m[0;34m  45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+[m[0;31m│  [0m         ↱ eager @45 (6 live vars)
+[0;31m│  [0m  [0m27/33: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v19/n21:[x4|R|t]]
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│  [0m  [0m28/37: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│  [0m         ↱ eager @45 (4 live vars)
+[0;31m│  [0m         │       @4 (4 live vars)
+[0;31m│  [0m  [0m29/38: Int32IncrementWithOverflow [v16/n13:[x0|R|w32]] → [x4|R|w32] (spilled: [stack:0|w32]), live range: [29-36]
+[0;31m│  [0m     [0m87: GapMove([x5|R|t] → [x0|R|t])
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:10)
+[m[0;31m│  [0m[0;34m  49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│  [0m         ↱ eager @49 (5 live vars)
+[0;31m│  [0m  [0m30/39: CheckedNumberToFloat64 [v18/n19:[x5|R|t]] → [v0|R|f64], live range: [30-32]
+[0;31m│  [0m  [0m31/40: ChangeInt32ToFloat64 [v29/n38:[x4|R|w32]] → [v1|R|f64], live range: [31-32]
+[0;31m│  [0m  [0m32/41: Float64Add [v30/n39:[v0|R|f64], v31/n40:[v1|R|f64]] → [v2|R|f64], live range: [32-33]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:9:7)
+[m[0;31m│  [0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m33/42: Float64ToTagged[kCanonicalizeSmi] [v32/n41:[v2|R|f64]] → [x0|R|t], live range: [33-34]
+[0;31m│  [0m     [0m88: GapMove([x2|R|t] → [x1|R|t])
+[0;31m│  [0m  [0m34/43: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:[x1|R|t], v33/n42:[x0|R|t]]
+[0;31m│  [0m         ↳ lazy @52 (3 live vars)
+[0;31m│  [0m     [0m89: ConstantGapMove(n44 → [x0|R|t])
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:0)
+[m[0;31m│  [0m[0;34m  59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8]
+[m[0;31m│  [0m  [0m35/45: ReduceInterruptBudgetForLoop(34) [v1/n44:[x0|R|t]]
+[0;31m│  [0m         ↳ lazy @59 (3 live vars)
+[0;31m│  [0m     [0m90: ConstantGapMove(n14 → [x5|R|w32])
+[0;31m│  [0m  [0m36/47: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v29/n38:[x4|R|w32] → 49: φᴵ r2 [x4|R|w32]
+[0;31m│  [0m      │  with register merges:
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m37/49: φᴵ r2 (n38, n64) → [x4|R|w32] (spilled: [stack:1|w32]), live range: [37-57]
+[0;31m│[0;32m│ [0m     [0m91: GapMove([x4|R|w32] → [x6|R|w32])
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m38/50: CheckedSmiSizedInt32 [v37/n49:[x4|R|w32]] → [x4|R|w32], live range: [38-52]
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 26             JumpIfFalse [38]
+[m[0;31m│[0;32m│[0;33m╭──[0m39/52: BranchIfInt32Compare(LessThan) [v38/n50:[x4|R|w32], v9/n14:[x5|R|w32]] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m  [0m40/78: Int32ToNumber[kCanonicalizeSmi] [v37/n49:[x6|R|w32]] → [x9|R|t], live range: [40-49]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  27 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m41/53: LoadContextSlot(0x10, mutable) [v11/n2:[x1|R|t]] → [x12|R|t], live range: [41-53]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m42/54: LoadTaggedField(0xc, compressed, JSFunction) [v2/n20:[x3|R|t]] → [x10|R|t], live range: [42-50]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+[m[0;31m│[0;32m│[0;33m│[0m  [0m43/55: AllocationBlock(Young) → [x11|R|t], live range: [43-44]
+[0;31m│[0;32m│[0;33m│[0m  [0m44/56: InlinedAllocation(object 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) [v43/n55:[x11|R|t]] → [x11|R|t], live range: [44-52]
+[0;31m│[0;32m│[0;33m│[0m     [0m92: GapMove([x11|R|t] → [x1|R|t])
+[0;31m│[0;32m│[0;33m│[0m  [0m45/57: StoreMap(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>, InlinedAllocation) [v44/n56:[x1|R|t]]
+[0;31m│[0;32m│[0;33m│[0m  [0m46/58: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v44/n56:[x1|R|t], v6/n23:[x7|R|t]]
+[0;31m│[0;32m│[0;33m│[0m  [0m47/59: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v44/n56:[x1|R|t], v6/n23:[x7|R|t]]
+[0;31m│[0;32m│[0;33m│[0m  [0m48/60: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v44/n56:[x1|R|t], v7/n25:[x8|R|t]]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m49/61: StoreTaggedFieldNoWriteBarrier(0xc: 0x09b8000034f5 <String[1]: #x>, mutable) [v44/n56:[x1|R|t], v40/n78:[x9|R|t]]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m50/62: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v42/n54:[x10|R|t]]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m51/63: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @45 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @4 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m52/64: Int32IncrementWithOverflow [v38/n50:[x4|R|w32]] → [x9|R|w32] (spilled: [stack:2|w32]), live range: [52-59]
+[0;31m│[0;32m│[0;33m│[0m     [0m93: GapMove([x12|R|t] → [x1|R|t])
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:8:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @49 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m53/65: CheckedNumberToFloat64 [v41/n53:[x12|R|t]] → [v0|R|f64], live range: [53-55]
+[0;31m│[0;32m│[0;33m│[0m  [0m54/66: ChangeInt32ToFloat64 [v52/n64:[x9|R|w32]] → [v1|R|f64], live range: [54-55]
+[0;31m│[0;32m│[0;33m│[0m  [0m55/67: Float64Add [v53/n65:[v0|R|f64], v54/n66:[v1|R|f64]] → [v2|R|f64], live range: [55-56]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56/68: Float64ToTagged[kCanonicalizeSmi] [v55/n67:[v2|R|f64]] → [x1|R|t], live range: [56-57]
+[0;31m│[0;32m│[0;33m│[0m     [0m94: GapMove([x1|R|t] → [x4|R|t])
+[0;31m│[0;32m│[0;33m│[0m     [0m95: GapMove([x2|R|t] → [x1|R|t])
+[0;31m│[0;32m│[0;33m│[0m  [0m57/69: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:[x1|R|t], v56/n68:[x4|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @52 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m58/70: ReduceInterruptBudgetForLoop(34) [v1/n44:[x0|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @59 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @59 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m59/71: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v52/n64:[x9|R|w32] → 49: φᴵ r2 [x4|R|w32]
+[0;31m│ [0;33m│[0m         with register merges:
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b8011406bd <String[24]: "workloads/deopt-eager.js">:13:0)
+[m[0;31m│  [0m[0;34m  63 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m╭───[0m60/73: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m61/74: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m  [0m62/75: LoadContextSlot(0x10, mutable) [v11/n2:[x1|R|t]] → [x5|R|t], live range: [62-64]
+   [0m[0;34m  66 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m   [0m  [0m63/76: LoadTaggedField(0xc, compressed, JSFunction) [v2/n20:[x3|R|t]] → [x0|R|t], live range: [63-64]
+   [0m[0;34m  70 : 89 04 0a 29       CreateObjectLiteral [4:0x09b80101e375 <ObjectBoilerplateDescription[4]>], FBV[10], #29
+[m   [0m         ↱ eager @70 (4 live vars)
+   [0m  [0m64/77: Deopt(Insufficient type feedback for object literal)
+   [0m
+---------------------------------------------------
+Finished compiling method  using Maglev
+[bailout (kind: deopt-eager, reason: Insufficient type feedback for object literal): begin. deoptimizing 0x09b80101e3e1 <JSFunction (sfi = 0x9b80101e2c5)>, 0x031a0100094d <Code MAGLEV>, opt id 2, bytecode offset 70, deopt exit 8, FP to SP delta 96, caller SP 0x00016b5a17f8, pc 0x000170000bb4]
+[bailout (kind: deopt-eager, reason: wrong map): begin. deoptimizing 0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, 0x031a01000491 <Code TURBOFAN_JS>, opt id 1, bytecode offset 0, deopt exit 1, FP to SP delta 32, caller SP 0x00016b5a1780, pc 0x0001700002e4]
+---------------------------------------------------
+Begin compiling method read using Maglev
+Compiling 0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)> with Maglev
+----- Bytecode array -----
+Parameter count 2
+Register count 0
+Frame size 0
+  269 S> 0x31a010001dc @    0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+  271 E> 0x31a010001e0 @    4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+  275 S> 0x31a010001e3 @    7 : b9                Return
+Constant pool (size = 1)
+0x31a010001a9: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 1
+           0: 0x09b8000034f5 <String[1]: #x>
+Handler Table (size = 0)
+Source Position Table (size = 9)
+0x031a010001e5 <Other heap object (TRUSTED_BYTE_ARRAY_TYPE)>
+0x9b80101e539: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 2
+ - shared function info: 0x09b80101e32d <SharedFunctionInfo read>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1004
+ - closure feedback cell array: 0x9b800002091: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 LoadProperty POLYMORPHIC
+   [weak] 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 3, descriptor index = 0)
+   [weak] 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 4, descriptor index = 1) {
+     [0]: 0x09b8010f8a79 <WeakFixedArray[4]>
+     [1]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+
+----- Maglev graph building -----
+Graph
+
+  [0m  [0m10: HeapConstant(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>), 1 uses
+  [0m  [0m20: HeapConstant(0x09b80101e401 <FeedbackCell[one closure]>), 1 uses
+  [0m   [0m3: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>), 4 uses
+  [0m   [0m4: HeapConstant(0x09b80101e421 <ScriptContext[3]>), 4 uses
+  [0m   [0m5: RootConstant(undefined_value), 0 uses 🪦
+   [0mBlock b0
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m  [0m   [0m1: InitialValue(<this>), 4 uses
+  [0m   [0m2: InitialValue(a0), 9 uses
+  [0m   [0m6: FunctionEntryStackCheck
+  [0m      ↳ lazy @-1 (3 live vars)
+  [0m   [0m7: Jump b1
+  [0m   ↓
+   [0mBlock b1
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:11)
+[m  [0m      ↱ eager @0 (3 live vars)
+  [0m   [0m8: CheckHeapObject [n2]
+  [0m   [0m9: LoadTaggedField(0x0, compressed, AnyHeapObject) [n2], 1 uses
+[0;31m╭───[0m11: BranchIfReferenceEqual [n9, n10] b2 b3
+[0;31m│ [0m   ↓
+[0;31m│  [0mBlock b2
+[0;31m│ [0m  [0m12: LoadTaggedField(0xc: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [n2], 1 uses
+[0;31m│[0;32m╭──[0m13: Jump b4
+[0;31m│[0;32m│[0m      with gap moves:
+[0;31m│[0;32m│[0m        - n12 → 17: φᵀ r0
+[0;31m│[0;32m│[0m
+[0;31m╰─►[0mBlock b3
+ [0;32m│[0m      ↱ eager @0 (3 live vars)
+ [0;32m│[0m  [0m14: CheckMaps(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, no heapobj check) [n2]
+ [0;32m│[0m  [0m15: LoadTaggedField(0x10: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [n2], 1 uses
+ [0;32m│[0m  [0m16: Jump b4
+ [0;32m│[0m   │  with gap moves:
+ [0;32m│[0m   │    - n15 → 17: φᵀ r0
+ [0;32m│[0m   ▼
+ [0;32m╰►[0mBlock b4
+  [0m  [0m17: φᵀ r0 (n12, n15), 2 uses
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m  [0m  [0m18: UnsafeSmiUntag [n17], 1 uses, cannot truncate to int32
+  [0m      ↱ eager @4 (4 live vars)
+  [0m  [0m19: Int32IncrementWithOverflow [n18], 1 uses, cannot truncate to int32
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:17)
+[m  [0m[0;34m   7 : b9                Return
+[m  [0m  [0m21: ReduceInterruptBudgetForReturn(7) [n20]
+  [0m  [0m22: Int32ToNumber[kCanonicalizeSmi] [n19], 1 uses
+  [0m  [0m23: Return [n22]
+  [0m
+
+----- Phi untagging -----
+Graph
+
+  [0m  [0m10: HeapConstant(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>), 1 uses
+  [0m  [0m20: HeapConstant(0x09b80101e401 <FeedbackCell[one closure]>), 1 uses
+  [0m   [0m3: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>), 4 uses
+  [0m   [0m4: HeapConstant(0x09b80101e421 <ScriptContext[3]>), 4 uses
+  [0m   [0m5: RootConstant(undefined_value), 0 uses 🪦
+   [0mBlock b0
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m  [0m   [0m1: InitialValue(<this>), 4 uses
+  [0m   [0m2: InitialValue(a0), 9 uses
+  [0m   [0m6: FunctionEntryStackCheck
+  [0m      ↳ lazy @-1 (3 live vars)
+  [0m   [0m7: Jump b1
+  [0m   ↓
+   [0mBlock b1
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:11)
+[m  [0m      ↱ eager @0 (3 live vars)
+  [0m   [0m8: CheckHeapObject [n2]
+  [0m   [0m9: LoadTaggedField(0x0, compressed, AnyHeapObject) [n2], 1 uses
+[0;31m╭───[0m11: BranchIfReferenceEqual [n9, n10] b2 b3
+[0;31m│ [0m   ↓
+[0;31m│  [0mBlock b2
+[0;31m│ [0m  [0m12: LoadTaggedField(0xc: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [n2], 1 uses
+[0;31m│ [0m  [0m24: UnsafeSmiUntag [n12], 1 uses, cannot truncate to int32
+[0;31m│[0;32m╭──[0m13: Jump b4
+[0;31m│[0;32m│[0m      with gap moves:
+[0;31m│[0;32m│[0m        - n24 → 17: φᴵ r0
+[0;31m│[0;32m│[0m
+[0;31m╰─►[0mBlock b3
+ [0;32m│[0m      ↱ eager @0 (3 live vars)
+ [0;32m│[0m  [0m14: CheckMaps(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, no heapobj check) [n2]
+ [0;32m│[0m  [0m15: LoadTaggedField(0x10: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [n2], 1 uses
+ [0;32m│[0m  [0m25: UnsafeSmiUntag [n15], 1 uses, cannot truncate to int32
+ [0;32m│[0m  [0m16: Jump b4
+ [0;32m│[0m   │  with gap moves:
+ [0;32m│[0m   │    - n25 → 17: φᴵ r0
+ [0;32m│[0m   ▼
+ [0;32m╰►[0mBlock b4
+  [0m  [0m17: φᴵ r0 (n24, n25), 3 uses
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m  [0m      ↱ eager @4 (4 live vars)
+  [0m  [0m19: Int32IncrementWithOverflow [n17], 1 uses, cannot truncate to int32
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:17)
+[m  [0m[0;34m   7 : b9                Return
+[m  [0m  [0m21: ReduceInterruptBudgetForReturn(7) [n20]
+  [0m  [0m22: Int32ToNumber[kCanonicalizeSmi] [n19], 1 uses
+  [0m  [0m23: Return [n22]
+  [0m
+
+----- AnyUseMarking -----
+Graph
+
+  [0m  [0m10: HeapConstant(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) → (x)
+  [0m  [0m20: HeapConstant(0x09b80101e401 <FeedbackCell[one closure]>) → (x)
+  [0m   [0m3: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → (x)
+  [0m   [0m4: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → (x)
+   [0mBlock b0
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m  [0m   [0m1: InitialValue(<this>) → (x)
+  [0m   [0m2: InitialValue(a0) → (x)
+  [0m   [0m6: FunctionEntryStackCheck
+  [0m      ↳ lazy @-1 (3 live vars)
+  [0m   [0m7: Jump b1
+  [0m   ↓
+   [0mBlock b1
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:11)
+[m  [0m      ↱ eager @0 (3 live vars)
+  [0m   [0m8: CheckHeapObject [v0/n2:(x)]
+  [0m   [0m9: LoadTaggedField(0x0, compressed, AnyHeapObject) [v0/n2:(x)] → (x)
+[0;31m╭───[0m11: BranchIfReferenceEqual [v0/n9:(x), v0/n10:(x)] b2 b3
+[0;31m│ [0m   ↓
+[0;31m│  [0mBlock b2
+[0;31m│ [0m  [0m12: LoadTaggedField(0xc: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [v0/n2:(x)] → (x)
+[0;31m│ [0m  [0m24: UnsafeSmiUntag [v0/n12:(x)] → (x)
+[0;31m│[0;32m╭──[0m13: Jump b4
+[0;31m│[0;32m│[0m      with gap moves:
+[0;31m│[0;32m│[0m        - v0/n24:(x) → 17: φᴵ r0 (x)
+[0;31m│[0;32m│[0m
+[0;31m╰─►[0mBlock b3
+ [0;32m│[0m      ↱ eager @0 (3 live vars)
+ [0;32m│[0m  [0m14: CheckMaps(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, no heapobj check) [v0/n2:(x)]
+ [0;32m│[0m  [0m15: LoadTaggedField(0x10: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [v0/n2:(x)] → (x)
+ [0;32m│[0m  [0m25: UnsafeSmiUntag [v0/n15:(x)] → (x)
+ [0;32m│[0m  [0m16: Jump b4
+ [0;32m│[0m   │  with gap moves:
+ [0;32m│[0m   │    - v0/n25:(x) → 17: φᴵ r0 (x)
+ [0;32m│[0m   ▼
+ [0;32m╰►[0mBlock b4
+  [0m  [0m17: φᴵ r0 (n24, n25) → (x)
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m  [0m      ↱ eager @4 (4 live vars)
+  [0m  [0m19: Int32IncrementWithOverflow [v0/n17:(x)] → (x)
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:17)
+[m  [0m[0;34m   7 : b9                Return
+[m  [0m  [0m21: ReduceInterruptBudgetForReturn(7) [v0/n20:(x)]
+  [0m  [0m22: Int32ToNumber[kCanonicalizeSmi] [v0/n19:(x)] → (x)
+  [0m  [0m23: Return [v0/n22:(x)]
+  [0m
+
+----- Dead nodes sweeping -----
+Graph
+
+  [0m   [0m1/10: HeapConstant(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) → v-1, live range: [1-11]
+  [0m   [0m2/20: HeapConstant(0x09b80101e401 <FeedbackCell[one closure]>) → v-1, live range: [2-21]
+  [0m    [0m3/3: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → v-1, live range: [3-20]
+  [0m    [0m4/4: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → v-1, live range: [4-20]
+   [0mBlock b0
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m  [0m    [0m5/1: InitialValue(<this>) → v-1(=-6S), live range: [5-20]
+  [0m    [0m6/2: InitialValue(a0) → v-1(=-7S), live range: [6-20]
+  [0m    [0m7/6: FunctionEntryStackCheck
+  [0m         ↳ lazy @-1 (3 live vars)
+  [0m    [0m8/7: Jump b1
+  [0m      ↓
+   [0mBlock b1
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:11)
+[m  [0m         ↱ eager @0 (3 live vars)
+  [0m    [0m9/8: CheckHeapObject [v6/n2:v-1(R)]
+  [0m   [0m10/9: LoadTaggedField(0x0, compressed, AnyHeapObject) [v6/n2:v-1(R)] → v-1(R), live range: [10-11]
+[0;31m╭───[0m11/11: BranchIfReferenceEqual [v10/n9:v-1(R), v1/n10:v-1(R)] b2 b3
+[0;31m│ [0m      ↓
+[0;31m│  [0mBlock b2
+[0;31m│ [0m  [0m12/12: LoadTaggedField(0xc: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [v6/n2:v-1(R)] → v-1(R), live range: [12-13]
+[0;31m│ [0m  [0m13/24: UnsafeSmiUntag [v12/n12:v-1(R)] → v-1(0), live range: [13-14]
+[0;31m│[0;32m╭──[0m14/13: Jump b4
+[0;31m│[0;32m│[0m         with gap moves:
+[0;31m│[0;32m│[0m           - v13/n24:v-1(*) → 17: φᴵ r0 v-1(*)
+[0;31m│[0;32m│[0m
+[0;31m╰─►[0mBlock b3
+ [0;32m│[0m         ↱ eager @0 (3 live vars)
+ [0;32m│[0m  [0m15/14: CheckMaps(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, no heapobj check) [v6/n2:v-1(R)]
+ [0;32m│[0m  [0m16/15: LoadTaggedField(0x10: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [v6/n2:v-1(R)] → v-1(R), live range: [16-17]
+ [0;32m│[0m  [0m17/25: UnsafeSmiUntag [v16/n15:v-1(R)] → v-1(0), live range: [17-18]
+ [0;32m│[0m  [0m18/16: Jump b4
+ [0;32m│[0m      │  with gap moves:
+ [0;32m│[0m      │    - v17/n25:v-1(*) → 17: φᴵ r0 v-1(*)
+ [0;32m│[0m      ▼
+ [0;32m╰►[0mBlock b4
+  [0m  [0m19/17: φᴵ r0 (n24, n25) → v-1(*), live range: [19-20]
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m  [0m         ↱ eager @4 (4 live vars)
+  [0m  [0m20/19: Int32IncrementWithOverflow [v19/n17:v-1(R)] → v-1(R), live range: [20-22]
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:17)
+[m  [0m[0;34m   7 : b9                Return
+[m  [0m  [0m21/21: ReduceInterruptBudgetForReturn(7) [v2/n20:v-1(R)]
+  [0m  [0m22/22: Int32ToNumber[kCanonicalizeSmi] [v20/n19:v-1(R)] → v-1(R), live range: [22-23]
+  [0m  [0m23/23: Return [v22/n22:v-1(=x0)]
+  [0m
+
+----- Register allocation -----
+Graph
+
+  [0m   [0m1/10: HeapConstant(0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>) → v-1, live range: [1-11]
+  [0m   [0m2/20: HeapConstant(0x09b80101e401 <FeedbackCell[one closure]>) → v-1, live range: [2-21]
+  [0m    [0m3/3: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → v-1, live range: [3-20]
+  [0m    [0m4/4: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → v-1, live range: [4-20]
+   [0mBlock b0
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m  [0m    [0m5/1: InitialValue(<this>) → [stack:-6|t], live range: [5-20]
+  [0m    [0m6/2: InitialValue(a0) → [stack:-7|t], live range: [6-20]
+  [0m    [0m7/6: FunctionEntryStackCheck
+  [0m         ↳ lazy @-1 (3 live vars)
+  [0m    [0m8/7: Jump b1
+  [0m      ↓
+   [0mBlock b1
+  [0m     [0m26: GapMove([stack:-7|t] → [x0|R|t])
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:11)
+[m  [0m         ↱ eager @0 (3 live vars)
+  [0m    [0m9/8: CheckHeapObject [v6/n2:[x0|R|t]]
+  [0m   [0m10/9: LoadTaggedField(0x0, compressed, AnyHeapObject) [v6/n2:[x0|R|t]] → [x1|R|t], live range: [10-11]
+  [0m     [0m27: ConstantGapMove(n10 → [x2|R|t])
+[0;31m╭───[0m11/11: BranchIfReferenceEqual [v10/n9:[x1|R|t], v1/n10:[x2|R|t]] b2 b3
+[0;31m│ [0m      ↓
+[0;31m│  [0mBlock b2
+[0;31m│ [0m  [0m12/12: LoadTaggedField(0xc: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [v6/n2:[x0|R|t]] → [x1|R|t], live range: [12-13]
+[0;31m│ [0m  [0m13/24: UnsafeSmiUntag [v12/n12:[x1|R|t]] → [x1|R|w32], live range: [13-14]
+[0;31m│[0;32m╭──[0m14/13: Jump b4
+[0;31m│[0;32m│[0m         with gap moves:
+[0;31m│[0;32m│[0m           - v13/n24:[x1|R|w32] → 17: φᴵ r0 [x1|R|w32]
+[0;31m│[0;32m│[0m         with register merges:
+[0;31m│[0;32m│[0m
+[0;31m╰─►[0mBlock b3
+ [0;32m│[0m         ↱ eager @0 (3 live vars)
+ [0;32m│[0m  [0m15/14: CheckMaps(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, no heapobj check) [v6/n2:[x0|R|t]]
+ [0;32m│[0m  [0m16/15: LoadTaggedField(0x10: 0x09b8000034f5 <String[1]: #x>, compressed, is_const, Smi) [v6/n2:[x0|R|t]] → [x1|R|t], live range: [16-17]
+ [0;32m│[0m  [0m17/25: UnsafeSmiUntag [v16/n15:[x1|R|t]] → [x1|R|w32], live range: [17-18]
+ [0;32m│[0m  [0m18/16: Jump b4
+ [0;32m│[0m      │  with gap moves:
+ [0;32m│[0m      │    - v17/n25:[x1|R|w32] → 17: φᴵ r0 [x1|R|w32]
+ [0;32m│[0m      │  with register merges:
+ [0;32m│[0m      ▼
+ [0;32m╰►[0mBlock b4
+  [0m  [0m19/17: φᴵ r0 (n24, n25) → [x1|R|w32], live range: [19-20]
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m  [0m         ↱ eager @4 (4 live vars)
+  [0m  [0m20/19: Int32IncrementWithOverflow [v19/n17:[x1|R|w32]] → [x2|R|w32], live range: [20-22]
+  [0m     [0m28: ConstantGapMove(n20 → [x0|R|t])
+  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:17)
+[m  [0m[0;34m   7 : b9                Return
+[m  [0m  [0m21/21: ReduceInterruptBudgetForReturn(7) [v2/n20:[x0|R|t]]
+  [0m  [0m22/22: Int32ToNumber[kCanonicalizeSmi] [v20/n19:[x2|R|w32]] → [x0|R|t], live range: [22-23]
+  [0m  [0m23/23: Return [v22/n22:[x0|R|t]]
+  [0m
+---------------------------------------------------
+Finished compiling method read using Maglev
+---------------------------------------------------
+Begin compiling method  using Maglev
+Compiling 0x09b80101e3e1 <JSFunction (sfi = 0x9b80101e2c5)> with Maglev
+----- Bytecode array -----
+Parameter count 1
+Register count 6
+Frame size 48
+         0x31a010000d0 @    0 : 13 00             LdaConstant [0:0x09b80101e31d <FixedArray[2]>]
+         0x31a010000d2 @    2 : d2                Star3
+         0x31a010000d3 @    3 : 1b fe f5          Mov <closure>, r4
+    0 E> 0x31a010000d6 @    6 : 70 77 01 f6 02    CallRuntime [DeclareGlobals], r3-r4
+  290 S> 0x31a010000db @   11 : 0c                LdaZero
+  290 E> 0x31a010000dc @   12 : 29 02             StaCurrentContextSlot [2]
+  306 S> 0x31a010000de @   14 : 0c                LdaZero
+         0x31a010000df @   15 : d3                Star2
+  311 S> 0x31a010000e0 @   16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+  311 E> 0x31a010000e6 @   22 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+         0x31a010000e9 @   25 : a8 26             JumpIfFalse [38] (0x31a0100010f @ 63)
+  330 S> 0x31a010000eb @   27 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000ed @   29 : d2                Star3
+         0x31a010000ee @   30 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+         0x31a010000f1 @   33 : d1                Star4
+         0x31a010000f2 @   34 : 89 02 02 29       CreateObjectLiteral [2:0x09b80101e35d <ObjectBoilerplateDescription[2]>], FBV[2], #29
+         0x31a010000f6 @   38 : d0                Star5
+         0x31a010000f7 @   39 : 0b f7             Ldar r2
+  347 E> 0x31a010000f9 @   41 : 3b f4 03 03       DefineNamedOwnProperty r5, [3:"x"], FBV[3]
+  338 E> 0x31a010000fd @   45 : 6d f5 f4 05       CallUndefinedReceiver1 r4, r5, FBV[5]
+         0x31a01000101 @   49 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+  335 E> 0x31a01000104 @   52 : 29 02             StaCurrentContextSlot [2]
+  322 S> 0x31a01000106 @   54 : 0b f7             Ldar r2
+         0x31a01000108 @   56 : 5b 07             Inc FBV[7]
+         0x31a0100010a @   58 : d3                Star2
+  293 E> 0x31a0100010b @   59 : 97 2b 00 08       JumpLoop [43], [0], FBV[8] (0x31a010000e0 @ 16)
+  414 S> 0x31a0100010f @   63 : 18 02             LdaCurrentContextSlot [2]
+         0x31a01000111 @   65 : d2                Star3
+         0x31a01000112 @   66 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+         0x31a01000115 @   69 : d1                Star4
+         0x31a01000116 @   70 : 89 04 0a 29       CreateObjectLiteral [4:0x09b80101e375 <ObjectBoilerplateDescription[4]>], FBV[10], #29
+         0x31a0100011a @   74 : d0                Star5
+  422 E> 0x31a0100011b @   75 : 6d f5 f4 0b       CallUndefinedReceiver1 r4, r5, FBV[11]
+         0x31a0100011f @   79 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+  419 E> 0x31a01000122 @   82 : 29 02             StaCurrentContextSlot [2]
+  599 S> 0x31a01000124 @   84 : 0c                LdaZero
+         0x31a01000125 @   85 : d4                Star1
+  604 S> 0x31a01000126 @   86 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+  604 E> 0x31a0100012c @   92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+         0x31a0100012f @   95 : a8 26             JumpIfFalse [38] (0x31a01000155 @ 133)
+  623 S> 0x31a01000131 @   97 : 18 02             LdaCurrentContextSlot [2]
+         0x31a01000133 @   99 : d2                Star3
+         0x31a01000134 @  100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+         0x31a01000137 @  103 : d1                Star4
+         0x31a01000138 @  104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+         0x31a0100013c @  108 : d0                Star5
+         0x31a0100013d @  109 : 0b f8             Ldar r1
+  646 E> 0x31a0100013f @  111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+  631 E> 0x31a01000143 @  115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+         0x31a01000147 @  119 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+  628 E> 0x31a0100014a @  122 : 29 02             StaCurrentContextSlot [2]
+  615 S> 0x31a0100014c @  124 : 0b f8             Ldar r1
+         0x31a0100014e @  126 : 5b 12             Inc FBV[18]
+         0x31a01000150 @  128 : d4                Star1
+  586 E> 0x31a01000151 @  129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19] (0x31a01000126 @ 86)
+  653 S> 0x31a01000155 @  133 : 23 06 15          LdaGlobal [6:"print"], FBV[21]
+         0x31a01000158 @  136 : d2                Star3
+         0x31a01000159 @  137 : 18 02             LdaCurrentContextSlot [2]
+         0x31a0100015b @  139 : d1                Star4
+  653 E> 0x31a0100015c @  140 : 6d f6 f5 17       CallUndefinedReceiver1 r3, r4, FBV[23]
+         0x31a01000160 @  144 : d5                Star0
+  666 S> 0x31a01000161 @  145 : b9                Return
+Constant pool (size = 7)
+0x31a01000085: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 7
+           0: 0x09b80101e31d <FixedArray[2]>
+           1: 0x09b8000051cd <String[4]: #read>
+           2: 0x09b80101e35d <ObjectBoilerplateDescription[2]>
+           3: 0x09b8000034f5 <String[1]: #x>
+           4: 0x09b80101e375 <ObjectBoilerplateDescription[4]>
+           5: 0x09b80101e395 <ObjectBoilerplateDescription[4]>
+           6: 0x09b801002e31 <String[5]: #print>
+Handler Table (size = 0)
+Source Position Table (size = 60)
+0x031a01000165 <Other heap object (TRUSTED_BYTE_ARRAY_TYPE)>
+0x9b80101e5e5: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 25
+ - shared function info: 0x09b80101e2c5 <SharedFunctionInfo>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1
+ - closure feedback cell array: 0x9b80101f009: [ClosureFeedbackCellArray] in OldSpace
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 1
+ - elements:
+           0: 0x09b80101e401 <FeedbackCell[one closure]>
+
+ - slot #0 LoadGlobalNotInsideTypeof MONOMORPHIC
+   [weak] 0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>> {
+     [0]: [weak] 0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>
+     [1]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #2 Literal  {
+     [2]: 0x09b80101e665 <AllocationSite>
+  }
+ - slot #3 DefineNamedOwn MONOMORPHIC
+   0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>: StoreHandler(Smi)(kind = kField, descriptor = 0, is in object = 1, representation = s, storage offset in words = 3)
+ {
+     [3]: [weak] 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>
+     [4]: 3342336
+  }
+ - slot #5 Call MONOMORPHIC {
+     [5]: [weak] 0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>
+     [6]: 410064
+  }
+ - slot #7 BinaryOp BinaryOp:SignedSmall {
+     [7]: 1
+  }
+ - slot #8 JumpLoop JumpLoop {
+     [8]: [weak] 0x09b80101e691 <CodeWrapper>
+     [9]: 0
+  }
+ - slot #10 Literal  {
+     [10]: 1
+  }
+ - slot #11 Call MONOMORPHIC {
+     [11]: [weak] 0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>
+     [12]: 8
+  }
+ - slot #13 Literal  {
+     [13]: 0x09b801246e8d <AllocationSite>
+  }
+ - slot #14 DefineNamedOwn MONOMORPHIC
+   0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>: StoreHandler(Smi)(kind = kField, descriptor = 1, is in object = 1, representation = s, storage offset in words = 4)
+ {
+     [14]: [weak] 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>
+     [15]: 4390976
+  }
+ - slot #16 Call MONOMORPHIC {
+     [16]: [weak] 0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>
+     [17]: 115656
+  }
+ - slot #18 BinaryOp BinaryOp:SignedSmall {
+     [18]: 1
+  }
+ - slot #19 JumpLoop JumpLoop {
+     [19]: [cleared]
+     [20]: 0
+  }
+ - slot #21 LoadGlobalNotInsideTypeof UNINITIALIZED {
+     [21]: [cleared]
+     [22]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #23 Call UNINITIALIZED {
+     [23]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+     [24]: 0
+  }
+
+----- Inlining 0x09b80101e32d <SharedFunctionInfo read> with bytecode -----
+Parameter count 2
+Register count 0
+Frame size 0
+  269 S> 0x31a010001dc @    0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+  271 E> 0x31a010001e0 @    4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+  275 S> 0x31a010001e3 @    7 : b9                Return
+Constant pool (size = 1)
+0x31a010001a9: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 1
+           0: 0x09b8000034f5 <String[1]: #x>
+Handler Table (size = 0)
+Source Position Table (size = 9)
+0x031a010001e5 <Other heap object (TRUSTED_BYTE_ARRAY_TYPE)>
+0x9b80101e539: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 2
+ - shared function info: 0x09b80101e32d <SharedFunctionInfo read>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1004
+ - closure feedback cell array: 0x9b800002091: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 LoadProperty POLYMORPHIC
+   [weak] 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 3, descriptor index = 0)
+   [weak] 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 4, descriptor index = 1) {
+     [0]: 0x09b801148041 <WeakFixedArray[4]>
+     [1]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+
+----- Inlining 0x09b80101e32d <SharedFunctionInfo read> with bytecode -----
+Parameter count 2
+Register count 0
+Frame size 0
+  269 S> 0x31a010001dc @    0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+  271 E> 0x31a010001e0 @    4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+  275 S> 0x31a010001e3 @    7 : b9                Return
+Constant pool (size = 1)
+0x31a010001a9: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 1
+           0: 0x09b8000034f5 <String[1]: #x>
+Handler Table (size = 0)
+Source Position Table (size = 9)
+0x031a010001e5 <Other heap object (TRUSTED_BYTE_ARRAY_TYPE)>
+0x9b80101e539: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 2
+ - shared function info: 0x09b80101e32d <SharedFunctionInfo read>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1004
+ - closure feedback cell array: 0x9b800002091: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 LoadProperty POLYMORPHIC
+   [weak] 0x09b80101e4cd <Map[16](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 3, descriptor index = 0)
+   [weak] 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 4, descriptor index = 1) {
+     [0]: 0x09b801148041 <WeakFixedArray[4]>
+     [1]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+
+----- Maglev graph building -----
+Graph
+
+   [0m  [0m38: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>), 2 uses
+   [0m  [0m36: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>), 2 uses
+   [0m  [0m37: HeapConstant(0x09b80101e421 <ScriptContext[3]>), 2 uses
+   [0m  [0m22: HeapConstant(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>), 0 uses 🪦
+   [0m  [0m46: HeapConstant(0x09b80101e411 <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m24: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m18: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m17: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m23: RootConstant(empty_fixed_array), 4 uses
+   [0m  [0m48: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m26: RootConstant(uninitialized_value), 2 uses
+   [0m  [0m25: SmiConstant(1), 2 uses
+   [0m  [0m12: SmiConstant(100000), 2 uses
+   [0m  [0m14: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:0:0)
+[m   [0m[0;34m  86 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 15 uses
+   [0m   [0m2: InitialValue(<context>), 19 uses
+   [0m   [0m3: InitialValue(<closure>), 15 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 9 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: InitialValue(r4), 0 uses 🪦
+   [0m   [0m9: InitialValue(r5), 0 uses 🪦
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @129 (3 live vars)
+   [0m      ↱ eager @129 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:18)
+[m   [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @92 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [n5], 3 uses, cannot truncate to int32
+   [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
+   [0m[0;34m  95 : a8 26             JumpIfFalse [38]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:2)
+[m[0;31m│  [0m[0;34m  97 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [n2], 4 uses
+[0;31m│  [0m[0;34m 100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│  [0m  [0m21: LoadTaggedField(0xc, compressed, JSFunction) [n20], 2 uses
+[0;31m│  [0m[0;34m 104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+[m[0;31m│  [0m  [0m27: AllocationBlock(Young), 1 uses
+[0;31m│  [0m  [0m28: InlinedAllocation(object 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>) [n27], 8 uses (7 non escaping uses)
+[0;31m│  [0m  [0m29: StoreMap(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, InlinedAllocation) [n28]
+[0;31m│  [0m  [0m30: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [n28, n23]
+[0;31m│  [0m  [0m31: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [n28, n23]
+[0;31m│  [0m  [0m32: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [n28, n25]
+[0;31m│  [0m  [0m33: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [n28, n26]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:25)
+[m[0;31m│  [0m[0;34m 111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+[m[0;31m│  [0m  [0m34: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034f5 <String[1]: #x>, mutable) [n28, n5]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:10)
+[m[0;31m│  [0m[0;34m 115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+[m[0;31m│  [0m      ↱ eager @115 (6 live vars)
+[0;31m│  [0m  [0m35: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [n21]
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│  [0m  [0m39: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│  [0m      ↱ eager @115 (4 live vars)
+[0;31m│  [0m      │       @4 (4 live vars)
+[0;31m│  [0m  [0m40: Int32IncrementWithOverflow [n13], 4 uses, cannot truncate to int32
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:10)
+[m[0;31m│  [0m[0;34m 119 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│  [0m      ↱ eager @119 (5 live vars)
+[0;31m│  [0m  [0m41: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m42: ChangeInt32ToFloat64 [n40], 1 uses
+[0;31m│  [0m  [0m43: Float64Add [n41, n42], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:7)
+[m[0;31m│  [0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m44: Float64ToTagged[kCanonicalizeSmi] [n43], 1 uses
+[0;31m│  [0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44]
+[0;31m│  [0m      ↳ lazy @122 (3 live vars)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:0)
+[m[0;31m│  [0m[0;34m 129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19]
+[m[0;31m│  [0m  [0m47: ReduceInterruptBudgetForLoop(34) [n46]
+[0;31m│  [0m      ↳ lazy @129 (3 live vars)
+[0;31m│  [0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [n40], 1 uses
+[0;31m│  [0m  [0m49: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n50 → 51: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m51: φᵀ r1 (n50, n75), 8 uses
+[0;31m│[0;32m│ [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @92 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m52: CheckedSmiUntag [n51], 3 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m53: Int32Compare[LessThan] [n52, n14], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  95 : a8 26             JumpIfFalse [38]
+[m[0;31m│[0;32m│[0;33m╭──[0m54: BranchIfInt32Compare(LessThan) [n52, n14] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  97 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55: LoadContextSlot(0x10, mutable) [n2], 4 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m 100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: LoadTaggedField(0xc, compressed, JSFunction) [n20], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m 104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57: AllocationBlock(Young), 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m58: InlinedAllocation(object 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>) [n57], 8 uses (7 non escaping uses)
+[0;31m│[0;32m│[0;33m│[0m  [0m59: StoreMap(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, InlinedAllocation) [n58]
+[0;31m│[0;32m│[0;33m│[0m  [0m60: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [n58, n23]
+[0;31m│[0;32m│[0;33m│[0m  [0m61: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [n58, n23]
+[0;31m│[0;32m│[0;33m│[0m  [0m62: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [n58, n25]
+[0;31m│[0;32m│[0;33m│[0m  [0m63: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [n58, n26]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m64: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034f5 <String[1]: #x>, mutable) [n58, n51]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [n56]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m66: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @4 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m67: Int32IncrementWithOverflow [n52], 5 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m 119 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @119 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m68: CheckedNumberToFloat64 [n55], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m69: ChangeInt32ToFloat64 [n67], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m70: Float64Add [n68, n69], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m71: Float64ToTagged[kCanonicalizeSmi] [n70], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m72: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n71]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @122 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m73: ReduceInterruptBudgetForLoop(34) [n46]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m75: Int32ToNumber[kCanonicalizeSmi] [n67], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @129 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m74: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n75 → 51: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:20:0)
+[m[0;31m│  [0m[0;34m 133 : 23 06 15          LdaGlobal [6:"print"], FBV[21]
+[m[0;31m│[0;32m╭───[0m76: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m77: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @133 (2 live vars)
+   [0m  [0m78: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Phi untagging -----
+Graph
+
+   [0m  [0m38: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>), 2 uses
+   [0m  [0m36: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>), 2 uses
+   [0m  [0m37: HeapConstant(0x09b80101e421 <ScriptContext[3]>), 2 uses
+   [0m  [0m22: HeapConstant(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>), 0 uses 🪦
+   [0m  [0m46: HeapConstant(0x09b80101e411 <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m24: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m18: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m17: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m23: RootConstant(empty_fixed_array), 4 uses
+   [0m  [0m48: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m26: RootConstant(uninitialized_value), 2 uses
+   [0m  [0m25: SmiConstant(1), 2 uses
+   [0m  [0m12: SmiConstant(100000), 2 uses
+   [0m  [0m14: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:0:0)
+[m   [0m[0;34m  86 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 15 uses
+   [0m   [0m2: InitialValue(<context>), 19 uses
+   [0m   [0m3: InitialValue(<closure>), 15 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 9 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: InitialValue(r4), 0 uses 🪦
+   [0m   [0m9: InitialValue(r5), 0 uses 🪦
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @129 (3 live vars)
+   [0m      ↱ eager @129 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:18)
+[m   [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @92 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [n5], 3 uses, cannot truncate to int32
+   [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
+   [0m[0;34m  95 : a8 26             JumpIfFalse [38]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:2)
+[m[0;31m│  [0m[0;34m  97 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [n2], 4 uses
+[0;31m│  [0m[0;34m 100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│  [0m  [0m21: LoadTaggedField(0xc, compressed, JSFunction) [n20], 2 uses
+[0;31m│  [0m[0;34m 104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+[m[0;31m│  [0m  [0m27: AllocationBlock(Young), 1 uses
+[0;31m│  [0m  [0m28: InlinedAllocation(object 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>) [n27], 8 uses (7 non escaping uses)
+[0;31m│  [0m  [0m29: StoreMap(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, InlinedAllocation) [n28]
+[0;31m│  [0m  [0m30: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [n28, n23]
+[0;31m│  [0m  [0m31: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [n28, n23]
+[0;31m│  [0m  [0m32: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [n28, n25]
+[0;31m│  [0m  [0m33: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [n28, n26]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:25)
+[m[0;31m│  [0m[0;34m 111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+[m[0;31m│  [0m  [0m34: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034f5 <String[1]: #x>, mutable) [n28, n5]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:10)
+[m[0;31m│  [0m[0;34m 115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+[m[0;31m│  [0m      ↱ eager @115 (6 live vars)
+[0;31m│  [0m  [0m35: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [n21]
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│  [0m  [0m39: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│  [0m      ↱ eager @115 (4 live vars)
+[0;31m│  [0m      │       @4 (4 live vars)
+[0;31m│  [0m  [0m40: Int32IncrementWithOverflow [n13], 5 uses, cannot truncate to int32
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:10)
+[m[0;31m│  [0m[0;34m 119 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│  [0m      ↱ eager @119 (5 live vars)
+[0;31m│  [0m  [0m41: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m42: ChangeInt32ToFloat64 [n40], 1 uses
+[0;31m│  [0m  [0m43: Float64Add [n41, n42], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:7)
+[m[0;31m│  [0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m44: Float64ToTagged[kCanonicalizeSmi] [n43], 1 uses
+[0;31m│  [0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44]
+[0;31m│  [0m      ↳ lazy @122 (3 live vars)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:0)
+[m[0;31m│  [0m[0;34m 129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19]
+[m[0;31m│  [0m  [0m47: ReduceInterruptBudgetForLoop(34) [n46]
+[0;31m│  [0m      ↳ lazy @129 (3 live vars)
+[0;31m│  [0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [n40], 0 uses 🪦
+[0;31m│  [0m  [0m49: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n40 → 51: φᴵ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m51: φᴵ r1 (n40, n67), 8 uses
+[0;31m│[0;32m│ [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @92 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m52: CheckedSmiSizedInt32 [n51], 3 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m53: Int32Compare[LessThan] [n52, n14], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  95 : a8 26             JumpIfFalse [38]
+[m[0;31m│[0;32m│[0;33m╭──[0m54: BranchIfInt32Compare(LessThan) [n52, n14] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m  [0m79: Int32ToNumber[kCanonicalizeSmi] [n51], 1 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  97 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55: LoadContextSlot(0x10, mutable) [n2], 4 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m 100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: LoadTaggedField(0xc, compressed, JSFunction) [n20], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m 104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57: AllocationBlock(Young), 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m58: InlinedAllocation(object 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>) [n57], 8 uses (7 non escaping uses)
+[0;31m│[0;32m│[0;33m│[0m  [0m59: StoreMap(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, InlinedAllocation) [n58]
+[0;31m│[0;32m│[0;33m│[0m  [0m60: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [n58, n23]
+[0;31m│[0;32m│[0;33m│[0m  [0m61: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [n58, n23]
+[0;31m│[0;32m│[0;33m│[0m  [0m62: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [n58, n25]
+[0;31m│[0;32m│[0;33m│[0m  [0m63: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [n58, n26]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m64: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034f5 <String[1]: #x>, mutable) [n58, n79]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [n56]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m66: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @4 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m67: Int32IncrementWithOverflow [n52], 6 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m 119 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @119 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m68: CheckedNumberToFloat64 [n55], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m69: ChangeInt32ToFloat64 [n67], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m70: Float64Add [n68, n69], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m71: Float64ToTagged[kCanonicalizeSmi] [n70], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m72: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n71]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @122 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m73: ReduceInterruptBudgetForLoop(34) [n46]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m75: Int32ToNumber[kCanonicalizeSmi] [n67], 0 uses 🪦
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @129 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m74: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n67 → 51: φᴵ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:20:0)
+[m[0;31m│  [0m[0;34m 133 : 23 06 15          LdaGlobal [6:"print"], FBV[21]
+[m[0;31m│[0;32m╭───[0m76: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m77: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @133 (2 live vars)
+   [0m  [0m78: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- AnyUseMarking -----
+Graph
+
+   [0m  [0m38: HeapConstant(0x09b801004999 <JSGlobalProxy>) → (x)
+   [0m  [0m20: HeapConstant(0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>) → (x)
+   [0m  [0m36: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → (x)
+   [0m  [0m37: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → (x)
+   [0m  [0m46: HeapConstant(0x09b80101e411 <FeedbackCell[one closure]>) → (x)
+   [0m  [0m23: RootConstant(empty_fixed_array) → (x)
+   [0m  [0m26: RootConstant(uninitialized_value) → (x)
+   [0m  [0m25: SmiConstant(1) → (x)
+   [0m  [0m12: SmiConstant(100000) → (x)
+   [0m  [0m14: Int32Constant(100000) → (x)
+    [0mBlock b0
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:0:0)
+[m   [0m[0;34m  86 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>) → (x)
+   [0m   [0m2: InitialValue(<context>) → (x)
+   [0m   [0m3: InitialValue(<closure>) → (x)
+   [0m   [0m5: InitialValue(r1) → (x)
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @129 (3 live vars)
+   [0m      ↱ eager @129 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:18)
+[m   [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @92 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [v0/n5:(x)] → (x)
+   [0m[0;34m  95 : a8 26             JumpIfFalse [38]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [v0/n13:(x), v0/n14:(x)] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:2)
+[m[0;31m│  [0m[0;34m  97 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│  [0m[0;34m 100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│  [0m  [0m21: LoadTaggedField(0xc, compressed, JSFunction) [v0/n20:(x)] → (x)
+[0;31m│  [0m[0;34m 104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+[m[0;31m│  [0m  [0m27: AllocationBlock(Young) → (x)
+[0;31m│  [0m  [0m28: InlinedAllocation(object 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>) [v0/n27:(x)] → (x)
+[0;31m│  [0m  [0m29: StoreMap(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, InlinedAllocation) [v0/n28:(x)]
+[0;31m│  [0m  [0m30: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v0/n28:(x), v0/n23:(x)]
+[0;31m│  [0m  [0m31: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v0/n28:(x), v0/n23:(x)]
+[0;31m│  [0m  [0m32: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v0/n28:(x), v0/n25:(x)]
+[0;31m│  [0m  [0m33: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [v0/n28:(x), v0/n26:(x)]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:25)
+[m[0;31m│  [0m[0;34m 111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+[m[0;31m│  [0m  [0m34: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034f5 <String[1]: #x>, mutable) [v0/n28:(x), v0/n5:(x)]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:10)
+[m[0;31m│  [0m[0;34m 115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+[m[0;31m│  [0m      ↱ eager @115 (6 live vars)
+[0;31m│  [0m  [0m35: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v0/n21:(x)]
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│  [0m  [0m39: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│  [0m      ↱ eager @115 (4 live vars)
+[0;31m│  [0m      │       @4 (4 live vars)
+[0;31m│  [0m  [0m40: Int32IncrementWithOverflow [v0/n13:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:10)
+[m[0;31m│  [0m[0;34m 119 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│  [0m      ↱ eager @119 (5 live vars)
+[0;31m│  [0m  [0m41: CheckedNumberToFloat64 [v0/n19:(x)] → (x)
+[0;31m│  [0m  [0m42: ChangeInt32ToFloat64 [v0/n40:(x)] → (x)
+[0;31m│  [0m  [0m43: Float64Add [v0/n41:(x), v0/n42:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:7)
+[m[0;31m│  [0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m44: Float64ToTagged[kCanonicalizeSmi] [v0/n43:(x)] → (x)
+[0;31m│  [0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n44:(x)]
+[0;31m│  [0m      ↳ lazy @122 (3 live vars)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:0)
+[m[0;31m│  [0m[0;34m 129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19]
+[m[0;31m│  [0m  [0m47: ReduceInterruptBudgetForLoop(34) [v0/n46:(x)]
+[0;31m│  [0m      ↳ lazy @129 (3 live vars)
+[0;31m│  [0m  [0m49: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - v0/n40:(x) → 51: φᴵ r1 (x)
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m51: φᴵ r1 (n40, n67) → (x)
+[0;31m│[0;32m│ [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @92 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m52: CheckedSmiSizedInt32 [v0/n51:(x)] → (x)
+[0;31m│[0;32m│ [0m[0;34m  95 : a8 26             JumpIfFalse [38]
+[m[0;31m│[0;32m│[0;33m╭──[0m54: BranchIfInt32Compare(LessThan) [v0/n52:(x), v0/n14:(x)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m  [0m79: Int32ToNumber[kCanonicalizeSmi] [v0/n51:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  97 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: LoadTaggedField(0xc, compressed, JSFunction) [v0/n20:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57: AllocationBlock(Young) → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m58: InlinedAllocation(object 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>) [v0/n57:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m59: StoreMap(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, InlinedAllocation) [v0/n58:(x)]
+[0;31m│[0;32m│[0;33m│[0m  [0m60: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v0/n58:(x), v0/n23:(x)]
+[0;31m│[0;32m│[0;33m│[0m  [0m61: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v0/n58:(x), v0/n23:(x)]
+[0;31m│[0;32m│[0;33m│[0m  [0m62: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v0/n58:(x), v0/n25:(x)]
+[0;31m│[0;32m│[0;33m│[0m  [0m63: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [v0/n58:(x), v0/n26:(x)]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m64: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034f5 <String[1]: #x>, mutable) [v0/n58:(x), v0/n79:(x)]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v0/n56:(x)]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m66: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @115 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @4 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m67: Int32IncrementWithOverflow [v0/n52:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m 119 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @119 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m68: CheckedNumberToFloat64 [v0/n55:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m69: ChangeInt32ToFloat64 [v0/n67:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m70: Float64Add [v0/n68:(x), v0/n69:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m71: Float64ToTagged[kCanonicalizeSmi] [v0/n70:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m72: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n71:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @122 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m73: ReduceInterruptBudgetForLoop(34) [v0/n46:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @129 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m74: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - v0/n67:(x) → 51: φᴵ r1 (x)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:20:0)
+[m[0;31m│  [0m[0;34m 133 : 23 06 15          LdaGlobal [6:"print"], FBV[21]
+[m[0;31m│[0;32m╭───[0m76: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m77: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @133 (2 live vars)
+   [0m  [0m78: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Dead nodes sweeping -----
+Graph
+
+   [0m   [0m1/38: HeapConstant(0x09b801004999 <JSGlobalProxy>) → v-1, live range: [1-62]
+   [0m   [0m2/20: HeapConstant(0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>) → v-1, live range: [2-62]
+   [0m   [0m3/36: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → v-1, live range: [3-62]
+   [0m   [0m4/37: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → v-1, live range: [4-62]
+   [0m   [0m5/46: HeapConstant(0x09b80101e411 <FeedbackCell[one closure]>) → v-1, live range: [5-62]
+   [0m   [0m6/23: RootConstant(empty_fixed_array) → v-1, live range: [6-62]
+   [0m   [0m7/26: RootConstant(uninitialized_value) → v-1, live range: [7-62]
+   [0m   [0m8/25: SmiConstant(1) → v-1, live range: [8-62]
+   [0m   [0m9/12: SmiConstant(100000) → v-1, live range: [9-62]
+   [0m  [0m10/14: Int32Constant(100000) → v-1, live range: [10-62]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:0:0)
+[m   [0m[0;34m  86 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m11/1: InitialValue(<this>) → v-1(=-6S), live range: [11-65]
+   [0m   [0m12/2: InitialValue(<context>) → v-1(=-3S), live range: [12-65]
+   [0m   [0m13/3: InitialValue(<closure>) → v-1(=-2S), live range: [13-65]
+   [0m   [0m14/5: InitialValue(r1) → v-1(=4S), live range: [14-36]
+   [0m  [0m15/10: FunctionEntryStackCheck
+   [0m         ↳ lazy @129 (3 live vars)
+   [0m         ↱ eager @129 (3 live vars)
+   [0m  [0m16/11: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:18)
+[m   [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @92 (4 live vars)
+   [0m  [0m17/13: CheckedSmiUntag [v14/n5:v-1(R)] → v-1(0), live range: [17-31]
+   [0m[0;34m  95 : a8 26             JumpIfFalse [38]
+[m[0;31m╭────[0m18/16: BranchIfInt32Compare(LessThan) [v17/n13:v-1(R), v10/n14:v-1(R)] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:2)
+[m[0;31m│  [0m[0;34m  97 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19/19: LoadContextSlot(0x10, mutable) [v12/n2:v-1(R)] → v-1(R), live range: [19-32]
+[0;31m│  [0m[0;34m 100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│  [0m  [0m20/21: LoadTaggedField(0xc, compressed, JSFunction) [v2/n20:v-1(R)] → v-1(R), live range: [20-29]
+[0;31m│  [0m[0;34m 104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+[m[0;31m│  [0m  [0m21/27: AllocationBlock(Young) → v-1(R), live range: [21-22]
+[0;31m│  [0m  [0m22/28: InlinedAllocation(object 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>) [v21/n27:v-1(R)] → v-1(0), live range: [22-31]
+[0;31m│  [0m  [0m23/29: StoreMap(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, InlinedAllocation) [v22/n28:v-1(=x1)]
+[0;31m│  [0m  [0m24/30: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v22/n28:v-1(R), v6/n23:v-1(R)]
+[0;31m│  [0m  [0m25/31: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v22/n28:v-1(R), v6/n23:v-1(R)]
+[0;31m│  [0m  [0m26/32: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v22/n28:v-1(R), v8/n25:v-1(R)]
+[0;31m│  [0m  [0m27/33: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [v22/n28:v-1(R), v7/n26:v-1(R)]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:25)
+[m[0;31m│  [0m[0;34m 111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+[m[0;31m│  [0m  [0m28/34: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034f5 <String[1]: #x>, mutable) [v22/n28:v-1(R), v14/n5:v-1(R)]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:10)
+[m[0;31m│  [0m[0;34m 115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+[m[0;31m│  [0m         ↱ eager @115 (6 live vars)
+[0;31m│  [0m  [0m29/35: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v20/n21:v-1(R)]
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│  [0m  [0m30/39: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│  [0m         ↱ eager @115 (4 live vars)
+[0;31m│  [0m         │       @4 (4 live vars)
+[0;31m│  [0m  [0m31/40: Int32IncrementWithOverflow [v17/n13:v-1(R)] → v-1(R), live range: [31-38]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:10)
+[m[0;31m│  [0m[0;34m 119 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│  [0m         ↱ eager @119 (5 live vars)
+[0;31m│  [0m  [0m32/41: CheckedNumberToFloat64 [v19/n19:v-1(R)] → v-1(R), live range: [32-34]
+[0;31m│  [0m  [0m33/42: ChangeInt32ToFloat64 [v31/n40:v-1(R)] → v-1(R), live range: [33-34]
+[0;31m│  [0m  [0m34/43: Float64Add [v32/n41:v-1(R), v33/n42:v-1(R)] → v-1(R), live range: [34-35]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:7)
+[m[0;31m│  [0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m35/44: Float64ToTagged[kCanonicalizeSmi] [v34/n43:v-1(R)] → v-1(R), live range: [35-36]
+[0;31m│  [0m  [0m36/45: StoreContextSlotWithWriteBarrier(2, mutable) [v12/n2:v-1(=x1), v35/n44:v-1(R)]
+[0;31m│  [0m         ↳ lazy @122 (3 live vars)
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:0)
+[m[0;31m│  [0m[0;34m 129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19]
+[m[0;31m│  [0m  [0m37/47: ReduceInterruptBudgetForLoop(34) [v5/n46:v-1(R)]
+[0;31m│  [0m         ↳ lazy @129 (3 live vars)
+[0;31m│  [0m  [0m38/49: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v31/n40:v-1(*) → 51: φᴵ r1 v-1(*)
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m39/51: φᴵ r1 (n40, n67) → v-1(*), live range: [39-60]
+[0;31m│[0;32m│ [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @92 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m40/52: CheckedSmiSizedInt32 [v39/n51:v-1(R)] → v-1(0), live range: [40-55]
+[0;31m│[0;32m│ [0m[0;34m  95 : a8 26             JumpIfFalse [38]
+[m[0;31m│[0;32m│[0;33m╭──[0m41/54: BranchIfInt32Compare(LessThan) [v40/n52:v-1(R), v10/n14:v-1(R)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m  [0m42/79: Int32ToNumber[kCanonicalizeSmi] [v39/n51:v-1(R)] → v-1(R), live range: [42-52]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  97 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m43/55: LoadContextSlot(0x10, mutable) [v12/n2:v-1(R)] → v-1(R), live range: [43-56]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44/56: LoadTaggedField(0xc, compressed, JSFunction) [v2/n20:v-1(R)] → v-1(R), live range: [44-53]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+[m[0;31m│[0;32m│[0;33m│[0m  [0m45/57: AllocationBlock(Young) → v-1(R), live range: [45-46]
+[0;31m│[0;32m│[0;33m│[0m  [0m46/58: InlinedAllocation(object 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>) [v45/n57:v-1(R)] → v-1(0), live range: [46-55]
+[0;31m│[0;32m│[0;33m│[0m  [0m47/59: StoreMap(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, InlinedAllocation) [v46/n58:v-1(=x1)]
+[0;31m│[0;32m│[0;33m│[0m  [0m48/60: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v46/n58:v-1(R), v6/n23:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m  [0m49/61: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v46/n58:v-1(R), v6/n23:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m  [0m50/62: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v46/n58:v-1(R), v8/n25:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m  [0m51/63: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [v46/n58:v-1(R), v7/n26:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m52/64: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034f5 <String[1]: #x>, mutable) [v46/n58:v-1(R), v42/n79:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m53/65: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v44/n56:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m54/66: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @4 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m55/67: Int32IncrementWithOverflow [v40/n52:v-1(R)] → v-1(R), live range: [55-62]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m 119 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @119 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m56/68: CheckedNumberToFloat64 [v43/n55:v-1(R)] → v-1(R), live range: [56-58]
+[0;31m│[0;32m│[0;33m│[0m  [0m57/69: ChangeInt32ToFloat64 [v55/n67:v-1(R)] → v-1(R), live range: [57-58]
+[0;31m│[0;32m│[0;33m│[0m  [0m58/70: Float64Add [v56/n68:v-1(R), v57/n69:v-1(R)] → v-1(R), live range: [58-59]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59/71: Float64ToTagged[kCanonicalizeSmi] [v58/n70:v-1(R)] → v-1(R), live range: [59-60]
+[0;31m│[0;32m│[0;33m│[0m  [0m60/72: StoreContextSlotWithWriteBarrier(2, mutable) [v12/n2:v-1(=x1), v59/n71:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @122 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61/73: ReduceInterruptBudgetForLoop(34) [v5/n46:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @129 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m62/74: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v55/n67:v-1(*) → 51: φᴵ r1 v-1(*)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:20:0)
+[m[0;31m│  [0m[0;34m 133 : 23 06 15          LdaGlobal [6:"print"], FBV[21]
+[m[0;31m│[0;32m╭───[0m63/76: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m64/77: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @133 (2 live vars)
+   [0m  [0m65/78: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Register allocation -----
+Graph
+
+   [0m   [0m1/38: HeapConstant(0x09b801004999 <JSGlobalProxy>) → v-1, live range: [1-62]
+   [0m   [0m2/20: HeapConstant(0x09b80101c131 <PropertyCell name=0x09b8000051cd <String[4]: #read> value=0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>>) → v-1, live range: [2-62]
+   [0m   [0m3/36: HeapConstant(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>) → v-1, live range: [3-62]
+   [0m   [0m4/37: HeapConstant(0x09b80101e421 <ScriptContext[3]>) → v-1, live range: [4-62]
+   [0m   [0m5/46: HeapConstant(0x09b80101e411 <FeedbackCell[one closure]>) → v-1, live range: [5-62]
+   [0m   [0m6/23: RootConstant(empty_fixed_array) → v-1, live range: [6-62]
+   [0m   [0m7/26: RootConstant(uninitialized_value) → v-1, live range: [7-62]
+   [0m   [0m8/25: SmiConstant(1) → v-1, live range: [8-62]
+   [0m   [0m9/12: SmiConstant(100000) → v-1, live range: [9-62]
+   [0m  [0m10/14: Int32Constant(100000) → v-1, live range: [10-62]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:0:0)
+[m   [0m[0;34m  86 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m11/1: InitialValue(<this>) → [stack:-6|t], live range: [11-65]
+   [0m   [0m12/2: InitialValue(<context>) → [stack:-3|t], live range: [12-65]
+   [0m   [0m13/3: InitialValue(<closure>) → [stack:-2|t], live range: [13-65]
+   [0m   [0m14/5: InitialValue(r1) → [stack:4|t], live range: [14-36]
+   [0m  [0m15/10: FunctionEntryStackCheck
+   [0m         ↳ lazy @129 (3 live vars)
+   [0m         ↱ eager @129 (3 live vars)
+   [0m  [0m16/11: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m     [0m80: GapMove([stack:4|t] → [x0|R|t])
+   [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:18)
+[m   [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @92 (4 live vars)
+   [0m  [0m17/13: CheckedSmiUntag [v14/n5:[x0|R|t]] → [x0|R|w32], live range: [17-31]
+   [0m     [0m81: ConstantGapMove(n14 → [x1|R|w32])
+   [0m[0;34m  95 : a8 26             JumpIfFalse [38]
+[m[0;31m╭────[0m18/16: BranchIfInt32Compare(LessThan) [v17/n13:[x0|R|w32], v10/n14:[x1|R|w32]] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m     [0m82: GapMove([stack:-3|t] → [x2|R|t])
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:2)
+[m[0;31m│  [0m[0;34m  97 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19/19: LoadContextSlot(0x10, mutable) [v12/n2:[x2|R|t]] → [x5|R|t], live range: [19-32]
+[0;31m│  [0m     [0m83: ConstantGapMove(n20 → [x3|R|t])
+[0;31m│  [0m[0;34m 100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│  [0m  [0m20/21: LoadTaggedField(0xc, compressed, JSFunction) [v2/n20:[x3|R|t]] → [x4|R|t], live range: [20-29]
+[0;31m│  [0m[0;34m 104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+[m[0;31m│  [0m  [0m21/27: AllocationBlock(Young) → [x6|R|t], live range: [21-22]
+[0;31m│  [0m  [0m22/28: InlinedAllocation(object 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>) [v21/n27:[x6|R|t]] → [x6|R|t], live range: [22-31]
+[0;31m│  [0m     [0m84: GapMove([x6|R|t] → [x1|R|t])
+[0;31m│  [0m  [0m23/29: StoreMap(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, InlinedAllocation) [v22/n28:[x1|R|t]]
+[0;31m│  [0m     [0m85: ConstantGapMove(n23 → [x7|R|t])
+[0;31m│  [0m  [0m24/30: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v22/n28:[x1|R|t], v6/n23:[x7|R|t]]
+[0;31m│  [0m  [0m25/31: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v22/n28:[x1|R|t], v6/n23:[x7|R|t]]
+[0;31m│  [0m     [0m86: ConstantGapMove(n25 → [x8|R|t])
+[0;31m│  [0m  [0m26/32: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v22/n28:[x1|R|t], v8/n25:[x8|R|t]]
+[0;31m│  [0m     [0m87: ConstantGapMove(n26 → [x9|R|t])
+[0;31m│  [0m  [0m27/33: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [v22/n28:[x1|R|t], v7/n26:[x9|R|t]]
+[0;31m│  [0m     [0m88: GapMove([stack:4|t] → [x10|R|t])
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:25)
+[m[0;31m│  [0m[0;34m 111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+[m[0;31m│  [0m  [0m28/34: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034f5 <String[1]: #x>, mutable) [v22/n28:[x1|R|t], v14/n5:[x10|R|t]]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:10)
+[m[0;31m│  [0m[0;34m 115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+[m[0;31m│  [0m         ↱ eager @115 (6 live vars)
+[0;31m│  [0m  [0m29/35: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v20/n21:[x4|R|t]]
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│  [0m  [0m30/39: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│  [0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│  [0m         ↱ eager @115 (4 live vars)
+[0;31m│  [0m         │       @4 (4 live vars)
+[0;31m│  [0m  [0m31/40: Int32IncrementWithOverflow [v17/n13:[x0|R|w32]] → [x4|R|w32] (spilled: [stack:0|w32]), live range: [31-38]
+[0;31m│  [0m     [0m89: GapMove([x5|R|t] → [x0|R|t])
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:10)
+[m[0;31m│  [0m[0;34m 119 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│  [0m         ↱ eager @119 (5 live vars)
+[0;31m│  [0m  [0m32/41: CheckedNumberToFloat64 [v19/n19:[x5|R|t]] → [v0|R|f64], live range: [32-34]
+[0;31m│  [0m  [0m33/42: ChangeInt32ToFloat64 [v31/n40:[x4|R|w32]] → [v1|R|f64], live range: [33-34]
+[0;31m│  [0m  [0m34/43: Float64Add [v32/n41:[v0|R|f64], v33/n42:[v1|R|f64]] → [v2|R|f64], live range: [34-35]
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:18:7)
+[m[0;31m│  [0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m35/44: Float64ToTagged[kCanonicalizeSmi] [v34/n43:[v2|R|f64]] → [x0|R|t], live range: [35-36]
+[0;31m│  [0m     [0m90: GapMove([x2|R|t] → [x1|R|t])
+[0;31m│  [0m  [0m36/45: StoreContextSlotWithWriteBarrier(2, mutable) [v12/n2:[x1|R|t], v35/n44:[x0|R|t]]
+[0;31m│  [0m         ↳ lazy @122 (3 live vars)
+[0;31m│  [0m     [0m91: ConstantGapMove(n46 → [x0|R|t])
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:0)
+[m[0;31m│  [0m[0;34m 129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19]
+[m[0;31m│  [0m  [0m37/47: ReduceInterruptBudgetForLoop(34) [v5/n46:[x0|R|t]]
+[0;31m│  [0m         ↳ lazy @129 (3 live vars)
+[0;31m│  [0m     [0m92: ConstantGapMove(n14 → [x5|R|w32])
+[0;31m│  [0m  [0m38/49: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v31/n40:[x4|R|w32] → 51: φᴵ r1 [x4|R|w32]
+[0;31m│  [0m      │  with register merges:
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m39/51: φᴵ r1 (n40, n67) → [x4|R|w32] (spilled: [stack:1|w32]), live range: [39-60]
+[0;31m│[0;32m│ [0m     [0m93: GapMove([x4|R|w32] → [x6|R|w32])
+[0;31m│[0;32m│ [0m[0;34m  92 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @92 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m40/52: CheckedSmiSizedInt32 [v39/n51:[x4|R|w32]] → [x4|R|w32], live range: [40-55]
+[0;31m│[0;32m│ [0m[0;34m  95 : a8 26             JumpIfFalse [38]
+[m[0;31m│[0;32m│[0;33m╭──[0m41/54: BranchIfInt32Compare(LessThan) [v40/n52:[x4|R|w32], v10/n14:[x5|R|w32]] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m  [0m42/79: Int32ToNumber[kCanonicalizeSmi] [v39/n51:[x6|R|w32]] → [x10|R|t], live range: [42-52]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  97 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m43/55: LoadContextSlot(0x10, mutable) [v12/n2:[x1|R|t]] → [x13|R|t], live range: [43-56]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 100 : 23 01 00          LdaGlobal [1:"read"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44/56: LoadTaggedField(0xc, compressed, JSFunction) [v2/n20:[x3|R|t]] → [x11|R|t], live range: [44-53]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 104 : 89 05 0d 29       CreateObjectLiteral [5:0x09b80101e395 <ObjectBoilerplateDescription[4]>], FBV[13], #29
+[m[0;31m│[0;32m│[0;33m│[0m  [0m45/57: AllocationBlock(Young) → [x12|R|t], live range: [45-46]
+[0;31m│[0;32m│[0;33m│[0m  [0m46/58: InlinedAllocation(object 0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>) [v45/n57:[x12|R|t]] → [x12|R|t], live range: [46-55]
+[0;31m│[0;32m│[0;33m│[0m     [0m94: GapMove([x12|R|t] → [x1|R|t])
+[0;31m│[0;32m│[0;33m│[0m  [0m47/59: StoreMap(0x09b801246e65 <Map[20](HOLEY_ELEMENTS)>, InlinedAllocation) [v46/n58:[x1|R|t]]
+[0;31m│[0;32m│[0;33m│[0m  [0m48/60: StoreTaggedFieldNoWriteBarrier(0x4, mutable) [v46/n58:[x1|R|t], v6/n23:[x7|R|t]]
+[0;31m│[0;32m│[0;33m│[0m  [0m49/61: StoreTaggedFieldNoWriteBarrier(0x8, mutable) [v46/n58:[x1|R|t], v6/n23:[x7|R|t]]
+[0;31m│[0;32m│[0;33m│[0m  [0m50/62: StoreTaggedFieldNoWriteBarrier(0xc, mutable) [v46/n58:[x1|R|t], v8/n25:[x8|R|t]]
+[0;31m│[0;32m│[0;33m│[0m  [0m51/63: StoreTaggedFieldNoWriteBarrier(0x10, mutable) [v46/n58:[x1|R|t], v7/n26:[x9|R|t]]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 111 : 3b f4 03 0e       DefineNamedOwnProperty r5, [3:"x"], FBV[14]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m52/64: StoreTaggedFieldNoWriteBarrier(0x10: 0x09b8000034f5 <String[1]: #x>, mutable) [v46/n58:[x1|R|t], v42/n79:[x10|R|t]]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 115 : 6d f5 f4 10       CallUndefinedReceiver1 r4, r5, FBV[16]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m53/65: CheckValue(0x09b80101e435 <JSFunction read (sfi = 0x9b80101e32d)>, wrong call target) [v44/n56:[x11|R|t]]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"x"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m54/66: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e32d <SharedFunctionInfo read> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:4:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   4 : 4f 01 01          AddSmi [1], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @115 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @4 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m55/67: Int32IncrementWithOverflow [v40/n52:[x4|R|w32]] → [x10|R|w32] (spilled: [stack:2|w32]), live range: [55-62]
+[0;31m│[0;32m│[0;33m│[0m     [0m95: GapMove([x13|R|t] → [x1|R|t])
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:17:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m 119 : 42 f6 03          Add r3, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @119 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m56/68: CheckedNumberToFloat64 [v43/n55:[x13|R|t]] → [v0|R|f64], live range: [56-58]
+[0;31m│[0;32m│[0;33m│[0m  [0m57/69: ChangeInt32ToFloat64 [v55/n67:[x10|R|w32]] → [v1|R|f64], live range: [57-58]
+[0;31m│[0;32m│[0;33m│[0m  [0m58/70: Float64Add [v56/n68:[v0|R|f64], v57/n69:[v1|R|f64]] → [v2|R|f64], live range: [58-59]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 122 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59/71: Float64ToTagged[kCanonicalizeSmi] [v58/n70:[v2|R|f64]] → [x1|R|t], live range: [59-60]
+[0;31m│[0;32m│[0;33m│[0m     [0m96: GapMove([x1|R|t] → [x4|R|t])
+[0;31m│[0;32m│[0;33m│[0m     [0m97: GapMove([x2|R|t] → [x1|R|t])
+[0;31m│[0;32m│[0;33m│[0m  [0m60/72: StoreContextSlotWithWriteBarrier(2, mutable) [v12/n2:[x1|R|t], v59/n71:[x4|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @122 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 129 : 97 2b 00 13       JumpLoop [43], [0], FBV[19]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61/73: ReduceInterruptBudgetForLoop(34) [v5/n46:[x0|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @129 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @129 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m62/74: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v55/n67:[x10|R|w32] → 51: φᴵ r1 [x4|R|w32]
+[0;31m│ [0;33m│[0m         with register merges:
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[1;34m0x09b80101e2c5 <SharedFunctionInfo> (0x09b80101ed25 <String[24]: "workloads/deopt-eager.js">:20:0)
+[m[0;31m│  [0m[0;34m 133 : 23 06 15          LdaGlobal [6:"print"], FBV[21]
+[m[0;31m│[0;32m╭───[0m63/76: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m64/77: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @133 (2 live vars)
+   [0m  [0m65/78: Deopt(Insufficient type feedback for generic global access)
+   [0m
+---------------------------------------------------
+Finished compiling method  using Maglev
+[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begin. deoptimizing 0x09b80101e3e1 <JSFunction (sfi = 0x9b80101e2c5)>, 0x031a01000fc5 <Code MAGLEV>, opt id 4, bytecode offset 133, deopt exit 8, FP to SP delta 96, caller SP 0x00016b5a17f8, pc 0x000170001644]
+10000100003

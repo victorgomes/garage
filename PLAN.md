@@ -48,14 +48,21 @@ Auto-detect and categorize output from `d8` flags, including:
   `--print-turbolev-frontend`, `--trace-turbo-graph`, `--print-opt-code`,
   `--print-code`, `--print-bytecode`
 - **Tiering & lifecycle:** `--trace-opt`, `--trace-deopt`, `--trace-deopt-verbose`,
-  `--trace-osr`, `--trace-ic`, `--trace-prototypes`, `--trace-gc`
+  `--trace-osr`, `--trace-prototype-users`, `--trace-gc`
+- **Pass tracing:** `--trace-maglev-inlining`, `--trace-maglev-graph-building`,
+  `--trace-maglev-regalloc`, `--trace-maglev-phi-untagging` (see §6.1)
 - **Optional structured:** Turbolizer `.json` files from `--trace-turbo`
   (roadmap; supplemental source, nothing in the core depends on it)
 - **Fallback:** any other flag from `flag-definitions.h` via the generic
   ANSI-preserving raw stream view
 
-> **Task:** verify the exact flag list against current `flag-definitions.h` before
-> implementation; do not trust this document's flag names blindly.
+> **Verified** against `flag-definitions.h` at V8 15.2.0 — see
+> [docs/printer-parser-contract.md](docs/printer-parser-contract.md) §2. Two v1
+> entries were wrong: `--trace-ic` does not exist (IC transitions go to `v8.log`
+> via `--log-ic`, which makes IC visibility a `v8.log`-ingestion feature, §13
+> far-term), and `--trace-prototypes` is really `--trace-prototype-users`.
+> Note also that the Maglev graph printer flags require a build with
+> `V8_ENABLE_MAGLEV_GRAPH_PRINTER`; without it they silently do nothing.
 
 ### 4.1. Input sources & pitfalls
 
@@ -97,11 +104,12 @@ Additions over the original model:
   be distinguishable from regular tier-up compilations in the sidebar.
 - **Grouping toggle.** Pure chronological order does not scale to thousands of
   compilations. Provide a sidebar toggle: chronological ⇄ grouped-by-function.
-- **Correlation keys are an explicit design task.** Linking a `--trace-deopt` event
-  to the exact compilation instance requires matching on what the deopt line
-  actually contains (code address / optimization id / function + offset), not
-  wishful thinking. Specify this mapping precisely per V8 version before building
-  the deopt→graph jump.
+- **Correlation keys are specified, not assumed.** See
+  [docs/correlation-keys.md](docs/correlation-keys.md). Short version: the deopt
+  line carries `opt id` and the Code address, but neither is printed on the
+  compile side, so the usable key is `(SFI address, tier, ordinal)` with
+  `bytecode offset` selecting the location inside the compilation. Unresolvable
+  events render as timeline entries with the jump disabled — never as a guess.
 - **Source resolution strategy.** Traces contain source positions, not source text.
   Load `.js` from disk when the script path resolves; otherwise degrade gracefully
   (offsets still shown, source pane disabled) rather than failing.
@@ -128,6 +136,15 @@ fixture corpus below, and the fact that the audience maintains the printers —
 when Maglev output changes, the same people can update `garage` in the same
 breath (or keep the printer stable because a tool now depends on it).
 
+> **Phase 0 raised the stakes on this.** Between V8 14.9 and 15.2 — one quarter
+> apart — *every* Maglev phase banner was renamed and the compilation banner
+> changed shape. So: the marker table needs a **version axis**, the compilation
+> anchor is the `Compiling 0x… with <Tier>` line (present in both versions), not
+> the `Begin compiling method` banner, and node-line syntax varies *per phase*
+> within one compilation. Architecture, by contrast, affects only register
+> names. Full findings — and the ANSI-in-piped-output surprise — in
+> [docs/spike-findings.md](docs/spike-findings.md).
+
 **Tier B — raw fallback:** everything unrecognized. Searchable, foldable, never
 dropped.
 
@@ -145,7 +162,7 @@ in the diff engine), but nothing in the core design depends on it.
 3. Per-section graceful degradation with a visible "unparsed" badge in the sidebar.
 4. CI job in V8 (or a cron against tip-of-tree) to catch format drift early.
 
-### 6.1. Interleaved pass tracing (`--trace-maglev-truncation` & friends)
+### 6.1. Interleaved pass tracing (`--trace-maglev-inlining` & friends)
 
 Pass-specific debug flags print free-form diagnostic lines *between and inside*
 graph dumps. Treating them as parse errors — or exiling them to an orphan raw
@@ -154,17 +171,36 @@ section — would destroy exactly the context that makes them useful. Instead:
 - **The section model is a context tree, not a flat partition.** The indexer
   assigns every line to the innermost open context: run → compilation → phase →
   block → node. A line matching no structural grammar becomes a **positioned
-  annotation** attached to that context — truncation-trace lines land on the
-  phase transition where they were printed, or on the node line they follow.
+  annotation** attached to that context — inlining-trace lines land on the
+  compilation they were printed in, regalloc lines on the node they follow.
 - **Annotation channels.** Annotations are classified by line prefix into
-  channels (`truncation`, `inlining`, `regalloc`, …) via an optional TOML prefix
-  map; unknown prefixes fall into a generic channel. No per-flag parser is
-  required — new `--trace-maglev-*` flags work on day one.
+  channels (`inlining`, `regalloc`, …) via an optional TOML prefix map; unknown
+  prefixes fall into a generic channel. No per-flag parser is required — new
+  `--trace-maglev-*` flags work on day one.
 - **Rendering.** Annotations render dimmed/italic like code comments, folded by
-  default (`[+] 12 trace lines (truncation)`); `t` toggles inline visibility,
+  default (`[+] 12 trace lines (inlining)`); `t` toggles inline visibility,
   `:trace <channel>` filters by channel.
 - **Node linking.** Any annotation mentioning a node ID (`n42`) is cross-linked:
   cursor highlighting includes it, and it feeds the node biography view (§7.11).
+
+> **Corrected in Phase 0.** v1 of this plan used `--trace-maglev-truncation` as
+> the exemplar. It isn't one: its output is byte-identical to plain
+> `--print-maglev-graphs`, because the truncation information is a node-line
+> suffix the graph printer emits unconditionally. The flags that genuinely
+> interleave are `--trace-maglev-inlining` (free-form lines attached to a
+> compilation *before any phase opens* — the attachment rule must handle that
+> case), `--trace-maglev-graph-building`, `--trace-maglev-regalloc` and
+> `--trace-maglev-phi-untagging`.
+>
+> Channel prefixes are real (`[ML:<compilation-id>]`, `[TLV:<id>]`) but must not
+> be load-bearing: `--no-trace-with-compilation-id`, the flag engineers already
+> use to get diffable traces, removes the prefix entirely. Classify on it when
+> present; fall back to the enclosing context otherwise.
+>
+> One structural correction: deopt-frame lines (`↱ eager @2 (5 live vars)`, with
+> `│` depth for inlining) are the *most common* non-node line in the corpus, and
+> they are IR structure, not annotations. They attach to the preceding node and
+> need their own type — folding them away by default would hide real content.
 
 **Scope now vs later:** only the attachment rule and folded rendering ship
 early — that part is structural and expensive to retrofit. Channels, `:trace`
@@ -201,7 +237,13 @@ Cursor-based (not "hover" — this is a terminal; mouse is optional, never requi
 changed, because node IDs renumber between phases and runs. The diff pipeline is:
 
 1. **Canonicalize** both sides: strip/normalize memory addresses, timestamps,
-   compilation ids; renumber node IDs into a canonical space.
+   compilation ids; renumber node IDs into a canonical space. The exact list of
+   what varies between two runs of the same binary — timings, native pointers,
+   PID/isolate, `[ML:<id>]` prefixes — is measured in
+   [docs/spike-findings.md](docs/spike-findings.md) §10. Useful discovery: under
+   `--predictable` the sandboxed V8 heap base is pinned, so `<JSFunction … (sfi
+   = 0x…)>` addresses are *stable* and comparable across runs. Recommending that
+   flag pair turns most of the matching problem into exact-address matching.
 2. **Match nodes by identity** where the format preserves IDs across phases
    (Turbolizer JSON does; Maglev text partially does), else by structural hash
    (opcode + canonicalized inputs).
@@ -267,9 +309,9 @@ mentions it:
 ```
 n42 [Phi]
   Phase 1   created in b3 (loop header)
-  Phase 3   truncation: skipped — input n17 not truncatable   [trace:truncation]
+  Phase 3   cannot truncate to int32 [-∞, +∞]
   Phase 4   untagged → Int32
-  regalloc  spilled at gap 118
+  regalloc  spilled at gap 118                                [trace:regalloc]
 ```
 
 This is the payoff of the annotation model: arbitrary `--trace-maglev-*` flags
@@ -403,13 +445,12 @@ mode, Turboshaft/disassembly parsers — is post-MVP and sequenced in TODO.md.
    lands in the *local* clipboard, `:export` writes Markdown pasted into a Gerrit
    comment.
 
-### J8 (new): Why wasn't this node truncated?
-1. `d8 --print-maglev-graphs --trace-maglev-truncation bench.js | garage`
-2. Diff `After truncation` against the previous phase: `n42` is unexpectedly
-   still tagged.
-3. `e` on `n42`: the biography panel shows the truncation trace line —
-   "skipped: input n17 not truncatable" — attached to exactly that phase
-   transition. `Enter` jumps to `n17` to continue the investigation.
+### J8 (new): Why wasn't this callee inlined?
+1. `d8 --print-maglev-graphs --trace-maglev-inlining bench.js | garage`
+2. The graph for `outer()` has a call to `big()` that was expected to disappear.
+3. `t` unfolds the compilation's trace annotations: `❌ SKIP big — big function,
+   size (174) >= max-size (100)`, attached to exactly that compilation. `e` on
+   the call node continues into its biography.
 
 ## 11. Technology & Implementation Notes
 

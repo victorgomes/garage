@@ -1,0 +1,289 @@
+
+----- Bytecode before MaglevGraphBuilding -----
+
+Function: 0x09b80101e0d5 <JSFunction add (sfi = 0x9b80101e031)>
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 00          Add a0, FBV[0]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e19d: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 1
+ - shared function info: 0x09b80101e031 <SharedFunctionInfo add>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 402
+ - closure feedback cell array: 0x9b8000021d9: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 BinaryOp BinaryOp:SignedSmall {
+     [0]: 1
+  }
+
+----- V8.TFTurbolevMaglevGraphBuilder -----
+Graph
+
+[0m   [0m4: Constant(0x09b80101e0d5 <JSFunction add (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0c1 <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 00          Add a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedSmiUntag [n2], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: Int32AddWithOverflow [n9, n10], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12: Int32ToNumber[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m13: Return [n12]
+[0m
+
+----- V8.TFTurbolevInliner -----
+Graph
+
+[0m   [0m4: Constant(0x09b80101e0d5 <JSFunction add (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0c1 <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 00          Add a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedSmiUntag [n2], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: Int32AddWithOverflow [n9, n10], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12: Int32ToNumber[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m13: Return [n12]
+[0m
+
+----- V8.TFTurbolevPostHoc -----
+Graph
+
+[0m   [0m4: Constant(0x09b80101e0d5 <JSFunction add (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0c1 <ScriptContext[3]>), 2 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 00          Add a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedSmiUntag [n2], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: Int32AddWithOverflow [n9, n10], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12: Int32ToNumber[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m13: Return [n12]
+[0m
+
+----- V8.TFTurbolevDeadNodeSweeping -----
+Graph
+
+[0m   [0m4: Constant(0x09b80101e0d5 <JSFunction add (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0c1 <ScriptContext[3]>), 2 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 00          Add a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedSmiUntag [n2], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: Int32AddWithOverflow [n9, n10], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12: Int32ToNumber[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m13: Return [n12]
+[0m
+
+----- Bytecode before MaglevGraphBuilding -----
+
+Function: 0x09b80101e0d5 <JSFunction add (sfi = 0x9b80101e031)>
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 00          Add a0, FBV[0]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e19d: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 1
+ - shared function info: 0x09b80101e031 <SharedFunctionInfo add>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 803
+ - closure feedback cell array: 0x9b8000021d9: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 BinaryOp BinaryOp:AdditiveSafeInteger {
+     [0]: 7
+  }
+
+----- V8.TFTurbolevMaglevGraphBuilder -----
+Graph
+
+[0m   [0m4: Constant(0x09b80101e0d5 <JSFunction add (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0c1 <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 00          Add a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Add [n9, n10], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12: Float64ToTagged[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m13: Return [n12]
+[0m
+
+----- V8.TFTurbolevInliner -----
+Graph
+
+[0m   [0m4: Constant(0x09b80101e0d5 <JSFunction add (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0c1 <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 00          Add a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Add [n9, n10], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12: Float64ToTagged[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m13: Return [n12]
+[0m
+
+----- V8.TFTurbolevPostHoc -----
+Graph
+
+[0m   [0m4: Constant(0x09b80101e0d5 <JSFunction add (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0c1 <ScriptContext[3]>), 2 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 00          Add a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Add [n9, n10], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12: Float64ToTagged[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m13: Return [n12]
+[0m
+
+----- V8.TFTurbolevDeadNodeSweeping -----
+Graph
+
+[0m   [0m4: Constant(0x09b80101e0d5 <JSFunction add (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0c1 <ScriptContext[3]>), 2 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo add> (0x09b80104a7b1 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 00          Add a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Add [n9, n10], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12: Float64ToTagged[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m13: Return [n12]
+[0m
+704982704

@@ -7,33 +7,53 @@ spanning every feature in the plan.
 
 ---
 
-## Phase 0: De-Risking & Fixture Corpus  ← do this before writing the tool
+## Phase 0: De-Risking & Fixture Corpus  ✅ done
 
-- [ ] **0.1. Collect fixture corpus (checked into repo)**
-  - Real `d8` outputs for: `--print-maglev-graphs`, `--print-turbolev-frontend`,
-    `--trace-turbo-graph`, `--print-opt-code`, `--print-bytecode`, `--trace-opt`,
-    `--trace-deopt[-verbose]`, `--trace-osr`, `--trace-ic`, `--trace-gc`.
-  - From tip-of-tree **and** one stable branch; on **x64 and arm64**.
-  - Include one trace with concurrent recompilation enabled (interleaved output)
-    and one with `--no-concurrent-recompilation --predictable` (clean).
-  - Include a graph dump interleaved with pass tracing (e.g.
-    `--print-maglev-graphs --trace-maglev-truncation`) to pin down the
-    annotation-attachment rules (PLAN §6.1).
-  - Include at least one multi-hundred-MB trace for perf testing (not checked in;
-    scripted generation).
-- [ ] **0.2. Verify flag inventory** against current `flag-definitions.h`; correct
-  PLAN.md if any listed flag is stale or misnamed.
-- [ ] **0.3. Throwaway parse spike**: a ~200-line Rust program that splits one
-  Maglev fixture into compilations/phases and prints the tree. Goal: validate
-  section-marker assumptions and discover interleaving/format surprises *now*.
-- [ ] **0.4. Printer↔parser contract note** (½ page in `docs/`): list the V8
-  source files that emit each parsed format (Maglev graph printer, deopt traces,
-  …) and add a script that regenerates fixtures from a local `d8` build — so
-  when a printer changes, updating `garage` is a mechanical step done in the
-  same breath.
-- [ ] **0.5. Correlation-key spec**: document exactly how `--trace-deopt` lines
-  map to compilation instances (code address / optimization id / function+offset)
-  for current V8. Blocks the deopt→graph jump later.
+- [x] **0.1. Collect fixture corpus (checked into repo)** — 69 fixtures,
+  23 flag/workload combinations × 3 builds, ~9 MB. See
+  [fixtures/README.md](fixtures/README.md).
+  - Real `d8` outputs for every flag in PLAN §4 that exists (see 0.2).
+  - Three builds: `arm64-v15.2.0` (tip of tree), `arm64-v14.9.0` (version axis),
+    `x64-v14.9.0` (architecture axis) — deliberately separating the two axes.
+    *Deviation from the original plan:* the second version is an older local
+    build rather than a stable branch, because it was available and gives the
+    same de-risking value. It paid off immediately (see 0.3).
+  - `concurrent.mixed.log` has concurrent recompilation on; everything else uses
+    `--no-concurrent-recompilation --predictable`.
+  - Annotation-attachment fixtures use `--trace-maglev-inlining`, not
+    `--trace-maglev-truncation` — see 0.3.
+  - Multi-hundred-MB trace: [`tools/gen-large-trace.sh`](tools/gen-large-trace.sh),
+    git-ignored.
+- [x] **0.2. Verify flag inventory** — two entries in PLAN §4 were wrong:
+  `--trace-ic` does not exist (IC transitions go to `v8.log` via `--log-ic`) and
+  `--trace-prototypes` is `--trace-prototype-users`. PLAN.md corrected; details
+  in [docs/printer-parser-contract.md](docs/printer-parser-contract.md) §2.
+- [x] **0.3. Throwaway parse spike** — [`spike/`](spike/). Findings in
+  [docs/spike-findings.md](docs/spike-findings.md); the ones that change the
+  design: output is ANSI-colored even when piped; every Maglev phase banner was
+  renamed between 14.9 and 15.2 (so the marker table needs a version axis, and
+  the compilation anchor must be the `Compiling … with <Tier>` line);
+  node-line syntax varies per phase; deopt-frame lines are structure, not
+  annotations; `--trace-maglev-truncation` emits nothing.
+- [x] **0.4. Printer↔parser contract note** —
+  [docs/printer-parser-contract.md](docs/printer-parser-contract.md), plus
+  [`tools/gen-fixtures.sh`](tools/gen-fixtures.sh) which regenerates the corpus
+  from any local d8 build and records command line, sha256 and measured
+  reproducibility per file.
+- [x] **0.5. Correlation-key spec** —
+  [docs/correlation-keys.md](docs/correlation-keys.md). `opt id` and the Code
+  address are printed on the deopt side only, so the key is
+  `(SFI address, tier, ordinal)` + `bytecode offset`, with explicit confidence
+  levels and a no-guessing rule.
+
+### Carried into Phase 2 from Phase 0
+
+- [ ] **0.6. Version-keyed marker TOML**: phase names come from
+  `src/maglev/maglev-phase.h` `PhaseName()`, which is a generated-from-source
+  table, not an observed one. Needs a version axis (14.9 and 15.2 share no phase
+  names). Folds into 2.2.
+- [ ] **0.7. Golden-test harness** over the corpus, keyed off `manifest.json`'s
+  `reproducible` flag. Folds into 2.7.
 
 ---
 
@@ -58,14 +78,28 @@ spanning every feature in the plan.
 
 ## Phase 2: Data Model, Indexer & Maglev Parser (only)
 
-- [ ] **2.1. Core types**: `CompilationKey` (function, script, line, tier,
-  compilation index, **OSR offset: Option**), `Tier` enum (incl. distinguishing
-  OSR), `FunctionCompilation`, `Phase`, `BasicBlock`, `IRNode` (id, opcode,
-  inputs, users, block, registers, type annotations, bytecode offset),
-  `TimelineEvent`, `RawSection`.
+- [ ] **2.1. Core types**: `CompilationKey` (**SFI address** — the correlation
+  key, and the only stable identity when the function name is empty — function
+  name, script, line, tier, compilation index, **OSR offset: Option**), `Tier`
+  enum (incl. distinguishing OSR), `FunctionCompilation`, `Phase`, `BasicBlock`,
+  `IRNode`, `TimelineEvent`, `RawSection`.
+  - `IRNode` must separate **identity** (`nN`, stable across phases — this is
+    what makes the phase diff work without Turbolizer JSON) from **per-phase
+    rendering** (`N/M:` ids, `v0/n9:(x)` input decoration, registers, live
+    ranges, `→ (x)` vs `, N uses`). Phase 0.3 §5.
+  - Deopt frames (`↱ eager @2 (5 live vars)`, `│` depth = inlining depth) are a
+    node-attached structural type, *not* annotations. Phase 0.3 §6.
+  - `RawSection` keeps both the original byte range (ANSI preserved, for the raw
+    view) and a stripped view (for matching). d8 colorizes piped output.
 - [ ] **2.2. Section indexer**: single streaming pass that finds section
   boundaries (table-driven markers, embedded TOML) and records byte ranges —
   **without parsing bodies**. This is what makes 1 GB files open instantly.
+  - Anchor compilations on `Compiling 0x… <JSFunction …> with <Tier>`, not on
+    the `Begin compiling method` banner, which does not exist before V8 15.2.
+  - Marker table is **version-keyed** (0.6). Not arch-keyed: architecture only
+    affects register names inside node lines.
+  - `----- Bytecode array -----` and `----- Inlining 0x… with bytecode -----`
+    share the phase-banner grammar but are not phases; match them specially.
 - [ ] **2.3. Lazy per-compilation parsing** on first view; parsed results cached.
 - [ ] **2.4. Maglev graph parser**: blocks (`b0:`, loop headers), node defs
   (`n10 = Int32Add n8, n9`), inputs/users, register allocation output, bytecode
@@ -78,8 +112,12 @@ spanning every feature in the plan.
 - [ ] **2.8. Annotation attachment rule (minimal)** (PLAN §6.1): unmatched lines
   inside an open compilation attach to the enclosing phase/transition as
   positioned annotations — never dropped, never exiled to an orphan raw
-  section. Golden-test against the interleaved `--trace-maglev-truncation`
-  fixture. (Channels, prefix maps, and node-ID linking: icebox.)
+  section. Must handle "inside a compilation, no phase open yet": inlining
+  traces print before the first phase banner. Golden-test against
+  `maglev-graphs+inlining.inlining.log` (no ids) **and**
+  `maglev-graphs+inlining-ids.inlining.log` (with `[ML:<id>]` prefixes) — the
+  prefix is absent whenever `--no-trace-with-compilation-id` is used, so it
+  cannot be load-bearing. (Channels, prefix maps, and node-ID linking: icebox.)
 
 ---
 
@@ -101,6 +139,9 @@ spanning every feature in the plan.
 
 - [ ] **4.1. IR tokenizer** → styled spans: opcodes, block labels, registers,
   node IDs, types/maps; 16/256/TrueColor palettes with detection + fallback.
+  Register vocabulary is the one arch-dependent axis (`x0`/`rax`); detect it
+  from the trace, not the host. Strip d8's own SGR escapes first — it colorizes
+  even when piped — and re-emit `garage`'s own styling.
 - [ ] **4.2. Basic block folding** (`Space`), per-block persisted state,
   `[+] b1 (loop) — 14 hidden` summaries.
 - [ ] **4.3. Cursor node tracking**: resolve node ID under cursor.
@@ -127,7 +168,9 @@ spanning every feature in the plan.
 - [ ] **5.4. Robustness**: fuzz parsers with garbage/truncated input; terminal
   matrix test (80×24, tmux, 16-color, SSH).
 - [ ] **5.5. README**: install, sample `d8` invocations, keymap, recommended
-  flags for clean traces (`--no-concurrent-recompilation --predictable`).
+  flags for clean traces (`--no-concurrent-recompilation --predictable`, plus
+  `--no-trace-with-compilation-id` when diffing runs). Note that the Maglev
+  graph flags need a build with `V8_ENABLE_MAGLEV_GRAPH_PRINTER`.
 - [ ] **5.6. Dogfood milestone**: author uses `garage` instead of `less` for one
   week of real Maglev work; fix what hurts. **MVP done = you don't go back.**
 

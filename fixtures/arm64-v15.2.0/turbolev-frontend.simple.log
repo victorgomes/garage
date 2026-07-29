@@ -1,0 +1,586 @@
+V8 is running with developer-only features enabled. Stability and security will suffer.
+Concurrent recompilation has been disabled for tracing.
+
+----- Bytecode before MaglevGraphBuilding -----
+
+Function: 0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Maglev graph building -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedSmiUntag [n4], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Int32AddWithOverflow [n10, n11], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Int32ToNumber[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Non-eager inlining -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedSmiUntag [n4], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Int32AddWithOverflow [n10, n11], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Int32ToNumber[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Non-eager loop peeling -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedSmiUntag [n4], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Int32AddWithOverflow [n10, n11], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Int32ToNumber[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Pre phi untagging -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedSmiUntag [n4], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Int32AddWithOverflow [n10, n11], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Int32ToNumber[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Phi untagging -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedSmiUntag [n4], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Int32AddWithOverflow [n10, n11], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Int32ToNumber[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Range analysis -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedSmiUntag [n4], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Int32AddWithOverflow [n10, n11], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Int32ToNumber[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Post optimizer -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedSmiUntag [n4], 1 uses, cannot truncate to int32
+[0m  [0m12: Int32Add [n10, n11], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Int32ToNumber[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- AnyUseMarking -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedSmiUntag [n4], 1 uses, cannot truncate to int32
+[0m  [0m12: Int32Add [n10, n11], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Int32ToNumber[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Dead nodes sweeping -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedSmiUntag [n4], 1 uses, cannot truncate to int32
+[0m  [0m12: Int32Add [n10, n11], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Int32ToNumber[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Bytecode before MaglevGraphBuilding -----
+
+Function: 0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Maglev graph building -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedNumberToFloat64 [n4], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Float64SpeculateSafeAdd [n10, n11], 1 uses, can truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Float64ToTagged[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Non-eager inlining -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedNumberToFloat64 [n4], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Float64SpeculateSafeAdd [n10, n11], 1 uses, can truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Float64ToTagged[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Non-eager loop peeling -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedNumberToFloat64 [n4], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Float64SpeculateSafeAdd [n10, n11], 1 uses, can truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Float64ToTagged[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Pre phi untagging -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedNumberToFloat64 [n4], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Float64SpeculateSafeAdd [n10, n11], 1 uses, can truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Float64ToTagged[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Phi untagging -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedNumberToFloat64 [n4], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Float64SpeculateSafeAdd [n10, n11], 1 uses, can truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Float64ToTagged[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Range analysis -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedNumberToFloat64 [n4], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Float64SpeculateSafeAdd [n10, n11], 1 uses, can truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Float64ToTagged[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Post optimizer -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m7: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedNumberToFloat64 [n4], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Float64SpeculateSafeAdd [n10, n11], 1 uses, can truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Float64ToTagged[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- AnyUseMarking -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedNumberToFloat64 [n4], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Float64SpeculateSafeAdd [n10, n11], 1 uses, can truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Float64ToTagged[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+
+----- Dead nodes sweeping -----
+Graph
+
+[0m   [0m5: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m6: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 3 uses
+[0m   [0m2: AssumeType[JSReceiver] [n1]
+[0m   [0m3: InitialValue(a0), 3 uses
+[0m   [0m4: InitialValue(a1), 4 uses
+[0m   [0m8: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m9: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: CheckedNumberToFloat64 [n4], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m12: Float64SpeculateSafeAdd [n10, n11], 1 uses, can truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: Float64ToTagged[kCanonicalizeSmi] [n12], 1 uses
+[0m  [0m14: Return [n13]
+[0m
+704982704

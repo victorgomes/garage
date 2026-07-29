@@ -1,0 +1,3343 @@
+Concurrent recompilation has been disabled for tracing.
+---------------------------------------------------
+Begin compiling method add using TurboFan
+----- Graph after V8.TFBytecodeGraphBuilder ----- 
+#18:NumberConstant[0]()
+#0:Start()
+#2:Parameter[1](#0:Start)
+#3:Parameter[2](#0:Start)
+#1:Parameter[0, debug name: %this](#0:Start)
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)
+#11:StateValues[dense]()
+#5:Parameter[6, debug name: %context](#0:Start)
+#13:Parameter[-1, debug name: %closure](#0:Start)
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #13:Parameter, #0:Start)
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #13:Parameter, #0:Start)
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeSmallIntegerAdd[SignedSmall](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#19:Return(#18:NumberConstant, #17:SpeculativeSmallIntegerAdd, #17:SpeculativeSmallIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFInlining ----- 
+#18:NumberConstant[0]()
+#0:Start()
+#2:Parameter[1](#0:Start)
+#3:Parameter[2](#0:Start)
+#1:Parameter[0, debug name: %this](#0:Start)
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)
+#11:StateValues[dense]()
+#5:Parameter[6, debug name: %context](#0:Start)
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeSmallIntegerAdd[SignedSmall](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#19:Return(#18:NumberConstant, #17:SpeculativeSmallIntegerAdd, #17:SpeculativeSmallIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFEarlyGraphTrimming ----- 
+#18:NumberConstant[0]()
+#0:Start()
+#2:Parameter[1](#0:Start)
+#3:Parameter[2](#0:Start)
+#1:Parameter[0, debug name: %this](#0:Start)
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)
+#11:StateValues[dense]()
+#5:Parameter[6, debug name: %context](#0:Start)
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeSmallIntegerAdd[SignedSmall](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#19:Return(#18:NumberConstant, #17:SpeculativeSmallIntegerAdd, #17:SpeculativeSmallIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFTyper ----- 
+#18:NumberConstant[0]()  [Type: Range(0, 0)]
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:StateValues[dense]()  [Type: Internal]
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f1fed8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f1fc70 {0x09b801004985 <NativeContext[307]>})]
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()  [Type: Hole]
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeSmallIntegerAdd[SignedSmall](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)  [Type: (MinusZero | Range(-9007199254740991, 9007199254740991))]
+#19:Return(#18:NumberConstant, #17:SpeculativeSmallIntegerAdd, #17:SpeculativeSmallIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFTypedLowering ----- 
+#18:NumberConstant[0]()  [Type: Range(0, 0)]
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:StateValues[dense]()  [Type: Internal]
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f1fed8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f1fc70 {0x09b801004985 <NativeContext[307]>})]
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()  [Type: Hole]
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeSmallIntegerAdd[SignedSmall](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)  [Type: (MinusZero | Range(-9007199254740991, 9007199254740991))]
+#19:Return(#18:NumberConstant, #17:SpeculativeSmallIntegerAdd, #17:SpeculativeSmallIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFLoopPeeling ----- 
+#18:NumberConstant[0]()  [Type: Range(0, 0)]
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:StateValues[dense]()  [Type: Internal]
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f1fed8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f1fc70 {0x09b801004985 <NativeContext[307]>})]
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()  [Type: Hole]
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeSmallIntegerAdd[SignedSmall](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)  [Type: (MinusZero | Range(-9007199254740991, 9007199254740991))]
+#19:Return(#18:NumberConstant, #17:SpeculativeSmallIntegerAdd, #17:SpeculativeSmallIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFLoadElimination ----- 
+#18:NumberConstant[0]()  [Type: Range(0, 0)]
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:StateValues[dense]()  [Type: Internal]
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f1fed8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f1fc70 {0x09b801004985 <NativeContext[307]>})]
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()  [Type: Hole]
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeSmallIntegerAdd[SignedSmall](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)  [Type: (MinusZero | Range(-9007199254740991, 9007199254740991))]
+#19:Return(#18:NumberConstant, #17:SpeculativeSmallIntegerAdd, #17:SpeculativeSmallIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFEscapeAnalysis ----- 
+#18:NumberConstant[0]()  [Type: Range(0, 0)]
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:StateValues[dense]()  [Type: Internal]
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f1fed8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f1fc70 {0x09b801004985 <NativeContext[307]>})]
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()  [Type: Hole]
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeSmallIntegerAdd[SignedSmall](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)  [Type: (MinusZero | Range(-9007199254740991, 9007199254740991))]
+#19:Return(#18:NumberConstant, #17:SpeculativeSmallIntegerAdd, #17:SpeculativeSmallIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFSimplifiedLowering ----- 
+#35:Int32Constant[0]()
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#10:TypedStateValues[kRepTagged|kTypeAny, kRepTagged|kTypeAny, kRepTagged|kTypeAny, dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:TypedStateValues[, dense]()  [Type: Internal]
+#31:TypedStateValues[kRepTagged|kTypeAny, dense](#3:Parameter)
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f1fed8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #31:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f1fc70 {0x09b801004985 <NativeContext[307]>})]
+#32:TypedStateValues[, sparse:.]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #32:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#33:CheckedTaggedSignedToInt32[FeedbackSource(INVALID)](#2:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#34:CheckedTaggedSignedToInt32[FeedbackSource(INVALID)](#3:Parameter, #33:CheckedTaggedSignedToInt32, #9:JSStackCheck)
+#17:CheckedInt32Add(#33:CheckedTaggedSignedToInt32, #34:CheckedTaggedSignedToInt32, #34:CheckedTaggedSignedToInt32, #9:JSStackCheck)  [Type: (MinusZero | Range(-9007199254740991, 9007199254740991))]
+#36:ChangeInt32ToTagged(#17:CheckedInt32Add)
+#19:Return(#35:Int32Constant, #36:ChangeInt32ToTagged, #17:CheckedInt32Add, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFGenericLowering ----- 
+#35:Int32Constant[0]()
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#10:TypedStateValues[kRepTagged|kTypeAny, kRepTagged|kTypeAny, kRepTagged|kTypeAny, dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:TypedStateValues[, dense]()  [Type: Internal]
+#31:TypedStateValues[kRepTagged|kTypeAny, dense](#3:Parameter)
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f1fed8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #31:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f1fc70 {0x09b801004985 <NativeContext[307]>})]
+#32:TypedStateValues[, sparse:.]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #32:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#33:CheckedTaggedSignedToInt32[FeedbackSource(INVALID)](#2:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#34:CheckedTaggedSignedToInt32[FeedbackSource(INVALID)](#3:Parameter, #33:CheckedTaggedSignedToInt32, #9:JSStackCheck)
+#17:CheckedInt32Add(#33:CheckedTaggedSignedToInt32, #34:CheckedTaggedSignedToInt32, #34:CheckedTaggedSignedToInt32, #9:JSStackCheck)  [Type: (MinusZero | Range(-9007199254740991, 9007199254740991))]
+#36:ChangeInt32ToTagged(#17:CheckedInt32Add)
+#19:Return(#35:Int32Constant, #36:ChangeInt32ToTagged, #17:CheckedInt32Add, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFEarlyOptimization ----- 
+#35:Int32Constant[0]()
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#10:TypedStateValues[kRepTagged|kTypeAny, kRepTagged|kTypeAny, kRepTagged|kTypeAny, dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:TypedStateValues[, dense]()  [Type: Internal]
+#31:TypedStateValues[kRepTagged|kTypeAny, dense](#3:Parameter)
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f1fed8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #31:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f1fc70 {0x09b801004985 <NativeContext[307]>})]
+#32:TypedStateValues[, sparse:.]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #32:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#33:CheckedTaggedSignedToInt32[FeedbackSource(INVALID)](#2:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#34:CheckedTaggedSignedToInt32[FeedbackSource(INVALID)](#3:Parameter, #33:CheckedTaggedSignedToInt32, #9:JSStackCheck)
+#17:CheckedInt32Add(#33:CheckedTaggedSignedToInt32, #34:CheckedTaggedSignedToInt32, #34:CheckedTaggedSignedToInt32, #9:JSStackCheck)  [Type: (MinusZero | Range(-9007199254740991, 9007199254740991))]
+#36:ChangeInt32ToTagged(#17:CheckedInt32Add)
+#19:Return(#35:Int32Constant, #36:ChangeInt32ToTagged, #17:CheckedInt32Add, #9:JSStackCheck)
+#20:End(#19:Return)
+----- schedule -----
+--- BLOCK B0 id0 ---
+  0: Start : Internal
+  5: Parameter[6, debug name: %context](0) : OtherInternal
+  1: Parameter[0, debug name: %this](0) : Receiver
+  2: Parameter[1](0) : (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)
+  3: Parameter[2](0) : (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)
+  23: HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>] : HeapConstant(0x11c00f1fed8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})
+  32: TypedStateValues[, sparse:.]
+  11: TypedStateValues[, dense] : Internal
+  10: TypedStateValues[kRepTagged|kTypeAny, kRepTagged|kTypeAny, kRepTagged|kTypeAny, dense](1, 2, 3) : Internal
+  14: FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](10, 11, 32, 5, 23, 0) : Internal
+  7: HeapConstant[0x09b801004985 <NativeContext[307]>] : HeapConstant(0x11c00f1fc70 {0x09b801004985 <NativeContext[307]>})
+  31: TypedStateValues[kRepTagged|kTypeAny, dense](3)
+  9: JSStackCheck[JSFunctionEntry](7, 14, 0, 0)
+  16: FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](10, 11, 31, 5, 23, 0) : Internal
+  15: Checkpoint(16, 9, 9)
+  33: CheckedTaggedSignedToInt32[FeedbackSource(INVALID)](2, 15, 9)
+  34: CheckedTaggedSignedToInt32[FeedbackSource(INVALID)](3, 33, 9)
+  17: CheckedInt32Add(33, 34, 34, 9) : (MinusZero | Range(-9007199254740991, 9007199254740991))
+  36: ChangeInt32ToTagged(17)
+  35: Int32Constant[0]
+  19: Return(35, 36, 17, 9) -> B1
+--- BLOCK B1 id1 <- B0 ---
+  20: End(19)
+
+----- V8.TFTurboshaftBuildGraph -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: JSStackCheck(#9, #7)[function-entry]
+   11: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   14: ConvertJSPrimitiveToUntaggedOrDeopt(#3, #11)[Smi, Int32, dont-check-for-minus-zero, FeedbackSource(INVALID)]
+   16: ConvertJSPrimitiveToUntaggedOrDeopt(#4, #11)[Smi, Int32, dont-check-for-minus-zero, FeedbackSource(INVALID)]
+   18: WordBinopDeoptOnOverflow(#14, #16, #11)[signed add, Word32, dont-check-for-minus-zero]
+   21: ConvertUntaggedToJSPrimitive(#18)[Number, Word32, Signed, dont-check-for-minus-zero]
+   22: Constant()[word32: 0]
+   23: Return(#22, #21)[0]
+
+----- V8.TFTurboshaftMachineLowering -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: JSStackCheck(#9, #7)[function-entry]
+   11: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   14: Constant()[word32: 1]
+   15: WordBinop(#3, #14)[BitwiseAnd, Word32]
+   16: Constant()[word32: 0]
+   17: Comparison(#15, #16)[Equal, Word32]
+   18: DeoptimizeIf(#15, #11)[NotASmi, FeedbackSource(INVALID)]
+   19: TaggedBitcast(#3)[Tagged, Word32, Smi]
+   20: Shift(#19, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   21: WordBinop(#4, #14)[BitwiseAnd, Word32]
+   22: Comparison(#21, #16)[Equal, Word32]
+   23: DeoptimizeIf(#21, #11)[NotASmi, FeedbackSource(INVALID)]
+   25: TaggedBitcast(#4)[Tagged, Word32, Smi]
+   26: Shift(#25, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   27: OverflowCheckedBinop(#20, #26)[signed add, Word32]
+   28: Projection(#27)[0, Word32]
+   29: Projection(#27)[1, Word32]
+   30: MakeTuple(#28, #29)
+   31: DeoptimizeIf(#29, #11)[Overflow, FeedbackSource(INVALID)]
+   32: OverflowCheckedBinop(#28, #28)[signed add, Word32]
+   33: Projection(#32)[0, Word32]
+   34: Projection(#32)[1, Word32]
+   35: MakeTuple(#33, #34)
+   36: Branch(#34)[B2, B1, False]
+
+BLOCK B1 <- B0
+   38: TaggedBitcast(#33)[Word32, Tagged, Smi]
+   39: Goto()[B3, 0]
+
+BLOCK B2 <- B0
+   40: Change(#28)[SignedToFloat, NoAssumption, Word32, Float64]
+   41: Constant()[word64: 12]
+   42: Allocate(#41)[Young, tagged aligned]
+   43: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   44: Store *(#42) = #43 [tagged base, TaggedPointer, MapWriteBarrier, initializing]
+   46: Store *(#42 + 4) = #40 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+   47: Goto()[B3, 0]
+
+MERGE B3 <- B1, B2
+   48: Phi(#38, #42)[Tagged]
+   49: Return(#16, #48)[0]
+
+----- V8.TFTurboshaftLoopUnrolling -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: JSStackCheck(#9, #7)[function-entry]
+   11: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   14: Constant()[word32: 1]
+   15: WordBinop(#3, #14)[BitwiseAnd, Word32]
+   16: Constant()[word32: 0]
+   17: Comparison(#15, #16)[Equal, Word32]
+   18: DeoptimizeIf(#15, #11)[NotASmi, FeedbackSource(INVALID)]
+   19: TaggedBitcast(#3)[Tagged, Word32, Smi]
+   20: Shift(#19, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   21: WordBinop(#4, #14)[BitwiseAnd, Word32]
+   22: Comparison(#21, #16)[Equal, Word32]
+   23: DeoptimizeIf(#21, #11)[NotASmi, FeedbackSource(INVALID)]
+   25: TaggedBitcast(#4)[Tagged, Word32, Smi]
+   26: Shift(#25, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   27: OverflowCheckedBinop(#20, #26)[signed add, Word32]
+   28: Projection(#27)[0, Word32]
+   29: Projection(#27)[1, Word32]
+   30: MakeTuple(#28, #29)
+   31: DeoptimizeIf(#29, #11)[Overflow, FeedbackSource(INVALID)]
+   32: OverflowCheckedBinop(#28, #28)[signed add, Word32]
+   33: Projection(#32)[0, Word32]
+   34: Projection(#32)[1, Word32]
+   35: MakeTuple(#33, #34)
+   36: Branch(#34)[B2, B1, False]
+
+BLOCK B1 <- B0
+   38: TaggedBitcast(#33)[Word32, Tagged, Smi]
+   39: Goto()[B3, 0]
+
+BLOCK B2 <- B0
+   40: Change(#28)[SignedToFloat, NoAssumption, Word32, Float64]
+   41: Constant()[word64: 12]
+   42: Allocate(#41)[Young, tagged aligned]
+   43: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   44: Store *(#42) = #43 [tagged base, TaggedPointer, MapWriteBarrier, initializing]
+   46: Store *(#42 + 4) = #40 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+   47: Goto()[B3, 0]
+
+MERGE B3 <- B1, B2
+   48: Phi(#38, #42)[Tagged]
+   49: Return(#16, #48)[0]
+
+----- V8.TFTurboshaftLoadElimination -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: JSStackCheck(#9, #7)[function-entry]
+   11: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   14: Constant()[word32: 1]
+   15: WordBinop(#3, #14)[BitwiseAnd, Word32]
+   16: Constant()[word32: 0]
+   17: DeoptimizeIf(#15, #11)[NotASmi, FeedbackSource(INVALID)]
+   18: TaggedBitcast(#3)[Tagged, Word32, Smi]
+   19: Shift(#18, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   20: WordBinop(#4, #14)[BitwiseAnd, Word32]
+   21: DeoptimizeIf(#20, #11)[NotASmi, FeedbackSource(INVALID)]
+   23: TaggedBitcast(#4)[Tagged, Word32, Smi]
+   24: Shift(#23, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   25: OverflowCheckedBinop(#19, #24)[signed add, Word32]
+   26: Projection(#25)[0, Word32]
+   27: Projection(#25)[1, Word32]
+   28: MakeTuple(#26, #27)
+   29: DeoptimizeIf(#27, #11)[Overflow, FeedbackSource(INVALID)]
+   30: OverflowCheckedBinop(#26, #26)[signed add, Word32]
+   31: Projection(#30)[0, Word32]
+   32: Projection(#30)[1, Word32]
+   33: MakeTuple(#31, #32)
+   34: Branch(#32)[B2, B1, False]
+
+BLOCK B1 <- B0
+   36: TaggedBitcast(#31)[Word32, Tagged, Smi]
+   37: Return(#16, #36)[0]
+
+BLOCK B2 <- B0
+   38: Change(#26)[SignedToFloat, NoAssumption, Word32, Float64]
+   39: Constant()[word64: 12]
+   40: Allocate(#39)[Young, tagged aligned]
+   41: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   42: Store *(#40) = #41 [tagged base, TaggedPointer, MapWriteBarrier, initializing]
+   44: Store *(#40 + 4) = #38 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+   45: Return(#16, #40)[0]
+
+----- V8.TFTurboshaftMemoryOptimization -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: JSStackCheck(#9, #7)[function-entry]
+   11: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   14: Constant()[word32: 1]
+   15: WordBinop(#3, #14)[BitwiseAnd, Word32]
+   16: Constant()[word32: 0]
+   17: DeoptimizeIf(#15, #11)[NotASmi, FeedbackSource(INVALID)]
+   18: TaggedBitcast(#3)[Tagged, Word32, Smi]
+   19: Shift(#18, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   20: WordBinop(#4, #14)[BitwiseAnd, Word32]
+   21: DeoptimizeIf(#20, #11)[NotASmi, FeedbackSource(INVALID)]
+   23: TaggedBitcast(#4)[Tagged, Word32, Smi]
+   24: Shift(#23, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   25: OverflowCheckedBinop(#19, #24)[signed add, Word32]
+   26: Projection(#25)[0, Word32]
+   27: Projection(#25)[1, Word32]
+   28: MakeTuple(#26, #27)
+   29: DeoptimizeIf(#27, #11)[Overflow, FeedbackSource(INVALID)]
+   30: OverflowCheckedBinop(#26, #26)[signed add, Word32]
+   31: Projection(#30)[0, Word32]
+   32: Projection(#30)[1, Word32]
+   33: MakeTuple(#31, #32)
+   34: Branch(#32)[B2, B1, False]
+
+BLOCK B1 <- B0
+   36: TaggedBitcast(#31)[Word32, Tagged, Smi]
+   37: Return(#16, #36)[0]
+
+BLOCK B2 <- B0
+   38: Change(#26)[SignedToFloat, NoAssumption, Word32, Float64]
+   39: Constant()[word64: 12]
+   40: Constant()[external: 0x46 <new_allocation_info_top>]
+   41: Load *(#40) [raw, Uint64, Word64]
+   42: Constant()[heap object: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>]
+   43: Constant()[external: 0x47 <new_allocation_info_limit>]
+   44: Constant()[word64: 131072]
+   45: Goto()[B3, 0]
+
+MERGE B3 <- B2
+   46: Load *(#43) [raw, Uint64, Word64]
+   47: WordBinop(#41, #39)[Add, Word64]
+   48: Comparison(#47, #46)[UnsignedLessThan, Word64]
+   49: Branch(#48)[B5, B4, True]
+
+BLOCK B4 <- B3
+   51: Call(#42, #39)[Code:Allocate Descriptor:r1s0i2f0]
+   53: DidntThrow(#51)[🁣🁣 🁣🁣 🁤🁪 🁣 i a, 0]
+   55: TaggedBitcast(#53)[Tagged, Word64, HeapObject]
+   56: Constant()[word64: 1]
+   57: Constant()[word64: -1]
+   58: WordBinop(#55, #57)[Add, Word64]
+   59: Goto()[B6, 0]
+
+BLOCK B5 <- B3
+   60: Goto()[B6, 0]
+
+MERGE B6 <- B5, B4
+   61: Phi(#41, #58)[Word64]
+   62: WordBinop(#61, #39)[Add, Word64]
+   63: Store *(#40) = #62 [raw, Uint64, NoWriteBarrier]
+   65: Constant()[word64: 1]
+   66: WordBinop(#61, #65)[Add, Word64]
+   67: TaggedBitcast(#66)[Word64, Tagged, HeapObject]
+   68: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   69: Store *(#67) = #68 [tagged base, TaggedPointer, NoWriteBarrier, initializing]
+   70: Store *(#67 + 4) = #38 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+   72: Return(#16, #67)[0]
+
+----- V8.TFTurboshaftCodeEliminationAndSimplification -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: Constant()[external: 0x11c00e04020]
+   11: Load *(#10) [raw, Uint64, Word64]
+   12: StackPointerGreaterThan(#11)[JSFunctionEntry]
+   13: Branch(#12)[B2, B1, True]
+
+BLOCK B1 <- B0
+   15: FrameConstant()[stack check offset]
+   16: Constant()[external: 0x10551feb0 <StackGuardWithGap.entry>]
+   17: Constant()[word32: 1]
+   18: Constant()[heap object: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>]
+   19: Call(#18, #7, #15, #16, #17, #9)[Code:StackGuardWithGap:r1s1i5f1]
+   22: DidntThrow(#19)[🁫🁫 🁫🁫 🁤🁪 🁫 i a, 0]
+   24: Goto()[B3, 0]
+
+BLOCK B2 <- B0
+   25: Goto()[B3, 0]
+
+MERGE B3 <- B1, B2
+   26: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   29: Constant()[word32: 1]
+   30: WordBinop(#3, #29)[BitwiseAnd, Word32]
+   31: Constant()[word32: 0]
+   32: DeoptimizeIf(#30, #26)[NotASmi, FeedbackSource(INVALID)]
+   33: TaggedBitcast(#3)[Tagged, Word32, Smi]
+   34: Shift(#33, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   35: WordBinop(#4, #29)[BitwiseAnd, Word32]
+   36: DeoptimizeIf(#35, #26)[NotASmi, FeedbackSource(INVALID)]
+   38: TaggedBitcast(#4)[Tagged, Word32, Smi]
+   39: Shift(#38, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   40: OverflowCheckedBinop(#34, #39)[signed add, Word32]
+   41: Projection(#40)[0, Word32]
+   42: Projection(#40)[1, Word32]
+   43: MakeTuple(#41, #42)
+   44: DeoptimizeIf(#42, #26)[Overflow, FeedbackSource(INVALID)]
+   45: OverflowCheckedBinop(#41, #41)[signed add, Word32]
+   46: Projection(#45)[0, Word32]
+   47: Projection(#45)[1, Word32]
+   48: MakeTuple(#46, #47)
+   49: Branch(#47)[B5, B4, False]
+
+BLOCK B4 <- B3
+   51: TaggedBitcast(#46)[Word32, Tagged, Smi]
+   52: Return(#31, #51)[0]
+
+BLOCK B5 <- B3
+   53: Change(#41)[SignedToFloat, NoAssumption, Word32, Float64]
+   54: Constant()[word64: 12]
+   55: Constant()[external: 0x46 <new_allocation_info_top>]
+   56: Load *(#55) [raw, Uint64, Word64]
+   57: Constant()[heap object: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>]
+   58: Constant()[external: 0x47 <new_allocation_info_limit>]
+   59: Goto()[B6, 0]
+
+MERGE B6 <- B5
+   60: Load *(#58) [raw, Uint64, Word64]
+   61: WordBinop(#56, #54)[Add, Word64]
+   62: Comparison(#61, #60)[UnsignedLessThan, Word64]
+   63: Branch(#62)[B8, B7, True]
+
+BLOCK B7 <- B6
+   65: Call(#57, #54)[Code:Allocate Descriptor:r1s0i2f0]
+   67: DidntThrow(#65)[🁣🁣 🁣🁣 🁤🁪 🁣 i a, 0]
+   69: TaggedBitcast(#67)[Tagged, Word64, HeapObject]
+   70: Constant()[word64: -1]
+   71: WordBinop(#69, #70)[Add, Word64]
+   72: Goto()[B9, 0]
+
+BLOCK B8 <- B6
+   73: Goto()[B9, 0]
+
+MERGE B9 <- B7, B8
+   74: Phi(#71, #56)[Word64]
+   75: WordBinop(#74, #54)[Add, Word64]
+   76: Store *(#55) = #75 [raw, Uint64, NoWriteBarrier]
+   78: Constant()[word64: 1]
+   79: WordBinop(#74, #78)[Add, Word64]
+   80: TaggedBitcast(#79)[Word64, Tagged, HeapObject]
+   81: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   82: Store *(#80) = #81 [tagged base, TaggedPointer, NoWriteBarrier, initializing]
+   83: Store *(#80 + 4) = #53 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+   85: Return(#31, #80)[0]
+
+----- V8.TFTurboshaftDecompressionOptimization -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[compressed heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: Constant()[external: 0x11c00e04020]
+   11: Load *(#10) [raw, Uint64, Word64]
+   12: StackPointerGreaterThan(#11)[JSFunctionEntry]
+   13: Branch(#12)[B2, B1, True]
+
+BLOCK B1 <- B0
+   15: FrameConstant()[stack check offset]
+   16: Constant()[external: 0x10551feb0 <StackGuardWithGap.entry>]
+   17: Constant()[word32: 1]
+   18: Constant()[heap object: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>]
+   19: Call(#18, #7, #15, #16, #17, #9)[Code:StackGuardWithGap:r1s1i5f1]
+   22: DidntThrow(#19)[🁫🁫 🁫🁫 🁤🁪 🁫 i a, 0]
+   24: Goto()[B3, 0]
+
+BLOCK B2 <- B0
+   25: Goto()[B3, 0]
+
+MERGE B3 <- B1, B2
+   26: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   29: Constant()[word32: 1]
+   30: WordBinop(#3, #29)[BitwiseAnd, Word32]
+   31: Constant()[word32: 0]
+   32: DeoptimizeIf(#30, #26)[NotASmi, FeedbackSource(INVALID)]
+   33: TaggedBitcast(#3)[Compressed, Word32, Smi]
+   34: Shift(#33, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   35: WordBinop(#4, #29)[BitwiseAnd, Word32]
+   36: DeoptimizeIf(#35, #26)[NotASmi, FeedbackSource(INVALID)]
+   38: TaggedBitcast(#4)[Compressed, Word32, Smi]
+   39: Shift(#38, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   40: OverflowCheckedBinop(#34, #39)[signed add, Word32]
+   41: Projection(#40)[0, Word32]
+   42: Projection(#40)[1, Word32]
+   43: MakeTuple(#41, #42)
+   44: DeoptimizeIf(#42, #26)[Overflow, FeedbackSource(INVALID)]
+   45: OverflowCheckedBinop(#41, #41)[signed add, Word32]
+   46: Projection(#45)[0, Word32]
+   47: Projection(#45)[1, Word32]
+   48: MakeTuple(#46, #47)
+   49: Branch(#47)[B5, B4, False]
+
+BLOCK B4 <- B3
+   51: TaggedBitcast(#46)[Word32, Tagged, Smi]
+   52: Return(#31, #51)[0]
+
+BLOCK B5 <- B3
+   53: Change(#41)[SignedToFloat, NoAssumption, Word32, Float64]
+   54: Constant()[word64: 12]
+   55: Constant()[external: 0x46 <new_allocation_info_top>]
+   56: Load *(#55) [raw, Uint64, Word64]
+   57: Constant()[heap object: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>]
+   58: Constant()[external: 0x47 <new_allocation_info_limit>]
+   59: Goto()[B6, 0]
+
+MERGE B6 <- B5
+   60: Load *(#58) [raw, Uint64, Word64]
+   61: WordBinop(#56, #54)[Add, Word64]
+   62: Comparison(#61, #60)[UnsignedLessThan, Word64]
+   63: Branch(#62)[B8, B7, True]
+
+BLOCK B7 <- B6
+   65: Call(#57, #54)[Code:Allocate Descriptor:r1s0i2f0]
+   67: DidntThrow(#65)[🁣🁣 🁣🁣 🁤🁪 🁣 i a, 0]
+   69: TaggedBitcast(#67)[Tagged, Word64, HeapObject]
+   70: Constant()[word64: -1]
+   71: WordBinop(#69, #70)[Add, Word64]
+   72: Goto()[B9, 0]
+
+BLOCK B8 <- B6
+   73: Goto()[B9, 0]
+
+MERGE B9 <- B7, B8
+   74: Phi(#71, #56)[Word64]
+   75: WordBinop(#74, #54)[Add, Word64]
+   76: Store *(#55) = #75 [raw, Uint64, NoWriteBarrier]
+   78: Constant()[word64: 1]
+   79: WordBinop(#74, #78)[Add, Word64]
+   80: TaggedBitcast(#79)[Word64, Tagged, HeapObject]
+   81: Constant()[compressed heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   82: Store *(#80) = #81 [tagged base, TaggedPointer, NoWriteBarrier, initializing]
+   83: Store *(#80 + 4) = #53 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+   85: Return(#31, #80)[0]
+
+----- V8.TFTurboshaftSpecialRPOScheduling -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[compressed heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: Constant()[external: 0x11c00e04020]
+   11: Load *(#10) [raw, Uint64, Word64]
+   12: StackPointerGreaterThan(#11)[JSFunctionEntry]
+   13: Branch(#12)[B2, B1, True]
+
+BLOCK B1 <- B0
+   15: FrameConstant()[stack check offset]
+   16: Constant()[external: 0x10551feb0 <StackGuardWithGap.entry>]
+   17: Constant()[word32: 1]
+   18: Constant()[heap object: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>]
+   19: Call(#18, #7, #15, #16, #17, #9)[Code:StackGuardWithGap:r1s1i5f1]
+   22: DidntThrow(#19)[🁫🁫 🁫🁫 🁤🁪 🁫 i a, 0]
+   24: Goto()[B3, 0]
+
+BLOCK B2 <- B0
+   25: Goto()[B3, 0]
+
+MERGE B3 <- B1, B2
+   26: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   29: Constant()[word32: 1]
+   30: WordBinop(#3, #29)[BitwiseAnd, Word32]
+   31: Constant()[word32: 0]
+   32: DeoptimizeIf(#30, #26)[NotASmi, FeedbackSource(INVALID)]
+   33: TaggedBitcast(#3)[Compressed, Word32, Smi]
+   34: Shift(#33, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   35: WordBinop(#4, #29)[BitwiseAnd, Word32]
+   36: DeoptimizeIf(#35, #26)[NotASmi, FeedbackSource(INVALID)]
+   38: TaggedBitcast(#4)[Compressed, Word32, Smi]
+   39: Shift(#38, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   40: OverflowCheckedBinop(#34, #39)[signed add, Word32]
+   41: Projection(#40)[0, Word32]
+   42: Projection(#40)[1, Word32]
+   43: MakeTuple(#41, #42)
+   44: DeoptimizeIf(#42, #26)[Overflow, FeedbackSource(INVALID)]
+   45: OverflowCheckedBinop(#41, #41)[signed add, Word32]
+   46: Projection(#45)[0, Word32]
+   47: Projection(#45)[1, Word32]
+   48: MakeTuple(#46, #47)
+   49: Branch(#47)[B5, B4, False]
+
+BLOCK B4 <- B3
+   51: TaggedBitcast(#46)[Word32, Tagged, Smi]
+   52: Return(#31, #51)[0]
+
+BLOCK B5 <- B3
+   53: Change(#41)[SignedToFloat, NoAssumption, Word32, Float64]
+   54: Constant()[word64: 12]
+   55: Constant()[external: 0x46 <new_allocation_info_top>]
+   56: Load *(#55) [raw, Uint64, Word64]
+   57: Constant()[heap object: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>]
+   58: Constant()[external: 0x47 <new_allocation_info_limit>]
+   59: Goto()[B6, 0]
+
+MERGE B6 <- B5
+   60: Load *(#58) [raw, Uint64, Word64]
+   61: WordBinop(#56, #54)[Add, Word64]
+   62: Comparison(#61, #60)[UnsignedLessThan, Word64]
+   63: Branch(#62)[B8, B7, True]
+
+BLOCK B7 <- B6
+   65: Call(#57, #54)[Code:Allocate Descriptor:r1s0i2f0]
+   67: DidntThrow(#65)[🁣🁣 🁣🁣 🁤🁪 🁣 i a, 0]
+   69: TaggedBitcast(#67)[Tagged, Word64, HeapObject]
+   70: Constant()[word64: -1]
+   71: WordBinop(#69, #70)[Add, Word64]
+   72: Goto()[B9, 0]
+
+BLOCK B8 <- B6
+   73: Goto()[B9, 0]
+
+MERGE B9 <- B7, B8
+   74: Phi(#71, #56)[Word64]
+   75: WordBinop(#74, #54)[Add, Word64]
+   76: Store *(#55) = #75 [raw, Uint64, NoWriteBarrier]
+   78: Constant()[word64: 1]
+   79: WordBinop(#74, #78)[Add, Word64]
+   80: TaggedBitcast(#79)[Word64, Tagged, HeapObject]
+   81: Constant()[compressed heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   82: Store *(#80) = #81 [tagged base, TaggedPointer, NoWriteBarrier, initializing]
+   83: Store *(#80 + 4) = #53 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+   85: Return(#31, #80)[0]
+----- Instruction sequence after instruction selection -----
+IMM#0: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>
+IMM#1: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>
+IMM#2: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#3: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#4: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#5: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>
+IMM#6: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+CST#0: v29 = 0x09b801004985 <NativeContext[307]>
+CST#1: v27 = 0x10551feb0 <StackGuardWithGap.entry>
+CST#2: v28 = 1
+CST#3: v10 = 12l
+B0: AO#0  instructions: [0, 6)
+ predecessors:
+       0: gap () () 
+          v22(=rsi) = ArchNop
+       1: gap () () 
+          v19(=-1S) = ArchNop
+       2: gap () () 
+          v20(=-2S) = ArchNop
+       3: gap () () 
+          v21(=-3S) = ArchNop
+       4: gap () () 
+          [constant:v29] = ArchNop
+       5: gap () () 
+          ArchStackPointerGreaterThan : Root && branch if unsigned greater than #-96 [rpo_immediate:2] [rpo_immediate:1]
+ successors: B2 B1
+B1: AO#4 (deferred) (no frame)  instructions: [6, 12)
+ predecessors: B0
+       6: gap () () 
+          v26(R) = ArchStackCheckOffset
+       7: gap () () 
+          [constant:v27] = ArchNop
+       8: gap () () 
+          [constant:v28] = ArchNop
+       9: gap () () 
+          X64Push #8 v26(-)
+      10: gap () () 
+          v25(=rax) = ArchCallCodeObject [immediate:5] #3 [immediate:6] v19(S) v20(S) v21(S) v22(S) v27(=rbx) v28(=rax) v29(=rsi) #7
+      11: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B2: AO#1 (no frame)  instructions: [12, 13)
+ predecessors: B0
+      12: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B3: AO#2 (no frame)  instructions: [13, 19)
+ predecessors: B1 B2
+      13: gap () () 
+          X64Test32 && deoptimize if not equal v20 #1 #2 [immediate:4] v19(-) v20(-) v21(-) v22(S) v21(-)
+      14: gap () () 
+          v18(0) = X64Sar32 v20(R) #1
+      15: gap () () 
+          X64Test32 && deoptimize if not equal v21 #1 #1 [immediate:3] v19(-) v20(-) v21(-) v22(S) v21(-)
+      16: gap () () 
+          v17(0) = X64Sar32 v21(R) #1
+      17: gap () () 
+          v16(0) = X64Add32 && deoptimize if overflow v17(R) v18 #0 [immediate:2] v19(-) v20(-) v21(-) v22(S) v21(-)
+      18: gap () () 
+          v15(0) = X64Add32 && branch if overflow v16(R) v16(R) [rpo_immediate:5] [rpo_immediate:4]
+ successors: B5 B4
+B4: AO#3 (no frame)  instructions: [19, 20)
+ predecessors: B3
+      19: gap () () 
+          ArchRet #0 v15(=rax)
+ successors:
+B5: AO#5 (deferred) (no frame)  instructions: [20, 24)
+ predecessors: B3
+      20: gap () () 
+          v1(R) = SSEInt32ToFloat64 v16
+      21: gap () () 
+          [constant:v10] = ArchNop
+      22: gap () () 
+          v6(R) = X64Movq : Root #80
+      23: gap () () 
+          ArchJmp [rpo_immediate:6]
+ successors: B6
+B6: AO#6 (deferred) (no frame)  instructions: [24, 26)
+ predecessors: B5
+      24: gap () () 
+          v11(R) = X64Lea : MRI v6(R) #12
+      25: gap () () 
+          X64Cmp : Root && branch if unsigned greater than #88 v11(R) [rpo_immediate:8] [rpo_immediate:7]
+ successors: B8 B7
+B7: AO#7 (deferred) (no frame)  instructions: [26, 29)
+ predecessors: B6
+      26: gap () () 
+          v9(=rax) = ArchCallCodeObject [immediate:1] v10(=rdx) #255
+      27: gap () () 
+          v5(R) = X64Lea : MRI v9(R) #-1
+      28: gap () () 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B8: AO#8 (deferred) (no frame)  instructions: [29, 30)
+ predecessors: B6
+      29: gap () () 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B9: AO#9 (deferred) (no frame)  instructions: [30, 37)
+ predecessors: B7 B8
+     phi: v3 = v5 v6
+      30: gap () () 
+          v4(R) = X64Lea : MRI v3(R) #12
+      31: gap () () 
+          X64Movq : Root #80 v4(R)
+      32: gap () () 
+          v2(R) = X64Lea : MRI v3(R) #1
+      33: gap () () 
+          v0(0) = ArchNop v2
+      34: gap () () 
+          X64MovqCompressTagged : MRI v0(R) #-1 [immediate:0]
+      35: gap () () 
+          X64Movsd : MRI v0(R) #3 v1(R)
+      36: gap () () 
+          ArchRet #0 v0(=rax)
+ successors:
+----- Instruction sequence before register allocation -----
+IMM#0: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>
+IMM#1: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>
+IMM#2: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#3: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#4: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#5: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>
+IMM#6: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+CST#0: v29 = 0x09b801004985 <NativeContext[307]>
+CST#1: v27 = 0x10551feb0 <StackGuardWithGap.entry>
+CST#2: v28 = 1
+CST#3: v10 = 12l
+B0: AO#0  instructions: [0, 6)
+ predecessors:
+       0: gap () () 
+          [rsi|R|t] = ArchNop
+       1: gap (v22(-) = [rsi|R|t]) () 
+          [stack:-1|t] = ArchNop
+       2: gap (v19(-) = [stack:-1|t]) () 
+          [stack:-2|t] = ArchNop
+       3: gap (v20(-) = [stack:-2|t]) () 
+          [stack:-3|t] = ArchNop
+       4: gap (v21(-) = [stack:-3|t]) () 
+          [constant:v29] = ArchNop
+       5: gap () () 
+          ArchStackPointerGreaterThan : Root && branch if unsigned greater than #-96 [rpo_immediate:2] [rpo_immediate:1]
+ successors: B2 B1
+B1: AO#4 (deferred) (no frame)  instructions: [6, 12)
+ predecessors: B0
+       6: gap () () 
+          v26(R) = ArchStackCheckOffset
+       7: gap () () 
+          [constant:v27] = ArchNop
+       8: gap () () 
+          [constant:v28] = ArchNop
+       9: gap () () 
+          X64Push #8 v26(-)
+      10: gap () ([rbx|R|w64] = v27(-); [rax|R|w64] = v28(-); [rsi|R|t] = v29(-)) 
+          [rax|R|t] = ArchCallCodeObject [immediate:5] #3 [immediate:6] v19(S) v20(S) v21(S) v22(S) [rbx|R|w64] [rax|R|w64] [rsi|R|t] #7
+      11: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B2: AO#1 (no frame)  instructions: [12, 13)
+ predecessors: B0
+      12: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B3: AO#2 (no frame)  instructions: [13, 19)
+ predecessors: B1 B2
+      13: gap () () 
+          X64Test32 && deoptimize if not equal v20 #1 #2 [immediate:4] v19(-) v20(-) v21(-) v22(S) v21(-)
+      14: gap () (v18(R) = v20(-)) 
+          v18(0) = X64Sar32 v18(R) #1
+      15: gap () () 
+          X64Test32 && deoptimize if not equal v21 #1 #1 [immediate:3] v19(-) v20(-) v21(-) v22(S) v21(-)
+      16: gap () (v17(R) = v21(-)) 
+          v17(0) = X64Sar32 v17(R) #1
+      17: gap () (v16(R) = v17(-)) 
+          v16(0) = X64Add32 && deoptimize if overflow v16(R) v18 #0 [immediate:2] v19(-) v20(-) v21(-) v22(S) v21(-)
+      18: gap () (v15(R) = v16(-)) 
+          v15(0) = X64Add32 && branch if overflow v15(R) v16(R) [rpo_immediate:5] [rpo_immediate:4]
+ successors: B5 B4
+B4: AO#3 (no frame)  instructions: [19, 20)
+ predecessors: B3
+      19: gap () ([rax|R|w64] = v15(-)) 
+          ArchRet #0 [rax|R|w64]
+ successors:
+B5: AO#5 (deferred) (no frame)  instructions: [20, 24)
+ predecessors: B3
+      20: gap () () 
+          v1(R) = SSEInt32ToFloat64 v16
+      21: gap () () 
+          [constant:v10] = ArchNop
+      22: gap () () 
+          v6(R) = X64Movq : Root #80
+      23: gap () () 
+          ArchJmp [rpo_immediate:6]
+ successors: B6
+B6: AO#6 (deferred) (no frame)  instructions: [24, 26)
+ predecessors: B5
+      24: gap () () 
+          v11(R) = X64Lea : MRI v6(R) #12
+      25: gap () () 
+          X64Cmp : Root && branch if unsigned greater than #88 v11(R) [rpo_immediate:8] [rpo_immediate:7]
+ successors: B8 B7
+B7: AO#7 (deferred) (no frame)  instructions: [26, 29)
+ predecessors: B6
+      26: gap () ([rdx|R|w64] = v10(-)) 
+          [rax|R|tp] = ArchCallCodeObject [immediate:1] [rdx|R|w64] #255
+      27: gap (v9(-) = [rax|R|tp]) () 
+          v5(R) = X64Lea : MRI v9(R) #-1
+      28: gap () (v3 = v5(-)) 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B8: AO#8 (deferred) (no frame)  instructions: [29, 30)
+ predecessors: B6
+      29: gap () (v3 = v6(-)) 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B9: AO#9 (deferred) (no frame)  instructions: [30, 37)
+ predecessors: B7 B8
+     phi: v3 = v5 v6
+      30: gap () () 
+          v4(R) = X64Lea : MRI v3(R) #12
+      31: gap () () 
+          X64Movq : Root #80 v4(R)
+      32: gap () () 
+          v2(R) = X64Lea : MRI v3(R) #1
+      33: gap () (v0 = v2(-)) 
+          v0(0) = ArchNop v0
+      34: gap () () 
+          X64MovqCompressTagged : MRI v0(R) #-1 [immediate:0]
+      35: gap () () 
+          X64Movsd : MRI v0(R) #3 v1(R)
+      36: gap () ([rax|R|t] = v0(-)) 
+          ArchRet #0 [rax|R|t]
+ successors:
+----- Instruction sequence after register allocation -----
+IMM#0: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>
+IMM#1: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>
+IMM#2: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#3: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#4: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#5: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>
+IMM#6: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+CST#0: v29 = 0x09b801004985 <NativeContext[307]>
+CST#1: v27 = 0x10551feb0 <StackGuardWithGap.entry>
+CST#2: v28 = 1
+CST#3: v10 = 12l
+B0: AO#0  instructions: [0, 6)
+ predecessors:
+       0: gap () () 
+          [rsi|R|t] = ArchNop
+       1: gap () () 
+          [stack:-1|t] = ArchNop
+       2: gap () () 
+          [stack:-2|t] = ArchNop
+       3: gap () () 
+          [stack:-3|t] = ArchNop
+       4: gap () () 
+          [constant:v29] = ArchNop
+       5: gap ([stack:5|t] = [rsi|R|t]) () 
+          ArchStackPointerGreaterThan : Root && branch if unsigned greater than #-96 [rpo_immediate:2] [rpo_immediate:1]
+ successors: B2 B1
+B1: AO#4 (deferred) (no frame)  instructions: [6, 12)
+ predecessors: B0
+       6: gap () () 
+          [rcx|R|w64] = ArchStackCheckOffset
+       7: gap () () 
+          [constant:v27] = ArchNop
+       8: gap () () 
+          [constant:v28] = ArchNop
+       9: gap () () 
+          X64Push #8 [rcx|R|w64]
+      10: gap ([rbx|R|w64] = [constant:v27]; [rax|R|w64] = [constant:v28]; [rsi|R|t] = [constant:v29]) () 
+          [rax|R|t] = ArchCallCodeObject [immediate:5] #3 [immediate:6] [stack:-1|t] [stack:-2|t] [stack:-3|t] [stack:5|t] [rbx|R|w64] [rax|R|w64] [rsi|R|t] #7
+      11: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B2: AO#1 (no frame)  instructions: [12, 13)
+ predecessors: B0
+      12: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B3: AO#2 (no frame)  instructions: [13, 19)
+ predecessors: B1 B2
+      13: gap ([rcx|R|t] = [stack:-2|t]) () 
+          X64Test32 && deoptimize if not equal [rcx|R|t] #1 #2 [immediate:4] [stack:-1|t] [rcx|R|t] [stack:-3|t] [stack:5|t] [stack:-3|t]
+      14: gap ([rdi|R|w32] = [rcx|R|t]) () 
+          [rdi|R|w32] = X64Sar32 [rdi|R|w32] #1
+      15: gap ([r8|R|t] = [stack:-3|t]) () 
+          X64Test32 && deoptimize if not equal [r8|R|t] #1 #1 [immediate:3] [stack:-1|t] [rcx|R|t] [r8|R|t] [stack:5|t] [r8|R|t]
+      16: gap ([r9|R|w32] = [r8|R|t]) () 
+          [r9|R|w32] = X64Sar32 [r9|R|w32] #1
+      17: gap () () 
+          [r9|R|w64] = X64Add32 && deoptimize if overflow [r9|R|w64] [rdi|R|w32] #0 [immediate:2] [stack:-1|t] [rcx|R|t] [r8|R|t] [stack:5|t] [r8|R|t]
+      18: gap ([rcx|R|w64] = [r9|R|w64]) () 
+          [rcx|R|w64] = X64Add32 && branch if overflow [rcx|R|w64] [r9|R|w64] [rpo_immediate:5] [rpo_immediate:4]
+ successors: B5 B4
+B4: AO#3 (no frame)  instructions: [19, 20)
+ predecessors: B3
+      19: gap ([rax|R|w64] = [rcx|R|w64]) () 
+          ArchRet #0 [rax|R|w64]
+ successors:
+B5: AO#5 (deferred)  instructions: [20, 24)
+ predecessors: B3
+      20: gap () () 
+          [xmm0|R|f64] = SSEInt32ToFloat64 [r9|R|w64]
+      21: gap () () 
+          [constant:v10] = ArchNop
+      22: gap () () 
+          [rcx|R|w64] = X64Movq : Root #80
+      23: gap ([fp_stack:5|f64] = [xmm0|R|f64]) () 
+          ArchJmp [rpo_immediate:6]
+ successors: B6
+B6: AO#6 (deferred) (no frame)  instructions: [24, 26)
+ predecessors: B5
+      24: gap () () 
+          [rdi|R|w64] = X64Lea : MRI [rcx|R|w64] #12
+      25: gap () () 
+          X64Cmp : Root && branch if unsigned greater than #88 [rdi|R|w64] [rpo_immediate:8] [rpo_immediate:7]
+ successors: B8 B7
+B7: AO#7 (deferred) (no frame)  instructions: [26, 29)
+ predecessors: B6
+      26: gap ([rdx|R|w64] = [constant:v10]) () 
+          [rax|R|tp] = ArchCallCodeObject [immediate:1] [rdx|R|w64] #255
+      27: gap () () 
+          [rcx|R|w64] = X64Lea : MRI [rax|R|tp] #-1
+      28: gap ([xmm0|R|f64] = [fp_stack:5|f64]) () 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B8: AO#8 (deferred) (no frame)  instructions: [29, 30)
+ predecessors: B6
+      29: gap () () 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B9: AO#9 (deferred) (no frame)  instructions: [30, 37)
+ predecessors: B7 B8
+     phi: [rcx|R|w64] = v5 v6
+      30: gap () () 
+          [rdi|R|w64] = X64Lea : MRI [rcx|R|w64] #12
+      31: gap () () 
+          X64Movq : Root #80 [rdi|R|w64]
+      32: gap () () 
+          [rcx|R|w64] = X64Lea : MRI [rcx|R|w64] #1
+      33: gap () () 
+          [rcx|R|t] = ArchNop [rcx|R|t]
+      34: gap () () 
+          X64MovqCompressTagged : MRI [rcx|R|t] #-1 [immediate:0]
+      35: gap () () 
+          X64Movsd : MRI [rcx|R|t] #3 [xmm0|R|f64]
+      36: gap ([rax|R|t] = [rcx|R|t]) () 
+          ArchRet #0 [rax|R|t]
+ successors:
+---------------------------------------------------
+Finished compiling method add using TurboFan
+---------------------------------------------------
+Begin compiling method add using TurboFan
+----- Graph after V8.TFBytecodeGraphBuilder ----- 
+#18:NumberConstant[0]()
+#0:Start()
+#2:Parameter[1](#0:Start)
+#3:Parameter[2](#0:Start)
+#1:Parameter[0, debug name: %this](#0:Start)
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)
+#11:StateValues[dense]()
+#5:Parameter[6, debug name: %context](#0:Start)
+#13:Parameter[-1, debug name: %closure](#0:Start)
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #13:Parameter, #0:Start)
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #13:Parameter, #0:Start)
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeAdditiveSafeIntegerAdd[AdditiveSafeInteger](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#19:Return(#18:NumberConstant, #17:SpeculativeAdditiveSafeIntegerAdd, #17:SpeculativeAdditiveSafeIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFInlining ----- 
+#18:NumberConstant[0]()
+#0:Start()
+#2:Parameter[1](#0:Start)
+#3:Parameter[2](#0:Start)
+#1:Parameter[0, debug name: %this](#0:Start)
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)
+#11:StateValues[dense]()
+#5:Parameter[6, debug name: %context](#0:Start)
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeAdditiveSafeIntegerAdd[AdditiveSafeInteger](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#19:Return(#18:NumberConstant, #17:SpeculativeAdditiveSafeIntegerAdd, #17:SpeculativeAdditiveSafeIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFEarlyGraphTrimming ----- 
+#18:NumberConstant[0]()
+#0:Start()
+#2:Parameter[1](#0:Start)
+#3:Parameter[2](#0:Start)
+#1:Parameter[0, debug name: %this](#0:Start)
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)
+#11:StateValues[dense]()
+#5:Parameter[6, debug name: %context](#0:Start)
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeAdditiveSafeIntegerAdd[AdditiveSafeInteger](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#19:Return(#18:NumberConstant, #17:SpeculativeAdditiveSafeIntegerAdd, #17:SpeculativeAdditiveSafeIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFTyper ----- 
+#18:NumberConstant[0]()  [Type: Range(0, 0)]
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:StateValues[dense]()  [Type: Internal]
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f3a6d8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f3a470 {0x09b801004985 <NativeContext[307]>})]
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()  [Type: Hole]
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeAdditiveSafeIntegerAdd[AdditiveSafeInteger](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)  [Type: Number]
+#19:Return(#18:NumberConstant, #17:SpeculativeAdditiveSafeIntegerAdd, #17:SpeculativeAdditiveSafeIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFTypedLowering ----- 
+#18:NumberConstant[0]()  [Type: Range(0, 0)]
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:StateValues[dense]()  [Type: Internal]
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f3a6d8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f3a470 {0x09b801004985 <NativeContext[307]>})]
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()  [Type: Hole]
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeAdditiveSafeIntegerAdd[AdditiveSafeInteger](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)  [Type: Number]
+#19:Return(#18:NumberConstant, #17:SpeculativeAdditiveSafeIntegerAdd, #17:SpeculativeAdditiveSafeIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFLoopPeeling ----- 
+#18:NumberConstant[0]()  [Type: Range(0, 0)]
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:StateValues[dense]()  [Type: Internal]
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f3a6d8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f3a470 {0x09b801004985 <NativeContext[307]>})]
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()  [Type: Hole]
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeAdditiveSafeIntegerAdd[AdditiveSafeInteger](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)  [Type: Number]
+#19:Return(#18:NumberConstant, #17:SpeculativeAdditiveSafeIntegerAdd, #17:SpeculativeAdditiveSafeIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFLoadElimination ----- 
+#18:NumberConstant[0]()  [Type: Range(0, 0)]
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:StateValues[dense]()  [Type: Internal]
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f3a6d8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f3a470 {0x09b801004985 <NativeContext[307]>})]
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()  [Type: Hole]
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeAdditiveSafeIntegerAdd[AdditiveSafeInteger](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)  [Type: Number]
+#19:Return(#18:NumberConstant, #17:SpeculativeAdditiveSafeIntegerAdd, #17:SpeculativeAdditiveSafeIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFEscapeAnalysis ----- 
+#18:NumberConstant[0]()  [Type: Range(0, 0)]
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#10:StateValues[dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:StateValues[dense]()  [Type: Internal]
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f3a6d8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #3:Parameter, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f3a470 {0x09b801004985 <NativeContext[307]>})]
+#12:HeapConstant[0x09b80012fffd <optimized_out>]()  [Type: Hole]
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:StateValues, #11:StateValues, #12:HeapConstant, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#17:SpeculativeAdditiveSafeIntegerAdd[AdditiveSafeInteger](#2:Parameter, #3:Parameter, #15:Checkpoint, #9:JSStackCheck)  [Type: Number]
+#19:Return(#18:NumberConstant, #17:SpeculativeAdditiveSafeIntegerAdd, #17:SpeculativeAdditiveSafeIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFSimplifiedLowering ----- 
+#35:Int32Constant[0]()
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#10:TypedStateValues[kRepTagged|kTypeAny, kRepTagged|kTypeAny, kRepTagged|kTypeAny, dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:TypedStateValues[, dense]()  [Type: Internal]
+#31:TypedStateValues[kRepTagged|kTypeAny, dense](#3:Parameter)
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f3a6d8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #31:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f3a470 {0x09b801004985 <NativeContext[307]>})]
+#32:TypedStateValues[, sparse:.]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #32:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#33:CheckedTaggedToAdditiveSafeInteger[check-for-minus-zero, FeedbackSource(INVALID)](#2:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#34:CheckedTaggedToAdditiveSafeInteger[check-for-minus-zero, FeedbackSource(INVALID)](#3:Parameter, #33:CheckedTaggedToAdditiveSafeInteger, #9:JSStackCheck)
+#17:CheckedAdditiveSafeIntegerAdd(#33:CheckedTaggedToAdditiveSafeInteger, #34:CheckedTaggedToAdditiveSafeInteger, #34:CheckedTaggedToAdditiveSafeInteger, #9:JSStackCheck)  [Type: Number]
+#36:ChangeInt64ToTagged(#17:CheckedAdditiveSafeIntegerAdd)
+#19:Return(#35:Int32Constant, #36:ChangeInt64ToTagged, #17:CheckedAdditiveSafeIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFGenericLowering ----- 
+#35:Int32Constant[0]()
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#10:TypedStateValues[kRepTagged|kTypeAny, kRepTagged|kTypeAny, kRepTagged|kTypeAny, dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:TypedStateValues[, dense]()  [Type: Internal]
+#31:TypedStateValues[kRepTagged|kTypeAny, dense](#3:Parameter)
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f3a6d8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #31:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f3a470 {0x09b801004985 <NativeContext[307]>})]
+#32:TypedStateValues[, sparse:.]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #32:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#33:CheckedTaggedToAdditiveSafeInteger[check-for-minus-zero, FeedbackSource(INVALID)](#2:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#34:CheckedTaggedToAdditiveSafeInteger[check-for-minus-zero, FeedbackSource(INVALID)](#3:Parameter, #33:CheckedTaggedToAdditiveSafeInteger, #9:JSStackCheck)
+#17:CheckedAdditiveSafeIntegerAdd(#33:CheckedTaggedToAdditiveSafeInteger, #34:CheckedTaggedToAdditiveSafeInteger, #34:CheckedTaggedToAdditiveSafeInteger, #9:JSStackCheck)  [Type: Number]
+#36:ChangeInt64ToTagged(#17:CheckedAdditiveSafeIntegerAdd)
+#19:Return(#35:Int32Constant, #36:ChangeInt64ToTagged, #17:CheckedAdditiveSafeIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- Graph after V8.TFEarlyOptimization ----- 
+#35:Int32Constant[0]()
+#0:Start()  [Type: Internal]
+#2:Parameter[1](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#1:Parameter[0, debug name: %this](#0:Start)  [Type: Receiver]
+#3:Parameter[2](#0:Start)  [Type: (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)]
+#10:TypedStateValues[kRepTagged|kTypeAny, kRepTagged|kTypeAny, kRepTagged|kTypeAny, dense](#1:Parameter, #2:Parameter, #3:Parameter)  [Type: Internal]
+#11:TypedStateValues[, dense]()  [Type: Internal]
+#31:TypedStateValues[kRepTagged|kTypeAny, dense](#3:Parameter)
+#5:Parameter[6, debug name: %context](#0:Start)  [Type: OtherInternal]
+#23:HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]()  [Type: HeapConstant(0x11c00f3a6d8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})]
+#16:FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #31:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#7:HeapConstant[0x09b801004985 <NativeContext[307]>]()  [Type: HeapConstant(0x11c00f3a470 {0x09b801004985 <NativeContext[307]>})]
+#32:TypedStateValues[, sparse:.]()
+#14:FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](#10:TypedStateValues, #11:TypedStateValues, #32:TypedStateValues, #5:Parameter, #23:HeapConstant, #0:Start)  [Type: Internal]
+#9:JSStackCheck[JSFunctionEntry](#7:HeapConstant, #14:FrameState, #0:Start, #0:Start)
+#15:Checkpoint(#16:FrameState, #9:JSStackCheck, #9:JSStackCheck)
+#33:CheckedTaggedToAdditiveSafeInteger[check-for-minus-zero, FeedbackSource(INVALID)](#2:Parameter, #15:Checkpoint, #9:JSStackCheck)
+#34:CheckedTaggedToAdditiveSafeInteger[check-for-minus-zero, FeedbackSource(INVALID)](#3:Parameter, #33:CheckedTaggedToAdditiveSafeInteger, #9:JSStackCheck)
+#17:CheckedAdditiveSafeIntegerAdd(#33:CheckedTaggedToAdditiveSafeInteger, #34:CheckedTaggedToAdditiveSafeInteger, #34:CheckedTaggedToAdditiveSafeInteger, #9:JSStackCheck)  [Type: Number]
+#36:ChangeInt64ToTagged(#17:CheckedAdditiveSafeIntegerAdd)
+#19:Return(#35:Int32Constant, #36:ChangeInt64ToTagged, #17:CheckedAdditiveSafeIntegerAdd, #9:JSStackCheck)
+#20:End(#19:Return)
+----- schedule -----
+--- BLOCK B0 id0 ---
+  0: Start : Internal
+  5: Parameter[6, debug name: %context](0) : OtherInternal
+  1: Parameter[0, debug name: %this](0) : Receiver
+  2: Parameter[1](0) : (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)
+  3: Parameter[2](0) : (StringOrOddball | SymbolOrReceiver | NumberOrHole | BigInt)
+  23: HeapConstant[0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>] : HeapConstant(0x11c00f3a6d8 {0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>})
+  32: TypedStateValues[, sparse:.]
+  11: TypedStateValues[, dense] : Internal
+  10: TypedStateValues[kRepTagged|kTypeAny, kRepTagged|kTypeAny, kRepTagged|kTypeAny, dense](1, 2, 3) : Internal
+  14: FrameState[UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](10, 11, 32, 5, 23, 0) : Internal
+  7: HeapConstant[0x09b801004985 <NativeContext[307]>] : HeapConstant(0x11c00f3a470 {0x09b801004985 <NativeContext[307]>})
+  31: TypedStateValues[kRepTagged|kTypeAny, dense](3)
+  9: JSStackCheck[JSFunctionEntry](7, 14, 0, 0)
+  16: FrameState[UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>](10, 11, 31, 5, 23, 0) : Internal
+  15: Checkpoint(16, 9, 9)
+  33: CheckedTaggedToAdditiveSafeInteger[check-for-minus-zero, FeedbackSource(INVALID)](2, 15, 9)
+  34: CheckedTaggedToAdditiveSafeInteger[check-for-minus-zero, FeedbackSource(INVALID)](3, 33, 9)
+  17: CheckedAdditiveSafeIntegerAdd(33, 34, 34, 9) : Number
+  36: ChangeInt64ToTagged(17)
+  35: Int32Constant[0]
+  19: Return(35, 36, 17, 9) -> B1
+--- BLOCK B1 id1 <- B0 ---
+  20: End(19)
+
+----- V8.TFTurboshaftBuildGraph -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: JSStackCheck(#9, #7)[function-entry]
+   11: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   14: ConvertJSPrimitiveToUntaggedOrDeopt(#3, #11)[Number, AdditiveSafeInteger, check-for-minus-zero, FeedbackSource(INVALID)]
+   16: ConvertJSPrimitiveToUntaggedOrDeopt(#4, #11)[Number, AdditiveSafeInteger, check-for-minus-zero, FeedbackSource(INVALID)]
+   18: Constant()[word32: 12]
+   19: Shift(#14, #18)[ShiftLeft, Word64]
+   20: Shift(#16, #18)[ShiftLeft, Word64]
+   21: WordBinopDeoptOnOverflow(#19, #20, #11)[signed add, Word64, dont-check-for-minus-zero]
+   24: Shift(#21, #18)[ShiftRightArithmetic, Word64]
+   25: ConvertUntaggedToJSPrimitive(#24)[Number, Word64, Signed, dont-check-for-minus-zero]
+   26: Constant()[word32: 0]
+   27: Return(#26, #25)[0]
+
+----- V8.TFTurboshaftMachineLowering -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: JSStackCheck(#9, #7)[function-entry]
+   11: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   14: Constant()[word32: 1]
+   15: WordBinop(#3, #14)[BitwiseAnd, Word32]
+   16: Constant()[word32: 0]
+   17: Comparison(#15, #16)[Equal, Word32]
+   18: Branch(#15)[B2, B1, False]
+
+BLOCK B1 <- B0
+   20: TaggedBitcast(#3)[Tagged, Word32, Smi]
+   21: Shift(#20, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   22: Change(#21)[SignExtend, NoAssumption, Word32, Word64]
+   23: Goto()[B6, 0]
+
+BLOCK B2 <- B0
+   24: Load *(#3) [tagged base, TaggedPointer, Tagged]
+   25: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   26: Comparison(#24, #25)[Equal, Tagged]
+   27: DeoptimizeIf(#26, #11)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   28: Load *(#3 + 4) [tagged base, Float64, Float64, offset: 4]
+   29: Change(#28)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   30: Change(#29)[SignedToFloat, NoAssumption, Word64, Float64]
+   31: Comparison(#30, #28)[Equal, Float64]
+   32: DeoptimizeIf(#31, #11)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   34: Constant()[word64: 0]
+   35: Comparison(#29, #34)[Equal, Word64]
+   36: Branch(#35)[B3, B4, False]
+
+BLOCK B3 <- B2
+   38: Change(#28)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   39: Comparison(#38, #16)[SignedLessThan, Word32]
+   40: DeoptimizeIf(#39, #11)[MinusZero, FeedbackSource(INVALID)]
+   41: Goto()[B5, 0]
+
+BLOCK B4 <- B2
+   42: Goto()[B5, 0]
+
+MERGE B5 <- B3, B4
+   43: Constant()[word64: -2251799813685248]
+   44: Constant()[word64: 2251799813685248]
+   45: WordBinop(#29, #44)[Add, Word64]
+   46: Constant()[word32: 52]
+   47: Shift(#45, #46)[ShiftRightArithmetic, Word64]
+   48: Comparison(#47, #34)[Equal, Word64]
+   49: DeoptimizeIf(#48, #11)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   51: Goto()[B6, 0]
+
+MERGE B6 <- B1, B5
+   52: Phi(#22, #29)[Word64]
+   53: WordBinop(#4, #14)[BitwiseAnd, Word32]
+   54: Comparison(#53, #16)[Equal, Word32]
+   55: Branch(#53)[B8, B7, False]
+
+BLOCK B7 <- B6
+   57: TaggedBitcast(#4)[Tagged, Word32, Smi]
+   58: Shift(#57, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   59: Change(#58)[SignExtend, NoAssumption, Word32, Word64]
+   60: Goto()[B12, 0]
+
+BLOCK B8 <- B6
+   61: Load *(#4) [tagged base, TaggedPointer, Tagged]
+   62: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   63: Comparison(#61, #62)[Equal, Tagged]
+   64: DeoptimizeIf(#63, #11)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   65: Load *(#4 + 4) [tagged base, Float64, Float64, offset: 4]
+   66: Change(#65)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   67: Change(#66)[SignedToFloat, NoAssumption, Word64, Float64]
+   68: Comparison(#67, #65)[Equal, Float64]
+   69: DeoptimizeIf(#68, #11)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   71: Constant()[word64: 0]
+   72: Comparison(#66, #71)[Equal, Word64]
+   73: Branch(#72)[B9, B10, False]
+
+BLOCK B9 <- B8
+   75: Change(#65)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   76: Comparison(#75, #16)[SignedLessThan, Word32]
+   77: DeoptimizeIf(#76, #11)[MinusZero, FeedbackSource(INVALID)]
+   78: Goto()[B11, 0]
+
+BLOCK B10 <- B8
+   79: Goto()[B11, 0]
+
+MERGE B11 <- B9, B10
+   80: Constant()[word64: -2251799813685248]
+   81: Constant()[word64: 2251799813685248]
+   82: WordBinop(#66, #81)[Add, Word64]
+   83: Constant()[word32: 52]
+   84: Shift(#82, #83)[ShiftRightArithmetic, Word64]
+   85: Comparison(#84, #71)[Equal, Word64]
+   86: DeoptimizeIf(#85, #11)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   88: Goto()[B12, 0]
+
+MERGE B12 <- B7, B11
+   89: Phi(#59, #66)[Word64]
+   90: Constant()[word32: 12]
+   91: Shift(#52, #90)[ShiftLeft, Word64]
+   92: Shift(#89, #90)[ShiftLeft, Word64]
+   93: OverflowCheckedBinop(#91, #92)[signed add, Word64]
+   94: Projection(#93)[0, Word64]
+   95: Projection(#93)[1, Word32]
+   96: MakeTuple(#94, #95)
+   97: DeoptimizeIf(#95, #11)[Overflow, FeedbackSource(INVALID)]
+   98: Shift(#94, #90)[ShiftRightArithmetic, Word64]
+   99: Change(#98)[Truncate, NoAssumption, Word64, Word32]
+  100: Change(#99)[SignExtend, NoAssumption, Word32, Word64]
+  101: Comparison(#100, #98)[Equal, Word64]
+  102: Branch(#101)[B13, B14, None]
+
+BLOCK B13 <- B12
+  104: OverflowCheckedBinop(#99, #99)[signed add, Word32]
+  105: Projection(#104)[0, Word32]
+  106: Projection(#104)[1, Word32]
+  107: MakeTuple(#105, #106)
+  108: Branch(#106)[B15, B16, False]
+
+BLOCK B14 <- B12
+  110: Goto()[B17, 0]
+
+BLOCK B15 <- B13
+  111: Goto()[B17, 0]
+
+BLOCK B16 <- B13
+  112: TaggedBitcast(#105)[Word32, Tagged, Smi]
+  113: Goto()[B18, 0]
+
+MERGE B17 <- B14, B15
+  114: Change(#98)[SignedToFloat, NoAssumption, Word64, Float64]
+  115: Constant()[word64: 12]
+  116: Allocate(#115)[Young, tagged aligned]
+  117: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+  118: Store *(#116) = #117 [tagged base, TaggedPointer, MapWriteBarrier, initializing]
+  120: Store *(#116 + 4) = #114 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+  121: Goto()[B18, 0]
+
+MERGE B18 <- B16, B17
+  122: Phi(#112, #116)[Tagged]
+  123: Return(#16, #122)[0]
+
+----- V8.TFTurboshaftLoopUnrolling -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: JSStackCheck(#9, #7)[function-entry]
+   11: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   14: Constant()[word32: 1]
+   15: WordBinop(#3, #14)[BitwiseAnd, Word32]
+   16: Constant()[word32: 0]
+   17: Comparison(#15, #16)[Equal, Word32]
+   18: Branch(#15)[B2, B1, False]
+
+BLOCK B1 <- B0
+   20: TaggedBitcast(#3)[Tagged, Word32, Smi]
+   21: Shift(#20, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   22: Change(#21)[SignExtend, NoAssumption, Word32, Word64]
+   23: Goto()[B6, 0]
+
+BLOCK B2 <- B0
+   24: Load *(#3) [tagged base, TaggedPointer, Tagged]
+   25: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   26: Comparison(#24, #25)[Equal, Tagged]
+   27: DeoptimizeIf(#26, #11)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   28: Load *(#3 + 4) [tagged base, Float64, Float64, offset: 4]
+   29: Change(#28)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   30: Change(#29)[SignedToFloat, NoAssumption, Word64, Float64]
+   31: Comparison(#30, #28)[Equal, Float64]
+   32: DeoptimizeIf(#31, #11)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   34: Constant()[word64: 0]
+   35: Comparison(#29, #34)[Equal, Word64]
+   36: Branch(#35)[B3, B4, False]
+
+BLOCK B3 <- B2
+   38: Change(#28)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   39: Comparison(#38, #16)[SignedLessThan, Word32]
+   40: DeoptimizeIf(#39, #11)[MinusZero, FeedbackSource(INVALID)]
+   41: Goto()[B5, 0]
+
+BLOCK B4 <- B2
+   42: Goto()[B5, 0]
+
+MERGE B5 <- B3, B4
+   43: Constant()[word64: -2251799813685248]
+   44: Constant()[word64: 2251799813685248]
+   45: WordBinop(#29, #44)[Add, Word64]
+   46: Constant()[word32: 52]
+   47: Shift(#45, #46)[ShiftRightArithmetic, Word64]
+   48: Comparison(#47, #34)[Equal, Word64]
+   49: DeoptimizeIf(#48, #11)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   51: Goto()[B6, 0]
+
+MERGE B6 <- B1, B5
+   52: Phi(#22, #29)[Word64]
+   53: WordBinop(#4, #14)[BitwiseAnd, Word32]
+   54: Comparison(#53, #16)[Equal, Word32]
+   55: Branch(#53)[B8, B7, False]
+
+BLOCK B7 <- B6
+   57: TaggedBitcast(#4)[Tagged, Word32, Smi]
+   58: Shift(#57, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   59: Change(#58)[SignExtend, NoAssumption, Word32, Word64]
+   60: Goto()[B12, 0]
+
+BLOCK B8 <- B6
+   61: Load *(#4) [tagged base, TaggedPointer, Tagged]
+   62: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   63: Comparison(#61, #62)[Equal, Tagged]
+   64: DeoptimizeIf(#63, #11)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   65: Load *(#4 + 4) [tagged base, Float64, Float64, offset: 4]
+   66: Change(#65)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   67: Change(#66)[SignedToFloat, NoAssumption, Word64, Float64]
+   68: Comparison(#67, #65)[Equal, Float64]
+   69: DeoptimizeIf(#68, #11)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   71: Constant()[word64: 0]
+   72: Comparison(#66, #71)[Equal, Word64]
+   73: Branch(#72)[B9, B10, False]
+
+BLOCK B9 <- B8
+   75: Change(#65)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   76: Comparison(#75, #16)[SignedLessThan, Word32]
+   77: DeoptimizeIf(#76, #11)[MinusZero, FeedbackSource(INVALID)]
+   78: Goto()[B11, 0]
+
+BLOCK B10 <- B8
+   79: Goto()[B11, 0]
+
+MERGE B11 <- B9, B10
+   80: Constant()[word64: -2251799813685248]
+   81: Constant()[word64: 2251799813685248]
+   82: WordBinop(#66, #81)[Add, Word64]
+   83: Constant()[word32: 52]
+   84: Shift(#82, #83)[ShiftRightArithmetic, Word64]
+   85: Comparison(#84, #71)[Equal, Word64]
+   86: DeoptimizeIf(#85, #11)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   88: Goto()[B12, 0]
+
+MERGE B12 <- B7, B11
+   89: Phi(#59, #66)[Word64]
+   90: Constant()[word32: 12]
+   91: Shift(#52, #90)[ShiftLeft, Word64]
+   92: Shift(#89, #90)[ShiftLeft, Word64]
+   93: OverflowCheckedBinop(#91, #92)[signed add, Word64]
+   94: Projection(#93)[0, Word64]
+   95: Projection(#93)[1, Word32]
+   96: MakeTuple(#94, #95)
+   97: DeoptimizeIf(#95, #11)[Overflow, FeedbackSource(INVALID)]
+   98: Shift(#94, #90)[ShiftRightArithmetic, Word64]
+   99: Change(#98)[Truncate, NoAssumption, Word64, Word32]
+  100: Change(#99)[SignExtend, NoAssumption, Word32, Word64]
+  101: Comparison(#100, #98)[Equal, Word64]
+  102: Branch(#101)[B13, B14, None]
+
+BLOCK B13 <- B12
+  104: OverflowCheckedBinop(#99, #99)[signed add, Word32]
+  105: Projection(#104)[0, Word32]
+  106: Projection(#104)[1, Word32]
+  107: MakeTuple(#105, #106)
+  108: Branch(#106)[B15, B16, False]
+
+BLOCK B14 <- B12
+  110: Goto()[B17, 0]
+
+BLOCK B15 <- B13
+  111: Goto()[B17, 0]
+
+BLOCK B16 <- B13
+  112: TaggedBitcast(#105)[Word32, Tagged, Smi]
+  113: Goto()[B18, 0]
+
+MERGE B17 <- B14, B15
+  114: Change(#98)[SignedToFloat, NoAssumption, Word64, Float64]
+  115: Constant()[word64: 12]
+  116: Allocate(#115)[Young, tagged aligned]
+  117: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+  118: Store *(#116) = #117 [tagged base, TaggedPointer, MapWriteBarrier, initializing]
+  120: Store *(#116 + 4) = #114 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+  121: Goto()[B18, 0]
+
+MERGE B18 <- B16, B17
+  122: Phi(#112, #116)[Tagged]
+  123: Return(#16, #122)[0]
+
+----- V8.TFTurboshaftLoadElimination -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: JSStackCheck(#9, #7)[function-entry]
+   11: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   14: Constant()[word32: 1]
+   15: WordBinop(#3, #14)[BitwiseAnd, Word32]
+   16: Constant()[word32: 0]
+   17: Branch(#15)[B2, B1, False]
+
+BLOCK B1 <- B0
+   19: TaggedBitcast(#3)[Tagged, Word32, Smi]
+   20: Shift(#19, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   21: Change(#20)[SignExtend, NoAssumption, Word32, Word64]
+   22: Goto()[B6, 0]
+
+BLOCK B2 <- B0
+   23: Load *(#3) [tagged base, TaggedPointer, Tagged]
+   24: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   25: Comparison(#23, #24)[Equal, Tagged]
+   26: DeoptimizeIf(#25, #11)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   27: Load *(#3 + 4) [tagged base, Float64, Float64, offset: 4]
+   28: Change(#27)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   29: Change(#28)[SignedToFloat, NoAssumption, Word64, Float64]
+   30: Comparison(#29, #27)[Equal, Float64]
+   31: DeoptimizeIf(#30, #11)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   33: Constant()[word64: 0]
+   34: Comparison(#28, #33)[Equal, Word64]
+   35: Branch(#34)[B3, B4, False]
+
+BLOCK B3 <- B2
+   37: Change(#27)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   38: Comparison(#37, #16)[SignedLessThan, Word32]
+   39: DeoptimizeIf(#38, #11)[MinusZero, FeedbackSource(INVALID)]
+   40: Goto()[B5, 0]
+
+BLOCK B4 <- B2
+   41: Goto()[B5, 0]
+
+MERGE B5 <- B3, B4
+   42: Constant()[word64: 2251799813685248]
+   43: WordBinop(#28, #42)[Add, Word64]
+   44: Constant()[word32: 52]
+   45: Shift(#43, #44)[ShiftRightArithmetic, Word64]
+   46: Comparison(#45, #33)[Equal, Word64]
+   47: DeoptimizeIf(#46, #11)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   49: Goto()[B6, 0]
+
+MERGE B6 <- B1, B5
+   50: Phi(#21, #28)[Word64]
+   51: WordBinop(#4, #14)[BitwiseAnd, Word32]
+   52: Branch(#51)[B8, B7, False]
+
+BLOCK B7 <- B6
+   54: TaggedBitcast(#4)[Tagged, Word32, Smi]
+   55: Shift(#54, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   56: Change(#55)[SignExtend, NoAssumption, Word32, Word64]
+   57: Goto()[B12, 0]
+
+BLOCK B8 <- B6
+   58: Load *(#4) [tagged base, TaggedPointer, Tagged]
+   59: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   60: Comparison(#58, #59)[Equal, Tagged]
+   61: DeoptimizeIf(#60, #11)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   62: Load *(#4 + 4) [tagged base, Float64, Float64, offset: 4]
+   63: Change(#62)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   64: Change(#63)[SignedToFloat, NoAssumption, Word64, Float64]
+   65: Comparison(#64, #62)[Equal, Float64]
+   66: DeoptimizeIf(#65, #11)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   68: Constant()[word64: 0]
+   69: Comparison(#63, #68)[Equal, Word64]
+   70: Branch(#69)[B9, B10, False]
+
+BLOCK B9 <- B8
+   72: Change(#62)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   73: Comparison(#72, #16)[SignedLessThan, Word32]
+   74: DeoptimizeIf(#73, #11)[MinusZero, FeedbackSource(INVALID)]
+   75: Goto()[B11, 0]
+
+BLOCK B10 <- B8
+   76: Goto()[B11, 0]
+
+MERGE B11 <- B9, B10
+   77: Constant()[word64: 2251799813685248]
+   78: WordBinop(#63, #77)[Add, Word64]
+   79: Constant()[word32: 52]
+   80: Shift(#78, #79)[ShiftRightArithmetic, Word64]
+   81: Comparison(#80, #68)[Equal, Word64]
+   82: DeoptimizeIf(#81, #11)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   84: Goto()[B12, 0]
+
+MERGE B12 <- B7, B11
+   85: Phi(#56, #63)[Word64]
+   86: Constant()[word32: 12]
+   87: Shift(#50, #86)[ShiftLeft, Word64]
+   88: Shift(#85, #86)[ShiftLeft, Word64]
+   89: OverflowCheckedBinop(#87, #88)[signed add, Word64]
+   90: Projection(#89)[0, Word64]
+   91: Projection(#89)[1, Word32]
+   92: MakeTuple(#90, #91)
+   93: DeoptimizeIf(#91, #11)[Overflow, FeedbackSource(INVALID)]
+   94: Shift(#90, #86)[ShiftRightArithmetic, Word64]
+   95: Change(#94)[Truncate, NoAssumption, Word64, Word32]
+   96: Change(#95)[SignExtend, NoAssumption, Word32, Word64]
+   97: Comparison(#96, #94)[Equal, Word64]
+   98: Branch(#97)[B13, B16, None]
+
+BLOCK B13 <- B12
+  100: OverflowCheckedBinop(#95, #95)[signed add, Word32]
+  101: Projection(#100)[0, Word32]
+  102: Projection(#100)[1, Word32]
+  103: MakeTuple(#101, #102)
+  104: Branch(#102)[B14, B15, False]
+
+BLOCK B14 <- B13
+  106: Goto()[B17, 0]
+
+BLOCK B15 <- B13
+  107: TaggedBitcast(#101)[Word32, Tagged, Smi]
+  108: Return(#16, #107)[0]
+
+BLOCK B16 <- B12
+  109: Goto()[B17, 0]
+
+MERGE B17 <- B14, B16
+  110: Change(#94)[SignedToFloat, NoAssumption, Word64, Float64]
+  111: Constant()[word64: 12]
+  112: Allocate(#111)[Young, tagged aligned]
+  113: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+  114: Store *(#112) = #113 [tagged base, TaggedPointer, MapWriteBarrier, initializing]
+  116: Store *(#112 + 4) = #110 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+  117: Return(#16, #112)[0]
+
+----- V8.TFTurboshaftMemoryOptimization -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: JSStackCheck(#9, #7)[function-entry]
+   11: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   14: Constant()[word32: 1]
+   15: WordBinop(#3, #14)[BitwiseAnd, Word32]
+   16: Constant()[word32: 0]
+   17: Branch(#15)[B2, B1, False]
+
+BLOCK B1 <- B0
+   19: TaggedBitcast(#3)[Tagged, Word32, Smi]
+   20: Shift(#19, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   21: Change(#20)[SignExtend, NoAssumption, Word32, Word64]
+   22: Goto()[B6, 0]
+
+BLOCK B2 <- B0
+   23: Load *(#3) [tagged base, TaggedPointer, Tagged]
+   24: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   25: Comparison(#23, #24)[Equal, Tagged]
+   26: DeoptimizeIf(#25, #11)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   27: Load *(#3 + 4) [tagged base, Float64, Float64, offset: 4]
+   28: Change(#27)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   29: Change(#28)[SignedToFloat, NoAssumption, Word64, Float64]
+   30: Comparison(#29, #27)[Equal, Float64]
+   31: DeoptimizeIf(#30, #11)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   33: Constant()[word64: 0]
+   34: Comparison(#28, #33)[Equal, Word64]
+   35: Branch(#34)[B3, B4, False]
+
+BLOCK B3 <- B2
+   37: Change(#27)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   38: Comparison(#37, #16)[SignedLessThan, Word32]
+   39: DeoptimizeIf(#38, #11)[MinusZero, FeedbackSource(INVALID)]
+   40: Goto()[B5, 0]
+
+BLOCK B4 <- B2
+   41: Goto()[B5, 0]
+
+MERGE B5 <- B3, B4
+   42: Constant()[word64: 2251799813685248]
+   43: WordBinop(#28, #42)[Add, Word64]
+   44: Constant()[word32: 52]
+   45: Shift(#43, #44)[ShiftRightArithmetic, Word64]
+   46: Comparison(#45, #33)[Equal, Word64]
+   47: DeoptimizeIf(#46, #11)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   49: Goto()[B6, 0]
+
+MERGE B6 <- B1, B5
+   50: Phi(#21, #28)[Word64]
+   51: WordBinop(#4, #14)[BitwiseAnd, Word32]
+   52: Branch(#51)[B8, B7, False]
+
+BLOCK B7 <- B6
+   54: TaggedBitcast(#4)[Tagged, Word32, Smi]
+   55: Shift(#54, #14)[ShiftRightArithmeticShiftOutZeros, Word32]
+   56: Change(#55)[SignExtend, NoAssumption, Word32, Word64]
+   57: Goto()[B12, 0]
+
+BLOCK B8 <- B6
+   58: Load *(#4) [tagged base, TaggedPointer, Tagged]
+   59: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   60: Comparison(#58, #59)[Equal, Tagged]
+   61: DeoptimizeIf(#60, #11)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   62: Load *(#4 + 4) [tagged base, Float64, Float64, offset: 4]
+   63: Change(#62)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   64: Change(#63)[SignedToFloat, NoAssumption, Word64, Float64]
+   65: Comparison(#64, #62)[Equal, Float64]
+   66: DeoptimizeIf(#65, #11)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   68: Constant()[word64: 0]
+   69: Comparison(#63, #68)[Equal, Word64]
+   70: Branch(#69)[B9, B10, False]
+
+BLOCK B9 <- B8
+   72: Change(#62)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   73: Comparison(#72, #16)[SignedLessThan, Word32]
+   74: DeoptimizeIf(#73, #11)[MinusZero, FeedbackSource(INVALID)]
+   75: Goto()[B11, 0]
+
+BLOCK B10 <- B8
+   76: Goto()[B11, 0]
+
+MERGE B11 <- B9, B10
+   77: Constant()[word64: 2251799813685248]
+   78: WordBinop(#63, #77)[Add, Word64]
+   79: Constant()[word32: 52]
+   80: Shift(#78, #79)[ShiftRightArithmetic, Word64]
+   81: Comparison(#80, #68)[Equal, Word64]
+   82: DeoptimizeIf(#81, #11)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   84: Goto()[B12, 0]
+
+MERGE B12 <- B7, B11
+   85: Phi(#56, #63)[Word64]
+   86: Constant()[word32: 12]
+   87: Shift(#50, #86)[ShiftLeft, Word64]
+   88: Shift(#85, #86)[ShiftLeft, Word64]
+   89: OverflowCheckedBinop(#87, #88)[signed add, Word64]
+   90: Projection(#89)[0, Word64]
+   91: Projection(#89)[1, Word32]
+   92: MakeTuple(#90, #91)
+   93: DeoptimizeIf(#91, #11)[Overflow, FeedbackSource(INVALID)]
+   94: Shift(#90, #86)[ShiftRightArithmetic, Word64]
+   95: Change(#94)[Truncate, NoAssumption, Word64, Word32]
+   96: Change(#95)[SignExtend, NoAssumption, Word32, Word64]
+   97: Comparison(#96, #94)[Equal, Word64]
+   98: Branch(#97)[B13, B16, None]
+
+BLOCK B13 <- B12
+  100: OverflowCheckedBinop(#95, #95)[signed add, Word32]
+  101: Projection(#100)[0, Word32]
+  102: Projection(#100)[1, Word32]
+  103: MakeTuple(#101, #102)
+  104: Branch(#102)[B14, B15, False]
+
+BLOCK B14 <- B13
+  106: Goto()[B17, 0]
+
+BLOCK B15 <- B13
+  107: TaggedBitcast(#101)[Word32, Tagged, Smi]
+  108: Return(#16, #107)[0]
+
+BLOCK B16 <- B12
+  109: Goto()[B17, 0]
+
+MERGE B17 <- B14, B16
+  110: Change(#94)[SignedToFloat, NoAssumption, Word64, Float64]
+  111: Constant()[word64: 12]
+  112: Constant()[external: 0x46 <new_allocation_info_top>]
+  113: Load *(#112) [raw, Uint64, Word64]
+  114: Constant()[heap object: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>]
+  115: Constant()[external: 0x47 <new_allocation_info_limit>]
+  116: Constant()[word64: 131072]
+  117: Goto()[B18, 0]
+
+MERGE B18 <- B17
+  118: Load *(#115) [raw, Uint64, Word64]
+  119: WordBinop(#113, #111)[Add, Word64]
+  120: Comparison(#119, #118)[UnsignedLessThan, Word64]
+  121: Branch(#120)[B20, B19, True]
+
+BLOCK B19 <- B18
+  123: Call(#114, #111)[Code:Allocate Descriptor:r1s0i2f0]
+  125: DidntThrow(#123)[🁣🁣 🁣🁣 🁤🁪 🁣 i a, 0]
+  127: TaggedBitcast(#125)[Tagged, Word64, HeapObject]
+  128: Constant()[word64: 1]
+  129: Constant()[word64: -1]
+  130: WordBinop(#127, #129)[Add, Word64]
+  131: Goto()[B21, 0]
+
+BLOCK B20 <- B18
+  132: Goto()[B21, 0]
+
+MERGE B21 <- B20, B19
+  133: Phi(#113, #130)[Word64]
+  134: WordBinop(#133, #111)[Add, Word64]
+  135: Store *(#112) = #134 [raw, Uint64, NoWriteBarrier]
+  137: Constant()[word64: 1]
+  138: WordBinop(#133, #137)[Add, Word64]
+  139: TaggedBitcast(#138)[Word64, Tagged, HeapObject]
+  140: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+  141: Store *(#139) = #140 [tagged base, TaggedPointer, NoWriteBarrier, initializing]
+  142: Store *(#139 + 4) = #110 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+  144: Return(#16, #139)[0]
+
+----- V8.TFTurboshaftCodeEliminationAndSimplification -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: Constant()[external: 0x11c00e04020]
+   11: Load *(#10) [raw, Uint64, Word64]
+   12: StackPointerGreaterThan(#11)[JSFunctionEntry]
+   13: Branch(#12)[B2, B1, True]
+
+BLOCK B1 <- B0
+   15: FrameConstant()[stack check offset]
+   16: Constant()[external: 0x10551feb0 <StackGuardWithGap.entry>]
+   17: Constant()[word32: 1]
+   18: Constant()[heap object: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>]
+   19: Call(#18, #7, #15, #16, #17, #9)[Code:StackGuardWithGap:r1s1i5f1]
+   22: DidntThrow(#19)[🁫🁫 🁫🁫 🁤🁪 🁫 i a, 0]
+   24: Goto()[B3, 0]
+
+BLOCK B2 <- B0
+   25: Goto()[B3, 0]
+
+MERGE B3 <- B1, B2
+   26: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   29: Constant()[word32: 1]
+   30: WordBinop(#3, #29)[BitwiseAnd, Word32]
+   31: Constant()[word32: 0]
+   32: Branch(#30)[B5, B4, False]
+
+BLOCK B4 <- B3
+   34: TaggedBitcast(#3)[Tagged, Word32, Smi]
+   35: Shift(#34, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   36: Change(#35)[SignExtend, NoAssumption, Word32, Word64]
+   37: Goto()[B9, 0]
+
+BLOCK B5 <- B3
+   38: Load *(#3) [tagged base, TaggedPointer, Tagged]
+   39: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   40: Comparison(#38, #39)[Equal, Tagged]
+   41: DeoptimizeIf(#40, #26)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   42: Load *(#3 + 4) [tagged base, Float64, Float64, offset: 4]
+   43: Change(#42)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   44: Change(#43)[SignedToFloat, NoAssumption, Word64, Float64]
+   45: Comparison(#44, #42)[Equal, Float64]
+   46: DeoptimizeIf(#45, #26)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   48: Constant()[word64: 0]
+   49: Comparison(#43, #48)[Equal, Word64]
+   50: Branch(#49)[B6, B7, False]
+
+BLOCK B6 <- B5
+   52: Change(#42)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   53: Comparison(#52, #31)[SignedLessThan, Word32]
+   54: DeoptimizeIf(#53, #26)[MinusZero, FeedbackSource(INVALID)]
+   55: Goto()[B8, 0]
+
+BLOCK B7 <- B5
+   56: Goto()[B8, 0]
+
+MERGE B8 <- B6, B7
+   57: Constant()[word64: 2251799813685248]
+   58: WordBinop(#43, #57)[Add, Word64]
+   59: Constant()[word32: 52]
+   60: Shift(#58, #59)[ShiftRightArithmetic, Word64]
+   61: Comparison(#60, #48)[Equal, Word64]
+   62: DeoptimizeIf(#61, #26)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   64: Goto()[B9, 0]
+
+MERGE B9 <- B4, B8
+   65: Phi(#36, #43)[Word64]
+   66: WordBinop(#4, #29)[BitwiseAnd, Word32]
+   67: Branch(#66)[B11, B10, False]
+
+BLOCK B10 <- B9
+   69: TaggedBitcast(#4)[Tagged, Word32, Smi]
+   70: Shift(#69, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   71: Change(#70)[SignExtend, NoAssumption, Word32, Word64]
+   72: Goto()[B15, 0]
+
+BLOCK B11 <- B9
+   73: Load *(#4) [tagged base, TaggedPointer, Tagged]
+   74: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   75: Comparison(#73, #74)[Equal, Tagged]
+   76: DeoptimizeIf(#75, #26)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   77: Load *(#4 + 4) [tagged base, Float64, Float64, offset: 4]
+   78: Change(#77)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   79: Change(#78)[SignedToFloat, NoAssumption, Word64, Float64]
+   80: Comparison(#79, #77)[Equal, Float64]
+   81: DeoptimizeIf(#80, #26)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   83: Constant()[word64: 0]
+   84: Comparison(#78, #83)[Equal, Word64]
+   85: Branch(#84)[B12, B13, False]
+
+BLOCK B12 <- B11
+   87: Change(#77)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   88: Comparison(#87, #31)[SignedLessThan, Word32]
+   89: DeoptimizeIf(#88, #26)[MinusZero, FeedbackSource(INVALID)]
+   90: Goto()[B14, 0]
+
+BLOCK B13 <- B11
+   91: Goto()[B14, 0]
+
+MERGE B14 <- B12, B13
+   92: Constant()[word64: 2251799813685248]
+   93: WordBinop(#78, #92)[Add, Word64]
+   94: Constant()[word32: 52]
+   95: Shift(#93, #94)[ShiftRightArithmetic, Word64]
+   96: Comparison(#95, #83)[Equal, Word64]
+   97: DeoptimizeIf(#96, #26)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   99: Goto()[B15, 0]
+
+MERGE B15 <- B10, B14
+  100: Phi(#71, #78)[Word64]
+  101: Constant()[word32: 12]
+  102: Shift(#65, #101)[ShiftLeft, Word64]
+  103: Shift(#100, #101)[ShiftLeft, Word64]
+  104: OverflowCheckedBinop(#102, #103)[signed add, Word64]
+  105: Projection(#104)[0, Word64]
+  106: Projection(#104)[1, Word32]
+  107: MakeTuple(#105, #106)
+  108: DeoptimizeIf(#106, #26)[Overflow, FeedbackSource(INVALID)]
+  109: Shift(#105, #101)[ShiftRightArithmetic, Word64]
+  110: Change(#109)[Truncate, NoAssumption, Word64, Word32]
+  111: Change(#110)[SignExtend, NoAssumption, Word32, Word64]
+  112: Comparison(#111, #109)[Equal, Word64]
+  113: Branch(#112)[B16, B19, None]
+
+BLOCK B16 <- B15
+  115: OverflowCheckedBinop(#110, #110)[signed add, Word32]
+  116: Projection(#115)[0, Word32]
+  117: Projection(#115)[1, Word32]
+  118: MakeTuple(#116, #117)
+  119: Branch(#117)[B17, B18, False]
+
+BLOCK B17 <- B16
+  121: Goto()[B20, 0]
+
+BLOCK B18 <- B16
+  122: TaggedBitcast(#116)[Word32, Tagged, Smi]
+  123: Return(#31, #122)[0]
+
+BLOCK B19 <- B15
+  124: Goto()[B20, 0]
+
+MERGE B20 <- B17, B19
+  125: Change(#109)[SignedToFloat, NoAssumption, Word64, Float64]
+  126: Constant()[word64: 12]
+  127: Constant()[external: 0x46 <new_allocation_info_top>]
+  128: Load *(#127) [raw, Uint64, Word64]
+  129: Constant()[heap object: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>]
+  130: Constant()[external: 0x47 <new_allocation_info_limit>]
+  131: Goto()[B21, 0]
+
+MERGE B21 <- B20
+  132: Load *(#130) [raw, Uint64, Word64]
+  133: WordBinop(#128, #126)[Add, Word64]
+  134: Comparison(#133, #132)[UnsignedLessThan, Word64]
+  135: Branch(#134)[B23, B22, True]
+
+BLOCK B22 <- B21
+  137: Call(#129, #126)[Code:Allocate Descriptor:r1s0i2f0]
+  139: DidntThrow(#137)[🁣🁣 🁣🁣 🁤🁪 🁣 i a, 0]
+  141: TaggedBitcast(#139)[Tagged, Word64, HeapObject]
+  142: Constant()[word64: -1]
+  143: WordBinop(#141, #142)[Add, Word64]
+  144: Goto()[B24, 0]
+
+BLOCK B23 <- B21
+  145: Goto()[B24, 0]
+
+MERGE B24 <- B22, B23
+  146: Phi(#143, #128)[Word64]
+  147: WordBinop(#146, #126)[Add, Word64]
+  148: Store *(#127) = #147 [raw, Uint64, NoWriteBarrier]
+  150: Constant()[word64: 1]
+  151: WordBinop(#146, #150)[Add, Word64]
+  152: TaggedBitcast(#151)[Word64, Tagged, HeapObject]
+  153: Constant()[heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+  154: Store *(#152) = #153 [tagged base, TaggedPointer, NoWriteBarrier, initializing]
+  155: Store *(#152 + 4) = #125 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+  157: Return(#31, #152)[0]
+
+----- V8.TFTurboshaftDecompressionOptimization -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[compressed heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: Constant()[external: 0x11c00e04020]
+   11: Load *(#10) [raw, Uint64, Word64]
+   12: StackPointerGreaterThan(#11)[JSFunctionEntry]
+   13: Branch(#12)[B2, B1, True]
+
+BLOCK B1 <- B0
+   15: FrameConstant()[stack check offset]
+   16: Constant()[external: 0x10551feb0 <StackGuardWithGap.entry>]
+   17: Constant()[word32: 1]
+   18: Constant()[heap object: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>]
+   19: Call(#18, #7, #15, #16, #17, #9)[Code:StackGuardWithGap:r1s1i5f1]
+   22: DidntThrow(#19)[🁫🁫 🁫🁫 🁤🁪 🁫 i a, 0]
+   24: Goto()[B3, 0]
+
+BLOCK B2 <- B0
+   25: Goto()[B3, 0]
+
+MERGE B3 <- B1, B2
+   26: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   29: Constant()[word32: 1]
+   30: WordBinop(#3, #29)[BitwiseAnd, Word32]
+   31: Constant()[word32: 0]
+   32: Branch(#30)[B5, B4, False]
+
+BLOCK B4 <- B3
+   34: TaggedBitcast(#3)[Compressed, Word32, Smi]
+   35: Shift(#34, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   36: Change(#35)[SignExtend, NoAssumption, Word32, Word64]
+   37: Goto()[B9, 0]
+
+BLOCK B5 <- B3
+   38: Load *(#3) [tagged base, TaggedPointer, Compressed]
+   39: Constant()[compressed heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   40: Comparison(#38, #39)[Equal, Tagged]
+   41: DeoptimizeIf(#40, #26)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   42: Load *(#3 + 4) [tagged base, Float64, Float64, offset: 4]
+   43: Change(#42)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   44: Change(#43)[SignedToFloat, NoAssumption, Word64, Float64]
+   45: Comparison(#44, #42)[Equal, Float64]
+   46: DeoptimizeIf(#45, #26)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   48: Constant()[word64: 0]
+   49: Comparison(#43, #48)[Equal, Word64]
+   50: Branch(#49)[B6, B7, False]
+
+BLOCK B6 <- B5
+   52: Change(#42)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   53: Comparison(#52, #31)[SignedLessThan, Word32]
+   54: DeoptimizeIf(#53, #26)[MinusZero, FeedbackSource(INVALID)]
+   55: Goto()[B8, 0]
+
+BLOCK B7 <- B5
+   56: Goto()[B8, 0]
+
+MERGE B8 <- B6, B7
+   57: Constant()[word64: 2251799813685248]
+   58: WordBinop(#43, #57)[Add, Word64]
+   59: Constant()[word32: 52]
+   60: Shift(#58, #59)[ShiftRightArithmetic, Word64]
+   61: Comparison(#60, #48)[Equal, Word64]
+   62: DeoptimizeIf(#61, #26)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   64: Goto()[B9, 0]
+
+MERGE B9 <- B4, B8
+   65: Phi(#36, #43)[Word64]
+   66: WordBinop(#4, #29)[BitwiseAnd, Word32]
+   67: Branch(#66)[B11, B10, False]
+
+BLOCK B10 <- B9
+   69: TaggedBitcast(#4)[Compressed, Word32, Smi]
+   70: Shift(#69, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   71: Change(#70)[SignExtend, NoAssumption, Word32, Word64]
+   72: Goto()[B15, 0]
+
+BLOCK B11 <- B9
+   73: Load *(#4) [tagged base, TaggedPointer, Compressed]
+   74: Constant()[compressed heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   75: Comparison(#73, #74)[Equal, Tagged]
+   76: DeoptimizeIf(#75, #26)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   77: Load *(#4 + 4) [tagged base, Float64, Float64, offset: 4]
+   78: Change(#77)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   79: Change(#78)[SignedToFloat, NoAssumption, Word64, Float64]
+   80: Comparison(#79, #77)[Equal, Float64]
+   81: DeoptimizeIf(#80, #26)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   83: Constant()[word64: 0]
+   84: Comparison(#78, #83)[Equal, Word64]
+   85: Branch(#84)[B12, B13, False]
+
+BLOCK B12 <- B11
+   87: Change(#77)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   88: Comparison(#87, #31)[SignedLessThan, Word32]
+   89: DeoptimizeIf(#88, #26)[MinusZero, FeedbackSource(INVALID)]
+   90: Goto()[B14, 0]
+
+BLOCK B13 <- B11
+   91: Goto()[B14, 0]
+
+MERGE B14 <- B12, B13
+   92: Constant()[word64: 2251799813685248]
+   93: WordBinop(#78, #92)[Add, Word64]
+   94: Constant()[word32: 52]
+   95: Shift(#93, #94)[ShiftRightArithmetic, Word64]
+   96: Comparison(#95, #83)[Equal, Word64]
+   97: DeoptimizeIf(#96, #26)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   99: Goto()[B15, 0]
+
+MERGE B15 <- B10, B14
+  100: Phi(#71, #78)[Word64]
+  101: Constant()[word32: 12]
+  102: Shift(#65, #101)[ShiftLeft, Word64]
+  103: Shift(#100, #101)[ShiftLeft, Word64]
+  104: OverflowCheckedBinop(#102, #103)[signed add, Word64]
+  105: Projection(#104)[0, Word64]
+  106: Projection(#104)[1, Word32]
+  107: MakeTuple(#105, #106)
+  108: DeoptimizeIf(#106, #26)[Overflow, FeedbackSource(INVALID)]
+  109: Shift(#105, #101)[ShiftRightArithmetic, Word64]
+  110: Change(#109)[Truncate, NoAssumption, Word64, Word32]
+  111: Change(#110)[SignExtend, NoAssumption, Word32, Word64]
+  112: Comparison(#111, #109)[Equal, Word64]
+  113: Branch(#112)[B16, B19, None]
+
+BLOCK B16 <- B15
+  115: OverflowCheckedBinop(#110, #110)[signed add, Word32]
+  116: Projection(#115)[0, Word32]
+  117: Projection(#115)[1, Word32]
+  118: MakeTuple(#116, #117)
+  119: Branch(#117)[B17, B18, False]
+
+BLOCK B17 <- B16
+  121: Goto()[B20, 0]
+
+BLOCK B18 <- B16
+  122: TaggedBitcast(#116)[Word32, Tagged, Smi]
+  123: Return(#31, #122)[0]
+
+BLOCK B19 <- B15
+  124: Goto()[B20, 0]
+
+MERGE B20 <- B17, B19
+  125: Change(#109)[SignedToFloat, NoAssumption, Word64, Float64]
+  126: Constant()[word64: 12]
+  127: Constant()[external: 0x46 <new_allocation_info_top>]
+  128: Load *(#127) [raw, Uint64, Word64]
+  129: Constant()[heap object: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>]
+  130: Constant()[external: 0x47 <new_allocation_info_limit>]
+  131: Goto()[B21, 0]
+
+MERGE B21 <- B20
+  132: Load *(#130) [raw, Uint64, Word64]
+  133: WordBinop(#128, #126)[Add, Word64]
+  134: Comparison(#133, #132)[UnsignedLessThan, Word64]
+  135: Branch(#134)[B23, B22, True]
+
+BLOCK B22 <- B21
+  137: Call(#129, #126)[Code:Allocate Descriptor:r1s0i2f0]
+  139: DidntThrow(#137)[🁣🁣 🁣🁣 🁤🁪 🁣 i a, 0]
+  141: TaggedBitcast(#139)[Tagged, Word64, HeapObject]
+  142: Constant()[word64: -1]
+  143: WordBinop(#141, #142)[Add, Word64]
+  144: Goto()[B24, 0]
+
+BLOCK B23 <- B21
+  145: Goto()[B24, 0]
+
+MERGE B24 <- B22, B23
+  146: Phi(#143, #128)[Word64]
+  147: WordBinop(#146, #126)[Add, Word64]
+  148: Store *(#127) = #147 [raw, Uint64, NoWriteBarrier]
+  150: Constant()[word64: 1]
+  151: WordBinop(#146, #150)[Add, Word64]
+  152: TaggedBitcast(#151)[Word64, Tagged, HeapObject]
+  153: Constant()[compressed heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+  154: Store *(#152) = #153 [tagged base, TaggedPointer, NoWriteBarrier, initializing]
+  155: Store *(#152 + 4) = #125 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+  157: Return(#31, #152)[0]
+
+----- V8.TFTurboshaftSpecialRPOScheduling -----
+
+MERGE B0
+    0: Parameter()[6, %context]
+    1: Parameter()[0, %this]
+    3: Parameter()[1]
+    4: Parameter()[2]
+    6: Constant()[compressed heap object: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>]
+    7: FrameState(#6, #1, #3, #4, #0)[not inlined, UNOPTIMIZED_FRAME, -1, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) .]
+    9: Constant()[heap object: 0x09b801004985 <NativeContext[307]>]
+   10: Constant()[external: 0x11c00e04020]
+   11: Load *(#10) [raw, Uint64, Word64]
+   12: StackPointerGreaterThan(#11)[JSFunctionEntry]
+   13: Branch(#12)[B2, B1, True]
+
+BLOCK B1 <- B0
+   15: FrameConstant()[stack check offset]
+   16: Constant()[external: 0x10551feb0 <StackGuardWithGap.entry>]
+   17: Constant()[word32: 1]
+   18: Constant()[heap object: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>]
+   19: Call(#18, #7, #15, #16, #17, #9)[Code:StackGuardWithGap:r1s1i5f1]
+   22: DidntThrow(#19)[🁫🁫 🁫🁫 🁤🁪 🁫 i a, 0]
+   24: Goto()[B3, 0]
+
+BLOCK B2 <- B0
+   25: Goto()[B3, 0]
+
+MERGE B3 <- B1, B2
+   26: FrameState(#6, #1, #3, #4, #0, #4)[not inlined, UNOPTIMIZED_FRAME, 2, Ignore, 0x09b80101e069 <SharedFunctionInfo add>, state values: #6(kRepTagged|kTypeAny) #1(kRepTagged|kTypeAny) #3(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny) #0(kRepTagged|kTypeAny) #4(kRepTagged|kTypeAny)]
+   29: Constant()[word32: 1]
+   30: WordBinop(#3, #29)[BitwiseAnd, Word32]
+   31: Constant()[word32: 0]
+   32: Branch(#30)[B5, B4, False]
+
+BLOCK B4 <- B3
+   34: TaggedBitcast(#3)[Compressed, Word32, Smi]
+   35: Shift(#34, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   36: Change(#35)[SignExtend, NoAssumption, Word32, Word64]
+   37: Goto()[B9, 0]
+
+BLOCK B5 <- B3
+   38: Load *(#3) [tagged base, TaggedPointer, Compressed]
+   39: Constant()[compressed heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   40: Comparison(#38, #39)[Equal, Tagged]
+   41: DeoptimizeIf(#40, #26)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   42: Load *(#3 + 4) [tagged base, Float64, Float64, offset: 4]
+   43: Change(#42)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   44: Change(#43)[SignedToFloat, NoAssumption, Word64, Float64]
+   45: Comparison(#44, #42)[Equal, Float64]
+   46: DeoptimizeIf(#45, #26)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   48: Constant()[word64: 0]
+   49: Comparison(#43, #48)[Equal, Word64]
+   50: Branch(#49)[B7, B6, False]
+
+BLOCK B6 <- B5
+   56: Goto()[B8, 0]
+
+BLOCK B7 <- B5
+   52: Change(#42)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   53: Comparison(#52, #31)[SignedLessThan, Word32]
+   54: DeoptimizeIf(#53, #26)[MinusZero, FeedbackSource(INVALID)]
+   55: Goto()[B8, 0]
+
+MERGE B8 <- B7, B6
+   57: Constant()[word64: 2251799813685248]
+   58: WordBinop(#43, #57)[Add, Word64]
+   59: Constant()[word32: 52]
+   60: Shift(#58, #59)[ShiftRightArithmetic, Word64]
+   61: Comparison(#60, #48)[Equal, Word64]
+   62: DeoptimizeIf(#61, #26)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   64: Goto()[B9, 0]
+
+MERGE B9 <- B4, B8
+   65: Phi(#36, #43)[Word64]
+   66: WordBinop(#4, #29)[BitwiseAnd, Word32]
+   67: Branch(#66)[B11, B10, False]
+
+BLOCK B10 <- B9
+   69: TaggedBitcast(#4)[Compressed, Word32, Smi]
+   70: Shift(#69, #29)[ShiftRightArithmeticShiftOutZeros, Word32]
+   71: Change(#70)[SignExtend, NoAssumption, Word32, Word64]
+   72: Goto()[B15, 0]
+
+BLOCK B11 <- B9
+   73: Load *(#4) [tagged base, TaggedPointer, Compressed]
+   74: Constant()[compressed heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+   75: Comparison(#73, #74)[Equal, Tagged]
+   76: DeoptimizeIf(#75, #26)[negated, NotAHeapNumber, FeedbackSource(INVALID)]
+   77: Load *(#4 + 4) [tagged base, Float64, Float64, offset: 4]
+   78: Change(#77)[SignedFloatTruncateOverflowToMin, NoAssumption, Float64, Word64]
+   79: Change(#78)[SignedToFloat, NoAssumption, Word64, Float64]
+   80: Comparison(#79, #77)[Equal, Float64]
+   81: DeoptimizeIf(#80, #26)[negated, LostPrecisionOrNaN, FeedbackSource(INVALID)]
+   83: Constant()[word64: 0]
+   84: Comparison(#78, #83)[Equal, Word64]
+   85: Branch(#84)[B13, B12, False]
+
+BLOCK B12 <- B11
+   91: Goto()[B14, 0]
+
+BLOCK B13 <- B11
+   87: Change(#77)[ExtractHighHalf, NoAssumption, Float64, Word32]
+   88: Comparison(#87, #31)[SignedLessThan, Word32]
+   89: DeoptimizeIf(#88, #26)[MinusZero, FeedbackSource(INVALID)]
+   90: Goto()[B14, 0]
+
+MERGE B14 <- B13, B12
+   92: Constant()[word64: 2251799813685248]
+   93: WordBinop(#78, #92)[Add, Word64]
+   94: Constant()[word32: 52]
+   95: Shift(#93, #94)[ShiftRightArithmetic, Word64]
+   96: Comparison(#95, #83)[Equal, Word64]
+   97: DeoptimizeIf(#96, #26)[negated, NotAdditiveSafeInteger, FeedbackSource(INVALID)]
+   99: Goto()[B15, 0]
+
+MERGE B15 <- B10, B14
+  100: Phi(#71, #78)[Word64]
+  101: Constant()[word32: 12]
+  102: Shift(#65, #101)[ShiftLeft, Word64]
+  103: Shift(#100, #101)[ShiftLeft, Word64]
+  104: OverflowCheckedBinop(#102, #103)[signed add, Word64]
+  105: Projection(#104)[0, Word64]
+  106: Projection(#104)[1, Word32]
+  107: MakeTuple(#105, #106)
+  108: DeoptimizeIf(#106, #26)[Overflow, FeedbackSource(INVALID)]
+  109: Shift(#105, #101)[ShiftRightArithmetic, Word64]
+  110: Change(#109)[Truncate, NoAssumption, Word64, Word32]
+  111: Change(#110)[SignExtend, NoAssumption, Word32, Word64]
+  112: Comparison(#111, #109)[Equal, Word64]
+  113: Branch(#112)[B17, B16, None]
+
+BLOCK B16 <- B15
+  124: Goto()[B20, 0]
+
+BLOCK B17 <- B15
+  115: OverflowCheckedBinop(#110, #110)[signed add, Word32]
+  116: Projection(#115)[0, Word32]
+  117: Projection(#115)[1, Word32]
+  118: MakeTuple(#116, #117)
+  119: Branch(#117)[B19, B18, False]
+
+BLOCK B18 <- B17
+  122: TaggedBitcast(#116)[Word32, Tagged, Smi]
+  123: Return(#31, #122)[0]
+
+BLOCK B19 <- B17
+  121: Goto()[B20, 0]
+
+MERGE B20 <- B19, B16
+  125: Change(#109)[SignedToFloat, NoAssumption, Word64, Float64]
+  126: Constant()[word64: 12]
+  127: Constant()[external: 0x46 <new_allocation_info_top>]
+  128: Load *(#127) [raw, Uint64, Word64]
+  129: Constant()[heap object: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>]
+  130: Constant()[external: 0x47 <new_allocation_info_limit>]
+  131: Goto()[B21, 0]
+
+MERGE B21 <- B20
+  132: Load *(#130) [raw, Uint64, Word64]
+  133: WordBinop(#128, #126)[Add, Word64]
+  134: Comparison(#133, #132)[UnsignedLessThan, Word64]
+  135: Branch(#134)[B23, B22, True]
+
+BLOCK B22 <- B21
+  137: Call(#129, #126)[Code:Allocate Descriptor:r1s0i2f0]
+  139: DidntThrow(#137)[🁣🁣 🁣🁣 🁤🁪 🁣 i a, 0]
+  141: TaggedBitcast(#139)[Tagged, Word64, HeapObject]
+  142: Constant()[word64: -1]
+  143: WordBinop(#141, #142)[Add, Word64]
+  144: Goto()[B24, 0]
+
+BLOCK B23 <- B21
+  145: Goto()[B24, 0]
+
+MERGE B24 <- B22, B23
+  146: Phi(#143, #128)[Word64]
+  147: WordBinop(#146, #126)[Add, Word64]
+  148: Store *(#127) = #147 [raw, Uint64, NoWriteBarrier]
+  150: Constant()[word64: 1]
+  151: WordBinop(#146, #150)[Add, Word64]
+  152: TaggedBitcast(#151)[Word64, Tagged, HeapObject]
+  153: Constant()[compressed heap object: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>]
+  154: Store *(#152) = #153 [tagged base, TaggedPointer, NoWriteBarrier, initializing]
+  155: Store *(#152 + 4) = #125 [tagged base, Float64, NoWriteBarrier, offset: 4, initializing]
+  157: Return(#31, #152)[0]
+----- Instruction sequence after instruction selection -----
+IMM#0: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>
+IMM#1: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>
+IMM#2: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#3: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#4: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#5: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#6: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#7: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#8: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#9: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#10: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#11: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>
+IMM#12: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+CST#0: v54 = 0x09b801004985 <NativeContext[307]>
+CST#1: v52 = 0x10551feb0 <StackGuardWithGap.entry>
+CST#2: v53 = 1
+CST#3: v43 = 2251799813685248l
+CST#4: v32 = 2251799813685248l
+CST#5: v10 = 12l
+B0: AO#0  instructions: [0, 6)
+ predecessors:
+       0: gap () () 
+          v25(=rsi) = ArchNop
+       1: gap () () 
+          v22(=-1S) = ArchNop
+       2: gap () () 
+          v23(=-2S) = ArchNop
+       3: gap () () 
+          v24(=-3S) = ArchNop
+       4: gap () () 
+          [constant:v54] = ArchNop
+       5: gap () () 
+          ArchStackPointerGreaterThan : Root && branch if unsigned greater than #-96 [rpo_immediate:2] [rpo_immediate:1]
+ successors: B2 B1
+B1: AO#14 (deferred) (no frame)  instructions: [6, 12)
+ predecessors: B0
+       6: gap () () 
+          v51(R) = ArchStackCheckOffset
+       7: gap () () 
+          [constant:v52] = ArchNop
+       8: gap () () 
+          [constant:v53] = ArchNop
+       9: gap () () 
+          X64Push #8 v51(-)
+      10: gap () () 
+          v50(=rax) = ArchCallCodeObject [immediate:11] #9 [immediate:12] v22(S) v23(S) v24(S) v25(S) v52(=rbx) v53(=rax) v54(=rsi) #7
+      11: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B2: AO#1 (no frame)  instructions: [12, 13)
+ predecessors: B0
+      12: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B3: AO#2 (no frame)  instructions: [13, 14)
+ predecessors: B1 B2
+      13: gap () () 
+          X64Test32 && branch if not equal v23 #1 [rpo_immediate:5] [rpo_immediate:4]
+ successors: B5 B4
+B4: AO#3 (no frame)  instructions: [14, 17)
+ predecessors: B3
+      14: gap () () 
+          v48(0) = X64Sar32 v23(R) #1
+      15: gap () () 
+          v39(R) = X64Movsxlq v48
+      16: gap () () 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B5: AO#15 (deferred) (no frame)  instructions: [17, 24)
+ predecessors: B3
+      17: gap () () 
+          v47(R) = X64Movl : MRI v23(R) #-1
+      18: gap () () 
+          X64Cmp32 && deoptimize if not equal v47(R) #1301 #8 [immediate:10] v22(-) v23(-) v24(-) v25(S) v24(-)
+      19: gap () () 
+          v45(R) = X64Movsd : MRI v23(R) #3
+      20: gap () () 
+          v40(R) = SSEFloat64ToInt64 v45
+      21: gap () () 
+          v46(R) = SSEInt64ToFloat64 v40
+      22: gap () () 
+          SSEFloat64Cmp && deoptimize if unordered not equal v45(R) v46 #7 [immediate:9] v22(-) v23(-) v24(-) v25(S) v24(-)
+      23: gap () () 
+          X64Cmp && branch if equal v40 #0 [rpo_immediate:7] [rpo_immediate:6]
+ successors: B7 B6
+B6: AO#16 (deferred) (no frame)  instructions: [24, 25)
+ predecessors: B5
+      24: gap () () 
+          ArchJmp [rpo_immediate:8]
+ successors: B8
+B7: AO#17 (deferred) (no frame)  instructions: [25, 28)
+ predecessors: B5
+      25: gap () () 
+          v44(R) = SSEFloat64ExtractHighWord32 v45
+      26: gap () () 
+          X64Cmp32 && deoptimize if signed less than v44 #0 #6 [immediate:8] v22(-) v23(-) v24(-) v25(S) v24(-)
+      27: gap () () 
+          ArchJmp [rpo_immediate:8]
+ successors: B8
+B8: AO#18 (deferred) (no frame)  instructions: [28, 33)
+ predecessors: B7 B6
+      28: gap () () 
+          [constant:v43] = ArchNop
+      29: gap () () 
+          v42(0) = X64Add v43(R) v40
+      30: gap () () 
+          v41(0) = X64Sar v42(R) #52
+      31: gap () () 
+          X64Cmp && deoptimize if not equal v41 #0 #5 [immediate:7] v22(-) v23(-) v24(-) v25(S) v24(-)
+      32: gap () () 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B9: AO#4 (no frame)  instructions: [33, 34)
+ predecessors: B4 B8
+     phi: v27 = v39 v40
+      33: gap () () 
+          X64Test32 && branch if not equal v24 #1 [rpo_immediate:11] [rpo_immediate:10]
+ successors: B11 B10
+B10: AO#5 (no frame)  instructions: [34, 37)
+ predecessors: B9
+      34: gap () () 
+          v37(0) = X64Sar32 v24(R) #1
+      35: gap () () 
+          v28(R) = X64Movsxlq v37
+      36: gap () () 
+          ArchJmp [rpo_immediate:15]
+ successors: B15
+B11: AO#19 (deferred) (no frame)  instructions: [37, 44)
+ predecessors: B9
+      37: gap () () 
+          v36(R) = X64Movl : MRI v24(R) #-1
+      38: gap () () 
+          X64Cmp32 && deoptimize if not equal v36(R) #1301 #4 [immediate:6] v22(-) v23(-) v24(-) v25(S) v24(-)
+      39: gap () () 
+          v34(R) = X64Movsd : MRI v24(R) #3
+      40: gap () () 
+          v29(R) = SSEFloat64ToInt64 v34
+      41: gap () () 
+          v35(R) = SSEInt64ToFloat64 v29
+      42: gap () () 
+          SSEFloat64Cmp && deoptimize if unordered not equal v34(R) v35 #3 [immediate:5] v22(-) v23(-) v24(-) v25(S) v24(-)
+      43: gap () () 
+          X64Cmp && branch if equal v29 #0 [rpo_immediate:13] [rpo_immediate:12]
+ successors: B13 B12
+B12: AO#20 (deferred) (no frame)  instructions: [44, 45)
+ predecessors: B11
+      44: gap () () 
+          ArchJmp [rpo_immediate:14]
+ successors: B14
+B13: AO#21 (deferred) (no frame)  instructions: [45, 48)
+ predecessors: B11
+      45: gap () () 
+          v33(R) = SSEFloat64ExtractHighWord32 v34
+      46: gap () () 
+          X64Cmp32 && deoptimize if signed less than v33 #0 #2 [immediate:4] v22(-) v23(-) v24(-) v25(S) v24(-)
+      47: gap () () 
+          ArchJmp [rpo_immediate:14]
+ successors: B14
+B14: AO#22 (deferred) (no frame)  instructions: [48, 53)
+ predecessors: B13 B12
+      48: gap () () 
+          [constant:v32] = ArchNop
+      49: gap () () 
+          v31(0) = X64Add v32(R) v29
+      50: gap () () 
+          v30(0) = X64Sar v31(R) #52
+      51: gap () () 
+          X64Cmp && deoptimize if not equal v30 #0 #1 [immediate:3] v22(-) v23(-) v24(-) v25(S) v24(-)
+      52: gap () () 
+          ArchJmp [rpo_immediate:15]
+ successors: B15
+B15: AO#6 (no frame)  instructions: [53, 60)
+ predecessors: B10 B14
+     phi: v26 = v28 v29
+      53: gap () () 
+          v21(0) = X64Shl v27(R) #12
+      54: gap () () 
+          v20(0) = X64Shl v26(R) #12
+      55: gap () () 
+          v19(0) = X64Add && deoptimize if overflow v20(R) v21 #0 [immediate:2] v22(-) v23(-) v24(-) v25(S) v24(-)
+      56: gap () () 
+          v12(0) = X64Sar v19(R) #12
+      57: gap () () 
+          v16(R) = X64Movl v12
+      58: gap () () 
+          v17(R) = X64Movsxlq v16
+      59: gap () () 
+          X64Cmp && branch if equal v17(R) v12 [rpo_immediate:17] [rpo_immediate:16]
+ successors: B17 B16
+B16: AO#7 (no frame)  instructions: [60, 61)
+ predecessors: B15
+      60: gap () () 
+          ArchJmp [rpo_immediate:20]
+ successors: B20
+B17: AO#8 (no frame)  instructions: [61, 62)
+ predecessors: B15
+      61: gap () () 
+          v15(0) = X64Add32 && branch if overflow v16(R) v16(R) [rpo_immediate:19] [rpo_immediate:18]
+ successors: B19 B18
+B18: AO#9 (no frame)  instructions: [62, 63)
+ predecessors: B17
+      62: gap () () 
+          ArchRet #0 v15(=rax)
+ successors:
+B19: AO#23 (deferred) (no frame)  instructions: [63, 64)
+ predecessors: B17
+      63: gap () () 
+          ArchJmp [rpo_immediate:20]
+ successors: B20
+B20: AO#10 (no frame)  instructions: [64, 68)
+ predecessors: B19 B16
+      64: gap () () 
+          v1(R) = SSEInt64ToFloat64 v12
+      65: gap () () 
+          [constant:v10] = ArchNop
+      66: gap () () 
+          v6(R) = X64Movq : Root #80
+      67: gap () () 
+          ArchJmp [rpo_immediate:21]
+ successors: B21
+B21: AO#11 (no frame)  instructions: [68, 70)
+ predecessors: B20
+      68: gap () () 
+          v11(R) = X64Lea : MRI v6(R) #12
+      69: gap () () 
+          X64Cmp : Root && branch if unsigned greater than #88 v11(R) [rpo_immediate:23] [rpo_immediate:22]
+ successors: B23 B22
+B22: AO#24 (deferred) (no frame)  instructions: [70, 73)
+ predecessors: B21
+      70: gap () () 
+          v9(=rax) = ArchCallCodeObject [immediate:1] v10(=rdx) #255
+      71: gap () () 
+          v5(R) = X64Lea : MRI v9(R) #-1
+      72: gap () () 
+          ArchJmp [rpo_immediate:24]
+ successors: B24
+B23: AO#12 (no frame)  instructions: [73, 74)
+ predecessors: B21
+      73: gap () () 
+          ArchJmp [rpo_immediate:24]
+ successors: B24
+B24: AO#13 (no frame)  instructions: [74, 81)
+ predecessors: B22 B23
+     phi: v3 = v5 v6
+      74: gap () () 
+          v4(R) = X64Lea : MRI v3(R) #12
+      75: gap () () 
+          X64Movq : Root #80 v4(R)
+      76: gap () () 
+          v2(R) = X64Lea : MRI v3(R) #1
+      77: gap () () 
+          v0(0) = ArchNop v2
+      78: gap () () 
+          X64MovqCompressTagged : MRI v0(R) #-1 [immediate:0]
+      79: gap () () 
+          X64Movsd : MRI v0(R) #3 v1(R)
+      80: gap () () 
+          ArchRet #0 v0(=rax)
+ successors:
+----- Instruction sequence before register allocation -----
+IMM#0: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>
+IMM#1: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>
+IMM#2: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#3: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#4: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#5: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#6: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#7: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#8: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#9: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#10: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#11: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>
+IMM#12: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+CST#0: v54 = 0x09b801004985 <NativeContext[307]>
+CST#1: v52 = 0x10551feb0 <StackGuardWithGap.entry>
+CST#2: v53 = 1
+CST#3: v43 = 2251799813685248l
+CST#4: v32 = 2251799813685248l
+CST#5: v10 = 12l
+B0: AO#0  instructions: [0, 6)
+ predecessors:
+       0: gap () () 
+          [rsi|R|t] = ArchNop
+       1: gap (v25(-) = [rsi|R|t]) () 
+          [stack:-1|t] = ArchNop
+       2: gap (v22(-) = [stack:-1|t]) () 
+          [stack:-2|t] = ArchNop
+       3: gap (v23(-) = [stack:-2|t]) () 
+          [stack:-3|t] = ArchNop
+       4: gap (v24(-) = [stack:-3|t]) () 
+          [constant:v54] = ArchNop
+       5: gap () () 
+          ArchStackPointerGreaterThan : Root && branch if unsigned greater than #-96 [rpo_immediate:2] [rpo_immediate:1]
+ successors: B2 B1
+B1: AO#14 (deferred) (no frame)  instructions: [6, 12)
+ predecessors: B0
+       6: gap () () 
+          v51(R) = ArchStackCheckOffset
+       7: gap () () 
+          [constant:v52] = ArchNop
+       8: gap () () 
+          [constant:v53] = ArchNop
+       9: gap () () 
+          X64Push #8 v51(-)
+      10: gap () ([rbx|R|w64] = v52(-); [rax|R|w64] = v53(-); [rsi|R|t] = v54(-)) 
+          [rax|R|t] = ArchCallCodeObject [immediate:11] #9 [immediate:12] v22(S) v23(S) v24(S) v25(S) [rbx|R|w64] [rax|R|w64] [rsi|R|t] #7
+      11: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B2: AO#1 (no frame)  instructions: [12, 13)
+ predecessors: B0
+      12: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B3: AO#2 (no frame)  instructions: [13, 14)
+ predecessors: B1 B2
+      13: gap () () 
+          X64Test32 && branch if not equal v23 #1 [rpo_immediate:5] [rpo_immediate:4]
+ successors: B5 B4
+B4: AO#3 (no frame)  instructions: [14, 17)
+ predecessors: B3
+      14: gap () (v48(R) = v23(-)) 
+          v48(0) = X64Sar32 v48(R) #1
+      15: gap () () 
+          v39(R) = X64Movsxlq v48
+      16: gap () (v27 = v39(-)) 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B5: AO#15 (deferred) (no frame)  instructions: [17, 24)
+ predecessors: B3
+      17: gap () () 
+          v47(R) = X64Movl : MRI v23(R) #-1
+      18: gap () () 
+          X64Cmp32 && deoptimize if not equal v47(R) #1301 #8 [immediate:10] v22(-) v23(-) v24(-) v25(S) v24(-)
+      19: gap () () 
+          v45(R) = X64Movsd : MRI v23(R) #3
+      20: gap () () 
+          v40(R) = SSEFloat64ToInt64 v45
+      21: gap () () 
+          v46(R) = SSEInt64ToFloat64 v40
+      22: gap () () 
+          SSEFloat64Cmp && deoptimize if unordered not equal v45(R) v46 #7 [immediate:9] v22(-) v23(-) v24(-) v25(S) v24(-)
+      23: gap () () 
+          X64Cmp && branch if equal v40 #0 [rpo_immediate:7] [rpo_immediate:6]
+ successors: B7 B6
+B6: AO#16 (deferred) (no frame)  instructions: [24, 25)
+ predecessors: B5
+      24: gap () () 
+          ArchJmp [rpo_immediate:8]
+ successors: B8
+B7: AO#17 (deferred) (no frame)  instructions: [25, 28)
+ predecessors: B5
+      25: gap () () 
+          v44(R) = SSEFloat64ExtractHighWord32 v45
+      26: gap () () 
+          X64Cmp32 && deoptimize if signed less than v44 #0 #6 [immediate:8] v22(-) v23(-) v24(-) v25(S) v24(-)
+      27: gap () () 
+          ArchJmp [rpo_immediate:8]
+ successors: B8
+B8: AO#18 (deferred) (no frame)  instructions: [28, 33)
+ predecessors: B7 B6
+      28: gap () () 
+          [constant:v43] = ArchNop
+      29: gap () (v42(R) = v43(-)) 
+          v42(0) = X64Add v42(R) v40
+      30: gap () (v41(R) = v42(-)) 
+          v41(0) = X64Sar v41(R) #52
+      31: gap () () 
+          X64Cmp && deoptimize if not equal v41 #0 #5 [immediate:7] v22(-) v23(-) v24(-) v25(S) v24(-)
+      32: gap () (v27 = v40(-)) 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B9: AO#4 (no frame)  instructions: [33, 34)
+ predecessors: B4 B8
+     phi: v27 = v39 v40
+      33: gap () () 
+          X64Test32 && branch if not equal v24 #1 [rpo_immediate:11] [rpo_immediate:10]
+ successors: B11 B10
+B10: AO#5 (no frame)  instructions: [34, 37)
+ predecessors: B9
+      34: gap () (v37(R) = v24(-)) 
+          v37(0) = X64Sar32 v37(R) #1
+      35: gap () () 
+          v28(R) = X64Movsxlq v37
+      36: gap () (v26 = v28(-)) 
+          ArchJmp [rpo_immediate:15]
+ successors: B15
+B11: AO#19 (deferred) (no frame)  instructions: [37, 44)
+ predecessors: B9
+      37: gap () () 
+          v36(R) = X64Movl : MRI v24(R) #-1
+      38: gap () () 
+          X64Cmp32 && deoptimize if not equal v36(R) #1301 #4 [immediate:6] v22(-) v23(-) v24(-) v25(S) v24(-)
+      39: gap () () 
+          v34(R) = X64Movsd : MRI v24(R) #3
+      40: gap () () 
+          v29(R) = SSEFloat64ToInt64 v34
+      41: gap () () 
+          v35(R) = SSEInt64ToFloat64 v29
+      42: gap () () 
+          SSEFloat64Cmp && deoptimize if unordered not equal v34(R) v35 #3 [immediate:5] v22(-) v23(-) v24(-) v25(S) v24(-)
+      43: gap () () 
+          X64Cmp && branch if equal v29 #0 [rpo_immediate:13] [rpo_immediate:12]
+ successors: B13 B12
+B12: AO#20 (deferred) (no frame)  instructions: [44, 45)
+ predecessors: B11
+      44: gap () () 
+          ArchJmp [rpo_immediate:14]
+ successors: B14
+B13: AO#21 (deferred) (no frame)  instructions: [45, 48)
+ predecessors: B11
+      45: gap () () 
+          v33(R) = SSEFloat64ExtractHighWord32 v34
+      46: gap () () 
+          X64Cmp32 && deoptimize if signed less than v33 #0 #2 [immediate:4] v22(-) v23(-) v24(-) v25(S) v24(-)
+      47: gap () () 
+          ArchJmp [rpo_immediate:14]
+ successors: B14
+B14: AO#22 (deferred) (no frame)  instructions: [48, 53)
+ predecessors: B13 B12
+      48: gap () () 
+          [constant:v32] = ArchNop
+      49: gap () (v31(R) = v32(-)) 
+          v31(0) = X64Add v31(R) v29
+      50: gap () (v30(R) = v31(-)) 
+          v30(0) = X64Sar v30(R) #52
+      51: gap () () 
+          X64Cmp && deoptimize if not equal v30 #0 #1 [immediate:3] v22(-) v23(-) v24(-) v25(S) v24(-)
+      52: gap () (v26 = v29(-)) 
+          ArchJmp [rpo_immediate:15]
+ successors: B15
+B15: AO#6 (no frame)  instructions: [53, 60)
+ predecessors: B10 B14
+     phi: v26 = v28 v29
+      53: gap () (v21(R) = v27(-)) 
+          v21(0) = X64Shl v21(R) #12
+      54: gap () (v20(R) = v26(-)) 
+          v20(0) = X64Shl v20(R) #12
+      55: gap () (v19(R) = v20(-)) 
+          v19(0) = X64Add && deoptimize if overflow v19(R) v21 #0 [immediate:2] v22(-) v23(-) v24(-) v25(S) v24(-)
+      56: gap () (v12(R) = v19(-)) 
+          v12(0) = X64Sar v12(R) #12
+      57: gap () () 
+          v16(R) = X64Movl v12
+      58: gap () () 
+          v17(R) = X64Movsxlq v16
+      59: gap () () 
+          X64Cmp && branch if equal v17(R) v12 [rpo_immediate:17] [rpo_immediate:16]
+ successors: B17 B16
+B16: AO#7 (no frame)  instructions: [60, 61)
+ predecessors: B15
+      60: gap () () 
+          ArchJmp [rpo_immediate:20]
+ successors: B20
+B17: AO#8 (no frame)  instructions: [61, 62)
+ predecessors: B15
+      61: gap () (v15(R) = v16(-)) 
+          v15(0) = X64Add32 && branch if overflow v15(R) v16(R) [rpo_immediate:19] [rpo_immediate:18]
+ successors: B19 B18
+B18: AO#9 (no frame)  instructions: [62, 63)
+ predecessors: B17
+      62: gap () ([rax|R|w64] = v15(-)) 
+          ArchRet #0 [rax|R|w64]
+ successors:
+B19: AO#23 (deferred) (no frame)  instructions: [63, 64)
+ predecessors: B17
+      63: gap () () 
+          ArchJmp [rpo_immediate:20]
+ successors: B20
+B20: AO#10 (no frame)  instructions: [64, 68)
+ predecessors: B19 B16
+      64: gap () () 
+          v1(R) = SSEInt64ToFloat64 v12
+      65: gap () () 
+          [constant:v10] = ArchNop
+      66: gap () () 
+          v6(R) = X64Movq : Root #80
+      67: gap () () 
+          ArchJmp [rpo_immediate:21]
+ successors: B21
+B21: AO#11 (no frame)  instructions: [68, 70)
+ predecessors: B20
+      68: gap () () 
+          v11(R) = X64Lea : MRI v6(R) #12
+      69: gap () () 
+          X64Cmp : Root && branch if unsigned greater than #88 v11(R) [rpo_immediate:23] [rpo_immediate:22]
+ successors: B23 B22
+B22: AO#24 (deferred) (no frame)  instructions: [70, 73)
+ predecessors: B21
+      70: gap () ([rdx|R|w64] = v10(-)) 
+          [rax|R|tp] = ArchCallCodeObject [immediate:1] [rdx|R|w64] #255
+      71: gap (v9(-) = [rax|R|tp]) () 
+          v5(R) = X64Lea : MRI v9(R) #-1
+      72: gap () (v3 = v5(-)) 
+          ArchJmp [rpo_immediate:24]
+ successors: B24
+B23: AO#12 (no frame)  instructions: [73, 74)
+ predecessors: B21
+      73: gap () (v3 = v6(-)) 
+          ArchJmp [rpo_immediate:24]
+ successors: B24
+B24: AO#13 (no frame)  instructions: [74, 81)
+ predecessors: B22 B23
+     phi: v3 = v5 v6
+      74: gap () () 
+          v4(R) = X64Lea : MRI v3(R) #12
+      75: gap () () 
+          X64Movq : Root #80 v4(R)
+      76: gap () () 
+          v2(R) = X64Lea : MRI v3(R) #1
+      77: gap () (v0 = v2(-)) 
+          v0(0) = ArchNop v0
+      78: gap () () 
+          X64MovqCompressTagged : MRI v0(R) #-1 [immediate:0]
+      79: gap () () 
+          X64Movsd : MRI v0(R) #3 v1(R)
+      80: gap () ([rax|R|t] = v0(-)) 
+          ArchRet #0 [rax|R|t]
+ successors:
+----- Instruction sequence after register allocation -----
+IMM#0: 0x09b800000515 <Map[12](HEAP_NUMBER_TYPE)>
+IMM#1: 0x09b8001b6169 <Code BUILTIN AllocateInYoungGeneration>
+IMM#2: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#3: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#4: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#5: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#6: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#7: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#8: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#9: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#10: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+IMM#11: 0x09b8001c3451 <Code BUILTIN CEntry_Return1_ArgvOnStack_NoBuiltinExit>
+IMM#12: 0x09b80101e10d <JSFunction add (sfi = 0x9b80101e069)>
+CST#0: v54 = 0x09b801004985 <NativeContext[307]>
+CST#1: v52 = 0x10551feb0 <StackGuardWithGap.entry>
+CST#2: v53 = 1
+CST#3: v43 = 2251799813685248l
+CST#4: v32 = 2251799813685248l
+CST#5: v10 = 12l
+B0: AO#0  instructions: [0, 6)
+ predecessors:
+       0: gap () () 
+          [rsi|R|t] = ArchNop
+       1: gap () () 
+          [stack:-1|t] = ArchNop
+       2: gap () () 
+          [stack:-2|t] = ArchNop
+       3: gap () () 
+          [stack:-3|t] = ArchNop
+       4: gap () () 
+          [constant:v54] = ArchNop
+       5: gap ([stack:5|t] = [rsi|R|t]) () 
+          ArchStackPointerGreaterThan : Root && branch if unsigned greater than #-96 [rpo_immediate:2] [rpo_immediate:1]
+ successors: B2 B1
+B1: AO#14 (deferred) (no frame)  instructions: [6, 12)
+ predecessors: B0
+       6: gap () () 
+          [rcx|R|w64] = ArchStackCheckOffset
+       7: gap () () 
+          [constant:v52] = ArchNop
+       8: gap () () 
+          [constant:v53] = ArchNop
+       9: gap () () 
+          X64Push #8 [rcx|R|w64]
+      10: gap ([rbx|R|w64] = [constant:v52]; [rax|R|w64] = [constant:v53]; [rsi|R|t] = [constant:v54]) () 
+          [rax|R|t] = ArchCallCodeObject [immediate:11] #9 [immediate:12] [stack:-1|t] [stack:-2|t] [stack:-3|t] [stack:5|t] [rbx|R|w64] [rax|R|w64] [rsi|R|t] #7
+      11: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B2: AO#1 (no frame)  instructions: [12, 13)
+ predecessors: B0
+      12: gap () () 
+          ArchJmp [rpo_immediate:3]
+ successors: B3
+B3: AO#2 (no frame)  instructions: [13, 14)
+ predecessors: B1 B2
+      13: gap ([rcx|R|t] = [stack:-2|t]) () 
+          X64Test32 && branch if not equal [rcx|R|t] #1 [rpo_immediate:5] [rpo_immediate:4]
+ successors: B5 B4
+B4: AO#3 (no frame)  instructions: [14, 17)
+ predecessors: B3
+      14: gap ([rdi|R|w32] = [rcx|R|t]) () 
+          [rdi|R|w32] = X64Sar32 [rdi|R|w32] #1
+      15: gap () () 
+          [rdi|R|w64] = X64Movsxlq [rdi|R|w32]
+      16: gap () () 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B5: AO#15 (deferred) (no frame)  instructions: [17, 24)
+ predecessors: B3
+      17: gap () () 
+          [rdi|R|cp] = X64Movl : MRI [rcx|R|t] #-1
+      18: gap () () 
+          X64Cmp32 && deoptimize if not equal [rdi|R|cp] #1301 #8 [immediate:10] [stack:-1|t] [rcx|R|t] [stack:-3|t] [stack:5|t] [stack:-3|t]
+      19: gap () () 
+          [xmm0|R|f64] = X64Movsd : MRI [rcx|R|t] #3
+      20: gap () () 
+          [rdi|R|w64] = SSEFloat64ToInt64 [xmm0|R|f64]
+      21: gap () () 
+          [xmm1|R|f64] = SSEInt64ToFloat64 [rdi|R|w64]
+      22: gap () () 
+          SSEFloat64Cmp && deoptimize if unordered not equal [xmm0|R|f64] [xmm1|R|f64] #7 [immediate:9] [stack:-1|t] [rcx|R|t] [stack:-3|t] [stack:5|t] [stack:-3|t]
+      23: gap () () 
+          X64Cmp && branch if equal [rdi|R|w64] #0 [rpo_immediate:7] [rpo_immediate:6]
+ successors: B7 B6
+B6: AO#16 (deferred) (no frame)  instructions: [24, 25)
+ predecessors: B5
+      24: gap () () 
+          ArchJmp [rpo_immediate:8]
+ successors: B8
+B7: AO#17 (deferred) (no frame)  instructions: [25, 28)
+ predecessors: B5
+      25: gap () () 
+          [r8|R|w32] = SSEFloat64ExtractHighWord32 [xmm0|R|f64]
+      26: gap () () 
+          X64Cmp32 && deoptimize if signed less than [r8|R|w32] #0 #6 [immediate:8] [stack:-1|t] [rcx|R|t] [stack:-3|t] [stack:5|t] [stack:-3|t]
+      27: gap () () 
+          ArchJmp [rpo_immediate:8]
+ successors: B8
+B8: AO#18 (deferred) (no frame)  instructions: [28, 33)
+ predecessors: B7 B6
+      28: gap () () 
+          [constant:v43] = ArchNop
+      29: gap ([r8|R|w64] = [constant:v43]) () 
+          [r8|R|w64] = X64Add [r8|R|w64] [rdi|R|w64]
+      30: gap () () 
+          [r8|R|w64] = X64Sar [r8|R|w64] #52
+      31: gap () () 
+          X64Cmp && deoptimize if not equal [r8|R|w64] #0 #5 [immediate:7] [stack:-1|t] [rcx|R|t] [stack:-3|t] [stack:5|t] [stack:-3|t]
+      32: gap () () 
+          ArchJmp [rpo_immediate:9]
+ successors: B9
+B9: AO#4 (no frame)  instructions: [33, 34)
+ predecessors: B4 B8
+     phi: [rdi|R|w64] = v39 v40
+      33: gap ([r8|R|t] = [stack:-3|t]) () 
+          X64Test32 && branch if not equal [r8|R|t] #1 [rpo_immediate:11] [rpo_immediate:10]
+ successors: B11 B10
+B10: AO#5 (no frame)  instructions: [34, 37)
+ predecessors: B9
+      34: gap ([r9|R|w32] = [r8|R|t]) () 
+          [r9|R|w32] = X64Sar32 [r9|R|w32] #1
+      35: gap () () 
+          [r9|R|w64] = X64Movsxlq [r9|R|w32]
+      36: gap () () 
+          ArchJmp [rpo_immediate:15]
+ successors: B15
+B11: AO#19 (deferred) (no frame)  instructions: [37, 44)
+ predecessors: B9
+      37: gap () () 
+          [r9|R|cp] = X64Movl : MRI [r8|R|t] #-1
+      38: gap () () 
+          X64Cmp32 && deoptimize if not equal [r9|R|cp] #1301 #4 [immediate:6] [stack:-1|t] [rcx|R|t] [r8|R|t] [stack:5|t] [r8|R|t]
+      39: gap () () 
+          [xmm0|R|f64] = X64Movsd : MRI [r8|R|t] #3
+      40: gap () () 
+          [r9|R|w64] = SSEFloat64ToInt64 [xmm0|R|f64]
+      41: gap () () 
+          [xmm1|R|f64] = SSEInt64ToFloat64 [r9|R|w64]
+      42: gap () () 
+          SSEFloat64Cmp && deoptimize if unordered not equal [xmm0|R|f64] [xmm1|R|f64] #3 [immediate:5] [stack:-1|t] [rcx|R|t] [r8|R|t] [stack:5|t] [r8|R|t]
+      43: gap () () 
+          X64Cmp && branch if equal [r9|R|w64] #0 [rpo_immediate:13] [rpo_immediate:12]
+ successors: B13 B12
+B12: AO#20 (deferred) (no frame)  instructions: [44, 45)
+ predecessors: B11
+      44: gap () () 
+          ArchJmp [rpo_immediate:14]
+ successors: B14
+B13: AO#21 (deferred) (no frame)  instructions: [45, 48)
+ predecessors: B11
+      45: gap () () 
+          [r11|R|w32] = SSEFloat64ExtractHighWord32 [xmm0|R|f64]
+      46: gap () () 
+          X64Cmp32 && deoptimize if signed less than [r11|R|w32] #0 #2 [immediate:4] [stack:-1|t] [rcx|R|t] [r8|R|t] [stack:5|t] [r8|R|t]
+      47: gap () () 
+          ArchJmp [rpo_immediate:14]
+ successors: B14
+B14: AO#22 (deferred) (no frame)  instructions: [48, 53)
+ predecessors: B13 B12
+      48: gap () () 
+          [constant:v32] = ArchNop
+      49: gap ([r11|R|w64] = [constant:v32]) () 
+          [r11|R|w64] = X64Add [r11|R|w64] [r9|R|w64]
+      50: gap () () 
+          [r11|R|w64] = X64Sar [r11|R|w64] #52
+      51: gap () () 
+          X64Cmp && deoptimize if not equal [r11|R|w64] #0 #1 [immediate:3] [stack:-1|t] [rcx|R|t] [r8|R|t] [stack:5|t] [r8|R|t]
+      52: gap () () 
+          ArchJmp [rpo_immediate:15]
+ successors: B15
+B15: AO#6 (no frame)  instructions: [53, 60)
+ predecessors: B10 B14
+     phi: [r9|R|w64] = v28 v29
+      53: gap () () 
+          [rdi|R|w64] = X64Shl [rdi|R|w64] #12
+      54: gap () () 
+          [r9|R|w64] = X64Shl [r9|R|w64] #12
+      55: gap () () 
+          [r9|R|w64] = X64Add && deoptimize if overflow [r9|R|w64] [rdi|R|w64] #0 [immediate:2] [stack:-1|t] [rcx|R|t] [r8|R|t] [stack:5|t] [r8|R|t]
+      56: gap () () 
+          [r9|R|w64] = X64Sar [r9|R|w64] #12
+      57: gap () () 
+          [rcx|R|w32] = X64Movl [r9|R|w64]
+      58: gap () () 
+          [rdi|R|w64] = X64Movsxlq [rcx|R|w32]
+      59: gap () () 
+          X64Cmp && branch if equal [rdi|R|w64] [r9|R|w64] [rpo_immediate:17] [rpo_immediate:16]
+ successors: B17 B16
+B16: AO#7 (no frame)  instructions: [60, 61)
+ predecessors: B15
+      60: gap () () 
+          ArchJmp [rpo_immediate:20]
+ successors: B20
+B17: AO#8 (no frame)  instructions: [61, 62)
+ predecessors: B15
+      61: gap ([rdi|R|w64] = [rcx|R|w32]) () 
+          [rdi|R|w64] = X64Add32 && branch if overflow [rdi|R|w64] [rcx|R|w32] [rpo_immediate:19] [rpo_immediate:18]
+ successors: B19 B18
+B18: AO#9 (no frame)  instructions: [62, 63)
+ predecessors: B17
+      62: gap ([rax|R|w64] = [rdi|R|w64]) () 
+          ArchRet #0 [rax|R|w64]
+ successors:
+B19: AO#23 (deferred) (no frame)  instructions: [63, 64)
+ predecessors: B17
+      63: gap () () 
+          ArchJmp [rpo_immediate:20]
+ successors: B20
+B20: AO#10 (no frame)  instructions: [64, 68)
+ predecessors: B19 B16
+      64: gap () () 
+          [xmm0|R|f64] = SSEInt64ToFloat64 [r9|R|w64]
+      65: gap () () 
+          [constant:v10] = ArchNop
+      66: gap () () 
+          [rcx|R|w64] = X64Movq : Root #80
+      67: gap () () 
+          ArchJmp [rpo_immediate:21]
+ successors: B21
+B21: AO#11 (no frame)  instructions: [68, 70)
+ predecessors: B20
+      68: gap () () 
+          [rdi|R|w64] = X64Lea : MRI [rcx|R|w64] #12
+      69: gap () () 
+          X64Cmp : Root && branch if unsigned greater than #88 [rdi|R|w64] [rpo_immediate:23] [rpo_immediate:22]
+ successors: B23 B22
+B22: AO#24 (deferred)  instructions: [70, 73)
+ predecessors: B21
+      70: gap ([rdx|R|w64] = [constant:v10]; [fp_stack:5|f64] = [xmm0|R|f64]) () 
+          [rax|R|tp] = ArchCallCodeObject [immediate:1] [rdx|R|w64] #255
+      71: gap () () 
+          [rcx|R|w64] = X64Lea : MRI [rax|R|tp] #-1
+      72: gap ([xmm0|R|f64] = [fp_stack:5|f64]) () 
+          ArchJmp [rpo_immediate:24]
+ successors: B24
+B23: AO#12 (no frame)  instructions: [73, 74)
+ predecessors: B21
+      73: gap () () 
+          ArchJmp [rpo_immediate:24]
+ successors: B24
+B24: AO#13 (no frame)  instructions: [74, 81)
+ predecessors: B22 B23
+     phi: [rcx|R|w64] = v5 v6
+      74: gap () () 
+          [rdi|R|w64] = X64Lea : MRI [rcx|R|w64] #12
+      75: gap () () 
+          X64Movq : Root #80 [rdi|R|w64]
+      76: gap () () 
+          [rcx|R|w64] = X64Lea : MRI [rcx|R|w64] #1
+      77: gap () () 
+          [rcx|R|t] = ArchNop [rcx|R|t]
+      78: gap () () 
+          X64MovqCompressTagged : MRI [rcx|R|t] #-1 [immediate:0]
+      79: gap () () 
+          X64Movsd : MRI [rcx|R|t] #3 [xmm0|R|f64]
+      80: gap ([rax|R|t] = [rcx|R|t]) () 
+          ArchRet #0 [rax|R|t]
+ successors:
+---------------------------------------------------
+Finished compiling method add using TurboFan
+704982704

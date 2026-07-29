@@ -1,0 +1,1462 @@
+Compiling 0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)> with Maglev
+----- Bytecode array -----
+Parameter count 2
+Register count 0
+Frame size 0
+         0x31a010001b0 @    0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+         0x31a010001b4 @    4 : b9                Return
+Constant pool (size = 1)
+0x31a0100017d: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 1
+           0: 0x09b8000034b5 <String[1]: #v>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e86d: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 2
+ - shared function info: 0x09b80101e191 <SharedFunctionInfo load>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 503
+ - closure feedback cell array: 0x9b800002071: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 LoadProperty MONOMORPHIC
+   [weak] 0x09b80101e3c5 <Map[16](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 3, descriptor index = 0) {
+     [0]: [weak] 0x09b80101e3c5 <Map[16](HOLEY_ELEMENTS)>
+     [1]: 131269
+  }
+
+----- After graph building -----
+Graph
+
+[0m  [0m10: Constant(0x09b80101e345 <FeedbackCell[one closure]>), 1 uses
+[0m   [0m3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>), 2 uses
+[0m   [0m4: Constant(0x09b80101e365 <ScriptContext[4]>), 2 uses
+[0m   [0m5: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 4 uses
+[0m   [0m6: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (3 live vars)
+[0m   [0m7: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0m      ↱ eager @0 (3 live vars)
+[0m   [0m8: CheckMaps(0x09b80101e3c5 <Map[16](HOLEY_ELEMENTS)>, check heapobj) [n2]
+[0m   [0m9: LoadTaggedField(0xc: 0x09b8000034b5 <String[1]: #v>, compressed, is_const, Smi) [n2], 1 uses
+[0m[0;34m   4 : b9                Return
+[m[0m  [0m11: ReduceInterruptBudgetForReturn(4) [n10]
+[0m  [0m12: Return [n9]
+[0m
+
+----- After use marking -----
+Graph
+
+[0m  [0m10: Constant(0x09b80101e345 <FeedbackCell[one closure]>) → (x)
+[0m   [0m3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → (x)
+[0m   [0m4: Constant(0x09b80101e365 <ScriptContext[4]>) → (x)
+ [0mBlock b0
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0m   [0m1: InitialValue(<this>) → (x)
+[0m   [0m2: InitialValue(a0) → (x)
+[0m   [0m6: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (3 live vars)
+[0m   [0m7: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0m      ↱ eager @0 (3 live vars)
+[0m   [0m8: CheckMaps(0x09b80101e3c5 <Map[16](HOLEY_ELEMENTS)>, check heapobj) [v0/n2:(x)]
+[0m   [0m9: LoadTaggedField(0xc: 0x09b8000034b5 <String[1]: #v>, compressed, is_const, Smi) [v0/n2:(x)] → (x)
+[0m[0;34m   4 : b9                Return
+[m[0m  [0m11: ReduceInterruptBudgetForReturn(4) [v0/n10:(x)]
+[0m  [0m12: Return [v0/n9:(x)]
+[0m
+
+----- After register allocation pre-processing -----
+Graph
+
+[0m   [0m1/10: Constant(0x09b80101e345 <FeedbackCell[one closure]>) → v-1, live range: [1-10]
+[0m    [0m2/3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → v-1, live range: [2-8]
+[0m    [0m3/4: Constant(0x09b80101e365 <ScriptContext[4]>) → v-1, live range: [3-8]
+ [0mBlock b0
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0m    [0m4/1: InitialValue(<this>) → v-1(=-6S), live range: [4-8]
+[0m    [0m5/2: InitialValue(a0) → v-1(=-7S), live range: [5-9]
+[0m    [0m6/6: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (3 live vars)
+[0m    [0m7/7: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0m         ↱ eager @0 (3 live vars)
+[0m    [0m8/8: CheckMaps(0x09b80101e3c5 <Map[16](HOLEY_ELEMENTS)>, check heapobj) [v5/n2:v-1(R)]
+[0m    [0m9/9: LoadTaggedField(0xc: 0x09b8000034b5 <String[1]: #v>, decompressed, is_const, Smi) [v5/n2:v-1(R)] → v-1(R), live range: [9-11]
+[0m[0;34m   4 : b9                Return
+[m[0m  [0m10/11: ReduceInterruptBudgetForReturn(4) [v1/n10:v-1(R)]
+[0m  [0m11/12: Return [v9/n9:v-1(=x0)]
+[0m
+
+----- After register allocation -----
+Graph
+
+[0m   [0m1/10: Constant(0x09b80101e345 <FeedbackCell[one closure]>) → v-1, live range: [1-10]
+[0m    [0m2/3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → v-1, live range: [2-8]
+[0m    [0m3/4: Constant(0x09b80101e365 <ScriptContext[4]>) → v-1, live range: [3-8]
+ [0mBlock b0
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0m    [0m4/1: InitialValue(<this>) → [stack:-6|t], live range: [4-8]
+[0m    [0m5/2: InitialValue(a0) → [stack:-7|t], live range: [5-9]
+[0m    [0m6/6: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (3 live vars)
+[0m    [0m7/7: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m     [0m13: GapMove([stack:-7|t] → [x0|R|t])
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0m         ↱ eager @0 (3 live vars)
+[0m    [0m8/8: CheckMaps(0x09b80101e3c5 <Map[16](HOLEY_ELEMENTS)>, check heapobj) [v5/n2:[x0|R|t]]
+[0m    [0m9/9: LoadTaggedField(0xc: 0x09b8000034b5 <String[1]: #v>, decompressed, is_const, Smi) [v5/n2:[x0|R|t]] → [x1|R|t], live range: [9-11]
+[0m     [0m14: ConstantGapMove(n10 → [x0|R|t])
+[0m[0;34m   4 : b9                Return
+[m[0m  [0m10/11: ReduceInterruptBudgetForReturn(4) [v1/n10:[x0|R|t]]
+[0m     [0m15: GapMove([x1|R|t] → [x0|R|t])
+[0m  [0m11/12: Return [v9/n9:[x0|R|t]]
+[0m
+Compiling 0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)> with Maglev
+----- Bytecode array -----
+Parameter count 2
+Register count 0
+Frame size 0
+         0x31a010001b0 @    0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+         0x31a010001b4 @    4 : b9                Return
+Constant pool (size = 1)
+0x31a0100017d: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 1
+           0: 0x09b8000034b5 <String[1]: #v>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e86d: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 2
+ - shared function info: 0x09b80101e191 <SharedFunctionInfo load>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1005
+ - closure feedback cell array: 0x9b800002071: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 LoadProperty POLYMORPHIC
+   [weak] 0x09b80101e3c5 <Map[16](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 3, descriptor index = 0)
+   [weak] 0x09b80101e449 <Map[20](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 4, descriptor index = 1)
+   [weak] 0x09b80101e4e5 <Map[24](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 5, descriptor index = 2) {
+     [0]: 0x09b80104bd55 <WeakFixedArray[6]>
+     [1]: 0x09b800000e95 <Symbol: (uninitialized_symbol)>
+  }
+
+----- After graph building -----
+Graph
+
+    [0m  [0m22: Constant(0x09b80101e345 <FeedbackCell[one closure]>), 1 uses
+    [0m   [0m3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>), 3 uses
+    [0m   [0m4: Constant(0x09b80101e365 <ScriptContext[4]>), 3 uses
+    [0m  [0m10: Constant(0x09b80101e3c5 <Map[16](HOLEY_ELEMENTS)>), 1 uses
+    [0m  [0m14: Constant(0x09b80101e449 <Map[20](HOLEY_ELEMENTS)>), 1 uses
+    [0m   [0m5: RootConstant(undefined_value), 0 uses 🪦
+     [0mBlock b0
+    [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m    [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m    [0m   [0m1: InitialValue(<this>), 3 uses
+    [0m   [0m2: InitialValue(a0), 9 uses
+    [0m   [0m6: FunctionEntryStackCheck
+    [0m      ↳ lazy @-1 (3 live vars)
+    [0m   [0m7: Jump b1
+    [0m   ↓
+     [0mBlock b1
+    [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m    [0m      ↱ eager @0 (3 live vars)
+    [0m   [0m8: CheckHeapObject [n2]
+    [0m   [0m9: LoadTaggedField(0x0, compressed) [n2], 2 uses
+[0;31m╭─────[0m11: BranchIfReferenceEqual [n9, n10] b2 b3
+[0;31m│   [0m   ↓
+[0;31m│    [0mBlock b2
+[0;31m│   [0m  [0m12: LoadTaggedField(0xc: 0x09b8000034b5 <String[1]: #v>, compressed, is_const, Smi) [n2], 1 uses
+[0;31m│[0;32m╭────[0m13: Jump b6
+[0;31m│[0;32m│  [0m      with gap moves:
+[0;31m│[0;32m│  [0m        - n12 → 21: φᵀ r0
+[0;31m│[0;32m│  [0m
+[0;31m╰───►[0mBlock b3
+ [0;32m│[0;33m╭───[0m15: BranchIfReferenceEqual [n9, n14] b4 b5
+ [0;32m│[0;33m│ [0m   ↓
+ [0;32m│[0;33m│  [0mBlock b4
+ [0;32m│[0;33m│ [0m  [0m16: LoadTaggedField(0x10: 0x09b8000034b5 <String[1]: #v>, compressed, is_const, Smi) [n2], 1 uses
+ [0;32m│[0;33m│[0;34m╭──[0m17: Jump b6
+ [0;32m│[0;33m│[0;34m│[0m      with gap moves:
+ [0;32m│[0;33m│[0;34m│[0m        - n16 → 21: φᵀ r0
+ [0;32m│[0;33m│[0;34m│[0m
+ [0;32m│[0;33m╰─►[0mBlock b5
+ [0;32m│ [0;34m│[0m      ↱ eager @0 (3 live vars)
+ [0;32m│ [0;34m│[0m  [0m18: CheckMaps(0x09b80101e4e5 <Map[24](HOLEY_ELEMENTS)>, no heapobj check) [n2]
+ [0;32m│ [0;34m│[0m  [0m19: LoadTaggedField(0x14: 0x09b8000034b5 <String[1]: #v>, compressed, is_const, Smi) [n2], 1 uses
+ [0;32m│ [0;34m│[0m  [0m20: Jump b6
+ [0;32m│ [0;34m│[0m   │  with gap moves:
+ [0;32m│ [0;34m│[0m   │    - n19 → 21: φᵀ r0
+ [0;32m│ [0;34m│[0m   ▼
+ [0;32m╰─[0;34m┴►[0mBlock b6
+    [0m  [0m21: φᵀ r0 (n12, n16, n19), 1 uses
+    [0m[0;34m   4 : b9                Return
+[m    [0m  [0m23: ReduceInterruptBudgetForReturn(4) [n22]
+    [0m  [0m24: Return [n21]
+    [0m
+
+----- After use marking -----
+Graph
+
+    [0m  [0m22: Constant(0x09b80101e345 <FeedbackCell[one closure]>) → (x)
+    [0m   [0m3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → (x)
+    [0m   [0m4: Constant(0x09b80101e365 <ScriptContext[4]>) → (x)
+    [0m  [0m10: Constant(0x09b80101e3c5 <Map[16](HOLEY_ELEMENTS)>) → (x)
+    [0m  [0m14: Constant(0x09b80101e449 <Map[20](HOLEY_ELEMENTS)>) → (x)
+     [0mBlock b0
+    [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m    [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m    [0m   [0m1: InitialValue(<this>) → (x)
+    [0m   [0m2: InitialValue(a0) → (x)
+    [0m   [0m6: FunctionEntryStackCheck
+    [0m      ↳ lazy @-1 (3 live vars)
+    [0m   [0m7: Jump b1
+    [0m   ↓
+     [0mBlock b1
+    [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m    [0m      ↱ eager @0 (3 live vars)
+    [0m   [0m8: CheckHeapObject [v0/n2:(x)]
+    [0m   [0m9: LoadTaggedField(0x0, compressed) [v0/n2:(x)] → (x)
+[0;31m╭─────[0m11: BranchIfReferenceEqual [v0/n9:(x), v0/n10:(x)] b2 b3
+[0;31m│   [0m   ↓
+[0;31m│    [0mBlock b2
+[0;31m│   [0m  [0m12: LoadTaggedField(0xc: 0x09b8000034b5 <String[1]: #v>, compressed, is_const, Smi) [v0/n2:(x)] → (x)
+[0;31m│[0;32m╭────[0m13: Jump b6
+[0;31m│[0;32m│  [0m      with gap moves:
+[0;31m│[0;32m│  [0m        - v0/n12:(x) → 21: φᵀ r0 (x)
+[0;31m│[0;32m│  [0m
+[0;31m╰───►[0mBlock b3
+ [0;32m│[0;33m╭───[0m15: BranchIfReferenceEqual [v0/n9:(x), v0/n14:(x)] b4 b5
+ [0;32m│[0;33m│ [0m   ↓
+ [0;32m│[0;33m│  [0mBlock b4
+ [0;32m│[0;33m│ [0m  [0m16: LoadTaggedField(0x10: 0x09b8000034b5 <String[1]: #v>, compressed, is_const, Smi) [v0/n2:(x)] → (x)
+ [0;32m│[0;33m│[0;34m╭──[0m17: Jump b6
+ [0;32m│[0;33m│[0;34m│[0m      with gap moves:
+ [0;32m│[0;33m│[0;34m│[0m        - v0/n16:(x) → 21: φᵀ r0 (x)
+ [0;32m│[0;33m│[0;34m│[0m
+ [0;32m│[0;33m╰─►[0mBlock b5
+ [0;32m│ [0;34m│[0m      ↱ eager @0 (3 live vars)
+ [0;32m│ [0;34m│[0m  [0m18: CheckMaps(0x09b80101e4e5 <Map[24](HOLEY_ELEMENTS)>, no heapobj check) [v0/n2:(x)]
+ [0;32m│ [0;34m│[0m  [0m19: LoadTaggedField(0x14: 0x09b8000034b5 <String[1]: #v>, compressed, is_const, Smi) [v0/n2:(x)] → (x)
+ [0;32m│ [0;34m│[0m  [0m20: Jump b6
+ [0;32m│ [0;34m│[0m   │  with gap moves:
+ [0;32m│ [0;34m│[0m   │    - v0/n19:(x) → 21: φᵀ r0 (x)
+ [0;32m│ [0;34m│[0m   ▼
+ [0;32m╰─[0;34m┴►[0mBlock b6
+    [0m  [0m21: φᵀ r0 (n12, n16, n19) (compressed) → (x)
+    [0m[0;34m   4 : b9                Return
+[m    [0m  [0m23: ReduceInterruptBudgetForReturn(4) [v0/n22:(x)]
+    [0m  [0m24: Return [v0/n21:(x)]
+    [0m
+
+----- After register allocation pre-processing -----
+Graph
+
+    [0m   [0m1/22: Constant(0x09b80101e345 <FeedbackCell[one closure]>) → v-1, live range: [1-22]
+    [0m    [0m2/3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → v-1, live range: [2-18]
+    [0m    [0m3/4: Constant(0x09b80101e365 <ScriptContext[4]>) → v-1, live range: [3-18]
+    [0m   [0m4/10: Constant(0x09b80101e3c5 <Map[16](HOLEY_ELEMENTS)>) → v-1, live range: [4-12]
+    [0m   [0m5/14: Constant(0x09b80101e449 <Map[20](HOLEY_ELEMENTS)>) → v-1, live range: [5-15]
+     [0mBlock b0
+    [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m    [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m    [0m    [0m6/1: InitialValue(<this>) → v-1(=-6S), live range: [6-18]
+    [0m    [0m7/2: InitialValue(a0) → v-1(=-7S), live range: [7-19]
+    [0m    [0m8/6: FunctionEntryStackCheck
+    [0m         ↳ lazy @-1 (3 live vars)
+    [0m    [0m9/7: Jump b1
+    [0m      ↓
+     [0mBlock b1
+    [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m    [0m         ↱ eager @0 (3 live vars)
+    [0m   [0m10/8: CheckHeapObject [v7/n2:v-1(R)]
+    [0m   [0m11/9: LoadTaggedField(0x0, compressed) [v7/n2:v-1(R)] → v-1(R), live range: [11-15]
+[0;31m╭─────[0m12/11: BranchIfReferenceEqual [v11/n9:v-1(R), v4/n10:v-1(R)] b2 b3
+[0;31m│   [0m      ↓
+[0;31m│    [0mBlock b2
+[0;31m│   [0m  [0m13/12: LoadTaggedField(0xc: 0x09b8000034b5 <String[1]: #v>, decompressed, is_const, Smi) [v7/n2:v-1(R)] → v-1(R), live range: [13-14]
+[0;31m│[0;32m╭────[0m14/13: Jump b6
+[0;31m│[0;32m│  [0m         with gap moves:
+[0;31m│[0;32m│  [0m           - v13/n12:v-1(*) → 21: φᵀ r0 v-1(*)
+[0;31m│[0;32m│  [0m
+[0;31m╰───►[0mBlock b3
+ [0;32m│[0;33m╭───[0m15/15: BranchIfReferenceEqual [v11/n9:v-1(R), v5/n14:v-1(R)] b4 b5
+ [0;32m│[0;33m│ [0m      ↓
+ [0;32m│[0;33m│  [0mBlock b4
+ [0;32m│[0;33m│ [0m  [0m16/16: LoadTaggedField(0x10: 0x09b8000034b5 <String[1]: #v>, decompressed, is_const, Smi) [v7/n2:v-1(R)] → v-1(R), live range: [16-17]
+ [0;32m│[0;33m│[0;34m╭──[0m17/17: Jump b6
+ [0;32m│[0;33m│[0;34m│[0m         with gap moves:
+ [0;32m│[0;33m│[0;34m│[0m           - v16/n16:v-1(*) → 21: φᵀ r0 v-1(*)
+ [0;32m│[0;33m│[0;34m│[0m
+ [0;32m│[0;33m╰─►[0mBlock b5
+ [0;32m│ [0;34m│[0m         ↱ eager @0 (3 live vars)
+ [0;32m│ [0;34m│[0m  [0m18/18: CheckMaps(0x09b80101e4e5 <Map[24](HOLEY_ELEMENTS)>, no heapobj check) [v7/n2:v-1(R)]
+ [0;32m│ [0;34m│[0m  [0m19/19: LoadTaggedField(0x14: 0x09b8000034b5 <String[1]: #v>, decompressed, is_const, Smi) [v7/n2:v-1(R)] → v-1(R), live range: [19-20]
+ [0;32m│ [0;34m│[0m  [0m20/20: Jump b6
+ [0;32m│ [0;34m│[0m      │  with gap moves:
+ [0;32m│ [0;34m│[0m      │    - v19/n19:v-1(*) → 21: φᵀ r0 v-1(*)
+ [0;32m│ [0;34m│[0m      ▼
+ [0;32m╰─[0;34m┴►[0mBlock b6
+    [0m  [0m21/21: φᵀ r0 (n12, n16, n19) → v-1(*), live range: [21-23]
+    [0m[0;34m   4 : b9                Return
+[m    [0m  [0m22/23: ReduceInterruptBudgetForReturn(4) [v1/n22:v-1(R)]
+    [0m  [0m23/24: Return [v21/n21:v-1(=x0)]
+    [0m
+
+----- After register allocation -----
+Graph
+
+    [0m   [0m1/22: Constant(0x09b80101e345 <FeedbackCell[one closure]>) → v-1, live range: [1-22]
+    [0m    [0m2/3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → v-1, live range: [2-18]
+    [0m    [0m3/4: Constant(0x09b80101e365 <ScriptContext[4]>) → v-1, live range: [3-18]
+    [0m   [0m4/10: Constant(0x09b80101e3c5 <Map[16](HOLEY_ELEMENTS)>) → v-1, live range: [4-12]
+    [0m   [0m5/14: Constant(0x09b80101e449 <Map[20](HOLEY_ELEMENTS)>) → v-1, live range: [5-15]
+     [0mBlock b0
+    [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m    [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m    [0m    [0m6/1: InitialValue(<this>) → [stack:-6|t], live range: [6-18]
+    [0m    [0m7/2: InitialValue(a0) → [stack:-7|t], live range: [7-19]
+    [0m    [0m8/6: FunctionEntryStackCheck
+    [0m         ↳ lazy @-1 (3 live vars)
+    [0m    [0m9/7: Jump b1
+    [0m      ↓
+     [0mBlock b1
+    [0m     [0m25: GapMove([stack:-7|t] → [x0|R|t])
+    [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m    [0m         ↱ eager @0 (3 live vars)
+    [0m   [0m10/8: CheckHeapObject [v7/n2:[x0|R|t]]
+    [0m   [0m11/9: LoadTaggedField(0x0, compressed) [v7/n2:[x0|R|t]] → [x1|R|t], live range: [11-15]
+    [0m     [0m26: ConstantGapMove(n10 → [x2|R|t])
+[0;31m╭─────[0m12/11: BranchIfReferenceEqual [v11/n9:[x1|R|t], v4/n10:[x2|R|t]] b2 b3
+[0;31m│   [0m      ↓
+[0;31m│    [0mBlock b2
+[0;31m│   [0m  [0m13/12: LoadTaggedField(0xc: 0x09b8000034b5 <String[1]: #v>, decompressed, is_const, Smi) [v7/n2:[x0|R|t]] → [x2|R|t], live range: [13-14]
+[0;31m│[0;32m╭────[0m14/13: Jump b6
+[0;31m│[0;32m│  [0m         with gap moves:
+[0;31m│[0;32m│  [0m           - v13/n12:[x2|R|t] → 21: φᵀ r0 [x2|R|t]
+[0;31m│[0;32m│  [0m         with register merges:
+[0;31m│[0;32m│  [0m
+[0;31m╰───►[0mBlock b3
+ [0;32m│  [0m     [0m27: ConstantGapMove(n14 → [x2|R|t])
+ [0;32m│[0;33m╭───[0m15/15: BranchIfReferenceEqual [v11/n9:[x1|R|t], v5/n14:[x2|R|t]] b4 b5
+ [0;32m│[0;33m│ [0m      ↓
+ [0;32m│[0;33m│  [0mBlock b4
+ [0;32m│[0;33m│ [0m  [0m16/16: LoadTaggedField(0x10: 0x09b8000034b5 <String[1]: #v>, decompressed, is_const, Smi) [v7/n2:[x0|R|t]] → [x1|R|t], live range: [16-17]
+ [0;32m│[0;33m│[0;34m╭──[0m17/17: Jump b6
+ [0;32m│[0;33m│[0;34m│[0m         with gap moves:
+ [0;32m│[0;33m│[0;34m│[0m           - v16/n16:[x1|R|t] → 21: φᵀ r0 [x2|R|t]
+ [0;32m│[0;33m│[0;34m│[0m         with register merges:
+ [0;32m│[0;33m│[0;34m│[0m
+ [0;32m│[0;33m╰─►[0mBlock b5
+ [0;32m│ [0;34m│[0m         ↱ eager @0 (3 live vars)
+ [0;32m│ [0;34m│[0m  [0m18/18: CheckMaps(0x09b80101e4e5 <Map[24](HOLEY_ELEMENTS)>, no heapobj check) [v7/n2:[x0|R|t]]
+ [0;32m│ [0;34m│[0m  [0m19/19: LoadTaggedField(0x14: 0x09b8000034b5 <String[1]: #v>, decompressed, is_const, Smi) [v7/n2:[x0|R|t]] → [x1|R|t], live range: [19-20]
+ [0;32m│ [0;34m│[0m  [0m20/20: Jump b6
+ [0;32m│ [0;34m│[0m      │  with gap moves:
+ [0;32m│ [0;34m│[0m      │    - v19/n19:[x1|R|t] → 21: φᵀ r0 [x2|R|t]
+ [0;32m│ [0;34m│[0m      │  with register merges:
+ [0;32m│ [0;34m│[0m      ▼
+ [0;32m╰─[0;34m┴►[0mBlock b6
+    [0m  [0m21/21: φᵀ r0 (n12, n16, n19) (decompressed) → [x2|R|t], live range: [21-23]
+    [0m     [0m28: ConstantGapMove(n22 → [x0|R|t])
+    [0m[0;34m   4 : b9                Return
+[m    [0m  [0m22/23: ReduceInterruptBudgetForReturn(4) [v1/n22:[x0|R|t]]
+    [0m     [0m29: GapMove([x2|R|t] → [x0|R|t])
+    [0m  [0m23/24: Return [v21/n21:[x0|R|t]]
+    [0m
+Compiling 0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)> with Maglev
+----- Bytecode array -----
+Parameter count 2
+Register count 0
+Frame size 0
+         0x31a010001b0 @    0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+         0x31a010001b4 @    4 : b9                Return
+Constant pool (size = 1)
+0x31a0100017d: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 1
+           0: 0x09b8000034b5 <String[1]: #v>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e86d: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 2
+ - shared function info: 0x09b80101e191 <SharedFunctionInfo load>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1507
+ - closure feedback cell array: 0x9b800002071: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 LoadProperty MEGAMORPHIC {
+     [0]: 0x09b800000ea5 <Symbol: (megamorphic_symbol)>
+     [1]: 1
+  }
+
+----- After graph building -----
+Graph
+
+[0m  [0m10: Constant(0x09b80101e345 <FeedbackCell[one closure]>), 1 uses
+[0m   [0m3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>), 2 uses
+[0m   [0m4: Constant(0x09b80101e365 <ScriptContext[4]>), 3 uses
+[0m   [0m5: RootConstant(undefined_value), 0 uses 🪦
+[0m   [0m8: RootConstant(v_string), 1 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m6: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (3 live vars)
+[0m   [0m7: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0m   [0m9: 🐢 CallBuiltin(LoadIC_Megamorphic) [n2, n8, n4], 1 uses
+[0m      ↳ lazy @0 (3 live vars)
+[0m[0;34m   4 : b9                Return
+[m[0m  [0m11: ReduceInterruptBudgetForReturn(4) [n10]
+[0m  [0m12: Return [n9]
+[0m
+
+----- After use marking -----
+Graph
+
+[0m  [0m10: Constant(0x09b80101e345 <FeedbackCell[one closure]>) → (x)
+[0m   [0m3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → (x)
+[0m   [0m4: Constant(0x09b80101e365 <ScriptContext[4]>) → (x)
+[0m   [0m8: RootConstant(v_string) → (x)
+ [0mBlock b0
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0m   [0m1: InitialValue(<this>) → (x)
+[0m   [0m2: InitialValue(a0) → (x)
+[0m   [0m6: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (3 live vars)
+[0m   [0m7: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0m   [0m9: 🐢 CallBuiltin(LoadIC_Megamorphic) [v0/n2:(x), v0/n8:(x), v0/n4:(x)] → (x)
+[0m      ↳ lazy @0 (3 live vars)
+[0m[0;34m   4 : b9                Return
+[m[0m  [0m11: ReduceInterruptBudgetForReturn(4) [v0/n10:(x)]
+[0m  [0m12: Return [v0/n9:(x)]
+[0m
+
+----- After register allocation pre-processing -----
+Graph
+
+[0m   [0m1/10: Constant(0x09b80101e345 <FeedbackCell[one closure]>) → v-1, live range: [1-10]
+[0m    [0m2/3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → v-1, live range: [2-9]
+[0m    [0m3/4: Constant(0x09b80101e365 <ScriptContext[4]>) → v-1, live range: [3-9]
+[0m    [0m4/8: RootConstant(v_string) → v-1, live range: [4-9]
+ [0mBlock b0
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0m    [0m5/1: InitialValue(<this>) → v-1(=-6S), live range: [5-9]
+[0m    [0m6/2: InitialValue(a0) → v-1(=-7S), live range: [6-9]
+[0m    [0m7/6: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (3 live vars)
+[0m    [0m8/7: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0m    [0m9/9: 🐢 CallBuiltin(LoadIC_Megamorphic) [v6/n2:v-1(=x1), v4/n8:v-1(=x2), v3/n4:v-1(=x27)] → v-1(=x0), live range: [9-11]
+[0m         ↳ lazy @0 (3 live vars)
+[0m[0;34m   4 : b9                Return
+[m[0m  [0m10/11: ReduceInterruptBudgetForReturn(4) [v1/n10:v-1(R)]
+[0m  [0m11/12: Return [v9/n9:v-1(=x0)]
+[0m
+
+----- After register allocation -----
+Graph
+
+[0m   [0m1/10: Constant(0x09b80101e345 <FeedbackCell[one closure]>) → v-1, live range: [1-10]
+[0m    [0m2/3: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → v-1, live range: [2-9]
+[0m    [0m3/4: Constant(0x09b80101e365 <ScriptContext[4]>) → v-1, live range: [3-9]
+[0m    [0m4/8: RootConstant(v_string) → v-1, live range: [4-9]
+ [0mBlock b0
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0m    [0m5/1: InitialValue(<this>) → [stack:-6|t], live range: [5-9]
+[0m    [0m6/2: InitialValue(a0) → [stack:-7|t], live range: [6-9]
+[0m    [0m7/6: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (3 live vars)
+[0m    [0m8/7: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m     [0m13: GapMove([stack:-7|t] → [x1|R|t])
+[0m     [0m14: ConstantGapMove(n8 → [x2|R|t])
+[0m     [0m15: ConstantGapMove(n4 → [x27|R|t])
+[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0m    [0m9/9: 🐢 CallBuiltin(LoadIC_Megamorphic) [v6/n2:[x1|R|t], v4/n8:[x2|R|t], v3/n4:[x27|R|t]] → [x0|R|t], live range: [9-11]
+[0m         ↳ lazy @0 (3 live vars)
+[0m     [0m16: ConstantGapMove(n10 → [x1|R|t])
+[0m[0;34m   4 : b9                Return
+[m[0m  [0m10/11: ReduceInterruptBudgetForReturn(4) [v1/n10:[x1|R|t]]
+[0m  [0m11/12: Return [v9/n9:[x0|R|t]]
+[0m
+Compiling 0x09b80101e325 <JSFunction (sfi = 0x9b80101e121)> with Maglev
+----- Bytecode array -----
+Parameter count 1
+Register count 9
+Frame size 72
+         0x31a010000c8 @    0 : 13 00             LdaConstant [0:0x09b80101e181 <FixedArray[2]>]
+         0x31a010000ca @    2 : d0                Star4
+         0x31a010000cb @    3 : 1b fe f4          Mov <closure>, r5
+         0x31a010000ce @    6 : 70 75 01 f5 02    CallRuntime [DeclareGlobals], r4-r5
+         0x31a010000d3 @   11 : 86 01 00 04       CreateArrayLiteral [1:0x09b80101e2e9 <ArrayBoilerplateDescription PACKED_ELEMENTS, 0x09b80101e1c1 <FixedArray[6]>>], FBV[0], #4
+         0x31a010000d7 @   15 : 27 02             StaCurrentContextSlotNoCell [2]
+         0x31a010000d9 @   17 : 0c                LdaZero
+         0x31a010000da @   18 : 29 03             StaCurrentContextSlot [3]
+         0x31a010000dc @   20 : 0c                LdaZero
+         0x31a010000dd @   21 : d1                Star3
+         0x31a010000de @   22 : 00 0d 20 4e       LdaSmi.Wide [20000]
+         0x31a010000e2 @   26 : 79 f6 04          TestLessThan r3, EmbeddedFeedback[4]
+         0x31a010000e5 @   29 : a8 23             JumpIfFalse [35] (0x31a01000108 @ 64)
+         0x31a010000e7 @   31 : 18 03             LdaCurrentContextSlot [3]
+         0x31a010000e9 @   33 : d0                Star4
+         0x31a010000ea @   34 : 23 02 02          LdaGlobal [2:"load"], FBV[2]
+         0x31a010000ed @   37 : cf                Star5
+         0x31a010000ee @   38 : 19 02             LdaImmutableCurrentContextSlot [2]
+         0x31a010000f0 @   40 : ce                Star6
+         0x31a010000f1 @   41 : 0c                LdaZero
+         0x31a010000f2 @   42 : 35 f3 04          GetKeyedProperty r6, FBV[4]
+         0x31a010000f5 @   45 : ce                Star6
+         0x31a010000f6 @   46 : 6d f4 f3 06       CallUndefinedReceiver1 r5, r6, FBV[6]
+         0x31a010000fa @   50 : 42 f5 01          Add r4, FBV[1]
+         0x31a010000fd @   53 : 29 03             StaCurrentContextSlot [3]
+         0x31a010000ff @   55 : 0b f6             Ldar r3
+         0x31a01000101 @   57 : 5b 08             Inc FBV[8]
+         0x31a01000103 @   59 : d1                Star3
+         0x31a01000104 @   60 : 97 26 00 09       JumpLoop [38], [0], FBV[9] (0x31a010000de @ 22)
+         0x31a01000108 @   64 : 0c                LdaZero
+         0x31a01000109 @   65 : d2                Star2
+         0x31a0100010a @   66 : 00 0d 20 4e       LdaSmi.Wide [20000]
+         0x31a0100010e @   70 : 79 f7 04          TestLessThan r2, EmbeddedFeedback[4]
+         0x31a01000111 @   73 : a8 27             JumpIfFalse [39] (0x31a01000138 @ 112)
+         0x31a01000113 @   75 : 18 03             LdaCurrentContextSlot [3]
+         0x31a01000115 @   77 : d0                Star4
+         0x31a01000116 @   78 : 23 02 02          LdaGlobal [2:"load"], FBV[2]
+         0x31a01000119 @   81 : cf                Star5
+         0x31a0100011a @   82 : 19 02             LdaImmutableCurrentContextSlot [2]
+         0x31a0100011c @   84 : ce                Star6
+         0x31a0100011d @   85 : 0b f7             Ldar r2
+         0x31a0100011f @   87 : 53 03 0b          ModSmi [3], FBV[11]
+         0x31a01000122 @   90 : 35 f3 0c          GetKeyedProperty r6, FBV[12]
+         0x31a01000125 @   93 : ce                Star6
+         0x31a01000126 @   94 : 6d f4 f3 0e       CallUndefinedReceiver1 r5, r6, FBV[14]
+         0x31a0100012a @   98 : 42 f5 0a          Add r4, FBV[10]
+         0x31a0100012d @  101 : 29 03             StaCurrentContextSlot [3]
+         0x31a0100012f @  103 : 0b f7             Ldar r2
+         0x31a01000131 @  105 : 5b 10             Inc FBV[16]
+         0x31a01000133 @  107 : d2                Star2
+         0x31a01000134 @  108 : 97 2a 00 11       JumpLoop [42], [0], FBV[17] (0x31a0100010a @ 66)
+         0x31a01000138 @  112 : 0c                LdaZero
+         0x31a01000139 @  113 : d3                Star1
+         0x31a0100013a @  114 : 01 0d 60 ea 00 00 LdaSmi.ExtraWide [60000]
+         0x31a01000140 @  120 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+         0x31a01000143 @  123 : a8 2c             JumpIfFalse [44] (0x31a0100016f @ 167)
+         0x31a01000145 @  125 : 18 03             LdaCurrentContextSlot [3]
+         0x31a01000147 @  127 : d0                Star4
+         0x31a01000148 @  128 : 23 02 02          LdaGlobal [2:"load"], FBV[2]
+         0x31a0100014b @  131 : cf                Star5
+         0x31a0100014c @  132 : 19 02             LdaImmutableCurrentContextSlot [2]
+         0x31a0100014e @  134 : ce                Star6
+         0x31a0100014f @  135 : 19 02             LdaImmutableCurrentContextSlot [2]
+         0x31a01000151 @  137 : cc                Star8
+         0x31a01000152 @  138 : 33 f1 03 14       GetNamedProperty r8, [3:"length"], FBV[20]
+         0x31a01000156 @  142 : 46 f8 13          Mod r1, FBV[19]
+         0x31a01000159 @  145 : 35 f3 16          GetKeyedProperty r6, FBV[22]
+         0x31a0100015c @  148 : ce                Star6
+         0x31a0100015d @  149 : 6d f4 f3 18       CallUndefinedReceiver1 r5, r6, FBV[24]
+         0x31a01000161 @  153 : 42 f5 12          Add r4, FBV[18]
+         0x31a01000164 @  156 : 29 03             StaCurrentContextSlot [3]
+         0x31a01000166 @  158 : 0b f8             Ldar r1
+         0x31a01000168 @  160 : 5b 1a             Inc FBV[26]
+         0x31a0100016a @  162 : d3                Star1
+         0x31a0100016b @  163 : 97 31 00 1b       JumpLoop [49], [0], FBV[27] (0x31a0100013a @ 114)
+         0x31a0100016f @  167 : 23 04 1c          LdaGlobal [4:"print"], FBV[28]
+         0x31a01000172 @  170 : d0                Star4
+         0x31a01000173 @  171 : 18 03             LdaCurrentContextSlot [3]
+         0x31a01000175 @  173 : cf                Star5
+         0x31a01000176 @  174 : 6d f5 f4 1e       CallUndefinedReceiver1 r4, r5, FBV[30]
+         0x31a0100017a @  178 : d4                Star0
+         0x31a0100017b @  179 : b9                Return
+Constant pool (size = 5)
+0x31a01000085: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 5
+           0: 0x09b80101e181 <FixedArray[2]>
+           1: 0x09b80101e2e9 <ArrayBoilerplateDescription PACKED_ELEMENTS, 0x09b80101e1c1 <FixedArray[6]>>
+           2: 0x09b8001a575d <String[4]: #load>
+           3: 0x09b800000e19 <String[6]: #length>
+           4: 0x09b801002e25 <String[5]: #print>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e919: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 32
+ - shared function info: 0x09b80101e121 <SharedFunctionInfo>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1
+ - closure feedback cell array: 0x9b80104b7d1: [ClosureFeedbackCellArray]
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 1
+ - elements:
+           0: 0x09b80101e345 <FeedbackCell[one closure]>
+
+ - slot #0 Literal  {
+     [0]: 0
+  }
+ - slot #1 BinaryOp BinaryOp:SignedSmall {
+     [1]: 1
+  }
+ - slot #2 LoadGlobalNotInsideTypeof MONOMORPHIC
+   [weak] 0x09b80101c045 <PropertyCell name=0x09b8001a575d <String[4]: #load> value=0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>> {
+     [2]: [weak] 0x09b80101c045 <PropertyCell name=0x09b8001a575d <String[4]: #load> value=0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>>
+     [3]: 0x09b800000e95 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #4 LoadKeyed MONOMORPHIC
+   [weak] 0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>: LoadHandler(Smi)(kind = kElement, allow out of bounds = 0, is JSArray = 1, allow reading holes = 0, elements kind = PACKED_ELEMENTS) {
+     [4]: [weak] 0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>
+     [5]: 1152
+  }
+ - slot #6 Call MONOMORPHIC {
+     [6]: [weak] 0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>
+     [7]: 159744
+  }
+ - slot #8 BinaryOp BinaryOp:SignedSmall {
+     [8]: 1
+  }
+ - slot #9 JumpLoop JumpLoop {
+     [9]: [cleared]
+  }
+ - slot #10 BinaryOp BinaryOp:SignedSmall {
+     [10]: 1
+  }
+ - slot #11 BinaryOp BinaryOp:SignedSmall {
+     [11]: 1
+  }
+ - slot #12 LoadKeyed MONOMORPHIC
+   [weak] 0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>: LoadHandler(Smi)(kind = kElement, allow out of bounds = 0, is JSArray = 1, allow reading holes = 0, elements kind = PACKED_ELEMENTS) {
+     [12]: [weak] 0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>
+     [13]: 1152
+  }
+ - slot #14 Call MONOMORPHIC {
+     [14]: [weak] 0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>
+     [15]: 160000
+  }
+ - slot #16 BinaryOp BinaryOp:SignedSmall {
+     [16]: 1
+  }
+ - slot #17 JumpLoop JumpLoop {
+     [17]: [cleared]
+  }
+ - slot #18 BinaryOp BinaryOp:SignedSmall {
+     [18]: 1
+  }
+ - slot #19 BinaryOp BinaryOp:SignedSmall {
+     [19]: 1
+  }
+ - slot #20 LoadProperty MONOMORPHIC
+   [weak] 0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>: LoadHandler(Smi)(kind = kField, is in object = 1, is double = 0, storage offset in words = 3, descriptor index = 2046) {
+     [20]: [weak] 0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>
+     [21]: 1072824517
+  }
+ - slot #22 LoadKeyed MONOMORPHIC
+   [weak] 0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>: LoadHandler(Smi)(kind = kElement, allow out of bounds = 0, is JSArray = 1, allow reading holes = 0, elements kind = PACKED_ELEMENTS) {
+     [22]: [weak] 0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>
+     [23]: 1152
+  }
+ - slot #24 Call MONOMORPHIC {
+     [24]: [weak] 0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>
+     [25]: 182856
+  }
+ - slot #26 BinaryOp BinaryOp:SignedSmall {
+     [26]: 1
+  }
+ - slot #27 JumpLoop JumpLoop {
+     [27]: [cleared]
+  }
+ - slot #28 LoadGlobalNotInsideTypeof UNINITIALIZED {
+     [28]: [cleared]
+     [29]: 0x09b800000e95 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #30 Call UNINITIALIZED {
+     [30]: 0x09b800000e95 <Symbol: (uninitialized_symbol)>
+     [31]: 0
+  }
+
+----- Inlining 0x09b80101e191 <SharedFunctionInfo load> with bytecode -----
+Parameter count 2
+Register count 0
+Frame size 0
+         0x31a010001b0 @    0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+         0x31a010001b4 @    4 : b9                Return
+Constant pool (size = 1)
+0x31a0100017d: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 1
+           0: 0x09b8000034b5 <String[1]: #v>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e86d: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 2
+ - shared function info: 0x09b80101e191 <SharedFunctionInfo load>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1507
+ - closure feedback cell array: 0x9b800002071: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 LoadProperty MEGAMORPHIC {
+     [0]: 0x09b800000ea5 <Symbol: (megamorphic_symbol)>
+     [1]: 1
+  }
+
+----- Inlining 0x09b80101e191 <SharedFunctionInfo load> with bytecode -----
+Parameter count 2
+Register count 0
+Frame size 0
+         0x31a010001b0 @    0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+         0x31a010001b4 @    4 : b9                Return
+Constant pool (size = 1)
+0x31a0100017d: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 1
+           0: 0x09b8000034b5 <String[1]: #v>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e86d: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 2
+ - shared function info: 0x09b80101e191 <SharedFunctionInfo load>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1507
+ - closure feedback cell array: 0x9b800002071: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 LoadProperty MEGAMORPHIC {
+     [0]: 0x09b800000ea5 <Symbol: (megamorphic_symbol)>
+     [1]: 1
+  }
+
+----- After graph building -----
+Graph
+
+   [0m  [0m47: Constant(0x09b80101e355 <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m23: Constant(0x09b80101c045 <PropertyCell name=0x09b8001a575d <String[4]: #load> value=0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>>), 2 uses
+   [0m  [0m34: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>), 2 uses
+   [0m  [0m36: Constant(0x09b80101e365 <ScriptContext[4]>), 4 uses
+   [0m  [0m37: Constant(0x09b801004979 <JSGlobalProxy>), 2 uses
+   [0m  [0m35: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m21: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m20: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m49: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m39: RootConstant(v_string), 2 uses
+   [0m  [0m15: SmiConstant(60000), 2 uses
+   [0m  [0m17: Int32Constant(60000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m   [0m[0;34m 114 : 01 0d 60 ea 00 00 LdaSmi.ExtraWide [60000]
+[m   [0m   [0m1: InitialValue(<this>), 14 uses
+   [0m   [0m2: InitialValue(<context>), 19 uses
+   [0m   [0m3: InitialValue(<closure>), 14 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 7 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: InitialValue(r4), 0 uses 🪦
+   [0m   [0m9: InitialValue(r5), 0 uses 🪦
+   [0m  [0m10: InitialValue(r6), 0 uses 🪦
+   [0m  [0m11: InitialValue(r7), 0 uses 🪦
+   [0m  [0m12: InitialValue(r8), 0 uses 🪦
+   [0m  [0m13: FunctionEntryStackCheck
+   [0m      ↳ lazy @163 (3 live vars)
+   [0m      ↱ eager @163 (3 live vars)
+   [0m  [0m14: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m 120 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @120 (4 live vars)
+   [0m  [0m16: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m18: Int32Compare[LessThan] [n16, n17], 0 uses 🪦
+   [0m[0;34m 123 : a8 2c             JumpIfFalse [44]
+[m[0;31m╭────[0m19: BranchIfInt32Compare(LessThan) [n16, n17] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m 125 : 18 03             LdaCurrentContextSlot [3]
+[m[0;31m│  [0m  [0m22: LoadContextSlot(0x14, mutable) [n2], 3 uses
+[0;31m│  [0m[0;34m 128 : 23 02 02          LdaGlobal [2:"load"], FBV[2]
+[m[0;31m│  [0m  [0m24: LoadTaggedField(0xc, compressed) [n23], 1 uses
+[0;31m│  [0m[0;34m 132 : 19 02             LdaImmutableCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m25: LoadContextSlotNoCells(0x10, constant) [n2], 6 uses
+[0;31m│  [0m[0;34m 138 : 33 f1 03 14       GetNamedProperty r8, [3:"length"], FBV[20]
+[m[0;31m│  [0m      ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m26: CheckMaps(0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>, check heapobj) [n25]
+[0;31m│  [0m  [0m27: LoadTaggedField(0xc: 0x09b800000e19 <String[6]: #length>, compressed, Smi) [n25], 1 uses
+[0;31m│  [0m[0;34m 142 : 46 f8 13          Mod r1, FBV[19]
+[m[0;31m│  [0m  [0m28: UnsafeSmiUntag [n27], 2 uses, cannot truncate to int32
+[0;31m│  [0m      ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m29: Int32ModulusWithOverflow [n16, n28], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m 145 : 35 f3 16          GetKeyedProperty r6, FBV[22]
+[m[0;31m│  [0m  [0m30: LoadTaggedField(0x8, compressed) [n25], 1 uses
+[0;31m│  [0m      ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m31: CheckInt32Condition[UnsignedLessThan, OutOfBounds] [n29, n28]
+[0;31m│  [0m  [0m32: LoadFixedArrayElement(compressed), Unknown [n30, n29], 2 uses
+[0;31m│  [0m[0;34m 149 : 6d f4 f3 18       CallUndefinedReceiver1 r5, r6, FBV[24]
+[m[0;31m│  [0m      ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m33: CheckValue(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>, wrong call target) [n24]
+[0;31m│  [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0;31m│  [0m  [0m38: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│  [0m  [0m40: 🐢 CallBuiltin(LoadIC_Megamorphic) [n32, n39, n36], 2 uses
+[0;31m│  [0m      │      @149 (4 live vars)
+[0;31m│  [0m      ↳ lazy @0 (3 live vars)
+[0;31m│  [0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│  [0m[0;34m 153 : 42 f5 12          Add r4, FBV[18]
+[m[0;31m│  [0m      ↱ eager @153 (5 live vars)
+[0;31m│  [0m  [0m41: CheckedSmiUntag [n22], 1 uses, cannot truncate to int32
+[0;31m│  [0m      ↱ eager @153 (5 live vars)
+[0;31m│  [0m  [0m42: CheckedSmiUntag [n40], 1 uses, cannot truncate to int32
+[0;31m│  [0m      ↱ eager @153 (5 live vars)
+[0;31m│  [0m  [0m43: Int32AddWithOverflow [n41, n42], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│  [0m[0;34m 156 : 29 03             StaCurrentContextSlot [3]
+[m[0;31m│  [0m  [0m44: Int32ToNumber[kCanonicalizeSmi] [n43], 1 uses
+[0;31m│  [0m  [0m45: StoreContextSlotWithWriteBarrier(3, mutable) [n2, n44]
+[0;31m│  [0m      ↳ lazy @156 (3 live vars)
+[0;31m│  [0m[0;34m 160 : 5b 1a             Inc FBV[26]
+[m[0;31m│  [0m      ↱ eager @160 (3 live vars)
+[0;31m│  [0m  [0m46: Int32IncrementWithOverflow [n16], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m 163 : 97 31 00 1b       JumpLoop [49], [0], FBV[27]
+[m[0;31m│  [0m  [0m48: ReduceInterruptBudgetForLoop(39) [n47]
+[0;31m│  [0m      ↳ lazy @163 (3 live vars)
+[0;31m│  [0m  [0m51: Int32ToNumber[kCanonicalizeSmi] [n46], 1 uses
+[0;31m│  [0m  [0m50: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n51 → 52: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: ua c1)
+[0;31m│[0;32m│ [0m  [0m52: φᵀ r1 (n51, n76), 6 uses
+[0;31m│[0;32m│ [0m[0;34m 120 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m53: CheckedSmiUntag [n52], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m54: Int32Compare[LessThan] [n53, n17], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m 123 : a8 2c             JumpIfFalse [44]
+[m[0;31m│[0;32m│[0;33m╭──[0m55: BranchIfInt32Compare(LessThan) [n53, n17] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m 125 : 18 03             LdaCurrentContextSlot [3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: LoadContextSlot(0x14, mutable) [n2], 3 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m 128 : 23 02 02          LdaGlobal [2:"load"], FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57: LoadTaggedField(0xc, compressed) [n23], 1 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m 138 : 33 f1 03 14       GetNamedProperty r8, [3:"length"], FBV[20]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m58: CheckMaps(0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>, no heapobj check) [n25]
+[0;31m│[0;32m│[0;33m│[0m  [0m59: LoadTaggedField(0xc: 0x09b800000e19 <String[6]: #length>, compressed, Smi) [n25], 1 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m 142 : 46 f8 13          Mod r1, FBV[19]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60: UnsafeSmiUntag [n59], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m61: Int32ModulusWithOverflow [n53, n60], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m 145 : 35 f3 16          GetKeyedProperty r6, FBV[22]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m62: LoadTaggedField(0x8, compressed) [n25], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m63: CheckInt32Condition[UnsignedLessThan, OutOfBounds] [n61, n60]
+[0;31m│[0;32m│[0;33m│[0m  [0m64: LoadFixedArrayElement(compressed), Unknown [n62, n61], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m 149 : 6d f4 f3 18       CallUndefinedReceiver1 r5, r6, FBV[24]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: CheckValue(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>, wrong call target) [n57]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m66: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m  [0m67: 🐢 CallBuiltin(LoadIC_Megamorphic) [n64, n39, n36], 2 uses
+[0;31m│[0;32m│[0;33m│[0m      │      @149 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @0 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m 153 : 42 f5 12          Add r4, FBV[18]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m68: CheckedSmiUntag [n56], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m69: CheckedSmiUntag [n67], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m70: Int32AddWithOverflow [n68, n69], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 156 : 29 03             StaCurrentContextSlot [3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m71: Int32ToNumber[kCanonicalizeSmi] [n70], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m72: StoreContextSlotWithWriteBarrier(3, mutable) [n2, n71]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @156 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 160 : 5b 1a             Inc FBV[26]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @160 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m73: Int32IncrementWithOverflow [n53], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m 163 : 97 31 00 1b       JumpLoop [49], [0], FBV[27]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m74: ReduceInterruptBudgetForLoop(39) [n47]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @163 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m76: Int32ToNumber[kCanonicalizeSmi] [n73], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @160 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m75: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n76 → 52: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m 167 : 23 04 1c          LdaGlobal [4:"print"], FBV[28]
+[m[0;31m│[0;32m╭───[0m77: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m78: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @167 (2 live vars)
+   [0m  [0m79: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After use marking -----
+Graph
+
+   [0m  [0m47: Constant(0x09b80101e355 <FeedbackCell[one closure]>) → (x)
+   [0m  [0m23: Constant(0x09b80101c045 <PropertyCell name=0x09b8001a575d <String[4]: #load> value=0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>>) → (x)
+   [0m  [0m34: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → (x)
+   [0m  [0m36: Constant(0x09b80101e365 <ScriptContext[4]>) → (x)
+   [0m  [0m37: Constant(0x09b801004979 <JSGlobalProxy>) → (x)
+   [0m  [0m39: RootConstant(v_string) → (x)
+   [0m  [0m15: SmiConstant(60000) → (x)
+   [0m  [0m17: Int32Constant(60000) → (x)
+    [0mBlock b0
+   [0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m   [0m[0;34m 114 : 01 0d 60 ea 00 00 LdaSmi.ExtraWide [60000]
+[m   [0m   [0m1: InitialValue(<this>) → (x)
+   [0m   [0m2: InitialValue(<context>) → (x)
+   [0m   [0m3: InitialValue(<closure>) → (x)
+   [0m   [0m5: InitialValue(r1) → (x)
+   [0m  [0m13: FunctionEntryStackCheck
+   [0m      ↳ lazy @163 (3 live vars)
+   [0m      ↱ eager @163 (3 live vars)
+   [0m  [0m14: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m 120 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @120 (4 live vars)
+   [0m  [0m16: CheckedSmiUntag [v0/n5:(x)] → (x)
+   [0m[0;34m 123 : a8 2c             JumpIfFalse [44]
+[m[0;31m╭────[0m19: BranchIfInt32Compare(LessThan) [v0/n16:(x), v0/n17:(x)] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m 125 : 18 03             LdaCurrentContextSlot [3]
+[m[0;31m│  [0m  [0m22: LoadContextSlot(0x14, mutable) [v0/n2:(x)] → (x)
+[0;31m│  [0m[0;34m 128 : 23 02 02          LdaGlobal [2:"load"], FBV[2]
+[m[0;31m│  [0m  [0m24: LoadTaggedField(0xc, compressed) [v0/n23:(x)] → (x)
+[0;31m│  [0m[0;34m 132 : 19 02             LdaImmutableCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m25: LoadContextSlotNoCells(0x10, constant) [v0/n2:(x)] → (x)
+[0;31m│  [0m[0;34m 138 : 33 f1 03 14       GetNamedProperty r8, [3:"length"], FBV[20]
+[m[0;31m│  [0m      ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m26: CheckMaps(0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>, check heapobj) [v0/n25:(x)]
+[0;31m│  [0m  [0m27: LoadTaggedField(0xc: 0x09b800000e19 <String[6]: #length>, compressed, Smi) [v0/n25:(x)] → (x)
+[0;31m│  [0m[0;34m 142 : 46 f8 13          Mod r1, FBV[19]
+[m[0;31m│  [0m  [0m28: UnsafeSmiUntag [v0/n27:(x)] → (x)
+[0;31m│  [0m      ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m29: Int32ModulusWithOverflow [v0/n16:(x), v0/n28:(x)] → (x)
+[0;31m│  [0m[0;34m 145 : 35 f3 16          GetKeyedProperty r6, FBV[22]
+[m[0;31m│  [0m  [0m30: LoadTaggedField(0x8, compressed) [v0/n25:(x)] → (x)
+[0;31m│  [0m      ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m31: CheckInt32Condition[UnsignedLessThan, OutOfBounds] [v0/n29:(x), v0/n28:(x)]
+[0;31m│  [0m  [0m32: LoadFixedArrayElement(compressed), Unknown [v0/n30:(x), v0/n29:(x)] → (x)
+[0;31m│  [0m[0;34m 149 : 6d f4 f3 18       CallUndefinedReceiver1 r5, r6, FBV[24]
+[m[0;31m│  [0m      ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m33: CheckValue(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>, wrong call target) [v0/n24:(x)]
+[0;31m│  [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0;31m│  [0m  [0m38: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│  [0m  [0m40: 🐢 CallBuiltin(LoadIC_Megamorphic) [v0/n32:(x), v0/n39:(x), v0/n36:(x)] → (x)
+[0;31m│  [0m      │      @149 (4 live vars)
+[0;31m│  [0m      ↳ lazy @0 (3 live vars)
+[0;31m│  [0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│  [0m[0;34m 153 : 42 f5 12          Add r4, FBV[18]
+[m[0;31m│  [0m      ↱ eager @153 (5 live vars)
+[0;31m│  [0m  [0m41: CheckedSmiUntag [v0/n22:(x)] → (x)
+[0;31m│  [0m      ↱ eager @153 (5 live vars)
+[0;31m│  [0m  [0m42: CheckedSmiUntag [v0/n40:(x)] → (x)
+[0;31m│  [0m      ↱ eager @153 (5 live vars)
+[0;31m│  [0m  [0m43: Int32AddWithOverflow [v0/n41:(x), v0/n42:(x)] → (x)
+[0;31m│  [0m[0;34m 156 : 29 03             StaCurrentContextSlot [3]
+[m[0;31m│  [0m  [0m44: Int32ToNumber[kCanonicalizeSmi] [v0/n43:(x)] → (x)
+[0;31m│  [0m  [0m45: StoreContextSlotWithWriteBarrier(3, mutable) [v0/n2:(x), v0/n44:(x)]
+[0;31m│  [0m      ↳ lazy @156 (3 live vars)
+[0;31m│  [0m[0;34m 160 : 5b 1a             Inc FBV[26]
+[m[0;31m│  [0m      ↱ eager @160 (3 live vars)
+[0;31m│  [0m  [0m46: Int32IncrementWithOverflow [v0/n16:(x)] → (x)
+[0;31m│  [0m[0;34m 163 : 97 31 00 1b       JumpLoop [49], [0], FBV[27]
+[m[0;31m│  [0m  [0m48: ReduceInterruptBudgetForLoop(39) [v0/n47:(x)]
+[0;31m│  [0m      ↳ lazy @163 (3 live vars)
+[0;31m│  [0m  [0m51: Int32ToNumber[kCanonicalizeSmi] [v0/n46:(x)] → (x)
+[0;31m│  [0m  [0m50: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - v0/n51:(x) → 52: φᵀ r1 (x)
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: ua c1)
+[0;31m│[0;32m│ [0m  [0m52: φᵀ r1 (n51, n76) (compressed) → (x)
+[0;31m│[0;32m│ [0m[0;34m 120 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m53: CheckedSmiUntag [v0/n52:(x)] → (x)
+[0;31m│[0;32m│ [0m[0;34m 123 : a8 2c             JumpIfFalse [44]
+[m[0;31m│[0;32m│[0;33m╭──[0m55: BranchIfInt32Compare(LessThan) [v0/n53:(x), v0/n17:(x)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m 125 : 18 03             LdaCurrentContextSlot [3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: LoadContextSlot(0x14, mutable) [v0/n2:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 128 : 23 02 02          LdaGlobal [2:"load"], FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57: LoadTaggedField(0xc, compressed) [v0/n23:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 138 : 33 f1 03 14       GetNamedProperty r8, [3:"length"], FBV[20]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m58: CheckMaps(0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>, no heapobj check) [v0/n25:(x)]
+[0;31m│[0;32m│[0;33m│[0m  [0m59: LoadTaggedField(0xc: 0x09b800000e19 <String[6]: #length>, compressed, Smi) [v0/n25:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 142 : 46 f8 13          Mod r1, FBV[19]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60: UnsafeSmiUntag [v0/n59:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m61: Int32ModulusWithOverflow [v0/n53:(x), v0/n60:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 145 : 35 f3 16          GetKeyedProperty r6, FBV[22]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m62: LoadTaggedField(0x8, compressed) [v0/n25:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m63: CheckInt32Condition[UnsignedLessThan, OutOfBounds] [v0/n61:(x), v0/n60:(x)]
+[0;31m│[0;32m│[0;33m│[0m  [0m64: LoadFixedArrayElement(compressed), Unknown [v0/n62:(x), v0/n61:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 149 : 6d f4 f3 18       CallUndefinedReceiver1 r5, r6, FBV[24]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: CheckValue(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>, wrong call target) [v0/n57:(x)]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m66: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m  [0m67: 🐢 CallBuiltin(LoadIC_Megamorphic) [v0/n64:(x), v0/n39:(x), v0/n36:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m      │      @149 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @0 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m 153 : 42 f5 12          Add r4, FBV[18]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m68: CheckedSmiUntag [v0/n56:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m69: CheckedSmiUntag [v0/n67:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m70: Int32AddWithOverflow [v0/n68:(x), v0/n69:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 156 : 29 03             StaCurrentContextSlot [3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m71: Int32ToNumber[kCanonicalizeSmi] [v0/n70:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m72: StoreContextSlotWithWriteBarrier(3, mutable) [v0/n2:(x), v0/n71:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @156 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 160 : 5b 1a             Inc FBV[26]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @160 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m73: Int32IncrementWithOverflow [v0/n53:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 163 : 97 31 00 1b       JumpLoop [49], [0], FBV[27]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m74: ReduceInterruptBudgetForLoop(39) [v0/n47:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @163 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m76: Int32ToNumber[kCanonicalizeSmi] [v0/n73:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @160 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m75: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - v0/n76:(x) → 52: φᵀ r1 (x)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m 167 : 23 04 1c          LdaGlobal [4:"print"], FBV[28]
+[m[0;31m│[0;32m╭───[0m77: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m78: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @167 (2 live vars)
+   [0m  [0m79: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After register allocation pre-processing -----
+Graph
+
+   [0m   [0m1/47: Constant(0x09b80101e355 <FeedbackCell[one closure]>) → v-1, live range: [1-62]
+   [0m   [0m2/23: Constant(0x09b80101c045 <PropertyCell name=0x09b8001a575d <String[4]: #load> value=0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>>) → v-1, live range: [2-62]
+   [0m   [0m3/34: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → v-1, live range: [3-62]
+   [0m   [0m4/36: Constant(0x09b80101e365 <ScriptContext[4]>) → v-1, live range: [4-62]
+   [0m   [0m5/37: Constant(0x09b801004979 <JSGlobalProxy>) → v-1, live range: [5-62]
+   [0m   [0m6/39: RootConstant(v_string) → v-1, live range: [6-62]
+   [0m   [0m7/15: SmiConstant(60000) → v-1, live range: [7-62]
+   [0m   [0m8/17: Int32Constant(60000) → v-1, live range: [8-62]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m   [0m[0;34m 114 : 01 0d 60 ea 00 00 LdaSmi.ExtraWide [60000]
+[m   [0m    [0m9/1: InitialValue(<this>) → v-1(=-6S), live range: [9-65]
+   [0m   [0m10/2: InitialValue(<context>) → v-1(=-3S), live range: [10-65]
+   [0m   [0m11/3: InitialValue(<closure>) → v-1(=-2S), live range: [11-65]
+   [0m   [0m12/5: InitialValue(r1) → v-1(=4S), live range: [12-35]
+   [0m  [0m13/13: FunctionEntryStackCheck
+   [0m         ↳ lazy @163 (3 live vars)
+   [0m         ↱ eager @163 (3 live vars)
+   [0m  [0m14/14: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m[0;34m 120 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @120 (4 live vars)
+   [0m  [0m15/16: CheckedSmiUntag [v12/n5:v-1(R)] → v-1(0), live range: [15-35]
+   [0m[0;34m 123 : a8 2c             JumpIfFalse [44]
+[m[0;31m╭────[0m16/19: BranchIfInt32Compare(LessThan) [v15/n16:v-1(R), v8/n17:v-1(R)] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m 125 : 18 03             LdaCurrentContextSlot [3]
+[m[0;31m│  [0m  [0m17/22: LoadContextSlot(0x14, mutable) [v10/n2:v-1(R)] → v-1(R), live range: [17-32]
+[0;31m│  [0m[0;34m 128 : 23 02 02          LdaGlobal [2:"load"], FBV[2]
+[m[0;31m│  [0m  [0m18/24: LoadTaggedField(0xc, compressed) [v2/n23:v-1(R)] → v-1(R), live range: [18-27]
+[0;31m│  [0m[0;34m 132 : 19 02             LdaImmutableCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19/25: LoadContextSlotNoCells(0x10, constant) [v10/n2:v-1(R)] → v-1(R), live range: [19-62]
+[0;31m│  [0m[0;34m 138 : 33 f1 03 14       GetNamedProperty r8, [3:"length"], FBV[20]
+[m[0;31m│  [0m         ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m20/26: CheckMaps(0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>, check heapobj) [v19/n25:v-1(R)]
+[0;31m│  [0m  [0m21/27: LoadTaggedField(0xc: 0x09b800000e19 <String[6]: #length>, compressed, Smi) [v19/n25:v-1(R)] → v-1(R), live range: [21-22]
+[0;31m│  [0m[0;34m 142 : 46 f8 13          Mod r1, FBV[19]
+[m[0;31m│  [0m  [0m22/28: UnsafeSmiUntag [v21/n27:v-1(R)] → v-1(0), live range: [22-25]
+[0;31m│  [0m         ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m23/29: Int32ModulusWithOverflow [v15/n16:v-1(R), v22/n28:v-1(R)] → v-1(R), live range: [23-26]
+[0;31m│  [0m[0;34m 145 : 35 f3 16          GetKeyedProperty r6, FBV[22]
+[m[0;31m│  [0m  [0m24/30: LoadTaggedField(0x8, decompressed) [v19/n25:v-1(R)] → v-1(R), live range: [24-26]
+[0;31m│  [0m         ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m25/31: CheckInt32Condition[UnsignedLessThan, OutOfBounds] [v23/n29:v-1(R), v22/n28:v-1(R)]
+[0;31m│  [0m  [0m26/32: LoadFixedArrayElement(decompressed), Unknown [v24/n30:v-1(R), v23/n29:v-1(R)] → v-1(R), live range: [26-29]
+[0;31m│  [0m[0;34m 149 : 6d f4 f3 18       CallUndefinedReceiver1 r5, r6, FBV[24]
+[m[0;31m│  [0m         ↱ eager @120 (4 live vars)
+[0;31m│  [0m  [0m27/33: CheckValue(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>, wrong call target) [v18/n24:v-1(R)]
+[0;31m│  [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0;31m│  [0m  [0m28/38: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│  [0m  [0m29/40: 🐢 CallBuiltin(LoadIC_Megamorphic) [v26/n32:v-1(=x1), v6/n39:v-1(=x2), v4/n36:v-1(=x27)] → v-1(=x0), live range: [29-32]
+[0;31m│  [0m         │      @149 (4 live vars)
+[0;31m│  [0m         ↳ lazy @0 (3 live vars)
+[0;31m│  [0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│  [0m[0;34m 153 : 42 f5 12          Add r4, FBV[18]
+[m[0;31m│  [0m         ↱ eager @153 (5 live vars)
+[0;31m│  [0m  [0m30/41: CheckedSmiUntag [v17/n22:v-1(R)] → v-1(0), live range: [30-32]
+[0;31m│  [0m         ↱ eager @153 (5 live vars)
+[0;31m│  [0m  [0m31/42: CheckedSmiUntag [v29/n40:v-1(R)] → v-1(0), live range: [31-32]
+[0;31m│  [0m         ↱ eager @153 (5 live vars)
+[0;31m│  [0m  [0m32/43: Int32AddWithOverflow [v30/n41:v-1(R), v31/n42:v-1(R)] → v-1(R), live range: [32-33]
+[0;31m│  [0m[0;34m 156 : 29 03             StaCurrentContextSlot [3]
+[m[0;31m│  [0m  [0m33/44: Int32ToNumber[kCanonicalizeSmi] [v32/n43:v-1(R)] → v-1(R), live range: [33-34]
+[0;31m│  [0m  [0m34/45: StoreContextSlotWithWriteBarrier(3, mutable) [v10/n2:v-1(=x1), v33/n44:v-1(R)]
+[0;31m│  [0m         ↳ lazy @156 (3 live vars)
+[0;31m│  [0m[0;34m 160 : 5b 1a             Inc FBV[26]
+[m[0;31m│  [0m         ↱ eager @160 (3 live vars)
+[0;31m│  [0m  [0m35/46: Int32IncrementWithOverflow [v15/n16:v-1(R)] → v-1(R), live range: [35-37]
+[0;31m│  [0m[0;34m 163 : 97 31 00 1b       JumpLoop [49], [0], FBV[27]
+[m[0;31m│  [0m  [0m36/48: ReduceInterruptBudgetForLoop(39) [v1/n47:v-1(R)]
+[0;31m│  [0m         ↳ lazy @163 (3 live vars)
+[0;31m│  [0m  [0m37/51: Int32ToNumber[kCanonicalizeSmi] [v35/n46:v-1(R)] → v-1(R), live range: [37-38]
+[0;31m│  [0m  [0m38/50: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v37/n51:v-1(*) → 52: φᵀ r1 v-1(*)
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: ua c1)
+[0;31m│[0;32m│ [0m  [0m39/52: φᵀ r1 (n51, n76) → v-1(*), live range: [39-59]
+[0;31m│[0;32m│ [0m[0;34m 120 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m40/53: CheckedSmiUntag [v39/n52:v-1(R)] → v-1(0), live range: [40-59]
+[0;31m│[0;32m│ [0m[0;34m 123 : a8 2c             JumpIfFalse [44]
+[m[0;31m│[0;32m│[0;33m╭──[0m41/55: BranchIfInt32Compare(LessThan) [v40/n53:v-1(R), v8/n17:v-1(R)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m 125 : 18 03             LdaCurrentContextSlot [3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m42/56: LoadContextSlot(0x14, mutable) [v10/n2:v-1(R)] → v-1(R), live range: [42-56]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 128 : 23 02 02          LdaGlobal [2:"load"], FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m43/57: LoadTaggedField(0xc, compressed) [v2/n23:v-1(R)] → v-1(R), live range: [43-51]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 138 : 33 f1 03 14       GetNamedProperty r8, [3:"length"], FBV[20]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m44/58: CheckMaps(0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>, no heapobj check) [v19/n25:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m  [0m45/59: LoadTaggedField(0xc: 0x09b800000e19 <String[6]: #length>, compressed, Smi) [v19/n25:v-1(R)] → v-1(R), live range: [45-46]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 142 : 46 f8 13          Mod r1, FBV[19]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m46/60: UnsafeSmiUntag [v45/n59:v-1(R)] → v-1(0), live range: [46-49]
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m47/61: Int32ModulusWithOverflow [v40/n53:v-1(R), v46/n60:v-1(R)] → v-1(R), live range: [47-50]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 145 : 35 f3 16          GetKeyedProperty r6, FBV[22]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m48/62: LoadTaggedField(0x8, decompressed) [v19/n25:v-1(R)] → v-1(R), live range: [48-50]
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m49/63: CheckInt32Condition[UnsignedLessThan, OutOfBounds] [v47/n61:v-1(R), v46/n60:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m  [0m50/64: LoadFixedArrayElement(decompressed), Unknown [v48/n62:v-1(R), v47/n61:v-1(R)] → v-1(R), live range: [50-53]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 149 : 6d f4 f3 18       CallUndefinedReceiver1 r5, r6, FBV[24]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m51/65: CheckValue(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>, wrong call target) [v43/n57:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m52/66: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m  [0m53/67: 🐢 CallBuiltin(LoadIC_Megamorphic) [v50/n64:v-1(=x1), v6/n39:v-1(=x2), v4/n36:v-1(=x27)] → v-1(=x0), live range: [53-56]
+[0;31m│[0;32m│[0;33m│[0m         │      @149 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @0 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m 153 : 42 f5 12          Add r4, FBV[18]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m54/68: CheckedSmiUntag [v42/n56:v-1(R)] → v-1(0), live range: [54-56]
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m55/69: CheckedSmiUntag [v53/n67:v-1(R)] → v-1(0), live range: [55-56]
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m56/70: Int32AddWithOverflow [v54/n68:v-1(R), v55/n69:v-1(R)] → v-1(R), live range: [56-57]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 156 : 29 03             StaCurrentContextSlot [3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57/71: Int32ToNumber[kCanonicalizeSmi] [v56/n70:v-1(R)] → v-1(R), live range: [57-58]
+[0;31m│[0;32m│[0;33m│[0m  [0m58/72: StoreContextSlotWithWriteBarrier(3, mutable) [v10/n2:v-1(=x1), v57/n71:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @156 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m 160 : 5b 1a             Inc FBV[26]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @160 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m59/73: Int32IncrementWithOverflow [v40/n53:v-1(R)] → v-1(R), live range: [59-61]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 163 : 97 31 00 1b       JumpLoop [49], [0], FBV[27]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60/74: ReduceInterruptBudgetForLoop(39) [v1/n47:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @163 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m61/76: Int32ToNumber[kCanonicalizeSmi] [v59/n73:v-1(R)] → v-1(R), live range: [61-62]
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @160 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m62/75: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v61/n76:v-1(*) → 52: φᵀ r1 v-1(*)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m 167 : 23 04 1c          LdaGlobal [4:"print"], FBV[28]
+[m[0;31m│[0;32m╭───[0m63/77: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m64/78: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @167 (2 live vars)
+   [0m  [0m65/79: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After register allocation -----
+Graph
+
+   [0m    [0m1/47: Constant(0x09b80101e355 <FeedbackCell[one closure]>) → v-1, live range: [1-62]
+   [0m    [0m2/23: Constant(0x09b80101c045 <PropertyCell name=0x09b8001a575d <String[4]: #load> value=0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>>) → v-1, live range: [2-62]
+   [0m    [0m3/34: Constant(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>) → v-1, live range: [3-62]
+   [0m    [0m4/36: Constant(0x09b80101e365 <ScriptContext[4]>) → v-1, live range: [4-62]
+   [0m    [0m5/37: Constant(0x09b801004979 <JSGlobalProxy>) → v-1, live range: [5-62]
+   [0m    [0m6/39: RootConstant(v_string) → v-1, live range: [6-62]
+   [0m    [0m7/15: SmiConstant(60000) → v-1, live range: [7-62]
+   [0m    [0m8/17: Int32Constant(60000) → v-1, live range: [8-62]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m   [0m[0;34m 114 : 01 0d 60 ea 00 00 LdaSmi.ExtraWide [60000]
+[m   [0m     [0m9/1: InitialValue(<this>) → [stack:-6|t], live range: [9-65]
+   [0m    [0m10/2: InitialValue(<context>) → [stack:-3|t], live range: [10-65]
+   [0m    [0m11/3: InitialValue(<closure>) → [stack:-2|t], live range: [11-65]
+   [0m    [0m12/5: InitialValue(r1) → [stack:4|t], live range: [12-35]
+   [0m   [0m13/13: FunctionEntryStackCheck
+   [0m          ↳ lazy @163 (3 live vars)
+   [0m          ↱ eager @163 (3 live vars)
+   [0m   [0m14/14: CheckpointedJump b1
+   [0m       ↓
+    [0mBlock b1
+   [0m      [0m80: GapMove([stack:4|t] → [x0|R|t])
+   [0m[0;34m 120 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m          ↱ eager @120 (4 live vars)
+   [0m   [0m15/16: CheckedSmiUntag [v12/n5:[x0|R|t]] → [x0|R|w32] (spilled: [stack:0|w32]), live range: [15-35]
+   [0m      [0m81: ConstantGapMove(n17 → [x1|R|w32])
+   [0m[0;34m 123 : a8 2c             JumpIfFalse [44]
+[m[0;31m╭─────[0m16/19: BranchIfInt32Compare(LessThan) [v15/n16:[x0|R|w32], v8/n17:[x1|R|w32]] b2 b8
+[0;31m│  [0m       ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m      [0m82: GapMove([stack:-3|t] → [x2|R|t])
+[0;31m│  [0m[0;34m 125 : 18 03             LdaCurrentContextSlot [3]
+[m[0;31m│  [0m   [0m17/22: LoadContextSlot(0x14, mutable) [v10/n2:[x2|R|t]] → [x5|R|t] (spilled: [stack:2|t]), live range: [17-32]
+[0;31m│  [0m      [0m83: ConstantGapMove(n23 → [x3|R|t])
+[0;31m│  [0m[0;34m 128 : 23 02 02          LdaGlobal [2:"load"], FBV[2]
+[m[0;31m│  [0m   [0m18/24: LoadTaggedField(0xc, compressed) [v2/n23:[x3|R|t]] → [x4|R|t], live range: [18-27]
+[0;31m│  [0m[0;34m 132 : 19 02             LdaImmutableCurrentContextSlot [2]
+[m[0;31m│  [0m   [0m19/25: LoadContextSlotNoCells(0x10, constant) [v10/n2:[x2|R|t]] → [x6|R|t] (spilled: [stack:1|t]), live range: [19-62]
+[0;31m│  [0m[0;34m 138 : 33 f1 03 14       GetNamedProperty r8, [3:"length"], FBV[20]
+[m[0;31m│  [0m          ↱ eager @120 (4 live vars)
+[0;31m│  [0m   [0m20/26: CheckMaps(0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>, check heapobj) [v19/n25:[x6|R|t]]
+[0;31m│  [0m   [0m21/27: LoadTaggedField(0xc: 0x09b800000e19 <String[6]: #length>, compressed, Smi) [v19/n25:[x6|R|t]] → [x7|R|t], live range: [21-22]
+[0;31m│  [0m[0;34m 142 : 46 f8 13          Mod r1, FBV[19]
+[m[0;31m│  [0m   [0m22/28: UnsafeSmiUntag [v21/n27:[x7|R|t]] → [x7|R|w32], live range: [22-25]
+[0;31m│  [0m      [0m84: GapMove([x0|R|w32] → [x8|R|w32])
+[0;31m│  [0m      [0m85: GapMove([x7|R|w32] → [x9|R|w32])
+[0;31m│  [0m          ↱ eager @120 (4 live vars)
+[0;31m│  [0m   [0m23/29: Int32ModulusWithOverflow [v15/n16:[x0|R|w32], v22/n28:[x7|R|w32]] → [x10|R|w32], live range: [23-26]
+[0;31m│  [0m[0;34m 145 : 35 f3 16          GetKeyedProperty r6, FBV[22]
+[m[0;31m│  [0m   [0m24/30: LoadTaggedField(0x8, decompressed) [v19/n25:[x6|R|t]] → [x0|R|t], live range: [24-26]
+[0;31m│  [0m          ↱ eager @120 (4 live vars)
+[0;31m│  [0m   [0m25/31: CheckInt32Condition[UnsignedLessThan, OutOfBounds] [v23/n29:[x10|R|w32], v22/n28:[x9|R|w32]]
+[0;31m│  [0m   [0m26/32: LoadFixedArrayElement(decompressed), Unknown [v24/n30:[x0|R|t], v23/n29:[x10|R|w32]] → [x7|R|t] (spilled: [stack:3|t]), live range: [26-29]
+[0;31m│  [0m[0;34m 149 : 6d f4 f3 18       CallUndefinedReceiver1 r5, r6, FBV[24]
+[m[0;31m│  [0m          ↱ eager @120 (4 live vars)
+[0;31m│  [0m   [0m27/33: CheckValue(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>, wrong call target) [v18/n24:[x4|R|t]]
+[0;31m│  [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0;31m│  [0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0;31m│  [0m   [0m28/38: Jump b3
+[0;31m│  [0m       ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m      [0m86: GapMove([x7|R|t] → [x1|R|t])
+[0;31m│  [0m      [0m87: ConstantGapMove(n39 → [x2|R|t])
+[0;31m│  [0m      [0m88: ConstantGapMove(n36 → [x27|R|t])
+[0;31m│  [0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│  [0m   [0m29/40: 🐢 CallBuiltin(LoadIC_Megamorphic) [v26/n32:[x1|R|t], v6/n39:[x2|R|t], v4/n36:[x27|R|t]] → [x0|R|t], live range: [29-32]
+[0;31m│  [0m          │      @149 (4 live vars)
+[0;31m│  [0m          ↳ lazy @0 (3 live vars)
+[0;31m│  [0m      [0m89: GapMove([stack:2|t] → [x1|R|t])
+[0;31m│  [0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│  [0m[0;34m 153 : 42 f5 12          Add r4, FBV[18]
+[m[0;31m│  [0m          ↱ eager @153 (5 live vars)
+[0;31m│  [0m   [0m30/41: CheckedSmiUntag [v17/n22:[x1|R|t]] → [x1|R|w32], live range: [30-32]
+[0;31m│  [0m      [0m90: GapMove([x0|R|t] → [x2|R|t])
+[0;31m│  [0m          ↱ eager @153 (5 live vars)
+[0;31m│  [0m   [0m31/42: CheckedSmiUntag [v29/n40:[x0|R|t]] → [x0|R|w32], live range: [31-32]
+[0;31m│  [0m          ↱ eager @153 (5 live vars)
+[0;31m│  [0m   [0m32/43: Int32AddWithOverflow [v30/n41:[x1|R|w32], v31/n42:[x0|R|w32]] → [x3|R|w32], live range: [32-33]
+[0;31m│  [0m[0;34m 156 : 29 03             StaCurrentContextSlot [3]
+[m[0;31m│  [0m   [0m33/44: Int32ToNumber[kCanonicalizeSmi] [v32/n43:[x3|R|w32]] → [x0|R|t], live range: [33-34]
+[0;31m│  [0m      [0m91: GapMove([stack:-3|t] → [x1|R|t])
+[0;31m│  [0m   [0m34/45: StoreContextSlotWithWriteBarrier(3, mutable) [v10/n2:[x1|R|t], v33/n44:[x0|R|t]]
+[0;31m│  [0m          ↳ lazy @156 (3 live vars)
+[0;31m│  [0m      [0m92: GapMove([stack:0|w32] → [x0|R|w32])
+[0;31m│  [0m[0;34m 160 : 5b 1a             Inc FBV[26]
+[m[0;31m│  [0m          ↱ eager @160 (3 live vars)
+[0;31m│  [0m   [0m35/46: Int32IncrementWithOverflow [v15/n16:[x0|R|w32]] → [x2|R|w32] (spilled: [stack:1|w32]), live range: [35-37]
+[0;31m│  [0m      [0m93: ConstantGapMove(n47 → [x0|R|t])
+[0;31m│  [0m[0;34m 163 : 97 31 00 1b       JumpLoop [49], [0], FBV[27]
+[m[0;31m│  [0m   [0m36/48: ReduceInterruptBudgetForLoop(39) [v1/n47:[x0|R|t]]
+[0;31m│  [0m          ↳ lazy @163 (3 live vars)
+[0;31m│  [0m   [0m37/51: Int32ToNumber[kCanonicalizeSmi] [v35/n46:[x2|R|w32]] → [x3|R|t], live range: [37-38]
+[0;31m│  [0m   [0m38/50: Jump b4
+[0;31m│  [0m       │  with gap moves:
+[0;31m│  [0m       │    - v37/n51:[x3|R|t] → 52: φᵀ r1 [x3|R|t]
+[0;31m│  [0m       │  with register merges:
+[0;31m│  [0m       ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: ua c1)
+[0;31m│[0;32m│ [0m   [0m39/52: φᵀ r1 (n51, n76) (compressed) → [x3|R|t] (spilled: [stack:2|t]), live range: [39-59]
+[0;31m│[0;32m│ [0m      [0m94: GapMove([x3|R|t] → [x2|R|t])
+[0;31m│[0;32m│ [0m[0;34m 120 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m          ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│ [0m   [0m40/53: CheckedSmiUntag [v39/n52:[x3|R|t]] → [x3|R|w32] (spilled: [stack:2|w32]), live range: [40-59]
+[0;31m│[0;32m│ [0m      [0m95: ConstantGapMove(n17 → [x4|R|w32])
+[0;31m│[0;32m│ [0m[0;34m 123 : a8 2c             JumpIfFalse [44]
+[m[0;31m│[0;32m│[0;33m╭───[0m41/55: BranchIfInt32Compare(LessThan) [v40/n53:[x3|R|w32], v8/n17:[x4|R|w32]] b5 b7
+[0;31m│[0;32m│[0;33m│[0m       ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m 125 : 18 03             LdaCurrentContextSlot [3]
+[m[0;31m│[0;32m│[0;33m│[0m   [0m42/56: LoadContextSlot(0x14, mutable) [v10/n2:[x1|R|t]] → [x7|R|t] (spilled: [stack:3|t]), live range: [42-56]
+[0;31m│[0;32m│[0;33m│[0m      [0m96: ConstantGapMove(n23 → [x5|R|t])
+[0;31m│[0;32m│[0;33m│[0m[0;34m 128 : 23 02 02          LdaGlobal [2:"load"], FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m   [0m43/57: LoadTaggedField(0xc, compressed) [v2/n23:[x5|R|t]] → [x6|R|t], live range: [43-51]
+[0;31m│[0;32m│[0;33m│[0m      [0m97: GapMove([stack:1|t] → [x8|R|t])
+[0;31m│[0;32m│[0;33m│[0m[0;34m 138 : 33 f1 03 14       GetNamedProperty r8, [3:"length"], FBV[20]
+[m[0;31m│[0;32m│[0;33m│[0m          ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m   [0m44/58: CheckMaps(0x09b80100d1b1 <Map[16](PACKED_ELEMENTS)>, no heapobj check) [v19/n25:[x8|R|t]]
+[0;31m│[0;32m│[0;33m│[0m   [0m45/59: LoadTaggedField(0xc: 0x09b800000e19 <String[6]: #length>, compressed, Smi) [v19/n25:[x8|R|t]] → [x9|R|t], live range: [45-46]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 142 : 46 f8 13          Mod r1, FBV[19]
+[m[0;31m│[0;32m│[0;33m│[0m   [0m46/60: UnsafeSmiUntag [v45/n59:[x9|R|t]] → [x9|R|w32], live range: [46-49]
+[0;31m│[0;32m│[0;33m│[0m      [0m98: GapMove([x3|R|w32] → [x10|R|w32])
+[0;31m│[0;32m│[0;33m│[0m      [0m99: GapMove([x9|R|w32] → [x11|R|w32])
+[0;31m│[0;32m│[0;33m│[0m          ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m   [0m47/61: Int32ModulusWithOverflow [v40/n53:[x3|R|w32], v46/n60:[x9|R|w32]] → [x12|R|w32], live range: [47-50]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 145 : 35 f3 16          GetKeyedProperty r6, FBV[22]
+[m[0;31m│[0;32m│[0;33m│[0m   [0m48/62: LoadTaggedField(0x8, decompressed) [v19/n25:[x8|R|t]] → [x3|R|t], live range: [48-50]
+[0;31m│[0;32m│[0;33m│[0m          ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m   [0m49/63: CheckInt32Condition[UnsignedLessThan, OutOfBounds] [v47/n61:[x12|R|w32], v46/n60:[x11|R|w32]]
+[0;31m│[0;32m│[0;33m│[0m   [0m50/64: LoadFixedArrayElement(decompressed), Unknown [v48/n62:[x3|R|t], v47/n61:[x12|R|w32]] → [x9|R|t] (spilled: [stack:4|t]), live range: [50-53]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 149 : 6d f4 f3 18       CallUndefinedReceiver1 r5, r6, FBV[24]
+[m[0;31m│[0;32m│[0;33m│[0m          ↱ eager @120 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m   [0m51/65: CheckValue(0x09b80101e37d <JSFunction load (sfi = 0x9b80101e191)>, wrong call target) [v43/n57:[x6|R|t]]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:3:13)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 33 03 00 00       GetNamedProperty a0, [0:"v"], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m   [0m52/66: Jump b6
+[0;31m│[0;32m│[0;33m│[0m       ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m     [0m100: GapMove([x9|R|t] → [x1|R|t])
+[0;31m│[0;32m│[0;33m│[0m     [0m101: GapMove([x2|R|t] → [x3|R|t])
+[0;31m│[0;32m│[0;33m│[0m     [0m102: ConstantGapMove(n39 → [x2|R|t])
+[0;31m│[0;32m│[0;33m│[0m     [0m103: ConstantGapMove(n36 → [x27|R|t])
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e191 <SharedFunctionInfo load> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m   [0m53/67: 🐢 CallBuiltin(LoadIC_Megamorphic) [v50/n64:[x1|R|t], v6/n39:[x2|R|t], v4/n36:[x27|R|t]] → [x0|R|t], live range: [53-56]
+[0;31m│[0;32m│[0;33m│[0m          │      @149 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m          ↳ lazy @0 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m     [0m104: GapMove([stack:3|t] → [x1|R|t])
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e121 <SharedFunctionInfo> (0x09b80104a8b5 <String[17]: "workloads/poly.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m 153 : 42 f5 12          Add r4, FBV[18]
+[m[0;31m│[0;32m│[0;33m│[0m          ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m   [0m54/68: CheckedSmiUntag [v42/n56:[x1|R|t]] → [x1|R|w32], live range: [54-56]
+[0;31m│[0;32m│[0;33m│[0m     [0m105: GapMove([x0|R|t] → [x2|R|t])
+[0;31m│[0;32m│[0;33m│[0m          ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m   [0m55/69: CheckedSmiUntag [v53/n67:[x0|R|t]] → [x0|R|w32], live range: [55-56]
+[0;31m│[0;32m│[0;33m│[0m          ↱ eager @153 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m   [0m56/70: Int32AddWithOverflow [v54/n68:[x1|R|w32], v55/n69:[x0|R|w32]] → [x3|R|w32], live range: [56-57]
+[0;31m│[0;32m│[0;33m│[0m[0;34m 156 : 29 03             StaCurrentContextSlot [3]
+[m[0;31m│[0;32m│[0;33m│[0m   [0m57/71: Int32ToNumber[kCanonicalizeSmi] [v56/n70:[x3|R|w32]] → [x0|R|t], live range: [57-58]
+[0;31m│[0;32m│[0;33m│[0m     [0m106: GapMove([stack:-3|t] → [x1|R|t])
+[0;31m│[0;32m│[0;33m│[0m   [0m58/72: StoreContextSlotWithWriteBarrier(3, mutable) [v10/n2:[x1|R|t], v57/n71:[x0|R|t]]
+[0;31m│[0;32m│[0;33m│[0m          ↳ lazy @156 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m     [0m107: GapMove([stack:2|w32] → [x0|R|w32])
+[0;31m│[0;32m│[0;33m│[0m[0;34m 160 : 5b 1a             Inc FBV[26]
+[m[0;31m│[0;32m│[0;33m│[0m          ↱ eager @160 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m   [0m59/73: Int32IncrementWithOverflow [v40/n53:[x0|R|w32]] → [x2|R|w32] (spilled: [stack:3|w32]), live range: [59-61]
+[0;31m│[0;32m│[0;33m│[0m     [0m108: ConstantGapMove(n47 → [x0|R|t])
+[0;31m│[0;32m│[0;33m│[0m[0;34m 163 : 97 31 00 1b       JumpLoop [49], [0], FBV[27]
+[m[0;31m│[0;32m│[0;33m│[0m   [0m60/74: ReduceInterruptBudgetForLoop(39) [v1/n47:[x0|R|t]]
+[0;31m│[0;32m│[0;33m│[0m          ↳ lazy @163 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m   [0m61/76: Int32ToNumber[kCanonicalizeSmi] [v59/n73:[x2|R|w32]] → [x3|R|t], live range: [61-62]
+[0;31m│[0;32m│[0;33m│[0m          ↱ eager @160 (3 live vars)
+[0;31m│[0;32m╰─◄──[0m62/75: JumpLoop b4
+[0;31m│ [0;33m│[0m          with gap moves:
+[0;31m│ [0;33m│[0m            - v61/n76:[x3|R|t] → 52: φᵀ r1 [x3|R|t]
+[0;31m│ [0;33m│[0m          with register merges:
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m 167 : 23 04 1c          LdaGlobal [4:"print"], FBV[28]
+[m[0;31m│[0;32m╭────[0m63/77: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m   [0m64/78: Jump b9
+ [0;32m│ [0m       ↓
+ [0;32m╰─►[0mBlock b9
+   [0m          ↱ eager @167 (2 live vars)
+   [0m   [0m65/79: Deopt(Insufficient type feedback for generic global access)
+   [0m
+269999

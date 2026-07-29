@@ -1,0 +1,236 @@
+V8 is running with developer-only features enabled. Stability and security will suffer.
+--- Raw source ---
+(a, b) {
+  return a + b;
+}
+
+
+--- Optimized code ---
+optimization_id = 1
+source_position = 160
+kind = TURBOFAN_JS
+name = add
+compiler = turbofan
+address = 0x31a01000341
+
+Instructions (size = 288)
+0x1500001a0     0  a9bf7bfd       stp fp, lr, [sp, #-16]!
+0x1500001a4     4  910003fd       mov fp, sp
+0x1500001a8     8  a9be03ff       stp xzr, x0, [sp, #-32]!
+0x1500001ac     c  a9016fe1       stp x1, cp, [sp, #16]
+0x1500001b0    10  f8520342       ldur x2, [x26, #-224]
+0x1500001b4    14  f90003fb       str cp, [sp]
+0x1500001b8    18  eb2263ff       cmp sp, x2
+0x1500001bc    1c  540002c9       b.ls #+0x58 (addr 0x150000214)
+0x1500001c0    20  f9401fe2       ldr x2, [sp, #56]
+0x1500001c4    24  7200005f       tst w2, #0x1
+0x1500001c8    28  54000741       b.ne #+0xe8 (addr 0x1500002b0)
+0x1500001cc    2c  13017c43       asr w3, w2, #1
+0x1500001d0    30  f94023e4       ldr x4, [sp, #64]
+0x1500001d4    34  7200009f       tst w4, #0x1
+0x1500001d8    38  540006e1       b.ne #+0xdc (addr 0x1500002b4)
+0x1500001dc    3c  2b840463       adds w3, w3, w4, asr #1
+0x1500001e0    40  540006c6       b.vs #+0xd8 (addr 0x1500002b8)
+0x1500001e4    44  2b030060       adds w0, w3, w3
+0x1500001e8    48  540002c6       b.vs #+0x58 (addr 0x150000240)
+0x1500001ec    4c  f85e83a3       ldur x3, [fp, #-24]
+0x1500001f0    50  910003bf       mov sp, fp
+0x1500001f4    54  a8c17bfd       ldp fp, lr, [sp], #16
+0x1500001f8    58  f1000c7f       cmp x3, #0x3 (3)
+0x1500001fc    5c  5400004a       b.ge #+0x8 (addr 0x150000204)
+0x150000200    60  d2800063       movz x3, #0x3
+0x150000204    64  91000470       add x16, x3, #0x1 (1)
+0x150000208    68  927ffa10       and x16, x16, #0xfffffffffffffffe
+0x15000020c    6c  8b306fff       add sp, sp, x16, lsl #3
+0x150000210    70  d65f03c0       ret
+0x150000214    74  d2800a02       movz x2, #0x50
+0x150000218    78  d10043ff       sub sp, sp, #0x10 (16)
+0x15000021c    7c  f90007ff       str xzr, [sp, #8]
+0x150000220    80  f90003e2       str x2, [sp]
+0x150000224    84  d295e901       movz x1, #0xaf48
+0x150000228    88  f2a00f01       movk x1, #0x78, lsl #16
+0x15000022c    8c  f2c00021       movk x1, #0x1, lsl #32
+0x150000230    90  d2800020       movz x0, #0x1
+0x150000234    94  5800033b       ldr cp, pc+100 (addr 0x0000000150000298)    ;; object: 0x09b8010049f9 <NativeContext[310]>
+0x150000238    98  95fa0b7a       bl #+0x7e82de8 (addr 0x157e83020)    ;; near builtin entry
+0x15000023c    9c  17ffffe1       b #-0x7c (addr 0x1500001c0)
+0x150000240    a0  1e620060       scvtf d0, w3
+0x150000244    a4  f85d0342       ldur x2, [x26, #-48]
+0x150000248    a8  fd0003e0       str d0, [sp]
+0x15000024c    ac  f85d8343       ldur x3, [x26, #-40]
+0x150000250    b0  91003044       add x4, x2, #0xc (12)
+0x150000254    b4  eb03009f       cmp x4, x3
+0x150000258    b8  540000a3       b.lo #+0x14 (addr 0x15000026c)
+0x15000025c    bc  d2800181       movz x1, #0xc
+0x150000260    c0  95f74248       bl #+0x7dd0920 (addr 0x157dd0b80)    ;; near builtin entry
+0x150000264    c4  d1000402       sub x2, x0, #0x1 (1)
+0x150000268    c8  fd4003e0       ldr d0, [sp]
+0x15000026c    cc  91003043       add x3, x2, #0xc (12)
+0x150000270    d0  f81d0343       stur x3, [x26, #-48]
+0x150000274    d4  91000442       add x2, x2, #0x1 (1)
+0x150000278    d8  d280a2a3       movz x3, #0x515
+0x15000027c    dc  b81ff043       stur w3, [x2, #-1]
+0x150000280    e0  fc003040       stur d0, [x2, #3]
+0x150000284    e4  aa0203e0       mov x0, x2
+0x150000288    e8  17ffffd9       b #-0x9c (addr 0x1500001ec)
+0x15000028c    ec  d503201f       nop
+0x150000290    f0  5800007f       constant pool begin (num_const = 3)    ;; constant pool
+0x150000294    f4  d63f03e0       constant
+0x150000298    f8  010049f9       constant
+0x15000029c    fc  000009b8       constant
+0x1500002a0   100  f8558350       ldur x16, [x26, #-168]
+0x1500002a4   104  d61f0200       br x16
+0x1500002a8   108  f8560350       ldur x16, [x26, #-160]
+0x1500002ac   10c  d61f0200       br x16
+0x1500002b0   110  97fffffc       bl #-0x10 (addr 0x1500002a0)
+0x1500002b4   114  97fffffb       bl #-0x14 (addr 0x1500002a0)
+0x1500002b8   118  97fffffa       bl #-0x18 (addr 0x1500002a0)
+0x1500002bc   11c  97fffffb       bl #-0x14 (addr 0x1500002a8)
+
+Inlined functions (count = 0)
+
+Deoptimization Input Data (deopt points = 4)
+ index  bytecode-offset    pc
+     0                2    NA 
+     1                2    NA 
+     2                2    NA 
+     3               -1    9c 
+
+Safepoints (stack slots = 6, byte size = 17)
+0x15000023c     9c  slots (sp->fp): 100000  deopt      3 trampoline:    11c
+0x150000264     c4  slots (sp->fp): 000000
+
+RelocInfo (size = 13)
+0x150000234  full embedded object  (0x09b8010049f9 <NativeContext[310]>)
+0x150000238  near builtin entry
+0x150000260  near builtin entry
+0x150000290  constant pool (size 16)
+
+--- End code ---
+--- Raw source ---
+(a, b) {
+  return a + b;
+}
+
+
+--- Optimized code ---
+optimization_id = 4
+source_position = 160
+kind = TURBOFAN_JS
+name = add
+compiler = turbofan
+address = 0x31a0100080d
+
+Instructions (size = 364)
+0x150000ac0     0  a9bf7bfd       stp fp, lr, [sp, #-16]!
+0x150000ac4     4  910003fd       mov fp, sp
+0x150000ac8     8  a9be03ff       stp xzr, x0, [sp, #-32]!
+0x150000acc     c  a9016fe1       stp x1, cp, [sp, #16]
+0x150000ad0    10  f8520342       ldur x2, [x26, #-224]
+0x150000ad4    14  f90003fb       str cp, [sp]
+0x150000ad8    18  eb2263ff       cmp sp, x2
+0x150000adc    1c  540006c9       b.ls #+0xd8 (addr 0x150000bb4)
+0x150000ae0    20  f9401fe2       ldr x2, [sp, #56]
+0x150000ae4    24  37000082       tbnz w2, #0, #+0x10 (addr 0x150000af4)
+0x150000ae8    28  13017c43       asr w3, w2, #1
+0x150000aec    2c  1e620060       scvtf d0, w3
+0x150000af0    30  14000006       b #+0x18 (addr 0x150000b08)
+0x150000af4    34  b85ff043       ldur w3, [x2, #-1]
+0x150000af8    38  51127463       sub w3, w3, #0x49d (1181)
+0x150000afc    3c  7101e07f       cmp w3, #0x78 (120)
+0x150000b00    40  54000908       b.hi #+0x120 (addr 0x150000c20)
+0x150000b04    44  fc403040       ldur d0, [x2, #3]
+0x150000b08    48  f94023e3       ldr x3, [sp, #64]
+0x150000b0c    4c  37000083       tbnz w3, #0, #+0x10 (addr 0x150000b1c)
+0x150000b10    50  13017c62       asr w2, w3, #1
+0x150000b14    54  1e620041       scvtf d1, w2
+0x150000b18    58  14000006       b #+0x18 (addr 0x150000b30)
+0x150000b1c    5c  b85ff064       ldur w4, [x3, #-1]
+0x150000b20    60  51127484       sub w4, w4, #0x49d (1181)
+0x150000b24    64  7101e09f       cmp w4, #0x78 (120)
+0x150000b28    68  540007e8       b.hi #+0xfc (addr 0x150000c24)
+0x150000b2c    6c  fc403061       ldur d1, [x3, #3]
+0x150000b30    70  1e612800       fadd d0, d0, d1
+0x150000b34    74  1e780002       fcvtzs w2, d0
+0x150000b38    78  1e620041       scvtf d1, w2
+0x150000b3c    7c  1e612000       fcmp d0, d1
+0x150000b40    80  54000201       b.ne #+0x40 (addr 0x150000b80)
+0x150000b44    84  35000062       cbnz w2, #+0xc (addr 0x150000b50)
+0x150000b48    88  9e660003       fmov x3, d0
+0x150000b4c    8c  b7f801a3       tbnz x3, #63, #+0x34 (addr 0x150000b80)
+0x150000b50    90  2b020040       adds w0, w2, w2
+0x150000b54    94  54000166       b.vs #+0x2c (addr 0x150000b80)
+0x150000b58    98  f85e83a3       ldur x3, [fp, #-24]
+0x150000b5c    9c  910003bf       mov sp, fp
+0x150000b60    a0  a8c17bfd       ldp fp, lr, [sp], #16
+0x150000b64    a4  f1000c7f       cmp x3, #0x3 (3)
+0x150000b68    a8  5400004a       b.ge #+0x8 (addr 0x150000b70)
+0x150000b6c    ac  d2800063       movz x3, #0x3
+0x150000b70    b0  91000470       add x16, x3, #0x1 (1)
+0x150000b74    b4  927ffa10       and x16, x16, #0xfffffffffffffffe
+0x150000b78    b8  8b306fff       add sp, sp, x16, lsl #3
+0x150000b7c    bc  d65f03c0       ret
+0x150000b80    c0  f85d0342       ldur x2, [x26, #-48]
+0x150000b84    c4  f85d8343       ldur x3, [x26, #-40]
+0x150000b88    c8  91003044       add x4, x2, #0xc (12)
+0x150000b8c    cc  eb03009f       cmp x4, x3
+0x150000b90    d0  54000282       b.hs #+0x50 (addr 0x150000be0)
+0x150000b94    d4  91003043       add x3, x2, #0xc (12)
+0x150000b98    d8  f81d0343       stur x3, [x26, #-48]
+0x150000b9c    dc  91000442       add x2, x2, #0x1 (1)
+0x150000ba0    e0  d280a2a3       movz x3, #0x515
+0x150000ba4    e4  b81ff043       stur w3, [x2, #-1]
+0x150000ba8    e8  fc003040       stur d0, [x2, #3]
+0x150000bac    ec  aa0203e0       mov x0, x2
+0x150000bb0    f0  17ffffea       b #-0x58 (addr 0x150000b58)
+0x150000bb4    f4  d2800a02       movz x2, #0x50
+0x150000bb8    f8  d10043ff       sub sp, sp, #0x10 (16)
+0x150000bbc    fc  f90007ff       str xzr, [sp, #8]
+0x150000bc0   100  f90003e2       str x2, [sp]
+0x150000bc4   104  d295e901       movz x1, #0xaf48
+0x150000bc8   108  f2a00f01       movk x1, #0x78, lsl #16
+0x150000bcc   10c  f2c00021       movk x1, #0x1, lsl #32
+0x150000bd0   110  d2800020       movz x0, #0x1
+0x150000bd4   114  580001bb       ldr cp, pc+52 (addr 0x0000000150000c08)    ;; object: 0x09b8010049f9 <NativeContext[310]>
+0x150000bd8   118  95fa0912       bl #+0x7e82448 (addr 0x157e83020)    ;; near builtin entry
+0x150000bdc   11c  17ffffc1       b #-0xfc (addr 0x150000ae0)
+0x150000be0   120  d2800181       movz x1, #0xc
+0x150000be4   124  fd0003e0       str d0, [sp]
+0x150000be8   128  95f73fe6       bl #+0x7dcff98 (addr 0x157dd0b80)    ;; near builtin entry
+0x150000bec   12c  d1000402       sub x2, x0, #0x1 (1)
+0x150000bf0   130  fd4003e0       ldr d0, [sp]
+0x150000bf4   134  17ffffe8       b #-0x60 (addr 0x150000b94)
+0x150000bf8   138  d503201f       nop
+0x150000bfc   13c  5800009f       constant pool begin (num_const = 4)    ;; constant pool
+0x150000c00   140  d63f03e0       constant
+0x150000c04   144  d503201f       constant
+0x150000c08   148  010049f9       constant
+0x150000c0c   14c  000009b8       constant
+0x150000c10   150  f8558350       ldur x16, [x26, #-168]
+0x150000c14   154  d61f0200       br x16
+0x150000c18   158  f8560350       ldur x16, [x26, #-160]
+0x150000c1c   15c  d61f0200       br x16
+0x150000c20   160  97fffffc       bl #-0x10 (addr 0x150000c10)
+0x150000c24   164  97fffffb       bl #-0x14 (addr 0x150000c10)
+0x150000c28   168  97fffffc       bl #-0x10 (addr 0x150000c18)
+
+Inlined functions (count = 0)
+
+Deoptimization Input Data (deopt points = 3)
+ index  bytecode-offset    pc
+     0                2    NA 
+     1                2    NA 
+     2               -1   11c 
+
+Safepoints (stack slots = 6, byte size = 17)
+0x150000bdc    11c  slots (sp->fp): 100000  deopt      2 trampoline:    168
+0x150000bec    12c  slots (sp->fp): 000000
+
+RelocInfo (size = 13)
+0x150000bd4  full embedded object  (0x09b8010049f9 <NativeContext[310]>)
+0x150000bd8  near builtin entry
+0x150000be8  near builtin entry
+0x150000bfc  constant pool (size 20)
+
+--- End code ---
+704982704

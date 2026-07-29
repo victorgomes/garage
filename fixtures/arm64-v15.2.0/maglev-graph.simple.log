@@ -1,0 +1,569 @@
+V8 is running with developer-only features enabled. Stability and security will suffer.
+---------------------------------------------------
+Begin compiling method add using Maglev
+Compiling 0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)> with Maglev
+----- Bytecode array -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Register allocation -----
+Graph
+
+[0m   [0m1/12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>) → v-1, live range: [1-12]
+[0m    [0m2/4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [2-11]
+[0m    [0m3/5: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [3-11]
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m4/1: InitialValue(<this>) → [stack:-6|t], live range: [4-11]
+[0m    [0m5/2: InitialValue(a0) → [stack:-7|t], live range: [5-11]
+[0m    [0m6/3: InitialValue(a1) → [stack:-8|t], live range: [6-11]
+[0m    [0m7/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m    [0m8/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m     [0m16: GapMove([stack:-7|t] → [x0|R|t])
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m    [0m9/9: CheckedSmiUntag [v5/n2:[x0|R|t]] → [x0|R|w32], live range: [9-11]
+[0m     [0m17: GapMove([stack:-8|t] → [x1|R|t])
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m10/10: CheckedSmiUntag [v6/n3:[x1|R|t]] → [x1|R|w32], live range: [10-11]
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m11/11: Int32AddWithOverflow [v9/n9:[x0|R|w32], v10/n10:[x1|R|w32]] → [x2|R|w32], live range: [11-13]
+[0m     [0m18: ConstantGapMove(n12 → [x0|R|t])
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12/13: ReduceInterruptBudgetForReturn(5) [v1/n12:[x0|R|t]]
+[0m  [0m13/14: Int32ToNumber[kCanonicalizeSmi] [v11/n11:[x2|R|w32]] → [x0|R|t], live range: [13-14]
+[0m  [0m14/15: Return [v13/n14:[x0|R|t]]
+[0m
+---------------------------------------------------
+Finished compiling method add using Maglev
+---------------------------------------------------
+Begin compiling method  using Maglev
+Compiling 0x09b80101e31d <JSFunction (sfi = 0x9b80101e265)> with Maglev
+----- Bytecode array -----
+Parameter count 1
+Register count 4
+Frame size 32
+         0x31a010000c0 @    0 : 13 00             LdaConstant [0:0x09b80101e2bd <FixedArray[2]>]
+         0x31a010000c2 @    2 : d3                Star2
+         0x31a010000c3 @    3 : 1b fe f6          Mov <closure>, r3
+         0x31a010000c6 @    6 : 70 77 01 f7 02    CallRuntime [DeclareGlobals], r2-r3
+         0x31a010000cb @   11 : 0c                LdaZero
+         0x31a010000cc @   12 : 29 02             StaCurrentContextSlot [2]
+         0x31a010000ce @   14 : 0c                LdaZero
+         0x31a010000cf @   15 : d4                Star1
+         0x31a010000d0 @   16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+         0x31a010000d6 @   22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+         0x31a010000d9 @   25 : a8 1c             JumpIfFalse [28] (0x31a010000f5 @ 53)
+         0x31a010000db @   27 : 23 01 00          LdaGlobal [1:"add"], FBV[0]
+         0x31a010000de @   30 : d3                Star2
+         0x31a010000df @   31 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000e1 @   33 : d2                Star3
+         0x31a010000e2 @   34 : 6e f7 f6 f8 02    CallUndefinedReceiver2 r2, r3, r1, FBV[2]
+         0x31a010000e7 @   39 : 55 00 01          BitwiseOrSmi [0], EmbeddedFeedback[1]
+         0x31a010000ea @   42 : 29 02             StaCurrentContextSlot [2]
+         0x31a010000ec @   44 : 0b f8             Ldar r1
+         0x31a010000ee @   46 : 5b 04             Inc FBV[4]
+         0x31a010000f0 @   48 : d4                Star1
+         0x31a010000f1 @   49 : 97 21 00 05       JumpLoop [33], [0], FBV[5] (0x31a010000d0 @ 16)
+         0x31a010000f5 @   53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+         0x31a010000f8 @   56 : d3                Star2
+         0x31a010000f9 @   57 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000fb @   59 : d2                Star3
+         0x31a010000fc @   60 : 6d f7 f6 09       CallUndefinedReceiver1 r2, r3, FBV[9]
+         0x31a01000100 @   64 : d5                Star0
+         0x31a01000101 @   65 : b9                Return
+Constant pool (size = 3)
+0x31a01000085: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 3
+           0: 0x09b80101e2bd <FixedArray[2]>
+           1: 0x09b800003d75 <String[3]: #add>
+           2: 0x09b801002e31 <String[5]: #print>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e4cd: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 11
+ - shared function info: 0x09b80101e265 <SharedFunctionInfo>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1
+ - closure feedback cell array: 0x9b80104b16d: [ClosureFeedbackCellArray]
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 1
+ - elements:
+           0: 0x09b80101e33d <FeedbackCell[one closure]>
+
+ - slot #0 LoadGlobalNotInsideTypeof MONOMORPHIC
+   [weak] 0x09b80101e391 <PropertyCell name=0x09b800003d75 <String[3]: #add> value=0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>> {
+     [0]: [weak] 0x09b80101e391 <PropertyCell name=0x09b800003d75 <String[3]: #add> value=0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>>
+     [1]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #2 Call MONOMORPHIC {
+     [2]: [weak] 0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>
+     [3]: 234040
+  }
+ - slot #4 BinaryOp BinaryOp:SignedSmall {
+     [4]: 1
+  }
+ - slot #5 JumpLoop JumpLoop {
+     [5]: [cleared]
+     [6]: 0
+  }
+ - slot #7 LoadGlobalNotInsideTypeof UNINITIALIZED {
+     [7]: [cleared]
+     [8]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #9 Call UNINITIALIZED {
+     [9]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+     [10]: 0
+  }
+
+----- Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Register allocation -----
+Graph
+
+   [0m   [0m1/30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>) → v-1, live range: [1-35]
+   [0m   [0m2/17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [2-35]
+   [0m   [0m3/20: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [3-35]
+   [0m   [0m4/21: HeapConstant(0x09b801004999 <JSGlobalProxy>) → v-1, live range: [4-35]
+   [0m   [0m5/10: SmiConstant(100000) → v-1, live range: [5-35]
+   [0m   [0m6/12: Int32Constant(100000) → v-1, live range: [6-35]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m    [0m7/1: InitialValue(<this>) → [stack:-6|t], live range: [7-38]
+   [0m    [0m8/2: InitialValue(<context>) → [stack:-3|t], live range: [8-38]
+   [0m    [0m9/3: InitialValue(<closure>) → [stack:-2|t], live range: [9-38]
+   [0m   [0m10/5: InitialValue(r1) → [stack:4|t], live range: [10-21]
+   [0m   [0m11/8: FunctionEntryStackCheck
+   [0m         ↳ lazy @49 (3 live vars)
+   [0m         ↱ eager @49 (3 live vars)
+   [0m   [0m12/9: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m     [0m53: GapMove([stack:4|t] → [x0|R|t])
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m13/11: CheckedSmiUntag [v10/n5:[x0|R|t]] → [x0|R|w32], live range: [13-21]
+   [0m     [0m54: ConstantGapMove(n12 → [x1|R|w32])
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14/14: BranchIfInt32Compare(LessThan) [v13/n11:[x0|R|w32], v6/n12:[x1|R|w32]] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m     [0m55: GapMove([stack:-3|t] → [x2|R|t])
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m15/18: LoadContextSlot(0x10, mutable) [v8/n2:[x2|R|t]] → [x5|R|t] (spilled: [stack:3|t]), live range: [15-17]
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m16/22: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│  [0m         ↱ eager @34 (3 live vars)
+[0;31m│  [0m         │       @2 (5 live vars)
+[0;31m│  [0m  [0m17/23: CheckedSmiUntag [v15/n18:[x5|R|t]] → [x5|R|w32], live range: [17-18]
+[0;31m│  [0m  [0m18/24: Int32Add [v17/n23:[x5|R|w32], v13/n11:[x0|R|w32]] → [x3|R|w32], live range: [18-19]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19/27: Int32ToNumber[kCanonicalizeSmi] [v18/n24:[x3|R|w32]] → [x4|R|t], live range: [19-20]
+[0;31m│  [0m     [0m56: GapMove([x2|R|t] → [x1|R|t])
+[0;31m│  [0m  [0m20/28: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v19/n27:[x4|R|t]]
+[0;31m│  [0m         ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m         ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m21/29: Int32IncrementWithOverflow [v13/n11:[x0|R|w32]] → [x3|R|w32] (spilled: [stack:0|w32]), live range: [21-23]
+[0;31m│  [0m     [0m57: ConstantGapMove(n30 → [x0|R|t])
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m22/31: ReduceInterruptBudgetForLoop(26) [v1/n30:[x0|R|t]]
+[0;31m│  [0m         ↳ lazy @49 (3 live vars)
+[0;31m│  [0m     [0m58: ConstantGapMove(n12 → [x4|R|w32])
+[0;31m│  [0m  [0m23/33: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v21/n29:[x3|R|w32] → 35: φᴵ r1 [x3|R|w32]
+[0;31m│  [0m      │  with register merges:
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m24/35: φᴵ r1 (n29, n46) → [x3|R|w32] (spilled: [stack:1|w32]), live range: [24-33]
+[0;31m│[0;32m│ [0m     [0m59: GapMove([x3|R|w32] → [x5|R|w32])
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m25/36: CheckedSmiSizedInt32 [v24/n35:[x3|R|w32]] → [x3|R|w32], live range: [25-33]
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m26/38: BranchIfInt32Compare(LessThan) [v25/n36:[x3|R|w32], v6/n12:[x4|R|w32]] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m27/39: LoadContextSlot(0x10, mutable) [v8/n2:[x1|R|t]] → [x8|R|t] (spilled: [stack:4|t]), live range: [27-29]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m28/40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m29/41: CheckedSmiUntag [v27/n39:[x8|R|t]] → [x8|R|w32], live range: [29-30]
+[0;31m│[0;32m│[0;33m│[0m  [0m30/42: Int32Add [v25/n36:[x3|R|w32], v29/n41:[x8|R|w32]] → [x6|R|w32], live range: [30-31]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m31/44: Int32ToNumber[kCanonicalizeSmi] [v30/n42:[x6|R|w32]] → [x7|R|t], live range: [31-32]
+[0;31m│[0;32m│[0;33m│[0m  [0m32/45: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v31/n44:[x7|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m33/46: Int32IncrementWithOverflow [v25/n36:[x3|R|w32]] → [x6|R|w32] (spilled: [stack:2|w32]), live range: [33-35]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m34/47: ReduceInterruptBudgetForLoop(26) [v1/n30:[x0|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m35/48: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v33/n46:[x6|R|w32] → 35: φᴵ r1 [x3|R|w32]
+[0;31m│ [0;33m│[0m         with register merges:
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m36/50: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m37/51: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @53 (2 live vars)
+   [0m  [0m38/52: Deopt(Insufficient type feedback for generic global access)
+   [0m
+---------------------------------------------------
+Finished compiling method  using Maglev
+---------------------------------------------------
+Begin compiling method add using Maglev
+Compiling 0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)> with Maglev
+----- Bytecode array -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Register allocation -----
+Graph
+
+[0m   [0m1/12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>) → v-1, live range: [1-12]
+[0m    [0m2/4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [2-10]
+[0m    [0m3/5: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [3-10]
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m4/1: InitialValue(<this>) → [stack:-6|t], live range: [4-10]
+[0m    [0m5/2: InitialValue(a0) → [stack:-7|t], live range: [5-10]
+[0m    [0m6/3: InitialValue(a1) → [stack:-8|t], live range: [6-10]
+[0m    [0m7/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m    [0m8/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m     [0m16: GapMove([stack:-7|t] → [x0|R|t])
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m    [0m9/9: CheckedNumberToFloat64 [v5/n2:[x0|R|t]] → [v0|R|f64], live range: [9-11]
+[0m     [0m17: GapMove([stack:-8|t] → [x0|R|t])
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m10/10: CheckedNumberToFloat64 [v6/n3:[x0|R|t]] → [v1|R|f64], live range: [10-11]
+[0m  [0m11/11: Float64Add [v9/n9:[v0|R|f64], v10/n10:[v1|R|f64]] → [v2|R|f64], live range: [11-13]
+[0m     [0m18: ConstantGapMove(n12 → [x0|R|t])
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12/13: ReduceInterruptBudgetForReturn(5) [v1/n12:[x0|R|t]]
+[0m  [0m13/14: Float64ToTagged[kCanonicalizeSmi] [v11/n11:[v2|R|f64]] → [x0|R|t], live range: [13-14]
+[0m  [0m14/15: Return [v13/n14:[x0|R|t]]
+[0m
+---------------------------------------------------
+Finished compiling method add using Maglev
+---------------------------------------------------
+Begin compiling method  using Maglev
+Compiling 0x09b80101e31d <JSFunction (sfi = 0x9b80101e265)> with Maglev
+----- Bytecode array -----
+Parameter count 1
+Register count 4
+Frame size 32
+         0x31a010000c0 @    0 : 13 00             LdaConstant [0:0x09b80101e2bd <FixedArray[2]>]
+         0x31a010000c2 @    2 : d3                Star2
+         0x31a010000c3 @    3 : 1b fe f6          Mov <closure>, r3
+         0x31a010000c6 @    6 : 70 77 01 f7 02    CallRuntime [DeclareGlobals], r2-r3
+         0x31a010000cb @   11 : 0c                LdaZero
+         0x31a010000cc @   12 : 29 02             StaCurrentContextSlot [2]
+         0x31a010000ce @   14 : 0c                LdaZero
+         0x31a010000cf @   15 : d4                Star1
+         0x31a010000d0 @   16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+         0x31a010000d6 @   22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+         0x31a010000d9 @   25 : a8 1c             JumpIfFalse [28] (0x31a010000f5 @ 53)
+         0x31a010000db @   27 : 23 01 00          LdaGlobal [1:"add"], FBV[0]
+         0x31a010000de @   30 : d3                Star2
+         0x31a010000df @   31 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000e1 @   33 : d2                Star3
+         0x31a010000e2 @   34 : 6e f7 f6 f8 02    CallUndefinedReceiver2 r2, r3, r1, FBV[2]
+         0x31a010000e7 @   39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+         0x31a010000ea @   42 : 29 02             StaCurrentContextSlot [2]
+         0x31a010000ec @   44 : 0b f8             Ldar r1
+         0x31a010000ee @   46 : 5b 04             Inc FBV[4]
+         0x31a010000f0 @   48 : d4                Star1
+         0x31a010000f1 @   49 : 97 21 00 05       JumpLoop [33], [0], FBV[5] (0x31a010000d0 @ 16)
+         0x31a010000f5 @   53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+         0x31a010000f8 @   56 : d3                Star2
+         0x31a010000f9 @   57 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000fb @   59 : d2                Star3
+         0x31a010000fc @   60 : 6d f7 f6 09       CallUndefinedReceiver1 r2, r3, FBV[9]
+         0x31a01000100 @   64 : d5                Star0
+         0x31a01000101 @   65 : b9                Return
+Constant pool (size = 3)
+0x31a01000085: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 3
+           0: 0x09b80101e2bd <FixedArray[2]>
+           1: 0x09b800003d75 <String[3]: #add>
+           2: 0x09b801002e31 <String[5]: #print>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e4cd: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 11
+ - shared function info: 0x09b80101e265 <SharedFunctionInfo>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1
+ - closure feedback cell array: 0x9b80104b16d: [ClosureFeedbackCellArray]
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 1
+ - elements:
+           0: 0x09b80101e33d <FeedbackCell[one closure]>
+
+ - slot #0 LoadGlobalNotInsideTypeof MONOMORPHIC
+   [weak] 0x09b80101e391 <PropertyCell name=0x09b800003d75 <String[3]: #add> value=0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>> {
+     [0]: [weak] 0x09b80101e391 <PropertyCell name=0x09b800003d75 <String[3]: #add> value=0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>>
+     [1]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #2 Call MONOMORPHIC {
+     [2]: [weak] 0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>
+     [3]: 468080
+  }
+ - slot #4 BinaryOp BinaryOp:SignedSmall {
+     [4]: 1
+  }
+ - slot #5 JumpLoop JumpLoop {
+     [5]: [cleared]
+     [6]: 0
+  }
+ - slot #7 LoadGlobalNotInsideTypeof UNINITIALIZED {
+     [7]: [cleared]
+     [8]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #9 Call UNINITIALIZED {
+     [9]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+     [10]: 0
+  }
+
+----- Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Register allocation -----
+Graph
+
+   [0m   [0m1/17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [1-39]
+   [0m   [0m2/20: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [2-39]
+   [0m   [0m3/21: HeapConstant(0x09b801004999 <JSGlobalProxy>) → v-1, live range: [3-39]
+   [0m   [0m4/30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>) → v-1, live range: [4-39]
+   [0m   [0m5/10: SmiConstant(100000) → v-1, live range: [5-39]
+   [0m   [0m6/12: Int32Constant(100000) → v-1, live range: [6-39]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m    [0m7/1: InitialValue(<this>) → [stack:-6|t], live range: [7-42]
+   [0m    [0m8/2: InitialValue(<context>) → [stack:-3|t], live range: [8-42]
+   [0m    [0m9/3: InitialValue(<closure>) → [stack:-2|t], live range: [9-42]
+   [0m   [0m10/5: InitialValue(r1) → [stack:4|t], live range: [10-23]
+   [0m   [0m11/8: FunctionEntryStackCheck
+   [0m         ↳ lazy @49 (3 live vars)
+   [0m         ↱ eager @49 (3 live vars)
+   [0m   [0m12/9: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m     [0m54: GapMove([stack:4|t] → [x0|R|t])
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m13/11: CheckedSmiUntag [v10/n5:[x0|R|t]] → [x0|R|w32], live range: [13-23]
+   [0m     [0m55: ConstantGapMove(n12 → [x1|R|w32])
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14/14: BranchIfInt32Compare(LessThan) [v13/n11:[x0|R|w32], v6/n12:[x1|R|w32]] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m     [0m56: GapMove([stack:-3|t] → [x2|R|t])
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m15/18: LoadContextSlot(0x10, mutable) [v8/n2:[x2|R|t]] → [x5|R|t], live range: [15-17]
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m16/22: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m     [0m57: GapMove([x5|R|t] → [x3|R|t])
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│  [0m         ↱ eager @34 (3 live vars)
+[0;31m│  [0m         │       @2 (5 live vars)
+[0;31m│  [0m  [0m17/23: CheckedNumberToFloat64 [v15/n18:[x5|R|t]] → [v0|R|f64], live range: [17-19]
+[0;31m│  [0m  [0m18/24: ChangeInt32ToFloat64 [v13/n11:[x0|R|w32]] → [v1|R|f64], live range: [18-19]
+[0;31m│  [0m  [0m19/25: Float64Add [v17/n23:[v0|R|f64], v18/n24:[v1|R|f64]] → [v2|R|f64], live range: [19-20]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│  [0m  [0m20/26: TruncateFloat64ToInt32 [v19/n25:[v2|R|f64]] → [x3|R|w32], live range: [20-21]
+[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m21/27: Int32ToNumber[kCanonicalizeSmi] [v20/n26:[x3|R|w32]] → [x4|R|t], live range: [21-22]
+[0;31m│  [0m     [0m58: GapMove([x2|R|t] → [x1|R|t])
+[0;31m│  [0m  [0m22/28: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v21/n27:[x4|R|t]]
+[0;31m│  [0m         ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m         ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m23/29: Int32IncrementWithOverflow [v13/n11:[x0|R|w32]] → [x3|R|w32] (spilled: [stack:0|w32]), live range: [23-25]
+[0;31m│  [0m     [0m59: ConstantGapMove(n30 → [x0|R|t])
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m24/31: ReduceInterruptBudgetForLoop(26) [v4/n30:[x0|R|t]]
+[0;31m│  [0m         ↳ lazy @49 (3 live vars)
+[0;31m│  [0m     [0m60: ConstantGapMove(n12 → [x4|R|w32])
+[0;31m│  [0m  [0m25/33: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v23/n29:[x3|R|w32] → 35: φᴵ r1 [x3|R|w32]
+[0;31m│  [0m      │  with register merges:
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m26/35: φᴵ r1 (n29, n47) → [x3|R|w32] (spilled: [stack:1|w32]), live range: [26-37]
+[0;31m│[0;32m│ [0m     [0m61: GapMove([x3|R|w32] → [x5|R|w32])
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m27/36: CheckedSmiSizedInt32 [v26/n35:[x3|R|w32]] → [x3|R|w32], live range: [27-37]
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m28/38: BranchIfInt32Compare(LessThan) [v27/n36:[x3|R|w32], v6/n12:[x4|R|w32]] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m29/39: LoadContextSlot(0x10, mutable) [v8/n2:[x1|R|t]] → [x8|R|t], live range: [29-31]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m30/40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m     [0m62: GapMove([x8|R|t] → [x6|R|t])
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m31/41: CheckedNumberToFloat64 [v29/n39:[x8|R|t]] → [v0|R|f64], live range: [31-33]
+[0;31m│[0;32m│[0;33m│[0m  [0m32/42: ChangeInt32ToFloat64 [v27/n36:[x3|R|w32]] → [v1|R|f64], live range: [32-33]
+[0;31m│[0;32m│[0;33m│[0m  [0m33/43: Float64Add [v31/n41:[v0|R|f64], v32/n42:[v1|R|f64]] → [v2|R|f64], live range: [33-34]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m34/44: TruncateFloat64ToInt32 [v33/n43:[v2|R|f64]] → [x6|R|w32], live range: [34-35]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m35/45: Int32ToNumber[kCanonicalizeSmi] [v34/n44:[x6|R|w32]] → [x7|R|t], live range: [35-36]
+[0;31m│[0;32m│[0;33m│[0m  [0m36/46: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v35/n45:[x7|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m37/47: Int32IncrementWithOverflow [v27/n36:[x3|R|w32]] → [x6|R|w32] (spilled: [stack:2|w32]), live range: [37-39]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m38/48: ReduceInterruptBudgetForLoop(26) [v4/n30:[x0|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m39/49: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v37/n47:[x6|R|w32] → 35: φᴵ r1 [x3|R|w32]
+[0;31m│ [0;33m│[0m         with register merges:
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m40/51: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m41/52: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @53 (2 live vars)
+   [0m  [0m42/53: Deopt(Insufficient type feedback for generic global access)
+   [0m
+---------------------------------------------------
+Finished compiling method  using Maglev
+704982704

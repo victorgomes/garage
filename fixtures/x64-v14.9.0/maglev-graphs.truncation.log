@@ -1,0 +1,2973 @@
+Compiling 0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)> with Maglev
+----- Bytecode array -----
+Parameter count 3
+Register count 3
+Frame size 24
+         0x31a01000144 @    0 : 0b 04             Ldar a1
+         0x31a01000146 @    2 : 44 03 00          Mul a0, FBV[0]
+         0x31a01000149 @    5 : d4                Star0
+         0x31a0100014a @    6 : 0b 03             Ldar a0
+         0x31a0100014c @    8 : 42 f9 01          Add r0, FBV[1]
+         0x31a0100014f @   11 : d3                Star1
+         0x31a01000150 @   12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+         0x31a01000153 @   15 : d2                Star2
+         0x31a01000154 @   16 : 0b f9             Ldar r0
+         0x31a01000156 @   18 : 51 02 05          MulSmi [2], FBV[5]
+         0x31a01000159 @   21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+         0x31a0100015c @   24 : 42 f7 02          Add r2, FBV[2]
+         0x31a0100015f @   27 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e1b9: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 6
+ - shared function info: 0x09b80101e031 <SharedFunctionInfo trunc>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 402
+ - closure feedback cell array: 0x9b8000021d9: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 BinaryOp BinaryOp:Number {
+     [0]: 15
+  }
+ - slot #1 BinaryOp BinaryOp:Number {
+     [1]: 15
+  }
+ - slot #2 BinaryOp BinaryOp:SignedSmall {
+     [2]: 1
+  }
+ - slot #3 BinaryOp BinaryOp:Number {
+     [3]: 15
+  }
+ - slot #4 BinaryOp BinaryOp:Number {
+     [4]: 15
+  }
+ - slot #5 BinaryOp BinaryOp:Number {
+     [5]: 15
+  }
+
+----- After graph building -----
+Graph
+
+[0m  [0m18: Constant(0x09b80101e0bd <FeedbackCell[one closure]>), 1 uses
+[0m   [0m4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0dd <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+[0m  [0m14: Float64Constant(2), 1 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Multiply [n9, n10], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m12: Float64Add [n9, n11], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m13: TruncateFloat64ToInt32 [n12], 1 uses, cannot truncate to int32
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15: Float64Multiply [n11, n14], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16: TruncateFloat64ToInt32 [n15], 1 uses, cannot truncate to int32
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m17: Int32AddWithOverflow [n13, n16], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m19: ReduceInterruptBudgetForReturn(27) [n18]
+[0m  [0m20: Int32ToNumber[kCanonicalizeSmi] [n17], 1 uses
+[0m  [0m21: Return [n20]
+[0m
+
+----- After propagating truncation -----
+Graph
+
+[0m  [0m18: Constant(0x09b80101e0bd <FeedbackCell[one closure]>), 1 uses
+[0m   [0m4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0dd <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+[0m  [0m14: Float64Constant(2), 1 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Multiply [n9, n10], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m12: Float64Add [n9, n11], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m13: TruncateFloat64ToInt32 [n12], 1 uses, cannot truncate to int32
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15: Float64Multiply [n11, n14], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16: TruncateFloat64ToInt32 [n15], 1 uses, cannot truncate to int32
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m17: Int32AddWithOverflow [n13, n16], 1 uses, cannot truncate to int32
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m19: ReduceInterruptBudgetForReturn(27) [n18]
+[0m  [0m20: Int32ToNumber[kCanonicalizeSmi] [n17], 1 uses
+[0m  [0m21: Return [n20]
+[0m
+
+----- After truncation -----
+Graph
+
+[0m  [0m18: Constant(0x09b80101e0bd <FeedbackCell[one closure]>), 1 uses
+[0m   [0m4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0dd <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+[0m  [0m14: Float64Constant(2), 1 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Multiply [n9, n10], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m12: Float64Add [n9, n11], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m13: TruncateFloat64ToInt32 [n12], 1 uses, cannot truncate to int32
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15: Float64Multiply [n11, n14], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16: TruncateFloat64ToInt32 [n15], 1 uses, cannot truncate to int32
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m17: Int32AddWithOverflow [n13, n16], 1 uses, cannot truncate to int32
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m19: ReduceInterruptBudgetForReturn(27) [n18]
+[0m  [0m20: Int32ToNumber[kCanonicalizeSmi] [n17], 1 uses
+[0m  [0m21: Return [n20]
+[0m
+
+----- After use marking -----
+Graph
+
+[0m  [0m18: Constant(0x09b80101e0bd <FeedbackCell[one closure]>) → (x)
+[0m   [0m4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>) → (x)
+[0m   [0m5: Constant(0x09b80101e0dd <ScriptContext[3]>) → (x)
+[0m  [0m14: Float64Constant(2) → (x)
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>) → (x)
+[0m   [0m2: InitialValue(a0) → (x)
+[0m   [0m3: InitialValue(a1) → (x)
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [v0/n2:(x)] → (x)
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [v0/n3:(x)] → (x)
+[0m  [0m11: Float64Multiply [v0/n9:(x), v0/n10:(x)] → (x)
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m12: Float64Add [v0/n9:(x), v0/n11:(x)] → (x)
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m13: TruncateFloat64ToInt32 [v0/n12:(x)] → (x)
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15: Float64Multiply [v0/n11:(x), v0/n14:(x)] → (x)
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16: TruncateFloat64ToInt32 [v0/n15:(x)] → (x)
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m  [0m17: Int32AddWithOverflow [v0/n13:(x), v0/n16:(x)] → (x)
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m19: ReduceInterruptBudgetForReturn(27) [v0/n18:(x)]
+[0m  [0m20: Int32ToNumber[kCanonicalizeSmi] [v0/n17:(x)] → (x)
+[0m  [0m21: Return [v0/n20:(x)]
+[0m
+
+----- After register allocation pre-processing -----
+Graph
+
+[0m   [0m1/18: Constant(0x09b80101e0bd <FeedbackCell[one closure]>) → v-1, live range: [1-18]
+[0m    [0m2/4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>) → v-1, live range: [2-17]
+[0m    [0m3/5: Constant(0x09b80101e0dd <ScriptContext[3]>) → v-1, live range: [3-17]
+[0m   [0m4/14: Float64Constant(2) → v-1, live range: [4-15]
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m5/1: InitialValue(<this>) → v-1(=-6S), live range: [5-17]
+[0m    [0m6/2: InitialValue(a0) → v-1(=-7S), live range: [6-17]
+[0m    [0m7/3: InitialValue(a1) → v-1(=-8S), live range: [7-17]
+[0m    [0m8/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m    [0m9/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m   [0m10/9: CheckedNumberToFloat64 [v6/n2:v-1(R)] → v-1(R), live range: [10-13]
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m11/10: CheckedNumberToFloat64 [v7/n3:v-1(R)] → v-1(R), live range: [11-12]
+[0m  [0m12/11: Float64Multiply [v10/n9:v-1(R), v11/n10:v-1(R)] → v-1(0), live range: [12-15]
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m13/12: Float64Add [v10/n9:v-1(R), v12/n11:v-1(R)] → v-1(0), live range: [13-14]
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m14/13: TruncateFloat64ToInt32 [v13/n12:v-1(R)] → v-1(R), live range: [14-17]
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15/15: Float64Multiply [v12/n11:v-1(R), v4/n14:v-1(R)] → v-1(0), live range: [15-16]
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16/16: TruncateFloat64ToInt32 [v15/n15:v-1(R)] → v-1(R), live range: [16-17]
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m  [0m17/17: Int32AddWithOverflow [v14/n13:v-1(R), v16/n16:v-1(R)] → v-1(0), live range: [17-19]
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m18/19: ReduceInterruptBudgetForReturn(27) [v1/n18:v-1(R)]
+[0m  [0m19/20: Int32ToNumber[kCanonicalizeSmi] [v17/n17:v-1(R)] → v-1(R), live range: [19-20]
+[0m  [0m20/21: Return [v19/n20:v-1(=rax)]
+[0m
+
+----- After register allocation -----
+Graph
+
+[0m   [0m1/18: Constant(0x09b80101e0bd <FeedbackCell[one closure]>) → v-1, live range: [1-18]
+[0m    [0m2/4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>) → v-1, live range: [2-17]
+[0m    [0m3/5: Constant(0x09b80101e0dd <ScriptContext[3]>) → v-1, live range: [3-17]
+[0m   [0m4/14: Float64Constant(2) → v-1, live range: [4-15]
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m5/1: InitialValue(<this>) → [stack:-6|t], live range: [5-17]
+[0m    [0m6/2: InitialValue(a0) → [stack:-7|t], live range: [6-17]
+[0m    [0m7/3: InitialValue(a1) → [stack:-8|t], live range: [7-17]
+[0m    [0m8/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m    [0m9/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m     [0m22: GapMove([stack:-7|t] → [rax|R|t])
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80104a7b1 <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m   [0m10/9: CheckedNumberToFloat64 [v6/n2:[rax|R|t]] → [xmm0|R|f64], live range: [10-13]
+[0m     [0m23: GapMove([stack:-8|t] → [rax|R|t])
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m11/10: CheckedNumberToFloat64 [v7/n3:[rax|R|t]] → [xmm1|R|f64], live range: [11-12]
+[0m     [0m24: GapMove([xmm0|R|f64] → [xmm2|R|f64])
+[0m  [0m12/11: Float64Multiply [v10/n9:[xmm0|R|f64], v11/n10:[xmm1|R|f64]] → [xmm0|R|f64], live range: [12-15]
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m13/12: Float64Add [v10/n9:[xmm2|R|f64], v12/n11:[xmm0|R|f64]] → [xmm2|R|f64], live range: [13-14]
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m14/13: TruncateFloat64ToInt32 [v13/n12:[xmm2|R|f64]] → [rax|R|w32], live range: [14-17]
+[0m     [0m25: ConstantGapMove(n14 → [xmm1|R|f64])
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15/15: Float64Multiply [v12/n11:[xmm0|R|f64], v4/n14:[xmm1|R|f64]] → [xmm0|R|f64], live range: [15-16]
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16/16: TruncateFloat64ToInt32 [v15/n15:[xmm0|R|f64]] → [rcx|R|w32], live range: [16-17]
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m  [0m17/17: Int32AddWithOverflow [v14/n13:[rax|R|w32], v16/n16:[rcx|R|w32]] → [rax|R|w32], live range: [17-19]
+[0m     [0m26: ConstantGapMove(n18 → [rcx|R|t])
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m18/19: ReduceInterruptBudgetForReturn(27) [v1/n18:[rcx|R|t]]
+[0m  [0m19/20: Int32ToNumber[kCanonicalizeSmi] [v17/n17:[rax|R|w32]] → [rcx|R|t], live range: [19-20]
+[0m     [0m27: GapMove([rcx|R|t] → [rax|R|t])
+[0m  [0m20/21: Return [v19/n20:[rax|R|t]]
+[0m
+Compiling 0x09b80101e09d <JSFunction (sfi = 0x9b80101dfc9)> with Maglev
+----- Bytecode array -----
+Parameter count 1
+Register count 6
+Frame size 48
+         0x31a010000c8 @    0 : 13 00             LdaConstant [0:0x09b80101e021 <FixedArray[2]>]
+         0x31a010000ca @    2 : d2                Star2
+         0x31a010000cb @    3 : 1b fe f6          Mov <closure>, r3
+         0x31a010000ce @    6 : 70 75 01 f7 02    CallRuntime [DeclareGlobals], r2-r3
+         0x31a010000d3 @   11 : 0c                LdaZero
+         0x31a010000d4 @   12 : 29 02             StaCurrentContextSlot [2]
+         0x31a010000d6 @   14 : 0c                LdaZero
+         0x31a010000d7 @   15 : d3                Star1
+         0x31a010000d8 @   16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+         0x31a010000de @   22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+         0x31a010000e2 @   26 : a8 2b             JumpIfFalse [43] (0x31a0100010d @ 69)
+         0x31a010000e4 @   28 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000e6 @   30 : d2                Star2
+         0x31a010000e7 @   31 : 23 01 02          LdaGlobal [1:"trunc"], FBV[2]
+         0x31a010000ea @   34 : d1                Star3
+         0x31a010000eb @   35 : 13 02             LdaConstant [2:0x09b80101e061 <HeapNumber 1.5>]
+         0x31a010000ed @   37 : 44 f8 04          Mul r1, FBV[4]
+         0x31a010000f0 @   40 : d0                Star4
+         0x31a010000f1 @   41 : 13 03             LdaConstant [3:0x09b80101e06d <HeapNumber 0.25>]
+         0x31a010000f3 @   43 : 44 f8 05          Mul r1, FBV[5]
+         0x31a010000f6 @   46 : cf                Star5
+         0x31a010000f7 @   47 : 6e f6 f5 f4 06    CallUndefinedReceiver2 r3, r4, r5, FBV[6]
+         0x31a010000fc @   52 : 42 f7 01          Add r2, FBV[1]
+         0x31a010000ff @   55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+         0x31a01000102 @   58 : 29 02             StaCurrentContextSlot [2]
+         0x31a01000104 @   60 : 0b f8             Ldar r1
+         0x31a01000106 @   62 : 5b 08             Inc FBV[8]
+         0x31a01000108 @   64 : d3                Star1
+         0x31a01000109 @   65 : 97 31 00 09       JumpLoop [49], [0], FBV[9] (0x31a010000d8 @ 16)
+         0x31a0100010d @   69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+         0x31a01000110 @   72 : d2                Star2
+         0x31a01000111 @   73 : 18 02             LdaCurrentContextSlot [2]
+         0x31a01000113 @   75 : d1                Star3
+         0x31a01000114 @   76 : 6d f7 f6 0c       CallUndefinedReceiver1 r2, r3, FBV[12]
+         0x31a01000118 @   80 : d4                Star0
+         0x31a01000119 @   81 : b9                Return
+Constant pool (size = 5)
+0x31a01000085: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 5
+           0: 0x09b80101e021 <FixedArray[2]>
+           1: 0x09b800002d85 <String[5]: #trunc>
+           2: 0x09b80101e061 <HeapNumber 1.5>
+           3: 0x09b80101e06d <HeapNumber 0.25>
+           4: 0x09b801002e25 <String[5]: #print>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e275: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 14
+ - shared function info: 0x09b80101dfc9 <SharedFunctionInfo>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1
+ - closure feedback cell array: 0x9b801140939: [ClosureFeedbackCellArray]
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 1
+ - elements:
+           0: 0x09b80101e0bd <FeedbackCell[one closure]>
+
+ - slot #0 BinaryOp BinaryOp:Number {
+     [0]: 15
+  }
+ - slot #1 BinaryOp BinaryOp:AdditiveSafeInteger {
+     [1]: 7
+  }
+ - slot #2 LoadGlobalNotInsideTypeof MONOMORPHIC
+   [weak] 0x09b80101e111 <PropertyCell name=0x09b800002d85 <String[5]: #trunc> value=0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>> {
+     [2]: [weak] 0x09b80101e111 <PropertyCell name=0x09b800002d85 <String[5]: #trunc> value=0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>>
+     [3]: 0x09b800000e95 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #4 BinaryOp BinaryOp:Number {
+     [4]: 15
+  }
+ - slot #5 BinaryOp BinaryOp:Number {
+     [5]: 15
+  }
+ - slot #6 Call MONOMORPHIC {
+     [6]: [weak] 0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>
+     [7]: 202992
+  }
+ - slot #8 BinaryOp BinaryOp:SignedSmall {
+     [8]: 1
+  }
+ - slot #9 JumpLoop JumpLoop {
+     [9]: [cleared]
+  }
+ - slot #10 LoadGlobalNotInsideTypeof UNINITIALIZED {
+     [10]: [cleared]
+     [11]: 0x09b800000e95 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #12 Call UNINITIALIZED {
+     [12]: 0x09b800000e95 <Symbol: (uninitialized_symbol)>
+     [13]: 0
+  }
+
+----- Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode -----
+Parameter count 3
+Register count 3
+Frame size 24
+         0x31a01000144 @    0 : 0b 04             Ldar a1
+         0x31a01000146 @    2 : 44 03 00          Mul a0, FBV[0]
+         0x31a01000149 @    5 : d4                Star0
+         0x31a0100014a @    6 : 0b 03             Ldar a0
+         0x31a0100014c @    8 : 42 f9 01          Add r0, FBV[1]
+         0x31a0100014f @   11 : d3                Star1
+         0x31a01000150 @   12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+         0x31a01000153 @   15 : d2                Star2
+         0x31a01000154 @   16 : 0b f9             Ldar r0
+         0x31a01000156 @   18 : 51 02 05          MulSmi [2], FBV[5]
+         0x31a01000159 @   21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+         0x31a0100015c @   24 : 42 f7 02          Add r2, FBV[2]
+         0x31a0100015f @   27 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e1b9: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 6
+ - shared function info: 0x09b80101e031 <SharedFunctionInfo trunc>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 402
+ - closure feedback cell array: 0x9b8000021d9: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 BinaryOp BinaryOp:Number {
+     [0]: 15
+  }
+ - slot #1 BinaryOp BinaryOp:Number {
+     [1]: 15
+  }
+ - slot #2 BinaryOp BinaryOp:SignedSmall {
+     [2]: 1
+  }
+ - slot #3 BinaryOp BinaryOp:Number {
+     [3]: 15
+  }
+ - slot #4 BinaryOp BinaryOp:Number {
+     [4]: 15
+  }
+ - slot #5 BinaryOp BinaryOp:Number {
+     [5]: 15
+  }
+
+----- Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode -----
+Parameter count 3
+Register count 3
+Frame size 24
+         0x31a01000144 @    0 : 0b 04             Ldar a1
+         0x31a01000146 @    2 : 44 03 00          Mul a0, FBV[0]
+         0x31a01000149 @    5 : d4                Star0
+         0x31a0100014a @    6 : 0b 03             Ldar a0
+         0x31a0100014c @    8 : 42 f9 01          Add r0, FBV[1]
+         0x31a0100014f @   11 : d3                Star1
+         0x31a01000150 @   12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+         0x31a01000153 @   15 : d2                Star2
+         0x31a01000154 @   16 : 0b f9             Ldar r0
+         0x31a01000156 @   18 : 51 02 05          MulSmi [2], FBV[5]
+         0x31a01000159 @   21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+         0x31a0100015c @   24 : 42 f7 02          Add r2, FBV[2]
+         0x31a0100015f @   27 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e1b9: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 6
+ - shared function info: 0x09b80101e031 <SharedFunctionInfo trunc>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 402
+ - closure feedback cell array: 0x9b8000021d9: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 BinaryOp BinaryOp:Number {
+     [0]: 15
+  }
+ - slot #1 BinaryOp BinaryOp:Number {
+     [1]: 15
+  }
+ - slot #2 BinaryOp BinaryOp:SignedSmall {
+     [2]: 1
+  }
+ - slot #3 BinaryOp BinaryOp:Number {
+     [3]: 15
+  }
+ - slot #4 BinaryOp BinaryOp:Number {
+     [4]: 15
+  }
+ - slot #5 BinaryOp BinaryOp:Number {
+     [5]: 15
+  }
+
+----- After graph building -----
+Graph
+
+   [0m  [0m20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 2 uses
+   [0m  [0m29: Constant(0x09b80101e0dd <ScriptContext[3]>), 2 uses
+   [0m  [0m21: Constant(0x09b80101e061 <HeapNumber 1.5>), 0 uses 🪦
+   [0m  [0m25: Constant(0x09b80101e06d <HeapNumber 0.25>), 0 uses 🪦
+   [0m  [0m30: Constant(0x09b801004925 <JSGlobalProxy>), 2 uses
+   [0m  [0m46: Constant(0x09b80101e0cd <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m28: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m18: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m17: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m48: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m12: SmiConstant(100000), 2 uses
+   [0m  [0m14: Int32Constant(100000), 4 uses, cannot truncate to int32
+   [0m  [0m26: Float64Constant(0.25), 2 uses
+   [0m  [0m23: Float64Constant(1.5), 2 uses
+   [0m  [0m35: Float64Constant(2), 2 uses
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 14 uses
+   [0m   [0m2: InitialValue(<context>), 18 uses
+   [0m   [0m3: InitialValue(<closure>), 14 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 7 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: InitialValue(r4), 0 uses 🪦
+   [0m   [0m9: InitialValue(r5), 0 uses 🪦
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @65 (3 live vars)
+   [0m      ↱ eager @65 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m22: ChangeInt32ToFloat64 [n13], 2 uses
+[0;31m│  [0m  [0m24: Float64Multiply [n22, n23], 3 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m27: Float64Multiply [n22, n26], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m31: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m32: Float64Multiply [n24, n27], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m33: Float64Add [n24, n32], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m34: TruncateFloat64ToInt32 [n33], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m36: Float64Multiply [n32, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m37: TruncateFloat64ToInt32 [n36], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m      ↱ eager @47 (4 live vars)
+[0;31m│  [0m      │       @24 (6 live vars)
+[0;31m│  [0m  [0m38: Int32AddWithOverflow [n34, n37], 2 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m      ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m39: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m40: ChangeInt32ToFloat64 [n38], 1 uses
+[0;31m│  [0m  [0m41: Float64Add [n39, n40], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m42: TruncateFloat64ToInt32 [n41], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m43: Int32ToNumber[kCanonicalizeSmi] [n42], 1 uses
+[0;31m│  [0m  [0m44: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n43]
+[0;31m│  [0m      ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m      ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m45: Int32IncrementWithOverflow [n13], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m47: ReduceInterruptBudgetForLoop(39) [n46]
+[0;31m│  [0m      ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [n45], 1 uses
+[0;31m│  [0m  [0m49: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n50 → 51: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m51: φᵀ r1 (n50, n75), 6 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m52: CheckedSmiUntag [n51], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m53: Int32Compare[LessThan] [n52, n14], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m54: BranchIfInt32Compare(LessThan) [n52, n14] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: ChangeInt32ToFloat64 [n52], 2 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m57: Float64Multiply [n56, n23], 3 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m58: Float64Multiply [n56, n26], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60: Float64Multiply [n57, n58], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61: Float64Add [n57, n60], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m62: TruncateFloat64ToInt32 [n61], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m63: Float64Multiply [n60, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m64: TruncateFloat64ToInt32 [n63], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @47 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @24 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: Int32AddWithOverflow [n62, n64], 2 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m66: CheckedNumberToFloat64 [n55], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m67: ChangeInt32ToFloat64 [n65], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m68: Float64Add [n66, n67], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m69: TruncateFloat64ToInt32 [n68], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m70: Int32ToNumber[kCanonicalizeSmi] [n69], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m71: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n70]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m72: Int32IncrementWithOverflow [n52], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m73: ReduceInterruptBudgetForLoop(39) [n46]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m75: Int32ToNumber[kCanonicalizeSmi] [n72], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m74: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n75 → 51: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m76: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m77: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @69 (2 live vars)
+   [0m  [0m78: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After propagating truncation -----
+Graph
+
+   [0m  [0m20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 2 uses
+   [0m  [0m29: Constant(0x09b80101e0dd <ScriptContext[3]>), 2 uses
+   [0m  [0m21: Constant(0x09b80101e061 <HeapNumber 1.5>), 0 uses 🪦
+   [0m  [0m25: Constant(0x09b80101e06d <HeapNumber 0.25>), 0 uses 🪦
+   [0m  [0m30: Constant(0x09b801004925 <JSGlobalProxy>), 2 uses
+   [0m  [0m46: Constant(0x09b80101e0cd <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m28: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m18: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m17: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m48: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m12: SmiConstant(100000), 2 uses
+   [0m  [0m14: Int32Constant(100000), 4 uses, cannot truncate to int32
+   [0m  [0m26: Float64Constant(0.25), 2 uses
+   [0m  [0m23: Float64Constant(1.5), 2 uses
+   [0m  [0m35: Float64Constant(2), 2 uses
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 14 uses
+   [0m   [0m2: InitialValue(<context>), 18 uses
+   [0m   [0m3: InitialValue(<closure>), 14 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 7 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: InitialValue(r4), 0 uses 🪦
+   [0m   [0m9: InitialValue(r5), 0 uses 🪦
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @65 (3 live vars)
+   [0m      ↱ eager @65 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m22: ChangeInt32ToFloat64 [n13], 2 uses
+[0;31m│  [0m  [0m24: Float64Multiply [n22, n23], 3 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m27: Float64Multiply [n22, n26], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m31: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m32: Float64Multiply [n24, n27], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m33: Float64Add [n24, n32], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m34: TruncateFloat64ToInt32 [n33], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m36: Float64Multiply [n32, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m37: TruncateFloat64ToInt32 [n36], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m      ↱ eager @47 (4 live vars)
+[0;31m│  [0m      │       @24 (6 live vars)
+[0;31m│  [0m  [0m38: Int32AddWithOverflow [n34, n37], 2 uses, cannot truncate to int32
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m      ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m39: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m40: ChangeInt32ToFloat64 [n38], 1 uses
+[0;31m│  [0m  [0m41: Float64Add [n39, n40], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m42: TruncateFloat64ToInt32 [n41], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m43: Int32ToNumber[kCanonicalizeSmi] [n42], 1 uses
+[0;31m│  [0m  [0m44: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n43]
+[0;31m│  [0m      ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m      ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m45: Int32IncrementWithOverflow [n13], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m47: ReduceInterruptBudgetForLoop(39) [n46]
+[0;31m│  [0m      ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [n45], 1 uses
+[0;31m│  [0m  [0m49: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n50 → 51: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m51: φᵀ r1 (n50, n75), 6 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m52: CheckedSmiUntag [n51], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m53: Int32Compare[LessThan] [n52, n14], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m54: BranchIfInt32Compare(LessThan) [n52, n14] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: ChangeInt32ToFloat64 [n52], 2 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m57: Float64Multiply [n56, n23], 3 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m58: Float64Multiply [n56, n26], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60: Float64Multiply [n57, n58], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61: Float64Add [n57, n60], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m62: TruncateFloat64ToInt32 [n61], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m63: Float64Multiply [n60, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m64: TruncateFloat64ToInt32 [n63], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @47 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @24 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: Int32AddWithOverflow [n62, n64], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m66: CheckedNumberToFloat64 [n55], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m67: ChangeInt32ToFloat64 [n65], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m68: Float64Add [n66, n67], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m69: TruncateFloat64ToInt32 [n68], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m70: Int32ToNumber[kCanonicalizeSmi] [n69], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m71: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n70]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m72: Int32IncrementWithOverflow [n52], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m73: ReduceInterruptBudgetForLoop(39) [n46]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m75: Int32ToNumber[kCanonicalizeSmi] [n72], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m74: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n75 → 51: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m76: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m77: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @69 (2 live vars)
+   [0m  [0m78: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After truncation -----
+Graph
+
+   [0m  [0m20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 2 uses
+   [0m  [0m29: Constant(0x09b80101e0dd <ScriptContext[3]>), 2 uses
+   [0m  [0m21: Constant(0x09b80101e061 <HeapNumber 1.5>), 0 uses 🪦
+   [0m  [0m25: Constant(0x09b80101e06d <HeapNumber 0.25>), 0 uses 🪦
+   [0m  [0m30: Constant(0x09b801004925 <JSGlobalProxy>), 2 uses
+   [0m  [0m46: Constant(0x09b80101e0cd <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m28: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m18: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m17: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m48: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m12: SmiConstant(100000), 2 uses
+   [0m  [0m14: Int32Constant(100000), 4 uses, cannot truncate to int32
+   [0m  [0m26: Float64Constant(0.25), 2 uses
+   [0m  [0m23: Float64Constant(1.5), 2 uses
+   [0m  [0m35: Float64Constant(2), 2 uses
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 14 uses
+   [0m   [0m2: InitialValue(<context>), 18 uses
+   [0m   [0m3: InitialValue(<closure>), 14 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 7 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: InitialValue(r4), 0 uses 🪦
+   [0m   [0m9: InitialValue(r5), 0 uses 🪦
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @65 (3 live vars)
+   [0m      ↱ eager @65 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m22: ChangeInt32ToFloat64 [n13], 2 uses
+[0;31m│  [0m  [0m24: Float64Multiply [n22, n23], 3 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m27: Float64Multiply [n22, n26], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m31: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m32: Float64Multiply [n24, n27], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m33: Float64Add [n24, n32], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m34: TruncateFloat64ToInt32 [n33], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m36: Float64Multiply [n32, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m37: TruncateFloat64ToInt32 [n36], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m      ↱ eager @47 (4 live vars)
+[0;31m│  [0m      │       @24 (6 live vars)
+[0;31m│  [0m  [0m38: Int32AddWithOverflow [n34, n37], 2 uses, cannot truncate to int32
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m      ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m39: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m40: ChangeInt32ToFloat64 [n38], 1 uses
+[0;31m│  [0m  [0m41: Float64Add [n39, n40], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m42: TruncateFloat64ToInt32 [n41], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m43: Int32ToNumber[kCanonicalizeSmi] [n42], 1 uses
+[0;31m│  [0m  [0m44: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n43]
+[0;31m│  [0m      ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m      ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m45: Int32IncrementWithOverflow [n13], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m47: ReduceInterruptBudgetForLoop(39) [n46]
+[0;31m│  [0m      ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [n45], 1 uses
+[0;31m│  [0m  [0m49: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n50 → 51: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m51: φᵀ r1 (n50, n75), 6 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m52: CheckedSmiUntag [n51], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m53: Int32Compare[LessThan] [n52, n14], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m54: BranchIfInt32Compare(LessThan) [n52, n14] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: ChangeInt32ToFloat64 [n52], 2 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m57: Float64Multiply [n56, n23], 3 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m58: Float64Multiply [n56, n26], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60: Float64Multiply [n57, n58], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61: Float64Add [n57, n60], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m62: TruncateFloat64ToInt32 [n61], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m63: Float64Multiply [n60, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m64: TruncateFloat64ToInt32 [n63], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @47 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @24 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: Int32AddWithOverflow [n62, n64], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m66: CheckedNumberToFloat64 [n55], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m67: ChangeInt32ToFloat64 [n65], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m68: Float64Add [n66, n67], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m69: TruncateFloat64ToInt32 [n68], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m70: Int32ToNumber[kCanonicalizeSmi] [n69], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m71: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n70]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m72: Int32IncrementWithOverflow [n52], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m73: ReduceInterruptBudgetForLoop(39) [n46]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m75: Int32ToNumber[kCanonicalizeSmi] [n72], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m74: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n75 → 51: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m76: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m77: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @69 (2 live vars)
+   [0m  [0m78: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After use marking -----
+Graph
+
+   [0m  [0m20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>) → (x)
+   [0m  [0m29: Constant(0x09b80101e0dd <ScriptContext[3]>) → (x)
+   [0m  [0m30: Constant(0x09b801004925 <JSGlobalProxy>) → (x)
+   [0m  [0m46: Constant(0x09b80101e0cd <FeedbackCell[one closure]>) → (x)
+   [0m  [0m12: SmiConstant(100000) → (x)
+   [0m  [0m14: Int32Constant(100000) → (x)
+   [0m  [0m26: Float64Constant(0.25) → (x)
+   [0m  [0m23: Float64Constant(1.5) → (x)
+   [0m  [0m35: Float64Constant(2) → (x)
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>) → (x)
+   [0m   [0m2: InitialValue(<context>) → (x)
+   [0m   [0m3: InitialValue(<closure>) → (x)
+   [0m   [0m5: InitialValue(r1) → (x)
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @65 (3 live vars)
+   [0m      ↱ eager @65 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [v0/n5:(x)] → (x)
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [v0/n13:(x), v0/n14:(x)] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m22: ChangeInt32ToFloat64 [v0/n13:(x)] → (x)
+[0;31m│  [0m  [0m24: Float64Multiply [v0/n22:(x), v0/n23:(x)] → (x)
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m27: Float64Multiply [v0/n22:(x), v0/n26:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m31: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m32: Float64Multiply [v0/n24:(x), v0/n27:(x)] → (x)
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m33: Float64Add [v0/n24:(x), v0/n32:(x)] → (x)
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m34: TruncateFloat64ToInt32 [v0/n33:(x)] → (x)
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m36: Float64Multiply [v0/n32:(x), v0/n35:(x)] → (x)
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m37: TruncateFloat64ToInt32 [v0/n36:(x)] → (x)
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m      ↱ eager @47 (4 live vars)
+[0;31m│  [0m      │       @24 (6 live vars)
+[0;31m│  [0m  [0m38: Int32AddWithOverflow [v0/n34:(x), v0/n37:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m      ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m39: CheckedNumberToFloat64 [v0/n19:(x)] → (x)
+[0;31m│  [0m  [0m40: ChangeInt32ToFloat64 [v0/n38:(x)] → (x)
+[0;31m│  [0m  [0m41: Float64Add [v0/n39:(x), v0/n40:(x)] → (x)
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m42: TruncateFloat64ToInt32 [v0/n41:(x)] → (x)
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m43: Int32ToNumber[kCanonicalizeSmi] [v0/n42:(x)] → (x)
+[0;31m│  [0m  [0m44: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n43:(x)]
+[0;31m│  [0m      ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m      ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m45: Int32IncrementWithOverflow [v0/n13:(x)] → (x)
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m47: ReduceInterruptBudgetForLoop(39) [v0/n46:(x)]
+[0;31m│  [0m      ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [v0/n45:(x)] → (x)
+[0;31m│  [0m  [0m49: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - v0/n50:(x) → 51: φᵀ r1 (x)
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m51: φᵀ r1 (n50, n75) (compressed) → (x)
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m52: CheckedSmiUntag [v0/n51:(x)] → (x)
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m54: BranchIfInt32Compare(LessThan) [v0/n52:(x), v0/n14:(x)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: ChangeInt32ToFloat64 [v0/n52:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m57: Float64Multiply [v0/n56:(x), v0/n23:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m58: Float64Multiply [v0/n56:(x), v0/n26:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60: Float64Multiply [v0/n57:(x), v0/n58:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61: Float64Add [v0/n57:(x), v0/n60:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m62: TruncateFloat64ToInt32 [v0/n61:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m63: Float64Multiply [v0/n60:(x), v0/n35:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m64: TruncateFloat64ToInt32 [v0/n63:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @47 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @24 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m65: Int32AddWithOverflow [v0/n62:(x), v0/n64:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m66: CheckedNumberToFloat64 [v0/n55:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m67: ChangeInt32ToFloat64 [v0/n65:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m68: Float64Add [v0/n66:(x), v0/n67:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m69: TruncateFloat64ToInt32 [v0/n68:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m70: Int32ToNumber[kCanonicalizeSmi] [v0/n69:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m71: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n70:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m72: Int32IncrementWithOverflow [v0/n52:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m73: ReduceInterruptBudgetForLoop(39) [v0/n46:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m75: Int32ToNumber[kCanonicalizeSmi] [v0/n72:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m74: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - v0/n75:(x) → 51: φᵀ r1 (x)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m76: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m77: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @69 (2 live vars)
+   [0m  [0m78: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After register allocation pre-processing -----
+Graph
+
+   [0m   [0m1/20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>) → v-1, live range: [1-62]
+   [0m   [0m2/29: Constant(0x09b80101e0dd <ScriptContext[3]>) → v-1, live range: [2-62]
+   [0m   [0m3/30: Constant(0x09b801004925 <JSGlobalProxy>) → v-1, live range: [3-62]
+   [0m   [0m4/46: Constant(0x09b80101e0cd <FeedbackCell[one closure]>) → v-1, live range: [4-62]
+   [0m   [0m5/12: SmiConstant(100000) → v-1, live range: [5-62]
+   [0m   [0m6/14: Int32Constant(100000) → v-1, live range: [6-62]
+   [0m   [0m7/26: Float64Constant(0.25) → v-1, live range: [7-62]
+   [0m   [0m8/23: Float64Constant(1.5) → v-1, live range: [8-62]
+   [0m   [0m9/35: Float64Constant(2) → v-1, live range: [9-62]
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m10/1: InitialValue(<this>) → v-1(=-6S), live range: [10-65]
+   [0m   [0m11/2: InitialValue(<context>) → v-1(=-3S), live range: [11-65]
+   [0m   [0m12/3: InitialValue(<closure>) → v-1(=-2S), live range: [12-65]
+   [0m   [0m13/5: InitialValue(r1) → v-1(=4S), live range: [13-35]
+   [0m  [0m14/10: FunctionEntryStackCheck
+   [0m         ↳ lazy @65 (3 live vars)
+   [0m         ↱ eager @65 (3 live vars)
+   [0m  [0m15/11: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m16/13: CheckedSmiUntag [v13/n5:v-1(R)] → v-1(0), live range: [16-35]
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m17/16: BranchIfInt32Compare(LessThan) [v16/n13:v-1(R), v6/n14:v-1(R)] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18/19: LoadContextSlot(0x10, mutable) [v11/n2:v-1(R)] → v-1(R), live range: [18-29]
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m19/22: ChangeInt32ToFloat64 [v16/n13:v-1(R)] → v-1(R), live range: [19-21]
+[0;31m│  [0m  [0m20/24: Float64Multiply [v19/n22:v-1(R), v8/n23:v-1(R)] → v-1(0), live range: [20-28]
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m21/27: Float64Multiply [v19/n22:v-1(R), v7/n26:v-1(R)] → v-1(0), live range: [21-28]
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22/31: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m23/32: Float64Multiply [v20/n24:v-1(R), v21/n27:v-1(R)] → v-1(0), live range: [23-26]
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m24/33: Float64Add [v20/n24:v-1(R), v23/n32:v-1(R)] → v-1(0), live range: [24-25]
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m25/34: TruncateFloat64ToInt32 [v24/n33:v-1(R)] → v-1(R), live range: [25-28]
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m26/36: Float64Multiply [v23/n32:v-1(R), v9/n35:v-1(R)] → v-1(0), live range: [26-27]
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m27/37: TruncateFloat64ToInt32 [v26/n36:v-1(R)] → v-1(R), live range: [27-28]
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m         ↱ eager @47 (4 live vars)
+[0;31m│  [0m         │       @24 (6 live vars)
+[0;31m│  [0m  [0m28/38: Int32AddWithOverflow [v25/n34:v-1(R), v27/n37:v-1(R)] → v-1(0), live range: [28-30]
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m         ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m29/39: CheckedNumberToFloat64 [v18/n19:v-1(R)] → v-1(R), live range: [29-31]
+[0;31m│  [0m  [0m30/40: ChangeInt32ToFloat64 [v28/n38:v-1(R)] → v-1(R), live range: [30-31]
+[0;31m│  [0m  [0m31/41: Float64Add [v29/n39:v-1(R), v30/n40:v-1(R)] → v-1(0), live range: [31-32]
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m32/42: TruncateFloat64ToInt32 [v31/n41:v-1(R)] → v-1(R), live range: [32-33]
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m33/43: Int32ToNumber[kCanonicalizeSmi] [v32/n42:v-1(R)] → v-1(R), live range: [33-34]
+[0;31m│  [0m  [0m34/44: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:v-1(=rdi), v33/n43:v-1(R)]
+[0;31m│  [0m         ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m         ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m35/45: Int32IncrementWithOverflow [v16/n13:v-1(R)] → v-1(0), live range: [35-37]
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m36/47: ReduceInterruptBudgetForLoop(39) [v4/n46:v-1(R)]
+[0;31m│  [0m         ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m37/50: Int32ToNumber[kCanonicalizeSmi] [v35/n45:v-1(R)] → v-1(R), live range: [37-38]
+[0;31m│  [0m  [0m38/49: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v37/n50:v-1(*) → 51: φᵀ r1 v-1(*)
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m39/51: φᵀ r1 (n50, n75) → v-1(*), live range: [39-59]
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m40/52: CheckedSmiUntag [v39/n51:v-1(R)] → v-1(0), live range: [40-59]
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m41/54: BranchIfInt32Compare(LessThan) [v40/n52:v-1(R), v6/n14:v-1(R)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m42/55: LoadContextSlot(0x10, mutable) [v11/n2:v-1(R)] → v-1(R), live range: [42-53]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m43/56: ChangeInt32ToFloat64 [v40/n52:v-1(R)] → v-1(R), live range: [43-45]
+[0;31m│[0;32m│[0;33m│[0m  [0m44/57: Float64Multiply [v43/n56:v-1(R), v8/n23:v-1(R)] → v-1(0), live range: [44-52]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m45/58: Float64Multiply [v43/n56:v-1(R), v7/n26:v-1(R)] → v-1(0), live range: [45-52]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m46/59: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m47/60: Float64Multiply [v44/n57:v-1(R), v45/n58:v-1(R)] → v-1(0), live range: [47-50]
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m48/61: Float64Add [v44/n57:v-1(R), v47/n60:v-1(R)] → v-1(0), live range: [48-49]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m49/62: TruncateFloat64ToInt32 [v48/n61:v-1(R)] → v-1(R), live range: [49-52]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m50/63: Float64Multiply [v47/n60:v-1(R), v9/n35:v-1(R)] → v-1(0), live range: [50-51]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m51/64: TruncateFloat64ToInt32 [v50/n63:v-1(R)] → v-1(R), live range: [51-52]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @47 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @24 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m52/65: Int32AddWithOverflow [v49/n62:v-1(R), v51/n64:v-1(R)] → v-1(0), live range: [52-54]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m53/66: CheckedNumberToFloat64 [v42/n55:v-1(R)] → v-1(R), live range: [53-55]
+[0;31m│[0;32m│[0;33m│[0m  [0m54/67: ChangeInt32ToFloat64 [v52/n65:v-1(R)] → v-1(R), live range: [54-55]
+[0;31m│[0;32m│[0;33m│[0m  [0m55/68: Float64Add [v53/n66:v-1(R), v54/n67:v-1(R)] → v-1(0), live range: [55-56]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56/69: TruncateFloat64ToInt32 [v55/n68:v-1(R)] → v-1(R), live range: [56-57]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57/70: Int32ToNumber[kCanonicalizeSmi] [v56/n69:v-1(R)] → v-1(R), live range: [57-58]
+[0;31m│[0;32m│[0;33m│[0m  [0m58/71: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:v-1(=rdi), v57/n70:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m59/72: Int32IncrementWithOverflow [v40/n52:v-1(R)] → v-1(0), live range: [59-61]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60/73: ReduceInterruptBudgetForLoop(39) [v4/n46:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m61/75: Int32ToNumber[kCanonicalizeSmi] [v59/n72:v-1(R)] → v-1(R), live range: [61-62]
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m62/74: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v61/n75:v-1(*) → 51: φᵀ r1 v-1(*)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m63/76: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m64/77: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @69 (2 live vars)
+   [0m  [0m65/78: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After register allocation -----
+Graph
+
+   [0m   [0m1/20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>) → v-1, live range: [1-62]
+   [0m   [0m2/29: Constant(0x09b80101e0dd <ScriptContext[3]>) → v-1, live range: [2-62]
+   [0m   [0m3/30: Constant(0x09b801004925 <JSGlobalProxy>) → v-1, live range: [3-62]
+   [0m   [0m4/46: Constant(0x09b80101e0cd <FeedbackCell[one closure]>) → v-1, live range: [4-62]
+   [0m   [0m5/12: SmiConstant(100000) → v-1, live range: [5-62]
+   [0m   [0m6/14: Int32Constant(100000) → v-1, live range: [6-62]
+   [0m   [0m7/26: Float64Constant(0.25) → v-1, live range: [7-62]
+   [0m   [0m8/23: Float64Constant(1.5) → v-1, live range: [8-62]
+   [0m   [0m9/35: Float64Constant(2) → v-1, live range: [9-62]
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m10/1: InitialValue(<this>) → [stack:-6|t], live range: [10-65]
+   [0m   [0m11/2: InitialValue(<context>) → [stack:-3|t], live range: [11-65]
+   [0m   [0m12/3: InitialValue(<closure>) → [stack:-2|t], live range: [12-65]
+   [0m   [0m13/5: InitialValue(r1) → [stack:4|t], live range: [13-35]
+   [0m  [0m14/10: FunctionEntryStackCheck
+   [0m         ↳ lazy @65 (3 live vars)
+   [0m         ↱ eager @65 (3 live vars)
+   [0m  [0m15/11: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m     [0m79: GapMove([stack:4|t] → [rax|R|t])
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m16/13: CheckedSmiUntag [v13/n5:[rax|R|t]] → [rax|R|w32], live range: [16-35]
+   [0m     [0m80: ConstantGapMove(n14 → [rcx|R|w32])
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m17/16: BranchIfInt32Compare(LessThan) [v16/n13:[rax|R|w32], v6/n14:[rcx|R|w32]] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m     [0m81: GapMove([stack:-3|t] → [rdi|R|t])
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18/19: LoadContextSlot(0x10, mutable) [v11/n2:[rdi|R|t]] → [rsi|R|t], live range: [18-29]
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m19/22: ChangeInt32ToFloat64 [v16/n13:[rax|R|w32]] → [xmm0|R|f64], live range: [19-21]
+[0;31m│  [0m     [0m82: ConstantGapMove(n23 → [xmm1|R|f64])
+[0;31m│  [0m     [0m83: GapMove([xmm0|R|f64] → [xmm2|R|f64])
+[0;31m│  [0m  [0m20/24: Float64Multiply [v19/n22:[xmm0|R|f64], v8/n23:[xmm1|R|f64]] → [xmm0|R|f64], live range: [20-28]
+[0;31m│  [0m     [0m84: ConstantGapMove(n26 → [xmm3|R|f64])
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m21/27: Float64Multiply [v19/n22:[xmm2|R|f64], v7/n26:[xmm3|R|f64]] → [xmm2|R|f64], live range: [21-28]
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22/31: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m     [0m85: GapMove([xmm0|R|f64] → [xmm4|R|f64])
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m23/32: Float64Multiply [v20/n24:[xmm0|R|f64], v21/n27:[xmm2|R|f64]] → [xmm0|R|f64], live range: [23-26]
+[0;31m│  [0m     [0m86: GapMove([xmm4|R|f64] → [xmm5|R|f64])
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m24/33: Float64Add [v20/n24:[xmm4|R|f64], v23/n32:[xmm0|R|f64]] → [xmm4|R|f64], live range: [24-25]
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m25/34: TruncateFloat64ToInt32 [v24/n33:[xmm4|R|f64]] → [rdx|R|w32] (spilled: [stack:0|w32]), live range: [25-28]
+[0;31m│  [0m     [0m87: ConstantGapMove(n35 → [xmm4|R|f64])
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m26/36: Float64Multiply [v23/n32:[xmm0|R|f64], v9/n35:[xmm4|R|f64]] → [xmm0|R|f64], live range: [26-27]
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m27/37: TruncateFloat64ToInt32 [v26/n36:[xmm0|R|f64]] → [rbx|R|w32], live range: [27-28]
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m         ↱ eager @47 (4 live vars)
+[0;31m│  [0m         │       @24 (6 live vars)
+[0;31m│  [0m  [0m28/38: Int32AddWithOverflow [v25/n34:[rdx|R|w32], v27/n37:[rbx|R|w32]] → [rdx|R|w32], live range: [28-30]
+[0;31m│  [0m     [0m88: GapMove([rsi|R|t] → [rbx|R|t])
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m         ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m29/39: CheckedNumberToFloat64 [v18/n19:[rsi|R|t]] → [xmm0|R|f64], live range: [29-31]
+[0;31m│  [0m  [0m30/40: ChangeInt32ToFloat64 [v28/n38:[rdx|R|w32]] → [xmm2|R|f64], live range: [30-31]
+[0;31m│  [0m  [0m31/41: Float64Add [v29/n39:[xmm0|R|f64], v30/n40:[xmm2|R|f64]] → [xmm0|R|f64], live range: [31-32]
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m32/42: TruncateFloat64ToInt32 [v31/n41:[xmm0|R|f64]] → [rdx|R|w32], live range: [32-33]
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m33/43: Int32ToNumber[kCanonicalizeSmi] [v32/n42:[rdx|R|w32]] → [rbx|R|t], live range: [33-34]
+[0;31m│  [0m  [0m34/44: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:[rdi|R|t], v33/n43:[rbx|R|t]]
+[0;31m│  [0m         ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m         ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m35/45: Int32IncrementWithOverflow [v16/n13:[rax|R|w32]] → [rax|R|w32] (spilled: [stack:1|w32]), live range: [35-37]
+[0;31m│  [0m     [0m89: ConstantGapMove(n46 → [rdx|R|t])
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m36/47: ReduceInterruptBudgetForLoop(39) [v4/n46:[rdx|R|t]]
+[0;31m│  [0m         ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m37/50: Int32ToNumber[kCanonicalizeSmi] [v35/n45:[rax|R|w32]] → [rbx|R|t], live range: [37-38]
+[0;31m│  [0m  [0m38/49: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v37/n50:[rbx|R|t] → 51: φᵀ r1 [rbx|R|t]
+[0;31m│  [0m      │  with register merges:
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m39/51: φᵀ r1 (n50, n75) (compressed) → [rbx|R|t] (spilled: [stack:4|t]), live range: [39-59]
+[0;31m│[0;32m│ [0m     [0m90: GapMove([rbx|R|t] → [rax|R|t])
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m40/52: CheckedSmiUntag [v39/n51:[rbx|R|t]] → [rbx|R|w32], live range: [40-59]
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m41/54: BranchIfInt32Compare(LessThan) [v40/n52:[rbx|R|w32], v6/n14:[rcx|R|w32]] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m42/55: LoadContextSlot(0x10, mutable) [v11/n2:[rdi|R|t]] → [r9|R|t], live range: [42-53]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m43/56: ChangeInt32ToFloat64 [v40/n52:[rbx|R|w32]] → [xmm0|R|f64], live range: [43-45]
+[0;31m│[0;32m│[0;33m│[0m     [0m91: GapMove([xmm0|R|f64] → [xmm2|R|f64])
+[0;31m│[0;32m│[0;33m│[0m  [0m44/57: Float64Multiply [v43/n56:[xmm0|R|f64], v8/n23:[xmm1|R|f64]] → [xmm0|R|f64], live range: [44-52]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m45/58: Float64Multiply [v43/n56:[xmm2|R|f64], v7/n26:[xmm3|R|f64]] → [xmm2|R|f64], live range: [45-52]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m46/59: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m     [0m92: GapMove([xmm0|R|f64] → [xmm5|R|f64])
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m47/60: Float64Multiply [v44/n57:[xmm0|R|f64], v45/n58:[xmm2|R|f64]] → [xmm0|R|f64], live range: [47-50]
+[0;31m│[0;32m│[0;33m│[0m     [0m93: GapMove([xmm5|R|f64] → [xmm6|R|f64])
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m48/61: Float64Add [v44/n57:[xmm5|R|f64], v47/n60:[xmm0|R|f64]] → [xmm5|R|f64], live range: [48-49]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m49/62: TruncateFloat64ToInt32 [v48/n61:[xmm5|R|f64]] → [rsi|R|w32] (spilled: [stack:2|w32]), live range: [49-52]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m50/63: Float64Multiply [v47/n60:[xmm0|R|f64], v9/n35:[xmm4|R|f64]] → [xmm0|R|f64], live range: [50-51]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m51/64: TruncateFloat64ToInt32 [v50/n63:[xmm0|R|f64]] → [r8|R|w32], live range: [51-52]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @47 (4 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @24 (6 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m52/65: Int32AddWithOverflow [v49/n62:[rsi|R|w32], v51/n64:[r8|R|w32]] → [rsi|R|w32], live range: [52-54]
+[0;31m│[0;32m│[0;33m│[0m     [0m94: GapMove([r9|R|t] → [r8|R|t])
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m53/66: CheckedNumberToFloat64 [v42/n55:[r9|R|t]] → [xmm0|R|f64], live range: [53-55]
+[0;31m│[0;32m│[0;33m│[0m  [0m54/67: ChangeInt32ToFloat64 [v52/n65:[rsi|R|w32]] → [xmm2|R|f64], live range: [54-55]
+[0;31m│[0;32m│[0;33m│[0m  [0m55/68: Float64Add [v53/n66:[xmm0|R|f64], v54/n67:[xmm2|R|f64]] → [xmm0|R|f64], live range: [55-56]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56/69: TruncateFloat64ToInt32 [v55/n68:[xmm0|R|f64]] → [rsi|R|w32], live range: [56-57]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57/70: Int32ToNumber[kCanonicalizeSmi] [v56/n69:[rsi|R|w32]] → [r8|R|t], live range: [57-58]
+[0;31m│[0;32m│[0;33m│[0m  [0m58/71: StoreContextSlotWithWriteBarrier(2, mutable) [v11/n2:[rdi|R|t], v57/n70:[r8|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m59/72: Int32IncrementWithOverflow [v40/n52:[rbx|R|w32]] → [rbx|R|w32] (spilled: [stack:2|w32]), live range: [59-61]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60/73: ReduceInterruptBudgetForLoop(39) [v4/n46:[rdx|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m61/75: Int32ToNumber[kCanonicalizeSmi] [v59/n72:[rbx|R|w32]] → [rax|R|t], live range: [61-62]
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m62/74: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v61/n75:[rax|R|t] → 51: φᵀ r1 [rbx|R|t]
+[0;31m│ [0;33m│[0m         with register merges:
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m63/76: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m64/77: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @69 (2 live vars)
+   [0m  [0m65/78: Deopt(Insufficient type feedback for generic global access)
+   [0m
+Compiling 0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)> with Maglev
+----- Bytecode array -----
+Parameter count 3
+Register count 3
+Frame size 24
+         0x31a01000144 @    0 : 0b 04             Ldar a1
+         0x31a01000146 @    2 : 44 03 00          Mul a0, FBV[0]
+         0x31a01000149 @    5 : d4                Star0
+         0x31a0100014a @    6 : 0b 03             Ldar a0
+         0x31a0100014c @    8 : 42 f9 01          Add r0, FBV[1]
+         0x31a0100014f @   11 : d3                Star1
+         0x31a01000150 @   12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+         0x31a01000153 @   15 : d2                Star2
+         0x31a01000154 @   16 : 0b f9             Ldar r0
+         0x31a01000156 @   18 : 51 02 05          MulSmi [2], FBV[5]
+         0x31a01000159 @   21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+         0x31a0100015c @   24 : 42 f7 02          Add r2, FBV[2]
+         0x31a0100015f @   27 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e1b9: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 6
+ - shared function info: 0x09b80101e031 <SharedFunctionInfo trunc>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 803
+ - closure feedback cell array: 0x9b8000021d9: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 BinaryOp BinaryOp:Number {
+     [0]: 15
+  }
+ - slot #1 BinaryOp BinaryOp:Number {
+     [1]: 15
+  }
+ - slot #2 BinaryOp BinaryOp:AdditiveSafeInteger {
+     [2]: 7
+  }
+ - slot #3 BinaryOp BinaryOp:Number {
+     [3]: 15
+  }
+ - slot #4 BinaryOp BinaryOp:Number {
+     [4]: 15
+  }
+ - slot #5 BinaryOp BinaryOp:Number {
+     [5]: 15
+  }
+
+----- After graph building -----
+Graph
+
+[0m  [0m20: Constant(0x09b80101e0bd <FeedbackCell[one closure]>), 1 uses
+[0m   [0m4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0dd <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+[0m  [0m14: Float64Constant(2), 1 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Multiply [n9, n10], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m12: Float64Add [n9, n11], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m13: TruncateFloat64ToInt32 [n12], 1 uses, cannot truncate to int32
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15: Float64Multiply [n11, n14], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16: TruncateFloat64ToInt32 [n15], 1 uses, cannot truncate to int32
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m  [0m17: ChangeInt32ToFloat64 [n13], 1 uses
+[0m  [0m18: ChangeInt32ToFloat64 [n16], 1 uses
+[0m  [0m19: Float64Add [n17, n18], 1 uses, can truncate to int32 [-4294967296, 4294967294]
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m21: ReduceInterruptBudgetForReturn(27) [n20]
+[0m  [0m22: Float64ToTagged[kCanonicalizeSmi] [n19], 1 uses
+[0m  [0m23: Return [n22]
+[0m
+
+----- After propagating truncation -----
+Graph
+
+[0m  [0m20: Constant(0x09b80101e0bd <FeedbackCell[one closure]>), 1 uses
+[0m   [0m4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0dd <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+[0m  [0m14: Float64Constant(2), 1 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Multiply [n9, n10], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m12: Float64Add [n9, n11], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m13: TruncateFloat64ToInt32 [n12], 1 uses, cannot truncate to int32
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15: Float64Multiply [n11, n14], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16: TruncateFloat64ToInt32 [n15], 1 uses, cannot truncate to int32
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m  [0m17: ChangeInt32ToFloat64 [n13], 1 uses
+[0m  [0m18: ChangeInt32ToFloat64 [n16], 1 uses
+[0m  [0m19: Float64Add [n17, n18], 1 uses, cannot truncate to int32 [-4294967296, 4294967294]
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m21: ReduceInterruptBudgetForReturn(27) [n20]
+[0m  [0m22: Float64ToTagged[kCanonicalizeSmi] [n19], 1 uses
+[0m  [0m23: Return [n22]
+[0m
+
+----- After truncation -----
+Graph
+
+[0m  [0m20: Constant(0x09b80101e0bd <FeedbackCell[one closure]>), 1 uses
+[0m   [0m4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 2 uses
+[0m   [0m5: Constant(0x09b80101e0dd <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+[0m  [0m14: Float64Constant(2), 1 uses
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Multiply [n9, n10], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m12: Float64Add [n9, n11], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m13: TruncateFloat64ToInt32 [n12], 1 uses, cannot truncate to int32
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15: Float64Multiply [n11, n14], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16: TruncateFloat64ToInt32 [n15], 1 uses, cannot truncate to int32
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m  [0m17: ChangeInt32ToFloat64 [n13], 1 uses
+[0m  [0m18: ChangeInt32ToFloat64 [n16], 1 uses
+[0m  [0m19: Float64Add [n17, n18], 1 uses, cannot truncate to int32 [-4294967296, 4294967294]
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m21: ReduceInterruptBudgetForReturn(27) [n20]
+[0m  [0m22: Float64ToTagged[kCanonicalizeSmi] [n19], 1 uses
+[0m  [0m23: Return [n22]
+[0m
+
+----- After use marking -----
+Graph
+
+[0m  [0m20: Constant(0x09b80101e0bd <FeedbackCell[one closure]>) → (x)
+[0m   [0m4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>) → (x)
+[0m   [0m5: Constant(0x09b80101e0dd <ScriptContext[3]>) → (x)
+[0m  [0m14: Float64Constant(2) → (x)
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>) → (x)
+[0m   [0m2: InitialValue(a0) → (x)
+[0m   [0m3: InitialValue(a1) → (x)
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [v0/n2:(x)] → (x)
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [v0/n3:(x)] → (x)
+[0m  [0m11: Float64Multiply [v0/n9:(x), v0/n10:(x)] → (x)
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m12: Float64Add [v0/n9:(x), v0/n11:(x)] → (x)
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m13: TruncateFloat64ToInt32 [v0/n12:(x)] → (x)
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15: Float64Multiply [v0/n11:(x), v0/n14:(x)] → (x)
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16: TruncateFloat64ToInt32 [v0/n15:(x)] → (x)
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m  [0m17: ChangeInt32ToFloat64 [v0/n13:(x)] → (x)
+[0m  [0m18: ChangeInt32ToFloat64 [v0/n16:(x)] → (x)
+[0m  [0m19: Float64Add [v0/n17:(x), v0/n18:(x)] → (x)
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m21: ReduceInterruptBudgetForReturn(27) [v0/n20:(x)]
+[0m  [0m22: Float64ToTagged[kCanonicalizeSmi] [v0/n19:(x)] → (x)
+[0m  [0m23: Return [v0/n22:(x)]
+[0m
+
+----- After register allocation pre-processing -----
+Graph
+
+[0m   [0m1/20: Constant(0x09b80101e0bd <FeedbackCell[one closure]>) → v-1, live range: [1-20]
+[0m    [0m2/4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>) → v-1, live range: [2-11]
+[0m    [0m3/5: Constant(0x09b80101e0dd <ScriptContext[3]>) → v-1, live range: [3-11]
+[0m   [0m4/14: Float64Constant(2) → v-1, live range: [4-15]
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m5/1: InitialValue(<this>) → v-1(=-6S), live range: [5-11]
+[0m    [0m6/2: InitialValue(a0) → v-1(=-7S), live range: [6-11]
+[0m    [0m7/3: InitialValue(a1) → v-1(=-8S), live range: [7-11]
+[0m    [0m8/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m    [0m9/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m   [0m10/9: CheckedNumberToFloat64 [v6/n2:v-1(R)] → v-1(R), live range: [10-13]
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m11/10: CheckedNumberToFloat64 [v7/n3:v-1(R)] → v-1(R), live range: [11-12]
+[0m  [0m12/11: Float64Multiply [v10/n9:v-1(R), v11/n10:v-1(R)] → v-1(0), live range: [12-15]
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m13/12: Float64Add [v10/n9:v-1(R), v12/n11:v-1(R)] → v-1(0), live range: [13-14]
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m14/13: TruncateFloat64ToInt32 [v13/n12:v-1(R)] → v-1(R), live range: [14-17]
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15/15: Float64Multiply [v12/n11:v-1(R), v4/n14:v-1(R)] → v-1(0), live range: [15-16]
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16/16: TruncateFloat64ToInt32 [v15/n15:v-1(R)] → v-1(R), live range: [16-18]
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m  [0m17/17: ChangeInt32ToFloat64 [v14/n13:v-1(R)] → v-1(R), live range: [17-19]
+[0m  [0m18/18: ChangeInt32ToFloat64 [v16/n16:v-1(R)] → v-1(R), live range: [18-19]
+[0m  [0m19/19: Float64Add [v17/n17:v-1(R), v18/n18:v-1(R)] → v-1(0), live range: [19-21]
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m20/21: ReduceInterruptBudgetForReturn(27) [v1/n20:v-1(R)]
+[0m  [0m21/22: Float64ToTagged[kCanonicalizeSmi] [v19/n19:v-1(R)] → v-1(R), live range: [21-22]
+[0m  [0m22/23: Return [v21/n22:v-1(=rax)]
+[0m
+
+----- After register allocation -----
+Graph
+
+[0m   [0m1/20: Constant(0x09b80101e0bd <FeedbackCell[one closure]>) → v-1, live range: [1-20]
+[0m    [0m2/4: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>) → v-1, live range: [2-11]
+[0m    [0m3/5: Constant(0x09b80101e0dd <ScriptContext[3]>) → v-1, live range: [3-11]
+[0m   [0m4/14: Float64Constant(2) → v-1, live range: [4-15]
+ [0mBlock b0
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:5:14)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m5/1: InitialValue(<this>) → [stack:-6|t], live range: [5-11]
+[0m    [0m6/2: InitialValue(a0) → [stack:-7|t], live range: [6-11]
+[0m    [0m7/3: InitialValue(a1) → [stack:-8|t], live range: [7-11]
+[0m    [0m8/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m    [0m9/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m     [0m24: GapMove([stack:-7|t] → [rax|R|t])
+[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b8011406bd <String[23]: "workloads/truncation.js">:0:0)
+[m[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m   [0m10/9: CheckedNumberToFloat64 [v6/n2:[rax|R|t]] → [xmm0|R|f64], live range: [10-13]
+[0m     [0m25: GapMove([stack:-8|t] → [rax|R|t])
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m11/10: CheckedNumberToFloat64 [v7/n3:[rax|R|t]] → [xmm1|R|f64], live range: [11-12]
+[0m     [0m26: GapMove([xmm0|R|f64] → [xmm2|R|f64])
+[0m  [0m12/11: Float64Multiply [v10/n9:[xmm0|R|f64], v11/n10:[xmm1|R|f64]] → [xmm0|R|f64], live range: [12-15]
+[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0m  [0m13/12: Float64Add [v10/n9:[xmm2|R|f64], v12/n11:[xmm0|R|f64]] → [xmm2|R|f64], live range: [13-14]
+[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0m  [0m14/13: TruncateFloat64ToInt32 [v13/n12:[xmm2|R|f64]] → [rax|R|w32], live range: [14-17]
+[0m     [0m27: ConstantGapMove(n14 → [xmm1|R|f64])
+[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0m  [0m15/15: Float64Multiply [v12/n11:[xmm0|R|f64], v4/n14:[xmm1|R|f64]] → [xmm0|R|f64], live range: [15-16]
+[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0m  [0m16/16: TruncateFloat64ToInt32 [v15/n15:[xmm0|R|f64]] → [rcx|R|w32], live range: [16-18]
+[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0m  [0m17/17: ChangeInt32ToFloat64 [v14/n13:[rax|R|w32]] → [xmm0|R|f64], live range: [17-19]
+[0m  [0m18/18: ChangeInt32ToFloat64 [v16/n16:[rcx|R|w32]] → [xmm1|R|f64], live range: [18-19]
+[0m  [0m19/19: Float64Add [v17/n17:[xmm0|R|f64], v18/n18:[xmm1|R|f64]] → [xmm0|R|f64], live range: [19-21]
+[0m     [0m28: ConstantGapMove(n20 → [rax|R|t])
+[0m[0;34m  27 : b9                Return
+[m[0m  [0m20/21: ReduceInterruptBudgetForReturn(27) [v1/n20:[rax|R|t]]
+[0m  [0m21/22: Float64ToTagged[kCanonicalizeSmi] [v19/n19:[xmm0|R|f64]] → [rax|R|t], live range: [21-22]
+[0m  [0m22/23: Return [v21/n22:[rax|R|t]]
+[0m
+Compiling 0x09b80101e09d <JSFunction (sfi = 0x9b80101dfc9)> with Maglev
+----- Bytecode array -----
+Parameter count 1
+Register count 6
+Frame size 48
+         0x31a010000c8 @    0 : 13 00             LdaConstant [0:0x09b80101e021 <FixedArray[2]>]
+         0x31a010000ca @    2 : d2                Star2
+         0x31a010000cb @    3 : 1b fe f6          Mov <closure>, r3
+         0x31a010000ce @    6 : 70 75 01 f7 02    CallRuntime [DeclareGlobals], r2-r3
+         0x31a010000d3 @   11 : 0c                LdaZero
+         0x31a010000d4 @   12 : 29 02             StaCurrentContextSlot [2]
+         0x31a010000d6 @   14 : 0c                LdaZero
+         0x31a010000d7 @   15 : d3                Star1
+         0x31a010000d8 @   16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+         0x31a010000de @   22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+         0x31a010000e2 @   26 : a8 2b             JumpIfFalse [43] (0x31a0100010d @ 69)
+         0x31a010000e4 @   28 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000e6 @   30 : d2                Star2
+         0x31a010000e7 @   31 : 23 01 02          LdaGlobal [1:"trunc"], FBV[2]
+         0x31a010000ea @   34 : d1                Star3
+         0x31a010000eb @   35 : 13 02             LdaConstant [2:0x09b80101e061 <HeapNumber 1.5>]
+         0x31a010000ed @   37 : 44 f8 04          Mul r1, FBV[4]
+         0x31a010000f0 @   40 : d0                Star4
+         0x31a010000f1 @   41 : 13 03             LdaConstant [3:0x09b80101e06d <HeapNumber 0.25>]
+         0x31a010000f3 @   43 : 44 f8 05          Mul r1, FBV[5]
+         0x31a010000f6 @   46 : cf                Star5
+         0x31a010000f7 @   47 : 6e f6 f5 f4 06    CallUndefinedReceiver2 r3, r4, r5, FBV[6]
+         0x31a010000fc @   52 : 42 f7 01          Add r2, FBV[1]
+         0x31a010000ff @   55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+         0x31a01000102 @   58 : 29 02             StaCurrentContextSlot [2]
+         0x31a01000104 @   60 : 0b f8             Ldar r1
+         0x31a01000106 @   62 : 5b 08             Inc FBV[8]
+         0x31a01000108 @   64 : d3                Star1
+         0x31a01000109 @   65 : 97 31 00 09       JumpLoop [49], [0], FBV[9] (0x31a010000d8 @ 16)
+         0x31a0100010d @   69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+         0x31a01000110 @   72 : d2                Star2
+         0x31a01000111 @   73 : 18 02             LdaCurrentContextSlot [2]
+         0x31a01000113 @   75 : d1                Star3
+         0x31a01000114 @   76 : 6d f7 f6 0c       CallUndefinedReceiver1 r2, r3, FBV[12]
+         0x31a01000118 @   80 : d4                Star0
+         0x31a01000119 @   81 : b9                Return
+Constant pool (size = 5)
+0x31a01000085: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 5
+           0: 0x09b80101e021 <FixedArray[2]>
+           1: 0x09b800002d85 <String[5]: #trunc>
+           2: 0x09b80101e061 <HeapNumber 1.5>
+           3: 0x09b80101e06d <HeapNumber 0.25>
+           4: 0x09b801002e25 <String[5]: #print>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e275: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 14
+ - shared function info: 0x09b80101dfc9 <SharedFunctionInfo>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1
+ - closure feedback cell array: 0x9b80101ebed: [ClosureFeedbackCellArray] in OldSpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 1
+ - elements:
+           0: 0x09b80101e0bd <FeedbackCell[one closure]>
+
+ - slot #0 BinaryOp BinaryOp:Number {
+     [0]: 15
+  }
+ - slot #1 BinaryOp BinaryOp:AdditiveSafeInteger {
+     [1]: 7
+  }
+ - slot #2 LoadGlobalNotInsideTypeof MONOMORPHIC
+   [weak] 0x09b80101e111 <PropertyCell name=0x09b800002d85 <String[5]: #trunc> value=0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>> {
+     [2]: [weak] 0x09b80101e111 <PropertyCell name=0x09b800002d85 <String[5]: #trunc> value=0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>>
+     [3]: 0x09b800000e95 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #4 BinaryOp BinaryOp:Number {
+     [4]: 15
+  }
+ - slot #5 BinaryOp BinaryOp:Number {
+     [5]: 15
+  }
+ - slot #6 Call MONOMORPHIC {
+     [6]: [weak] 0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>
+     [7]: 405984
+  }
+ - slot #8 BinaryOp BinaryOp:SignedSmall {
+     [8]: 1
+  }
+ - slot #9 JumpLoop JumpLoop {
+     [9]: [cleared]
+  }
+ - slot #10 LoadGlobalNotInsideTypeof UNINITIALIZED {
+     [10]: [cleared]
+     [11]: 0x09b800000e95 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #12 Call UNINITIALIZED {
+     [12]: 0x09b800000e95 <Symbol: (uninitialized_symbol)>
+     [13]: 0
+  }
+
+----- Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode -----
+Parameter count 3
+Register count 3
+Frame size 24
+         0x31a01000144 @    0 : 0b 04             Ldar a1
+         0x31a01000146 @    2 : 44 03 00          Mul a0, FBV[0]
+         0x31a01000149 @    5 : d4                Star0
+         0x31a0100014a @    6 : 0b 03             Ldar a0
+         0x31a0100014c @    8 : 42 f9 01          Add r0, FBV[1]
+         0x31a0100014f @   11 : d3                Star1
+         0x31a01000150 @   12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+         0x31a01000153 @   15 : d2                Star2
+         0x31a01000154 @   16 : 0b f9             Ldar r0
+         0x31a01000156 @   18 : 51 02 05          MulSmi [2], FBV[5]
+         0x31a01000159 @   21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+         0x31a0100015c @   24 : 42 f7 02          Add r2, FBV[2]
+         0x31a0100015f @   27 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e1b9: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 6
+ - shared function info: 0x09b80101e031 <SharedFunctionInfo trunc>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 803
+ - closure feedback cell array: 0x9b8000021d9: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 BinaryOp BinaryOp:Number {
+     [0]: 15
+  }
+ - slot #1 BinaryOp BinaryOp:Number {
+     [1]: 15
+  }
+ - slot #2 BinaryOp BinaryOp:AdditiveSafeInteger {
+     [2]: 7
+  }
+ - slot #3 BinaryOp BinaryOp:Number {
+     [3]: 15
+  }
+ - slot #4 BinaryOp BinaryOp:Number {
+     [4]: 15
+  }
+ - slot #5 BinaryOp BinaryOp:Number {
+     [5]: 15
+  }
+
+----- Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode -----
+Parameter count 3
+Register count 3
+Frame size 24
+         0x31a01000144 @    0 : 0b 04             Ldar a1
+         0x31a01000146 @    2 : 44 03 00          Mul a0, FBV[0]
+         0x31a01000149 @    5 : d4                Star0
+         0x31a0100014a @    6 : 0b 03             Ldar a0
+         0x31a0100014c @    8 : 42 f9 01          Add r0, FBV[1]
+         0x31a0100014f @   11 : d3                Star1
+         0x31a01000150 @   12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+         0x31a01000153 @   15 : d2                Star2
+         0x31a01000154 @   16 : 0b f9             Ldar r0
+         0x31a01000156 @   18 : 51 02 05          MulSmi [2], FBV[5]
+         0x31a01000159 @   21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+         0x31a0100015c @   24 : 42 f7 02          Add r2, FBV[2]
+         0x31a0100015f @   27 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e1b9: [FeedbackVector] in OldSpace
+ - map: 0x09b800000899 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 6
+ - shared function info: 0x09b80101e031 <SharedFunctionInfo trunc>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 803
+ - closure feedback cell array: 0x9b8000021d9: [ClosureFeedbackCellArray] in ReadOnlySpace
+ - map: 0x09b800000871 <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 0
+ - elements:
+
+ - slot #0 BinaryOp BinaryOp:Number {
+     [0]: 15
+  }
+ - slot #1 BinaryOp BinaryOp:Number {
+     [1]: 15
+  }
+ - slot #2 BinaryOp BinaryOp:AdditiveSafeInteger {
+     [2]: 7
+  }
+ - slot #3 BinaryOp BinaryOp:Number {
+     [3]: 15
+  }
+ - slot #4 BinaryOp BinaryOp:Number {
+     [4]: 15
+  }
+ - slot #5 BinaryOp BinaryOp:Number {
+     [5]: 15
+  }
+
+----- After graph building -----
+Graph
+
+   [0m  [0m47: Constant(0x09b80101e0cd <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 0 uses 🪦
+   [0m  [0m29: Constant(0x09b80101e0dd <ScriptContext[3]>), 0 uses 🪦
+   [0m  [0m21: Constant(0x09b80101e061 <HeapNumber 1.5>), 0 uses 🪦
+   [0m  [0m25: Constant(0x09b80101e06d <HeapNumber 0.25>), 0 uses 🪦
+   [0m  [0m30: Constant(0x09b801004925 <JSGlobalProxy>), 0 uses 🪦
+   [0m  [0m28: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m18: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m17: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m49: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m12: SmiConstant(100000), 2 uses
+   [0m  [0m14: Int32Constant(100000), 4 uses, cannot truncate to int32
+   [0m  [0m26: Float64Constant(0.25), 2 uses
+   [0m  [0m23: Float64Constant(1.5), 2 uses
+   [0m  [0m35: Float64Constant(2), 2 uses
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 14 uses
+   [0m   [0m2: InitialValue(<context>), 18 uses
+   [0m   [0m3: InitialValue(<closure>), 14 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 7 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: InitialValue(r4), 0 uses 🪦
+   [0m   [0m9: InitialValue(r5), 0 uses 🪦
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @65 (3 live vars)
+   [0m      ↱ eager @65 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m22: ChangeInt32ToFloat64 [n13], 2 uses
+[0;31m│  [0m  [0m24: Float64Multiply [n22, n23], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m27: Float64Multiply [n22, n26], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m31: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m32: Float64Multiply [n24, n27], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m33: Float64Add [n24, n32], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m34: TruncateFloat64ToInt32 [n33], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m36: Float64Multiply [n32, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m37: TruncateFloat64ToInt32 [n36], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m  [0m38: ChangeInt32ToFloat64 [n34], 1 uses
+[0;31m│  [0m  [0m39: ChangeInt32ToFloat64 [n37], 1 uses
+[0;31m│  [0m  [0m40: Float64Add [n38, n39], 2 uses, can truncate to int32 [-4294967296, 4294967294]
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m      ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m41: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m42: Float64Add [n40, n41], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m43: TruncateFloat64ToInt32 [n42], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m44: Int32ToNumber[kCanonicalizeSmi] [n43], 1 uses
+[0;31m│  [0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44]
+[0;31m│  [0m      ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m      ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m46: Int32IncrementWithOverflow [n13], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m48: ReduceInterruptBudgetForLoop(39) [n47]
+[0;31m│  [0m      ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m51: Int32ToNumber[kCanonicalizeSmi] [n46], 1 uses
+[0;31m│  [0m  [0m50: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n51 → 52: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m52: φᵀ r1 (n51, n77), 6 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m53: CheckedSmiUntag [n52], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m54: Int32Compare[LessThan] [n53, n14], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m55: BranchIfInt32Compare(LessThan) [n53, n14] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57: ChangeInt32ToFloat64 [n53], 2 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m58: Float64Multiply [n57, n23], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59: Float64Multiply [n57, n26], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61: Float64Multiply [n58, n59], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m62: Float64Add [n58, n61], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m63: TruncateFloat64ToInt32 [n62], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m64: Float64Multiply [n61, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m65: TruncateFloat64ToInt32 [n64], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m66: ChangeInt32ToFloat64 [n63], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m67: ChangeInt32ToFloat64 [n65], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m68: Float64Add [n66, n67], 2 uses, can truncate to int32 [-4294967296, 4294967294]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m69: CheckedNumberToFloat64 [n56], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m70: Float64Add [n68, n69], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m71: TruncateFloat64ToInt32 [n70], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m72: Int32ToNumber[kCanonicalizeSmi] [n71], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m73: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n72]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m74: Int32IncrementWithOverflow [n53], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m75: ReduceInterruptBudgetForLoop(39) [n47]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m77: Int32ToNumber[kCanonicalizeSmi] [n74], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m76: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n77 → 52: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m78: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m79: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @69 (2 live vars)
+   [0m  [0m80: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After propagating truncation -----
+Graph
+
+   [0m  [0m47: Constant(0x09b80101e0cd <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 0 uses 🪦
+   [0m  [0m29: Constant(0x09b80101e0dd <ScriptContext[3]>), 0 uses 🪦
+   [0m  [0m21: Constant(0x09b80101e061 <HeapNumber 1.5>), 0 uses 🪦
+   [0m  [0m25: Constant(0x09b80101e06d <HeapNumber 0.25>), 0 uses 🪦
+   [0m  [0m30: Constant(0x09b801004925 <JSGlobalProxy>), 0 uses 🪦
+   [0m  [0m28: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m18: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m17: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m49: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m12: SmiConstant(100000), 2 uses
+   [0m  [0m14: Int32Constant(100000), 4 uses, cannot truncate to int32
+   [0m  [0m26: Float64Constant(0.25), 2 uses
+   [0m  [0m23: Float64Constant(1.5), 2 uses
+   [0m  [0m35: Float64Constant(2), 2 uses
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 14 uses
+   [0m   [0m2: InitialValue(<context>), 18 uses
+   [0m   [0m3: InitialValue(<closure>), 14 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 7 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: InitialValue(r4), 0 uses 🪦
+   [0m   [0m9: InitialValue(r5), 0 uses 🪦
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @65 (3 live vars)
+   [0m      ↱ eager @65 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m22: ChangeInt32ToFloat64 [n13], 2 uses
+[0;31m│  [0m  [0m24: Float64Multiply [n22, n23], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m27: Float64Multiply [n22, n26], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m31: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m32: Float64Multiply [n24, n27], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m33: Float64Add [n24, n32], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m34: TruncateFloat64ToInt32 [n33], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m36: Float64Multiply [n32, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m37: TruncateFloat64ToInt32 [n36], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m  [0m38: ChangeInt32ToFloat64 [n34], 1 uses
+[0;31m│  [0m  [0m39: ChangeInt32ToFloat64 [n37], 1 uses
+[0;31m│  [0m  [0m40: Float64Add [n38, n39], 2 uses, cannot truncate to int32 [-4294967296, 4294967294]
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m      ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m41: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m42: Float64Add [n40, n41], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m43: TruncateFloat64ToInt32 [n42], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m44: Int32ToNumber[kCanonicalizeSmi] [n43], 1 uses
+[0;31m│  [0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44]
+[0;31m│  [0m      ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m      ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m46: Int32IncrementWithOverflow [n13], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m48: ReduceInterruptBudgetForLoop(39) [n47]
+[0;31m│  [0m      ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m51: Int32ToNumber[kCanonicalizeSmi] [n46], 1 uses
+[0;31m│  [0m  [0m50: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n51 → 52: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m52: φᵀ r1 (n51, n77), 6 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m53: CheckedSmiUntag [n52], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m54: Int32Compare[LessThan] [n53, n14], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m55: BranchIfInt32Compare(LessThan) [n53, n14] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57: ChangeInt32ToFloat64 [n53], 2 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m58: Float64Multiply [n57, n23], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59: Float64Multiply [n57, n26], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61: Float64Multiply [n58, n59], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m62: Float64Add [n58, n61], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m63: TruncateFloat64ToInt32 [n62], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m64: Float64Multiply [n61, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m65: TruncateFloat64ToInt32 [n64], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m66: ChangeInt32ToFloat64 [n63], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m67: ChangeInt32ToFloat64 [n65], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m68: Float64Add [n66, n67], 2 uses, cannot truncate to int32 [-4294967296, 4294967294]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m69: CheckedNumberToFloat64 [n56], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m70: Float64Add [n68, n69], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m71: TruncateFloat64ToInt32 [n70], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m72: Int32ToNumber[kCanonicalizeSmi] [n71], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m73: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n72]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m74: Int32IncrementWithOverflow [n53], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m75: ReduceInterruptBudgetForLoop(39) [n47]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m77: Int32ToNumber[kCanonicalizeSmi] [n74], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m76: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n77 → 52: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m78: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m79: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @69 (2 live vars)
+   [0m  [0m80: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After truncation -----
+Graph
+
+   [0m  [0m47: Constant(0x09b80101e0cd <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m20: Constant(0x09b80101e0f1 <JSFunction trunc (sfi = 0x9b80101e031)>), 0 uses 🪦
+   [0m  [0m29: Constant(0x09b80101e0dd <ScriptContext[3]>), 0 uses 🪦
+   [0m  [0m21: Constant(0x09b80101e061 <HeapNumber 1.5>), 0 uses 🪦
+   [0m  [0m25: Constant(0x09b80101e06d <HeapNumber 0.25>), 0 uses 🪦
+   [0m  [0m30: Constant(0x09b801004925 <JSGlobalProxy>), 0 uses 🪦
+   [0m  [0m28: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m18: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m17: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m49: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m12: SmiConstant(100000), 2 uses
+   [0m  [0m14: Int32Constant(100000), 4 uses, cannot truncate to int32
+   [0m  [0m26: Float64Constant(0.25), 2 uses
+   [0m  [0m23: Float64Constant(1.5), 2 uses
+   [0m  [0m35: Float64Constant(2), 2 uses
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 14 uses
+   [0m   [0m2: InitialValue(<context>), 18 uses
+   [0m   [0m3: InitialValue(<closure>), 14 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 7 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: InitialValue(r4), 0 uses 🪦
+   [0m   [0m9: InitialValue(r5), 0 uses 🪦
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @65 (3 live vars)
+   [0m      ↱ eager @65 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m15: Int32Compare[LessThan] [n13, n14], 0 uses 🪦
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m22: ChangeInt32ToFloat64 [n13], 2 uses
+[0;31m│  [0m  [0m24: Float64Multiply [n22, n23], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m27: Float64Multiply [n22, n26], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m31: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m32: Float64Multiply [n24, n27], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m33: Float64Add [n24, n32], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m34: TruncateFloat64ToInt32 [n33], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m36: Float64Multiply [n32, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m37: TruncateFloat64ToInt32 [n36], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m  [0m38: ChangeInt32ToFloat64 [n34], 1 uses
+[0;31m│  [0m  [0m39: ChangeInt32ToFloat64 [n37], 1 uses
+[0;31m│  [0m  [0m40: Float64Add [n38, n39], 2 uses, cannot truncate to int32 [-4294967296, 4294967294]
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m      ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m41: CheckedNumberToFloat64 [n19], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m42: Float64Add [n40, n41], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m43: TruncateFloat64ToInt32 [n42], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m44: Int32ToNumber[kCanonicalizeSmi] [n43], 1 uses
+[0;31m│  [0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44]
+[0;31m│  [0m      ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m      ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m46: Int32IncrementWithOverflow [n13], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m48: ReduceInterruptBudgetForLoop(39) [n47]
+[0;31m│  [0m      ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m51: Int32ToNumber[kCanonicalizeSmi] [n46], 1 uses
+[0;31m│  [0m  [0m50: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n51 → 52: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m52: φᵀ r1 (n51, n77), 6 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m53: CheckedSmiUntag [n52], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m54: Int32Compare[LessThan] [n53, n14], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m55: BranchIfInt32Compare(LessThan) [n53, n14] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: LoadContextSlot(0x10, mutable) [n2], 3 uses
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57: ChangeInt32ToFloat64 [n53], 2 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m58: Float64Multiply [n57, n23], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59: Float64Multiply [n57, n26], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61: Float64Multiply [n58, n59], 2 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m62: Float64Add [n58, n61], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m63: TruncateFloat64ToInt32 [n62], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m64: Float64Multiply [n61, n35], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m65: TruncateFloat64ToInt32 [n64], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m66: ChangeInt32ToFloat64 [n63], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m67: ChangeInt32ToFloat64 [n65], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m68: Float64Add [n66, n67], 2 uses, cannot truncate to int32 [-4294967296, 4294967294]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m69: CheckedNumberToFloat64 [n56], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m70: Float64Add [n68, n69], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m71: TruncateFloat64ToInt32 [n70], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m72: Int32ToNumber[kCanonicalizeSmi] [n71], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m73: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n72]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m74: Int32IncrementWithOverflow [n53], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m75: ReduceInterruptBudgetForLoop(39) [n47]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m77: Int32ToNumber[kCanonicalizeSmi] [n74], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m76: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n77 → 52: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m78: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m79: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @69 (2 live vars)
+   [0m  [0m80: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After use marking -----
+Graph
+
+   [0m  [0m47: Constant(0x09b80101e0cd <FeedbackCell[one closure]>) → (x)
+   [0m  [0m12: SmiConstant(100000) → (x)
+   [0m  [0m14: Int32Constant(100000) → (x)
+   [0m  [0m26: Float64Constant(0.25) → (x)
+   [0m  [0m23: Float64Constant(1.5) → (x)
+   [0m  [0m35: Float64Constant(2) → (x)
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>) → (x)
+   [0m   [0m2: InitialValue(<context>) → (x)
+   [0m   [0m3: InitialValue(<closure>) → (x)
+   [0m   [0m5: InitialValue(r1) → (x)
+   [0m  [0m10: FunctionEntryStackCheck
+   [0m      ↳ lazy @65 (3 live vars)
+   [0m      ↱ eager @65 (3 live vars)
+   [0m  [0m11: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m13: CheckedSmiUntag [v0/n5:(x)] → (x)
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m16: BranchIfInt32Compare(LessThan) [v0/n13:(x), v0/n14:(x)] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m22: ChangeInt32ToFloat64 [v0/n13:(x)] → (x)
+[0;31m│  [0m  [0m24: Float64Multiply [v0/n22:(x), v0/n23:(x)] → (x)
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m27: Float64Multiply [v0/n22:(x), v0/n26:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m31: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m32: Float64Multiply [v0/n24:(x), v0/n27:(x)] → (x)
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m33: Float64Add [v0/n24:(x), v0/n32:(x)] → (x)
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m34: TruncateFloat64ToInt32 [v0/n33:(x)] → (x)
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m36: Float64Multiply [v0/n32:(x), v0/n35:(x)] → (x)
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m37: TruncateFloat64ToInt32 [v0/n36:(x)] → (x)
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m  [0m38: ChangeInt32ToFloat64 [v0/n34:(x)] → (x)
+[0;31m│  [0m  [0m39: ChangeInt32ToFloat64 [v0/n37:(x)] → (x)
+[0;31m│  [0m  [0m40: Float64Add [v0/n38:(x), v0/n39:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m      ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m41: CheckedNumberToFloat64 [v0/n19:(x)] → (x)
+[0;31m│  [0m  [0m42: Float64Add [v0/n40:(x), v0/n41:(x)] → (x)
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m43: TruncateFloat64ToInt32 [v0/n42:(x)] → (x)
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m44: Int32ToNumber[kCanonicalizeSmi] [v0/n43:(x)] → (x)
+[0;31m│  [0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n44:(x)]
+[0;31m│  [0m      ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m      ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m46: Int32IncrementWithOverflow [v0/n13:(x)] → (x)
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m48: ReduceInterruptBudgetForLoop(39) [v0/n47:(x)]
+[0;31m│  [0m      ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m51: Int32ToNumber[kCanonicalizeSmi] [v0/n46:(x)] → (x)
+[0;31m│  [0m  [0m50: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - v0/n51:(x) → 52: φᵀ r1 (x)
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m52: φᵀ r1 (n51, n77) (compressed) → (x)
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m53: CheckedSmiUntag [v0/n52:(x)] → (x)
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m55: BranchIfInt32Compare(LessThan) [v0/n53:(x), v0/n14:(x)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m57: ChangeInt32ToFloat64 [v0/n53:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m58: Float64Multiply [v0/n57:(x), v0/n23:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59: Float64Multiply [v0/n57:(x), v0/n26:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m60: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m61: Float64Multiply [v0/n58:(x), v0/n59:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m62: Float64Add [v0/n58:(x), v0/n61:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m63: TruncateFloat64ToInt32 [v0/n62:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m64: Float64Multiply [v0/n61:(x), v0/n35:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m65: TruncateFloat64ToInt32 [v0/n64:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m66: ChangeInt32ToFloat64 [v0/n63:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m67: ChangeInt32ToFloat64 [v0/n65:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m68: Float64Add [v0/n66:(x), v0/n67:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m69: CheckedNumberToFloat64 [v0/n56:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m70: Float64Add [v0/n68:(x), v0/n69:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m71: TruncateFloat64ToInt32 [v0/n70:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m72: Int32ToNumber[kCanonicalizeSmi] [v0/n71:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m73: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n72:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m74: Int32IncrementWithOverflow [v0/n53:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m75: ReduceInterruptBudgetForLoop(39) [v0/n47:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m77: Int32ToNumber[kCanonicalizeSmi] [v0/n74:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m76: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - v0/n77:(x) → 52: φᵀ r1 (x)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m78: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m79: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @69 (2 live vars)
+   [0m  [0m80: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After register allocation pre-processing -----
+Graph
+
+   [0m   [0m1/47: Constant(0x09b80101e0cd <FeedbackCell[one closure]>) → v-1, live range: [1-61]
+   [0m   [0m2/12: SmiConstant(100000) → v-1, live range: [2-61]
+   [0m   [0m3/14: Int32Constant(100000) → v-1, live range: [3-61]
+   [0m   [0m4/26: Float64Constant(0.25) → v-1, live range: [4-61]
+   [0m   [0m5/23: Float64Constant(1.5) → v-1, live range: [5-61]
+   [0m   [0m6/35: Float64Constant(2) → v-1, live range: [6-61]
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m    [0m7/1: InitialValue(<this>) → v-1(=-6S), live range: [7-64]
+   [0m    [0m8/2: InitialValue(<context>) → v-1(=-3S), live range: [8-64]
+   [0m    [0m9/3: InitialValue(<closure>) → v-1(=-2S), live range: [9-64]
+   [0m   [0m10/5: InitialValue(r1) → v-1(=4S), live range: [10-33]
+   [0m  [0m11/10: FunctionEntryStackCheck
+   [0m         ↳ lazy @65 (3 live vars)
+   [0m         ↱ eager @65 (3 live vars)
+   [0m  [0m12/11: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m13/13: CheckedSmiUntag [v10/n5:v-1(R)] → v-1(0), live range: [13-33]
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m14/16: BranchIfInt32Compare(LessThan) [v13/n13:v-1(R), v3/n14:v-1(R)] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m15/19: LoadContextSlot(0x10, mutable) [v8/n2:v-1(R)] → v-1(R), live range: [15-28]
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m16/22: ChangeInt32ToFloat64 [v13/n13:v-1(R)] → v-1(R), live range: [16-18]
+[0;31m│  [0m  [0m17/24: Float64Multiply [v16/n22:v-1(R), v5/n23:v-1(R)] → v-1(0), live range: [17-21]
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m18/27: Float64Multiply [v16/n22:v-1(R), v4/n26:v-1(R)] → v-1(0), live range: [18-20]
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m19/31: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m20/32: Float64Multiply [v17/n24:v-1(R), v18/n27:v-1(R)] → v-1(0), live range: [20-23]
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m21/33: Float64Add [v17/n24:v-1(R), v20/n32:v-1(R)] → v-1(0), live range: [21-22]
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m22/34: TruncateFloat64ToInt32 [v21/n33:v-1(R)] → v-1(R), live range: [22-25]
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m23/36: Float64Multiply [v20/n32:v-1(R), v6/n35:v-1(R)] → v-1(0), live range: [23-24]
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m24/37: TruncateFloat64ToInt32 [v23/n36:v-1(R)] → v-1(R), live range: [24-26]
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m  [0m25/38: ChangeInt32ToFloat64 [v22/n34:v-1(R)] → v-1(R), live range: [25-27]
+[0;31m│  [0m  [0m26/39: ChangeInt32ToFloat64 [v24/n37:v-1(R)] → v-1(R), live range: [26-27]
+[0;31m│  [0m  [0m27/40: Float64Add [v25/n38:v-1(R), v26/n39:v-1(R)] → v-1(0), live range: [27-29]
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m         ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m28/41: CheckedNumberToFloat64 [v15/n19:v-1(R)] → v-1(R), live range: [28-29]
+[0;31m│  [0m  [0m29/42: Float64Add [v27/n40:v-1(R), v28/n41:v-1(R)] → v-1(0), live range: [29-30]
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m30/43: TruncateFloat64ToInt32 [v29/n42:v-1(R)] → v-1(R), live range: [30-31]
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m31/44: Int32ToNumber[kCanonicalizeSmi] [v30/n43:v-1(R)] → v-1(R), live range: [31-32]
+[0;31m│  [0m  [0m32/45: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:v-1(=rdi), v31/n44:v-1(R)]
+[0;31m│  [0m         ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m         ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m33/46: Int32IncrementWithOverflow [v13/n13:v-1(R)] → v-1(0), live range: [33-35]
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m34/48: ReduceInterruptBudgetForLoop(39) [v1/n47:v-1(R)]
+[0;31m│  [0m         ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m35/51: Int32ToNumber[kCanonicalizeSmi] [v33/n46:v-1(R)] → v-1(R), live range: [35-36]
+[0;31m│  [0m  [0m36/50: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v35/n51:v-1(*) → 52: φᵀ r1 v-1(*)
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m37/52: φᵀ r1 (n51, n77) → v-1(*), live range: [37-58]
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m38/53: CheckedSmiUntag [v37/n52:v-1(R)] → v-1(0), live range: [38-58]
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m39/55: BranchIfInt32Compare(LessThan) [v38/n53:v-1(R), v3/n14:v-1(R)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40/56: LoadContextSlot(0x10, mutable) [v8/n2:v-1(R)] → v-1(R), live range: [40-53]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m41/57: ChangeInt32ToFloat64 [v38/n53:v-1(R)] → v-1(R), live range: [41-43]
+[0;31m│[0;32m│[0;33m│[0m  [0m42/58: Float64Multiply [v41/n57:v-1(R), v5/n23:v-1(R)] → v-1(0), live range: [42-46]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m43/59: Float64Multiply [v41/n57:v-1(R), v4/n26:v-1(R)] → v-1(0), live range: [43-45]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44/60: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m45/61: Float64Multiply [v42/n58:v-1(R), v43/n59:v-1(R)] → v-1(0), live range: [45-48]
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m46/62: Float64Add [v42/n58:v-1(R), v45/n61:v-1(R)] → v-1(0), live range: [46-47]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m47/63: TruncateFloat64ToInt32 [v46/n62:v-1(R)] → v-1(R), live range: [47-50]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m48/64: Float64Multiply [v45/n61:v-1(R), v6/n35:v-1(R)] → v-1(0), live range: [48-49]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m49/65: TruncateFloat64ToInt32 [v48/n64:v-1(R)] → v-1(R), live range: [49-51]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m50/66: ChangeInt32ToFloat64 [v47/n63:v-1(R)] → v-1(R), live range: [50-52]
+[0;31m│[0;32m│[0;33m│[0m  [0m51/67: ChangeInt32ToFloat64 [v49/n65:v-1(R)] → v-1(R), live range: [51-52]
+[0;31m│[0;32m│[0;33m│[0m  [0m52/68: Float64Add [v50/n66:v-1(R), v51/n67:v-1(R)] → v-1(0), live range: [52-54]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m53/69: CheckedNumberToFloat64 [v40/n56:v-1(R)] → v-1(R), live range: [53-54]
+[0;31m│[0;32m│[0;33m│[0m  [0m54/70: Float64Add [v52/n68:v-1(R), v53/n69:v-1(R)] → v-1(0), live range: [54-55]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55/71: TruncateFloat64ToInt32 [v54/n70:v-1(R)] → v-1(R), live range: [55-56]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56/72: Int32ToNumber[kCanonicalizeSmi] [v55/n71:v-1(R)] → v-1(R), live range: [56-57]
+[0;31m│[0;32m│[0;33m│[0m  [0m57/73: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:v-1(=rdi), v56/n72:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m58/74: Int32IncrementWithOverflow [v38/n53:v-1(R)] → v-1(0), live range: [58-60]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59/75: ReduceInterruptBudgetForLoop(39) [v1/n47:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m60/77: Int32ToNumber[kCanonicalizeSmi] [v58/n74:v-1(R)] → v-1(R), live range: [60-61]
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m61/76: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v60/n77:v-1(*) → 52: φᵀ r1 v-1(*)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m62/78: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m63/79: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @69 (2 live vars)
+   [0m  [0m64/80: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- After register allocation -----
+Graph
+
+   [0m   [0m1/47: Constant(0x09b80101e0cd <FeedbackCell[one closure]>) → v-1, live range: [1-61]
+   [0m   [0m2/12: SmiConstant(100000) → v-1, live range: [2-61]
+   [0m   [0m3/14: Int32Constant(100000) → v-1, live range: [3-61]
+   [0m   [0m4/26: Float64Constant(0.25) → v-1, live range: [4-61]
+   [0m   [0m5/23: Float64Constant(1.5) → v-1, live range: [5-61]
+   [0m   [0m6/35: Float64Constant(2) → v-1, live range: [6-61]
+    [0mBlock b0
+   [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m    [0m7/1: InitialValue(<this>) → [stack:-6|t], live range: [7-64]
+   [0m    [0m8/2: InitialValue(<context>) → [stack:-3|t], live range: [8-64]
+   [0m    [0m9/3: InitialValue(<closure>) → [stack:-2|t], live range: [9-64]
+   [0m   [0m10/5: InitialValue(r1) → [stack:4|t], live range: [10-33]
+   [0m  [0m11/10: FunctionEntryStackCheck
+   [0m         ↳ lazy @65 (3 live vars)
+   [0m         ↱ eager @65 (3 live vars)
+   [0m  [0m12/11: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m     [0m81: GapMove([stack:4|t] → [rax|R|t])
+   [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m13/13: CheckedSmiUntag [v10/n5:[rax|R|t]] → [rax|R|w32], live range: [13-33]
+   [0m     [0m82: ConstantGapMove(n14 → [rcx|R|w32])
+   [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m╭────[0m14/16: BranchIfInt32Compare(LessThan) [v13/n13:[rax|R|w32], v3/n14:[rcx|R|w32]] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m     [0m83: GapMove([stack:-3|t] → [rdi|R|t])
+[0;31m│  [0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m15/19: LoadContextSlot(0x10, mutable) [v8/n2:[rdi|R|t]] → [rsi|R|t], live range: [15-28]
+[0;31m│  [0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│  [0m  [0m16/22: ChangeInt32ToFloat64 [v13/n13:[rax|R|w32]] → [xmm0|R|f64], live range: [16-18]
+[0;31m│  [0m     [0m84: ConstantGapMove(n23 → [xmm1|R|f64])
+[0;31m│  [0m     [0m85: GapMove([xmm0|R|f64] → [xmm2|R|f64])
+[0;31m│  [0m  [0m17/24: Float64Multiply [v16/n22:[xmm0|R|f64], v5/n23:[xmm1|R|f64]] → [xmm0|R|f64], live range: [17-21]
+[0;31m│  [0m     [0m86: ConstantGapMove(n26 → [xmm3|R|f64])
+[0;31m│  [0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│  [0m  [0m18/27: Float64Multiply [v16/n22:[xmm2|R|f64], v4/n26:[xmm3|R|f64]] → [xmm2|R|f64], live range: [18-20]
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m19/31: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m     [0m87: GapMove([xmm0|R|f64] → [xmm4|R|f64])
+[0;31m│  [0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│  [0m  [0m20/32: Float64Multiply [v17/n24:[xmm0|R|f64], v18/n27:[xmm2|R|f64]] → [xmm0|R|f64], live range: [20-23]
+[0;31m│  [0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│  [0m  [0m21/33: Float64Add [v17/n24:[xmm4|R|f64], v20/n32:[xmm0|R|f64]] → [xmm4|R|f64], live range: [21-22]
+[0;31m│  [0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│  [0m  [0m22/34: TruncateFloat64ToInt32 [v21/n33:[xmm4|R|f64]] → [rdx|R|w32], live range: [22-25]
+[0;31m│  [0m     [0m88: ConstantGapMove(n35 → [xmm2|R|f64])
+[0;31m│  [0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│  [0m  [0m23/36: Float64Multiply [v20/n32:[xmm0|R|f64], v6/n35:[xmm2|R|f64]] → [xmm0|R|f64], live range: [23-24]
+[0;31m│  [0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│  [0m  [0m24/37: TruncateFloat64ToInt32 [v23/n36:[xmm0|R|f64]] → [rbx|R|w32], live range: [24-26]
+[0;31m│  [0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│  [0m  [0m25/38: ChangeInt32ToFloat64 [v22/n34:[rdx|R|w32]] → [xmm0|R|f64], live range: [25-27]
+[0;31m│  [0m  [0m26/39: ChangeInt32ToFloat64 [v24/n37:[rbx|R|w32]] → [xmm4|R|f64], live range: [26-27]
+[0;31m│  [0m  [0m27/40: Float64Add [v25/n38:[xmm0|R|f64], v26/n39:[xmm4|R|f64]] → [xmm0|R|f64], live range: [27-29]
+[0;31m│  [0m     [0m89: GapMove([rsi|R|t] → [rdx|R|t])
+[0;31m│  [0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│  [0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│  [0m         ↱ eager @52 (5 live vars)
+[0;31m│  [0m  [0m28/41: CheckedNumberToFloat64 [v15/n19:[rsi|R|t]] → [xmm4|R|f64], live range: [28-29]
+[0;31m│  [0m  [0m29/42: Float64Add [v27/n40:[xmm0|R|f64], v28/n41:[xmm4|R|f64]] → [xmm0|R|f64], live range: [29-30]
+[0;31m│  [0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│  [0m  [0m30/43: TruncateFloat64ToInt32 [v29/n42:[xmm0|R|f64]] → [rdx|R|w32], live range: [30-31]
+[0;31m│  [0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m31/44: Int32ToNumber[kCanonicalizeSmi] [v30/n43:[rdx|R|w32]] → [rbx|R|t], live range: [31-32]
+[0;31m│  [0m  [0m32/45: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[rdi|R|t], v31/n44:[rbx|R|t]]
+[0;31m│  [0m         ↳ lazy @58 (3 live vars)
+[0;31m│  [0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│  [0m         ↱ eager @62 (3 live vars)
+[0;31m│  [0m  [0m33/46: Int32IncrementWithOverflow [v13/n13:[rax|R|w32]] → [rax|R|w32] (spilled: [stack:0|w32]), live range: [33-35]
+[0;31m│  [0m     [0m90: ConstantGapMove(n47 → [rdx|R|t])
+[0;31m│  [0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│  [0m  [0m34/48: ReduceInterruptBudgetForLoop(39) [v1/n47:[rdx|R|t]]
+[0;31m│  [0m         ↳ lazy @65 (3 live vars)
+[0;31m│  [0m  [0m35/51: Int32ToNumber[kCanonicalizeSmi] [v33/n46:[rax|R|w32]] → [rbx|R|t], live range: [35-36]
+[0;31m│  [0m  [0m36/50: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v35/n51:[rbx|R|t] → 52: φᵀ r1 [rbx|R|t]
+[0;31m│  [0m      │  with register merges:
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects:)
+[0;31m│[0;32m│ [0m  [0m37/52: φᵀ r1 (n51, n77) (compressed) → [rbx|R|t] (spilled: [stack:4|t]), live range: [37-58]
+[0;31m│[0;32m│ [0m     [0m91: GapMove([rbx|R|t] → [rax|R|t])
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 01 00       TestLessThan r1, EmbeddedFeedback[0x1]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m38/53: CheckedSmiUntag [v37/n52:[rbx|R|t]] → [rbx|R|w32], live range: [38-58]
+[0;31m│[0;32m│ [0m[0;34m  26 : a8 2b             JumpIfFalse [43]
+[m[0;31m│[0;32m│[0;33m╭──[0m39/55: BranchIfInt32Compare(LessThan) [v38/n53:[rbx|R|w32], v3/n14:[rcx|R|w32]] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  28 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40/56: LoadContextSlot(0x10, mutable) [v8/n2:[rdi|R|t]] → [r9|R|t], live range: [40-53]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  37 : 44 f8 04          Mul r1, FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m41/57: ChangeInt32ToFloat64 [v38/n53:[rbx|R|w32]] → [xmm0|R|f64], live range: [41-43]
+[0;31m│[0;32m│[0;33m│[0m     [0m92: GapMove([xmm0|R|f64] → [xmm4|R|f64])
+[0;31m│[0;32m│[0;33m│[0m  [0m42/58: Float64Multiply [v41/n57:[xmm0|R|f64], v5/n23:[xmm1|R|f64]] → [xmm0|R|f64], live range: [42-46]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  43 : 44 f8 05          Mul r1, FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m43/59: Float64Multiply [v41/n57:[xmm4|R|f64], v4/n26:[xmm3|R|f64]] → [xmm4|R|f64], live range: [43-45]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:5:14)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44/60: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m     [0m93: GapMove([xmm0|R|f64] → [xmm5|R|f64])
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e031 <SharedFunctionInfo trunc> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 44 03 00          Mul a0, FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m45/61: Float64Multiply [v42/n58:[xmm0|R|f64], v43/n59:[xmm4|R|f64]] → [xmm0|R|f64], live range: [45-48]
+[0;31m│[0;32m│[0;33m│[0m[0;34m   8 : 42 f9 01          Add r0, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m46/62: Float64Add [v42/n58:[xmm5|R|f64], v45/n61:[xmm0|R|f64]] → [xmm5|R|f64], live range: [46-47]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  12 : 55 00 03          BitwiseOrSmi [0], FBV[3]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m47/63: TruncateFloat64ToInt32 [v46/n62:[xmm5|R|f64]] → [rsi|R|w32], live range: [47-50]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  18 : 51 02 05          MulSmi [2], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m48/64: Float64Multiply [v45/n61:[xmm0|R|f64], v6/n35:[xmm2|R|f64]] → [xmm0|R|f64], live range: [48-49]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  21 : 55 00 04          BitwiseOrSmi [0], FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m49/65: TruncateFloat64ToInt32 [v48/n64:[xmm0|R|f64]] → [r8|R|w32], live range: [49-51]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  24 : 42 f7 02          Add r2, FBV[2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m50/66: ChangeInt32ToFloat64 [v47/n63:[rsi|R|w32]] → [xmm0|R|f64], live range: [50-52]
+[0;31m│[0;32m│[0;33m│[0m  [0m51/67: ChangeInt32ToFloat64 [v49/n65:[r8|R|w32]] → [xmm4|R|f64], live range: [51-52]
+[0;31m│[0;32m│[0;33m│[0m  [0m52/68: Float64Add [v50/n66:[xmm0|R|f64], v51/n67:[xmm4|R|f64]] → [xmm0|R|f64], live range: [52-54]
+[0;31m│[0;32m│[0;33m│[0m     [0m94: GapMove([r9|R|t] → [rsi|R|t])
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101dfc9 <SharedFunctionInfo> (0x09b80101e971 <String[23]: "workloads/truncation.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  52 : 42 f7 01          Add r2, FBV[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @52 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m53/69: CheckedNumberToFloat64 [v40/n56:[r9|R|t]] → [xmm4|R|f64], live range: [53-54]
+[0;31m│[0;32m│[0;33m│[0m  [0m54/70: Float64Add [v52/n68:[xmm0|R|f64], v53/n69:[xmm4|R|f64]] → [xmm0|R|f64], live range: [54-55]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  55 : 55 00 00          BitwiseOrSmi [0], FBV[0]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m55/71: TruncateFloat64ToInt32 [v54/n70:[xmm0|R|f64]] → [rsi|R|w32], live range: [55-56]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  58 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m56/72: Int32ToNumber[kCanonicalizeSmi] [v55/n71:[rsi|R|w32]] → [r8|R|t], live range: [56-57]
+[0;31m│[0;32m│[0;33m│[0m  [0m57/73: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[rdi|R|t], v56/n72:[r8|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @58 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  62 : 5b 08             Inc FBV[8]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @62 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m58/74: Int32IncrementWithOverflow [v38/n53:[rbx|R|w32]] → [rbx|R|w32] (spilled: [stack:1|w32]), live range: [58-60]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  65 : 97 31 00 09       JumpLoop [49], [0], FBV[9]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m59/75: ReduceInterruptBudgetForLoop(39) [v1/n47:[rdx|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @65 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m60/77: Int32ToNumber[kCanonicalizeSmi] [v58/n74:[rbx|R|w32]] → [rax|R|t], live range: [60-61]
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @62 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m61/76: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v60/n77:[rax|R|t] → 52: φᵀ r1 [rbx|R|t]
+[0;31m│ [0;33m│[0m         with register merges:
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  69 : 23 04 0a          LdaGlobal [4:"print"], FBV[10]
+[m[0;31m│[0;32m╭───[0m62/78: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m63/79: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @69 (2 live vars)
+   [0m  [0m64/80: Deopt(Insufficient type feedback for generic global access)
+   [0m
+-309698352

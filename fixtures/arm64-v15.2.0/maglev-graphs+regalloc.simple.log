@@ -1,0 +1,3311 @@
+V8 is running with developer-only features enabled. Stability and security will suffer.
+---------------------------------------------------
+Begin compiling method add using Maglev
+Compiling 0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)> with Maglev
+----- Bytecode array -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Maglev graph building -----
+Graph
+
+[0m  [0m12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>), 1 uses
+[0m   [0m4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m5: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedSmiUntag [n2], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: Int32AddWithOverflow [n9, n10], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: ReduceInterruptBudgetForReturn(5) [n12]
+[0m  [0m14: Int32ToNumber[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m15: Return [n14]
+[0m
+
+----- Phi untagging -----
+Graph
+
+[0m  [0m12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>), 1 uses
+[0m   [0m4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m5: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedSmiUntag [n2], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [n3], 1 uses, cannot truncate to int32
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: Int32AddWithOverflow [n9, n10], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: ReduceInterruptBudgetForReturn(5) [n12]
+[0m  [0m14: Int32ToNumber[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m15: Return [n14]
+[0m
+
+----- AnyUseMarking -----
+Graph
+
+[0m  [0m12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>) → (x)
+[0m   [0m4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → (x)
+[0m   [0m5: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → (x)
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>) → (x)
+[0m   [0m2: InitialValue(a0) → (x)
+[0m   [0m3: InitialValue(a1) → (x)
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedSmiUntag [v0/n2:(x)] → (x)
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedSmiUntag [v0/n3:(x)] → (x)
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m11: Int32AddWithOverflow [v0/n9:(x), v0/n10:(x)] → (x)
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: ReduceInterruptBudgetForReturn(5) [v0/n12:(x)]
+[0m  [0m14: Int32ToNumber[kCanonicalizeSmi] [v0/n11:(x)] → (x)
+[0m  [0m15: Return [v0/n14:(x)]
+[0m
+
+----- Dead nodes sweeping -----
+Graph
+
+[0m   [0m1/12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>) → v-1, live range: [1-12]
+[0m    [0m2/4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [2-11]
+[0m    [0m3/5: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [3-11]
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m4/1: InitialValue(<this>) → v-1(=-6S), live range: [4-11]
+[0m    [0m5/2: InitialValue(a0) → v-1(=-7S), live range: [5-11]
+[0m    [0m6/3: InitialValue(a1) → v-1(=-8S), live range: [6-11]
+[0m    [0m7/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m    [0m8/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m    [0m9/9: CheckedSmiUntag [v5/n2:v-1(R)] → v-1(0), live range: [9-11]
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m10/10: CheckedSmiUntag [v6/n3:v-1(R)] → v-1(0), live range: [10-11]
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m11/11: Int32AddWithOverflow [v9/n9:v-1(R), v10/n10:v-1(R)] → v-1(R), live range: [11-13]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12/13: ReduceInterruptBudgetForReturn(5) [v1/n12:v-1(R)]
+[0m  [0m13/14: Int32ToNumber[kCanonicalizeSmi] [v11/n11:v-1(R)] → v-1(R), live range: [13-14]
+[0m  [0m14/15: Return [v13/n14:v-1(=x0)]
+[0m
+Graph
+
+ [0mBlock b0
+[0m live regs: 
+[0m [holes: 14.]
+[0m Allocating n1 inputs...
+[0m Allocating result...
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m4/1: InitialValue(<this>) → [stack:-6|t], live range: [4-11]
+[0m         live regs: 
+[0m         Allocating n2 inputs...
+[0m         Allocating result...
+[0m    [0m5/2: InitialValue(a0) → [stack:-7|t], live range: [5-11]
+[0m         live regs: 
+[0m         Allocating n3 inputs...
+[0m         Allocating result...
+[0m    [0m6/3: InitialValue(a1) → [stack:-8|t], live range: [6-11]
+[0m         live regs: 
+[0m         Allocating n7 inputs...
+[0m         Fixed Temporaries: {x0}
+[0m         Temporaries: {x1, x2}
+[0m         Allocating lazy deopt inputs...
+[0m         Using n4...
+[0m         Using n1...
+[0m         Using n2...
+[0m         Using n3...
+[0m         Using n5...
+[0m    [0m7/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m         live regs: 
+[0m    [0m8/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m live regs: 
+[0m [holes: 14.]
+[0m Allocating n9 inputs...
+[0m - n2 has arbitrary register
+[0m   gap move: [x0|R|t] ← n2:[stack:-7|t]
+[0m - n2 in [x0|R|t] ← [x0|R|t]
+[0m Using n2...
+[0m Allocating result...
+[0m   dropping x0 value n2
+[0m   forcing x0 to n9...
+[0m Allocating eager deopt inputs...
+[0m Using n4...
+[0m Using n1...
+[0m Using n2...
+[0m Using n3...
+[0m Using n5...
+[0m Using n3...
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m    [0m9/9: CheckedSmiUntag [v5/n2:[x0|R|t]] → [x0|R|w32], live range: [9-11]
+[0m         live regs: x0=v9
+[0m         Allocating n10 inputs...
+[0m         - n3 has arbitrary register
+[0m           gap move: [x1|R|t] ← n3:[stack:-8|t]
+[0m         - n3 in [x1|R|t] ← [x1|R|t]
+[0m         Using n3...
+[0m         Allocating result...
+[0m           dropping x1 value n3
+[0m           forcing x1 to n10...
+[0m         Allocating eager deopt inputs...
+[0m         Using n4...
+[0m         Using n1...
+[0m         Using n2...
+[0m         Using n3...
+[0m         Using n5...
+[0m         Using n3...
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m10/10: CheckedSmiUntag [v6/n3:[x1|R|t]] → [x1|R|w32], live range: [10-11]
+[0m         live regs: x0=v9, x1=v10
+[0m         Allocating n11 inputs...
+[0m         - n9 has arbitrary register
+[0m         - n10 has arbitrary register
+[0m         - n9 in [x0|R|w32]
+[0m         Using n9...
+[0m           freeing n9
+[0m         - n10 in [x1|R|w32]
+[0m         Using n10...
+[0m           freeing n10
+[0m         Allocating result...
+[0m         Allocating eager deopt inputs...
+[0m         Using n4...
+[0m           freeing n4
+[0m         Using n1...
+[0m           freeing n1
+[0m         Using n2...
+[0m           freeing n2
+[0m         Using n3...
+[0m         Using n5...
+[0m           freeing n5
+[0m         Using n3...
+[0m           freeing n3
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m11/11: Int32AddWithOverflow [v9/n9:[x0|R|w32], v10/n10:[x1|R|w32]] → [x2|R|w32], live range: [11-13]
+[0m         live regs: x2=v11
+[0m         Allocating n13 inputs...
+[0m         - n12 has arbitrary register
+[0m           constant gap move: [x0|R|t] ← n12
+[0m         - n12 in [x0|R|t] ← [x0|R|t]
+[0m         Using n12...
+[0m           freeing n12
+[0m         Temporaries: {x1}
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12/13: ReduceInterruptBudgetForReturn(5) [v1/n12:[x0|R|t]]
+[0m         live regs: x2=v11
+[0m         Allocating n14 inputs...
+[0m         - n11 has arbitrary register
+[0m         - n11 in [x2|R|w32]
+[0m         Using n11...
+[0m           freeing n11
+[0m         Allocating result...
+[0m  [0m13/14: Int32ToNumber[kCanonicalizeSmi] [v11/n11:[x2|R|w32]] → [x0|R|t], live range: [13-14]
+[0m         live regs: x0=v13
+[0m           forcing x0 to n14...
+[0m         - n14 in forced [x0|R|t]
+[0m         Using n14...
+[0m           freeing n14
+[0m  [0m14/15: Return [v13/n14:[x0|R|t]]
+[0m
+
+----- Register allocation -----
+Graph
+
+[0m   [0m1/12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>) → v-1, live range: [1-12]
+[0m    [0m2/4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [2-11]
+[0m    [0m3/5: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [3-11]
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m4/1: InitialValue(<this>) → [stack:-6|t], live range: [4-11]
+[0m    [0m5/2: InitialValue(a0) → [stack:-7|t], live range: [5-11]
+[0m    [0m6/3: InitialValue(a1) → [stack:-8|t], live range: [6-11]
+[0m    [0m7/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m    [0m8/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m     [0m16: GapMove([stack:-7|t] → [x0|R|t])
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m    [0m9/9: CheckedSmiUntag [v5/n2:[x0|R|t]] → [x0|R|w32], live range: [9-11]
+[0m     [0m17: GapMove([stack:-8|t] → [x1|R|t])
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m10/10: CheckedSmiUntag [v6/n3:[x1|R|t]] → [x1|R|w32], live range: [10-11]
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m11/11: Int32AddWithOverflow [v9/n9:[x0|R|w32], v10/n10:[x1|R|w32]] → [x2|R|w32], live range: [11-13]
+[0m     [0m18: ConstantGapMove(n12 → [x0|R|t])
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12/13: ReduceInterruptBudgetForReturn(5) [v1/n12:[x0|R|t]]
+[0m  [0m13/14: Int32ToNumber[kCanonicalizeSmi] [v11/n11:[x2|R|w32]] → [x0|R|t], live range: [13-14]
+[0m  [0m14/15: Return [v13/n14:[x0|R|t]]
+[0m
+---------------------------------------------------
+Finished compiling method add using Maglev
+---------------------------------------------------
+Begin compiling method  using Maglev
+Compiling 0x09b80101e31d <JSFunction (sfi = 0x9b80101e265)> with Maglev
+----- Bytecode array -----
+Parameter count 1
+Register count 4
+Frame size 32
+         0x31a010000c0 @    0 : 13 00             LdaConstant [0:0x09b80101e2bd <FixedArray[2]>]
+         0x31a010000c2 @    2 : d3                Star2
+         0x31a010000c3 @    3 : 1b fe f6          Mov <closure>, r3
+         0x31a010000c6 @    6 : 70 77 01 f7 02    CallRuntime [DeclareGlobals], r2-r3
+         0x31a010000cb @   11 : 0c                LdaZero
+         0x31a010000cc @   12 : 29 02             StaCurrentContextSlot [2]
+         0x31a010000ce @   14 : 0c                LdaZero
+         0x31a010000cf @   15 : d4                Star1
+         0x31a010000d0 @   16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+         0x31a010000d6 @   22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+         0x31a010000d9 @   25 : a8 1c             JumpIfFalse [28] (0x31a010000f5 @ 53)
+         0x31a010000db @   27 : 23 01 00          LdaGlobal [1:"add"], FBV[0]
+         0x31a010000de @   30 : d3                Star2
+         0x31a010000df @   31 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000e1 @   33 : d2                Star3
+         0x31a010000e2 @   34 : 6e f7 f6 f8 02    CallUndefinedReceiver2 r2, r3, r1, FBV[2]
+         0x31a010000e7 @   39 : 55 00 01          BitwiseOrSmi [0], EmbeddedFeedback[1]
+         0x31a010000ea @   42 : 29 02             StaCurrentContextSlot [2]
+         0x31a010000ec @   44 : 0b f8             Ldar r1
+         0x31a010000ee @   46 : 5b 04             Inc FBV[4]
+         0x31a010000f0 @   48 : d4                Star1
+         0x31a010000f1 @   49 : 97 21 00 05       JumpLoop [33], [0], FBV[5] (0x31a010000d0 @ 16)
+         0x31a010000f5 @   53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+         0x31a010000f8 @   56 : d3                Star2
+         0x31a010000f9 @   57 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000fb @   59 : d2                Star3
+         0x31a010000fc @   60 : 6d f7 f6 09       CallUndefinedReceiver1 r2, r3, FBV[9]
+         0x31a01000100 @   64 : d5                Star0
+         0x31a01000101 @   65 : b9                Return
+Constant pool (size = 3)
+0x31a01000085: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 3
+           0: 0x09b80101e2bd <FixedArray[2]>
+           1: 0x09b800003d75 <String[3]: #add>
+           2: 0x09b801002e31 <String[5]: #print>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e4cd: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 11
+ - shared function info: 0x09b80101e265 <SharedFunctionInfo>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1
+ - closure feedback cell array: 0x9b80104b16d: [ClosureFeedbackCellArray]
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 1
+ - elements:
+           0: 0x09b80101e33d <FeedbackCell[one closure]>
+
+ - slot #0 LoadGlobalNotInsideTypeof MONOMORPHIC
+   [weak] 0x09b80101e391 <PropertyCell name=0x09b800003d75 <String[3]: #add> value=0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>> {
+     [0]: [weak] 0x09b80101e391 <PropertyCell name=0x09b800003d75 <String[3]: #add> value=0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>>
+     [1]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #2 Call MONOMORPHIC {
+     [2]: [weak] 0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>
+     [3]: 234040
+  }
+ - slot #4 BinaryOp BinaryOp:SignedSmall {
+     [4]: 1
+  }
+ - slot #5 JumpLoop JumpLoop {
+     [5]: [cleared]
+     [6]: 0
+  }
+ - slot #7 LoadGlobalNotInsideTypeof UNINITIALIZED {
+     [7]: [cleared]
+     [8]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #9 Call UNINITIALIZED {
+     [9]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+     [10]: 0
+  }
+
+----- Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Maglev graph building -----
+Graph
+
+   [0m  [0m30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+   [0m  [0m21: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m19: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m16: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m15: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m32: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m10: SmiConstant(100000), 2 uses
+   [0m  [0m25: Int32Constant(0), 2 uses, cannot truncate to int32
+   [0m  [0m12: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 12 uses
+   [0m   [0m2: InitialValue(<context>), 16 uses
+   [0m   [0m3: InitialValue(<closure>), 12 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 8 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: FunctionEntryStackCheck
+   [0m      ↳ lazy @49 (3 live vars)
+   [0m      ↱ eager @49 (3 live vars)
+   [0m   [0m9: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m11: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m13: Int32Compare[LessThan] [n11, n12], 0 uses 🪦
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14: BranchIfInt32Compare(LessThan) [n11, n12] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m23: CheckedSmiUntag [n18], 1 uses, cannot truncate to int32
+[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m24: Int32AddWithOverflow [n23, n11], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  39 : 55 00 01          BitwiseOrSmi [0], EmbeddedFeedback[1]
+[m[0;31m│  [0m  [0m26: Int32BitwiseOr [n24, n25], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m27: Int32ToNumber[kCanonicalizeSmi] [n26], 1 uses
+[0;31m│  [0m  [0m28: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n27]
+[0;31m│  [0m      ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m      ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m29: Int32IncrementWithOverflow [n11], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m31: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│  [0m      ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m34: Int32ToNumber[kCanonicalizeSmi] [n29], 1 uses
+[0;31m│  [0m  [0m33: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n34 → 35: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m35: φᵀ r1 (n34, n49), 7 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m36: CheckedSmiUntag [n35], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m37: Int32Compare[LessThan] [n36, n12], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m38: BranchIfInt32Compare(LessThan) [n36, n12] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m39: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m41: CheckedSmiUntag [n39], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m42: Int32AddWithOverflow [n36, n41], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  39 : 55 00 01          BitwiseOrSmi [0], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m43: Int32BitwiseOr [n42, n25], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44: Int32ToNumber[kCanonicalizeSmi] [n43], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m46: Int32IncrementWithOverflow [n36], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m47: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m49: Int32ToNumber[kCanonicalizeSmi] [n46], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m48: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n49 → 35: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m50: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m51: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @53 (2 live vars)
+   [0m  [0m52: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Truncation propagation -----
+Graph
+
+   [0m  [0m30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+   [0m  [0m21: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m19: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m16: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m15: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m32: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m10: SmiConstant(100000), 2 uses
+   [0m  [0m25: Int32Constant(0), 2 uses, cannot truncate to int32
+   [0m  [0m12: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 12 uses
+   [0m   [0m2: InitialValue(<context>), 16 uses
+   [0m   [0m3: InitialValue(<closure>), 12 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 8 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: FunctionEntryStackCheck
+   [0m      ↳ lazy @49 (3 live vars)
+   [0m      ↱ eager @49 (3 live vars)
+   [0m   [0m9: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m11: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m13: Int32Compare[LessThan] [n11, n12], 0 uses 🪦
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14: BranchIfInt32Compare(LessThan) [n11, n12] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m23: CheckedSmiUntag [n18], 1 uses, cannot truncate to int32
+[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m24: Int32AddWithOverflow [n23, n11], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  39 : 55 00 01          BitwiseOrSmi [0], EmbeddedFeedback[1]
+[m[0;31m│  [0m  [0m26: Int32BitwiseOr [n24, n25], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m27: Int32ToNumber[kCanonicalizeSmi] [n26], 1 uses
+[0;31m│  [0m  [0m28: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n27]
+[0;31m│  [0m      ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m      ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m29: Int32IncrementWithOverflow [n11], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m31: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│  [0m      ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m34: Int32ToNumber[kCanonicalizeSmi] [n29], 1 uses
+[0;31m│  [0m  [0m33: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n34 → 35: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m35: φᵀ r1 (n34, n49), 7 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m36: CheckedSmiUntag [n35], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m37: Int32Compare[LessThan] [n36, n12], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m38: BranchIfInt32Compare(LessThan) [n36, n12] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m39: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m41: CheckedSmiUntag [n39], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m42: Int32AddWithOverflow [n36, n41], 1 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  39 : 55 00 01          BitwiseOrSmi [0], EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m43: Int32BitwiseOr [n42, n25], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44: Int32ToNumber[kCanonicalizeSmi] [n43], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m46: Int32IncrementWithOverflow [n36], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m47: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m49: Int32ToNumber[kCanonicalizeSmi] [n46], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m48: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n49 → 35: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m50: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m51: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @53 (2 live vars)
+   [0m  [0m52: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Truncation -----
+Graph
+
+   [0m  [0m30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+   [0m  [0m21: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m19: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m16: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m15: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m32: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m10: SmiConstant(100000), 2 uses
+   [0m  [0m25: Int32Constant(0), 0 uses 🪦, cannot truncate to int32
+   [0m  [0m12: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 12 uses
+   [0m   [0m2: InitialValue(<context>), 16 uses
+   [0m   [0m3: InitialValue(<closure>), 12 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 8 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: FunctionEntryStackCheck
+   [0m      ↳ lazy @49 (3 live vars)
+   [0m      ↱ eager @49 (3 live vars)
+   [0m   [0m9: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m11: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m13: Int32Compare[LessThan] [n11, n12], 0 uses 🪦
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14: BranchIfInt32Compare(LessThan) [n11, n12] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m23: CheckedSmiUntag [n18], 1 uses, cannot truncate to int32
+[0;31m│  [0m  [0m24: Int32Add [n23, n11], 2 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m27: Int32ToNumber[kCanonicalizeSmi] [n24], 1 uses
+[0;31m│  [0m  [0m28: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n27]
+[0;31m│  [0m      ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m      ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m29: Int32IncrementWithOverflow [n11], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m31: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│  [0m      ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m34: Int32ToNumber[kCanonicalizeSmi] [n29], 1 uses
+[0;31m│  [0m  [0m33: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n34 → 35: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m35: φᵀ r1 (n34, n49), 7 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m36: CheckedSmiUntag [n35], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m37: Int32Compare[LessThan] [n36, n12], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m38: BranchIfInt32Compare(LessThan) [n36, n12] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m39: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m41: CheckedSmiUntag [n39], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m  [0m42: Int32Add [n36, n41], 2 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44: Int32ToNumber[kCanonicalizeSmi] [n42], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m46: Int32IncrementWithOverflow [n36], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m47: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m49: Int32ToNumber[kCanonicalizeSmi] [n46], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m48: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n49 → 35: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m50: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m51: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @53 (2 live vars)
+   [0m  [0m52: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Phi untagging -----
+Graph
+
+   [0m  [0m30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+   [0m  [0m21: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m19: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m16: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m15: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m32: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m10: SmiConstant(100000), 2 uses
+   [0m  [0m25: Int32Constant(0), 0 uses 🪦, cannot truncate to int32
+   [0m  [0m12: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 12 uses
+   [0m   [0m2: InitialValue(<context>), 16 uses
+   [0m   [0m3: InitialValue(<closure>), 12 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 8 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: FunctionEntryStackCheck
+   [0m      ↳ lazy @49 (3 live vars)
+   [0m      ↱ eager @49 (3 live vars)
+   [0m   [0m9: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m11: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m13: Int32Compare[LessThan] [n11, n12], 0 uses 🪦
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14: BranchIfInt32Compare(LessThan) [n11, n12] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m23: CheckedSmiUntag [n18], 1 uses, cannot truncate to int32
+[0;31m│  [0m  [0m24: Int32Add [n23, n11], 2 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m27: Int32ToNumber[kCanonicalizeSmi] [n24], 1 uses
+[0;31m│  [0m  [0m28: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n27]
+[0;31m│  [0m      ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m      ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m29: Int32IncrementWithOverflow [n11], 3 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m31: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│  [0m      ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m34: Int32ToNumber[kCanonicalizeSmi] [n29], 0 uses 🪦
+[0;31m│  [0m  [0m33: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n29 → 35: φᴵ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m35: φᴵ r1 (n29, n46), 7 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m36: CheckedSmiSizedInt32 [n35], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m37: Int32Compare[LessThan] [n36, n12], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m38: BranchIfInt32Compare(LessThan) [n36, n12] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m39: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m41: CheckedSmiUntag [n39], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m  [0m42: Int32Add [n36, n41], 2 uses, can truncate to int32 [-2147483648, 2147483647]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44: Int32ToNumber[kCanonicalizeSmi] [n42], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n44]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m46: Int32IncrementWithOverflow [n36], 3 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m47: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m49: Int32ToNumber[kCanonicalizeSmi] [n46], 0 uses 🪦
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m48: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n46 → 35: φᴵ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m50: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m51: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @53 (2 live vars)
+   [0m  [0m52: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- AnyUseMarking -----
+Graph
+
+   [0m  [0m30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>) → (x)
+   [0m  [0m17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → (x)
+   [0m  [0m20: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → (x)
+   [0m  [0m21: HeapConstant(0x09b801004999 <JSGlobalProxy>) → (x)
+   [0m  [0m10: SmiConstant(100000) → (x)
+   [0m  [0m12: Int32Constant(100000) → (x)
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>) → (x)
+   [0m   [0m2: InitialValue(<context>) → (x)
+   [0m   [0m3: InitialValue(<closure>) → (x)
+   [0m   [0m5: InitialValue(r1) → (x)
+   [0m   [0m8: FunctionEntryStackCheck
+   [0m      ↳ lazy @49 (3 live vars)
+   [0m      ↱ eager @49 (3 live vars)
+   [0m   [0m9: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m11: CheckedSmiUntag [v0/n5:(x)] → (x)
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14: BranchIfInt32Compare(LessThan) [v0/n11:(x), v0/n12:(x)] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m23: CheckedSmiUntag [v0/n18:(x)] → (x)
+[0;31m│  [0m  [0m24: Int32Add [v0/n23:(x), v0/n11:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m27: Int32ToNumber[kCanonicalizeSmi] [v0/n24:(x)] → (x)
+[0;31m│  [0m  [0m28: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n27:(x)]
+[0;31m│  [0m      ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m      ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m29: Int32IncrementWithOverflow [v0/n11:(x)] → (x)
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m31: ReduceInterruptBudgetForLoop(26) [v0/n30:(x)]
+[0;31m│  [0m      ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m33: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - v0/n29:(x) → 35: φᴵ r1 (x)
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m35: φᴵ r1 (n29, n46) → (x)
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m36: CheckedSmiSizedInt32 [v0/n35:(x)] → (x)
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m38: BranchIfInt32Compare(LessThan) [v0/n36:(x), v0/n12:(x)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m39: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m41: CheckedSmiUntag [v0/n39:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m42: Int32Add [v0/n36:(x), v0/n41:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44: Int32ToNumber[kCanonicalizeSmi] [v0/n42:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m45: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n44:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m46: Int32IncrementWithOverflow [v0/n36:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m47: ReduceInterruptBudgetForLoop(26) [v0/n30:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m48: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - v0/n46:(x) → 35: φᴵ r1 (x)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m50: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m51: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @53 (2 live vars)
+   [0m  [0m52: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Dead nodes sweeping -----
+Graph
+
+   [0m   [0m1/30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>) → v-1, live range: [1-35]
+   [0m   [0m2/17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [2-35]
+   [0m   [0m3/20: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [3-35]
+   [0m   [0m4/21: HeapConstant(0x09b801004999 <JSGlobalProxy>) → v-1, live range: [4-35]
+   [0m   [0m5/10: SmiConstant(100000) → v-1, live range: [5-35]
+   [0m   [0m6/12: Int32Constant(100000) → v-1, live range: [6-35]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m    [0m7/1: InitialValue(<this>) → v-1(=-6S), live range: [7-38]
+   [0m    [0m8/2: InitialValue(<context>) → v-1(=-3S), live range: [8-38]
+   [0m    [0m9/3: InitialValue(<closure>) → v-1(=-2S), live range: [9-38]
+   [0m   [0m10/5: InitialValue(r1) → v-1(=4S), live range: [10-21]
+   [0m   [0m11/8: FunctionEntryStackCheck
+   [0m         ↳ lazy @49 (3 live vars)
+   [0m         ↱ eager @49 (3 live vars)
+   [0m   [0m12/9: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m13/11: CheckedSmiUntag [v10/n5:v-1(R)] → v-1(0), live range: [13-21]
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14/14: BranchIfInt32Compare(LessThan) [v13/n11:v-1(R), v6/n12:v-1(R)] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m15/18: LoadContextSlot(0x10, mutable) [v8/n2:v-1(R)] → v-1(R), live range: [15-17]
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m16/22: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│  [0m         ↱ eager @34 (3 live vars)
+[0;31m│  [0m         │       @2 (5 live vars)
+[0;31m│  [0m  [0m17/23: CheckedSmiUntag [v15/n18:v-1(R)] → v-1(0), live range: [17-18]
+[0;31m│  [0m  [0m18/24: Int32Add [v17/n23:v-1(R), v13/n11:v-1(R)] → v-1(R), live range: [18-19]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19/27: Int32ToNumber[kCanonicalizeSmi] [v18/n24:v-1(R)] → v-1(R), live range: [19-20]
+[0;31m│  [0m  [0m20/28: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:v-1(=x1), v19/n27:v-1(R)]
+[0;31m│  [0m         ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m         ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m21/29: Int32IncrementWithOverflow [v13/n11:v-1(R)] → v-1(R), live range: [21-23]
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m22/31: ReduceInterruptBudgetForLoop(26) [v1/n30:v-1(R)]
+[0;31m│  [0m         ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m23/33: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v21/n29:v-1(*) → 35: φᴵ r1 v-1(*)
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m24/35: φᴵ r1 (n29, n46) → v-1(*), live range: [24-33]
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m25/36: CheckedSmiSizedInt32 [v24/n35:v-1(R)] → v-1(0), live range: [25-33]
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m26/38: BranchIfInt32Compare(LessThan) [v25/n36:v-1(R), v6/n12:v-1(R)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m27/39: LoadContextSlot(0x10, mutable) [v8/n2:v-1(R)] → v-1(R), live range: [27-29]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m28/40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m29/41: CheckedSmiUntag [v27/n39:v-1(R)] → v-1(0), live range: [29-30]
+[0;31m│[0;32m│[0;33m│[0m  [0m30/42: Int32Add [v25/n36:v-1(R), v29/n41:v-1(R)] → v-1(R), live range: [30-31]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m31/44: Int32ToNumber[kCanonicalizeSmi] [v30/n42:v-1(R)] → v-1(R), live range: [31-32]
+[0;31m│[0;32m│[0;33m│[0m  [0m32/45: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:v-1(=x1), v31/n44:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m33/46: Int32IncrementWithOverflow [v25/n36:v-1(R)] → v-1(R), live range: [33-35]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m34/47: ReduceInterruptBudgetForLoop(26) [v1/n30:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m35/48: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v33/n46:v-1(*) → 35: φᴵ r1 v-1(*)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m36/50: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m37/51: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @53 (2 live vars)
+   [0m  [0m38/52: Deopt(Insufficient type feedback for generic global access)
+   [0m
+Graph
+
+    [0mBlock b0
+   [0m live regs: 
+   [0m [holes: 38✖️]
+   [0m Allocating n1 inputs...
+   [0m Allocating result...
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m    [0m7/1: InitialValue(<this>) → [stack:-6|t], live range: [7-38]
+   [0m         live regs: 
+   [0m         Allocating n2 inputs...
+   [0m         Allocating result...
+   [0m    [0m8/2: InitialValue(<context>) → [stack:-3|t], live range: [8-38]
+   [0m         live regs: 
+   [0m         Allocating n3 inputs...
+   [0m         Allocating result...
+   [0m    [0m9/3: InitialValue(<closure>) → [stack:-2|t], live range: [9-38]
+   [0m         live regs: 
+   [0m         Allocating n5 inputs...
+   [0m         Allocating result...
+   [0m   [0m10/5: InitialValue(r1) → [stack:4|t], live range: [10-21]
+   [0m         live regs: 
+   [0m         Allocating n8 inputs...
+   [0m         Fixed Temporaries: {x0}
+   [0m         Temporaries: {x1, x2}
+   [0m         Allocating lazy deopt inputs...
+   [0m         Using n3...
+   [0m         Using n1...
+   [0m         Using n2...
+   [0m         Using n5...
+   [0m   [0m11/8: FunctionEntryStackCheck
+   [0m         ↳ lazy @49 (3 live vars)
+   [0m         live regs: 
+   [0m         ↱ eager @49 (3 live vars)
+   [0m   [0m12/9: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m live regs: 
+   [0m [holes: 38✖️]
+   [0m Allocating n11 inputs...
+   [0m - n5 has arbitrary register
+   [0m   gap move: [x0|R|t] ← n5:[stack:4|t]
+   [0m - n5 in [x0|R|t] ← [x0|R|t]
+   [0m Using n5...
+   [0m Allocating result...
+   [0m   dropping x0 value n5
+   [0m   forcing x0 to n11...
+   [0m Allocating eager deopt inputs...
+   [0m Using n3...
+   [0m Using n1...
+   [0m Using n2...
+   [0m Using n5...
+   [0m Using n10...
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m13/11: CheckedSmiUntag [v10/n5:[x0|R|t]] → [x0|R|w32], live range: [13-21]
+   [0m         live regs: x0=v13
+   [0m         - n11 has arbitrary register
+   [0m         - n12 has arbitrary register
+   [0m         - n11 in [x0|R|w32]
+   [0m         Using n11...
+   [0m           constant gap move: [x1|R|w32] ← n12
+   [0m         - n12 in [x1|R|w32] ← [x1|R|w32]
+   [0m         Using n12...
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14/14: BranchIfInt32Compare(LessThan) [v13/n11:[x0|R|w32], v6/n12:[x1|R|w32]] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m live regs: x0=v13, x1=v6
+[0;31m│  [0m [holes: 36-38 38✖️]
+[0;31m│  [0m Allocating n18 inputs...
+[0;31m│  [0m - n2 has arbitrary register
+[0;31m│  [0m   gap move: [x2|R|t] ← n2:[stack:-3|t]
+[0;31m│  [0m - n2 in [x2|R|t] ← [x2|R|t]
+[0;31m│  [0m Using n2...
+[0;31m│  [0m Temporaries: {x3, x4}
+[0;31m│  [0m Double Temporaries: {v0}
+[0;31m│  [0m Allocating result...
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m15/18: LoadContextSlot(0x10, mutable) [v8/n2:[x2|R|t]] → [x5|R|t], live range: [15-17]
+[0;31m│  [0m         live regs: x0=v13, x1=v6, x2=v8, x5=v15
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m16/22: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m live regs: x0=v13, x1=v6, x2=v8, x5=v15
+[0;31m│  [0m [holes: 36-38 38✖️]
+[0;31m│  [0m Allocating n23 inputs...
+[0;31m│  [0m - n18 has arbitrary register
+[0;31m│  [0m - n18 in [x5|R|t]
+[0;31m│  [0m Using n18...
+[0;31m│  [0m Allocating result...
+[0;31m│  [0m   forcing x5 to n23...
+[0;31m│  [0m Allocating eager deopt inputs...
+[0;31m│  [0m Using n3...
+[0;31m│  [0m Using n1...
+[0;31m│  [0m Using n2...
+[0;31m│  [0m Using n5...
+[0;31m│  [0m Using n17...
+[0;31m│  [0m Using n21...
+[0;31m│  [0m   spill: [stack:3|t] ← n18
+[0;31m│  [0m Using n18...
+[0;31m│  [0m   freeing n18
+[0;31m│  [0m Using n5...
+[0;31m│  [0m Using n20...
+[0;31m│  [0m Using n5...
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│  [0m         ↱ eager @34 (3 live vars)
+[0;31m│  [0m         │       @2 (5 live vars)
+[0;31m│  [0m  [0m17/23: CheckedSmiUntag [v15/n18:[x5|R|t]] → [x5|R|w32], live range: [17-18]
+[0;31m│  [0m         live regs: x0=v13, x1=v6, x2=v8, x5=v17
+[0;31m│  [0m         Allocating n24 inputs...
+[0;31m│  [0m         - n23 has arbitrary register
+[0;31m│  [0m         - n11 has arbitrary register
+[0;31m│  [0m         - n23 in [x5|R|w32]
+[0;31m│  [0m         Using n23...
+[0;31m│  [0m           freeing n23
+[0;31m│  [0m         - n11 in [x0|R|w32]
+[0;31m│  [0m         Using n11...
+[0;31m│  [0m         Allocating result...
+[0;31m│  [0m  [0m18/24: Int32Add [v17/n23:[x5|R|w32], v13/n11:[x0|R|w32]] → [x3|R|w32], live range: [18-19]
+[0;31m│  [0m         live regs: x0=v13, x1=v6, x2=v8, x3=v18
+[0;31m│  [0m         Allocating n27 inputs...
+[0;31m│  [0m         - n24 has arbitrary register
+[0;31m│  [0m         - n24 in [x3|R|w32]
+[0;31m│  [0m         Using n24...
+[0;31m│  [0m           freeing n24
+[0;31m│  [0m         Allocating result...
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19/27: Int32ToNumber[kCanonicalizeSmi] [v18/n24:[x3|R|w32]] → [x4|R|t], live range: [19-20]
+[0;31m│  [0m         live regs: x0=v13, x1=v6, x2=v8, x4=v19
+[0;31m│  [0m         Allocating n28 inputs...
+[0;31m│  [0m           forcing x1 to n2...
+[0;31m│  [0m           dropping x1 value n12
+[0;31m│  [0m         - n2 in forced [x1|R|t]
+[0;31m│  [0m           gap move: [x1|R|t] ← n2:[x2|R|t]
+[0;31m│  [0m         Using n2...
+[0;31m│  [0m         - n27 has arbitrary register
+[0;31m│  [0m         - n27 in [x4|R|t]
+[0;31m│  [0m         Using n27...
+[0;31m│  [0m           freeing n27
+[0;31m│  [0m         Temporaries: {x3, x5}
+[0;31m│  [0m         Double Temporaries: {v0}
+[0;31m│  [0m         Allocating lazy deopt inputs...
+[0;31m│  [0m         Using n3...
+[0;31m│  [0m         Using n1...
+[0;31m│  [0m         Using n2...
+[0;31m│  [0m         Using n5...
+[0;31m│  [0m  [0m20/28: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v19/n27:[x4|R|t]]
+[0;31m│  [0m         ↳ lazy @42 (3 live vars)
+[0;31m│  [0m         live regs: x0=v13, x1=v8, x2=v8
+[0;31m│  [0m         Allocating n29 inputs...
+[0;31m│  [0m         - n11 has arbitrary register
+[0;31m│  [0m         - n11 in [x0|R|w32]
+[0;31m│  [0m         Using n11...
+[0;31m│  [0m           freeing n11
+[0;31m│  [0m         Allocating result...
+[0;31m│  [0m         Allocating eager deopt inputs...
+[0;31m│  [0m         Using n3...
+[0;31m│  [0m         Using n1...
+[0;31m│  [0m         Using n2...
+[0;31m│  [0m         Using n5...
+[0;31m│  [0m           freeing n5
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m         ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m21/29: Int32IncrementWithOverflow [v13/n11:[x0|R|w32]] → [x3|R|w32], live range: [21-23]
+[0;31m│  [0m         live regs: x1=v8, x2=v8, x3=v21
+[0;31m│  [0m         Allocating n31 inputs...
+[0;31m│  [0m         - n30 has arbitrary register
+[0;31m│  [0m           constant gap move: [x0|R|t] ← n30
+[0;31m│  [0m         - n30 in [x0|R|t] ← [x0|R|t]
+[0;31m│  [0m         Using n30...
+[0;31m│  [0m         Temporaries: {x4}
+[0;31m│  [0m         Allocating lazy deopt inputs...
+[0;31m│  [0m         Using n3...
+[0;31m│  [0m         Using n1...
+[0;31m│  [0m         Using n2...
+[0;31m│  [0m           spill: [stack:0|w32] ← n29
+[0;31m│  [0m         Using n29...
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m22/31: ReduceInterruptBudgetForLoop(26) [v1/n30:[x0|R|t]]
+[0;31m│  [0m         ↳ lazy @49 (3 live vars)
+[0;31m│  [0m         live regs: x0=v1, x1=v8, x2=v8, x3=v21
+[0;31m│  [0m           constant gap move: [x4|R|w32] ← n12
+[0;31m│  [0m         Using n29...
+[0;31m│  [0m           freeing n29
+[0;31m│  [0m  [0m23/33: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v21/n29:[x3|R|w32] → 35: φᴵ r1 v-1(*)
+[0;31m│  [0m      │  with register merges:
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m live regs: x0=v1, x1=v8, x2=v8, x4=v6
+[0;31m│[0;32m│ [0m [holes: 36-38 38✖️]
+[0;31m│[0;32m│ [0m   forcing x3 to n35...
+[0;31m│[0;32m│ [0m  [0m24/35: φᴵ r1 (n29, n46) → [x3|R|w32], live range: [24-33]
+[0;31m│[0;32m│ [0m         phi (reuse) [x3|R|w32]
+[0;31m│[0;32m│ [0m         live regs: x0=v1, x1=v8, x2=v8, x3=v24, x4=v6
+[0;31m│[0;32m│ [0m         Allocating n36 inputs...
+[0;31m│[0;32m│ [0m         - n35 has arbitrary register
+[0;31m│[0;32m│ [0m         - n35 in clobbered [x3|R|w32]
+[0;31m│[0;32m│ [0m         Using n35...
+[0;31m│[0;32m│ [0m           dropping x3 value n35
+[0;31m│[0;32m│ [0m           gap move: [x5|R|w32] ← n35:[x3|R|w32]
+[0;31m│[0;32m│ [0m         Allocating result...
+[0;31m│[0;32m│ [0m           forcing x3 to n36...
+[0;31m│[0;32m│ [0m         Allocating eager deopt inputs...
+[0;31m│[0;32m│ [0m         Using n3...
+[0;31m│[0;32m│ [0m         Using n1...
+[0;31m│[0;32m│ [0m         Using n2...
+[0;31m│[0;32m│ [0m         Using n35...
+[0;31m│[0;32m│ [0m         Using n10...
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m25/36: CheckedSmiSizedInt32 [v24/n35:[x3|R|w32]] → [x3|R|w32], live range: [25-33]
+[0;31m│[0;32m│ [0m         live regs: x0=v1, x1=v8, x2=v8, x3=v25, x4=v6, x5=v24
+[0;31m│[0;32m│ [0m         - n36 has arbitrary register
+[0;31m│[0;32m│ [0m         - n12 has arbitrary register
+[0;31m│[0;32m│ [0m         - n36 in [x3|R|w32]
+[0;31m│[0;32m│ [0m         Using n36...
+[0;31m│[0;32m│ [0m         - n12 in [x4|R|w32]
+[0;31m│[0;32m│ [0m         Using n12...
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m26/38: BranchIfInt32Compare(LessThan) [v25/n36:[x3|R|w32], v6/n12:[x4|R|w32]] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m live regs: x0=v1, x1=v8, x2=v8, x3=v25, x4=v6, x5=v24
+[0;31m│[0;32m│[0;33m│[0m Allocating n39 inputs...
+[0;31m│[0;32m│[0;33m│[0m - n2 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m - n2 in [x1|R|t]
+[0;31m│[0;32m│[0;33m│[0m Using n2...
+[0;31m│[0;32m│[0;33m│[0m Temporaries: {x6, x7}
+[0;31m│[0;32m│[0;33m│[0m Double Temporaries: {v0}
+[0;31m│[0;32m│[0;33m│[0m Allocating result...
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m27/39: LoadContextSlot(0x10, mutable) [v8/n2:[x1|R|t]] → [x8|R|t], live range: [27-29]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v1, x1=v8, x2=v8, x3=v25, x4=v6, x5=v24, x8=v27
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m28/40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m live regs: x0=v1, x1=v8, x2=v8, x3=v25, x4=v6, x5=v24, x8=v27
+[0;31m│[0;32m│[0;33m│[0m Allocating n41 inputs...
+[0;31m│[0;32m│[0;33m│[0m - n39 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m - n39 in [x8|R|t]
+[0;31m│[0;32m│[0;33m│[0m Using n39...
+[0;31m│[0;32m│[0;33m│[0m Allocating result...
+[0;31m│[0;32m│[0;33m│[0m   forcing x8 to n41...
+[0;31m│[0;32m│[0;33m│[0m Allocating eager deopt inputs...
+[0;31m│[0;32m│[0;33m│[0m Using n3...
+[0;31m│[0;32m│[0;33m│[0m Using n1...
+[0;31m│[0;32m│[0;33m│[0m Using n2...
+[0;31m│[0;32m│[0;33m│[0m Using n35...
+[0;31m│[0;32m│[0;33m│[0m Using n17...
+[0;31m│[0;32m│[0;33m│[0m Using n21...
+[0;31m│[0;32m│[0;33m│[0m   spill: [stack:4|t] ← n39
+[0;31m│[0;32m│[0;33m│[0m Using n39...
+[0;31m│[0;32m│[0;33m│[0m   freeing n39
+[0;31m│[0;32m│[0;33m│[0m Using n35...
+[0;31m│[0;32m│[0;33m│[0m Using n20...
+[0;31m│[0;32m│[0;33m│[0m Using n35...
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m29/41: CheckedSmiUntag [v27/n39:[x8|R|t]] → [x8|R|w32], live range: [29-30]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v1, x1=v8, x2=v8, x3=v25, x4=v6, x5=v24, x8=v29
+[0;31m│[0;32m│[0;33m│[0m         Allocating n42 inputs...
+[0;31m│[0;32m│[0;33m│[0m         - n36 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n41 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n36 in [x3|R|w32]
+[0;31m│[0;32m│[0;33m│[0m         Using n36...
+[0;31m│[0;32m│[0;33m│[0m         - n41 in [x8|R|w32]
+[0;31m│[0;32m│[0;33m│[0m         Using n41...
+[0;31m│[0;32m│[0;33m│[0m           freeing n41
+[0;31m│[0;32m│[0;33m│[0m         Allocating result...
+[0;31m│[0;32m│[0;33m│[0m  [0m30/42: Int32Add [v25/n36:[x3|R|w32], v29/n41:[x8|R|w32]] → [x6|R|w32], live range: [30-31]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v1, x1=v8, x2=v8, x3=v25, x4=v6, x5=v24, x6=v30
+[0;31m│[0;32m│[0;33m│[0m         Allocating n44 inputs...
+[0;31m│[0;32m│[0;33m│[0m         - n42 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n42 in [x6|R|w32]
+[0;31m│[0;32m│[0;33m│[0m         Using n42...
+[0;31m│[0;32m│[0;33m│[0m           freeing n42
+[0;31m│[0;32m│[0;33m│[0m         Allocating result...
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m31/44: Int32ToNumber[kCanonicalizeSmi] [v30/n42:[x6|R|w32]] → [x7|R|t], live range: [31-32]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v1, x1=v8, x2=v8, x3=v25, x4=v6, x5=v24, x7=v31
+[0;31m│[0;32m│[0;33m│[0m         Allocating n45 inputs...
+[0;31m│[0;32m│[0;33m│[0m           forcing x1 to n2...
+[0;31m│[0;32m│[0;33m│[0m         - n2 in forced [x1|R|t]
+[0;31m│[0;32m│[0;33m│[0m         Using n2...
+[0;31m│[0;32m│[0;33m│[0m         - n44 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n44 in [x7|R|t]
+[0;31m│[0;32m│[0;33m│[0m         Using n44...
+[0;31m│[0;32m│[0;33m│[0m           freeing n44
+[0;31m│[0;32m│[0;33m│[0m         Temporaries: {x6, x8}
+[0;31m│[0;32m│[0;33m│[0m         Double Temporaries: {v0}
+[0;31m│[0;32m│[0;33m│[0m         Allocating lazy deopt inputs...
+[0;31m│[0;32m│[0;33m│[0m         Using n3...
+[0;31m│[0;32m│[0;33m│[0m         Using n1...
+[0;31m│[0;32m│[0;33m│[0m         Using n2...
+[0;31m│[0;32m│[0;33m│[0m           spill: [stack:1|w32] ← n35
+[0;31m│[0;32m│[0;33m│[0m         Using n35...
+[0;31m│[0;32m│[0;33m│[0m  [0m32/45: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v31/n44:[x7|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v1, x1=v8, x2=v8, x3=v25, x4=v6, x5=v24
+[0;31m│[0;32m│[0;33m│[0m         Allocating n46 inputs...
+[0;31m│[0;32m│[0;33m│[0m         - n36 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n36 in [x3|R|w32]
+[0;31m│[0;32m│[0;33m│[0m         Using n36...
+[0;31m│[0;32m│[0;33m│[0m           freeing n36
+[0;31m│[0;32m│[0;33m│[0m         Allocating result...
+[0;31m│[0;32m│[0;33m│[0m         Allocating eager deopt inputs...
+[0;31m│[0;32m│[0;33m│[0m         Using n3...
+[0;31m│[0;32m│[0;33m│[0m         Using n1...
+[0;31m│[0;32m│[0;33m│[0m         Using n2...
+[0;31m│[0;32m│[0;33m│[0m         Using n35...
+[0;31m│[0;32m│[0;33m│[0m           freeing n35
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m33/46: Int32IncrementWithOverflow [v25/n36:[x3|R|w32]] → [x6|R|w32], live range: [33-35]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v1, x1=v8, x2=v8, x4=v6, x6=v33
+[0;31m│[0;32m│[0;33m│[0m         Allocating n47 inputs...
+[0;31m│[0;32m│[0;33m│[0m         - n30 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n30 in [x0|R|t]
+[0;31m│[0;32m│[0;33m│[0m         Using n30...
+[0;31m│[0;32m│[0;33m│[0m         Temporaries: {x3}
+[0;31m│[0;32m│[0;33m│[0m         Allocating lazy deopt inputs...
+[0;31m│[0;32m│[0;33m│[0m         Using n3...
+[0;31m│[0;32m│[0;33m│[0m         Using n1...
+[0;31m│[0;32m│[0;33m│[0m         Using n2...
+[0;31m│[0;32m│[0;33m│[0m           spill: [stack:2|w32] ← n46
+[0;31m│[0;32m│[0;33m│[0m         Using n46...
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m34/47: ReduceInterruptBudgetForLoop(26) [v1/n30:[x0|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v1, x1=v8, x2=v8, x4=v6, x6=v33
+[0;31m│[0;32m│[0;33m│[0m         Merging registers...
+[0;31m│[0;32m│[0;33m│[0m           x0 - incoming node same as node: n30
+[0;31m│[0;32m│[0;33m│[0m           x1 - incoming node same as node: n2
+[0;31m│[0;32m│[0;33m│[0m           x2 - incoming node same as node: n2
+[0;31m│[0;32m│[0;33m│[0m           x4 - incoming node same as node: n12
+[0;31m│[0;32m│[0;33m│[0m           x6 - incoming node n46 dead at target
+[0;31m│[0;32m│[0;33m│[0m         Using n46...
+[0;31m│[0;32m│[0;33m│[0m           freeing n46
+[0;31m│[0;32m│[0;33m│[0m         Using n30...
+[0;31m│[0;32m│[0;33m│[0m           freeing n30
+[0;31m│[0;32m│[0;33m│[0m         Using n1...
+[0;31m│[0;32m│[0;33m│[0m         Using n2...
+[0;31m│[0;32m│[0;33m│[0m         Using n3...
+[0;31m│[0;32m│[0;33m│[0m         Using n10...
+[0;31m│[0;32m│[0;33m│[0m           freeing n10
+[0;31m│[0;32m│[0;33m│[0m         Using n12...
+[0;31m│[0;32m│[0;33m│[0m           freeing n12
+[0;31m│[0;32m│[0;33m│[0m         Using n17...
+[0;31m│[0;32m│[0;33m│[0m           freeing n17
+[0;31m│[0;32m│[0;33m│[0m         Using n20...
+[0;31m│[0;32m│[0;33m│[0m           freeing n20
+[0;31m│[0;32m│[0;33m│[0m         Using n21...
+[0;31m│[0;32m│[0;33m│[0m           freeing n21
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m35/48: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v33/n46:[x6|R|w32] → 35: φᴵ r1 [x3|R|w32]
+[0;31m│ [0;33m│[0m         with register merges:
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m live regs: x1=v8, x2=v8
+[0;31m│  [0m [holes: 36-38 38✖️]
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m36/50: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m live regs: 
+ [0;32m│ [0m [holes: 38✖️]
+ [0;32m│ [0m Merging registers...
+ [0;32m│ [0m   x1 - new merge: loading n2 from [stack:-3|t] 
+ [0;32m│ [0m   x2 - new merge: loading n2 from [stack:-3|t] 
+ [0;32m│ [0m  [0m37/51: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m live regs: x1=v8, x2=v8
+   [0m [holes: 38✖️]
+   [0m Using n3...
+   [0m   freeing n3
+   [0m Using n1...
+   [0m   freeing n1
+   [0m Using n2...
+   [0m   freeing n2
+   [0m         ↱ eager @53 (2 live vars)
+   [0m  [0m38/52: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Register allocation -----
+Graph
+
+   [0m   [0m1/30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>) → v-1, live range: [1-35]
+   [0m   [0m2/17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [2-35]
+   [0m   [0m3/20: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [3-35]
+   [0m   [0m4/21: HeapConstant(0x09b801004999 <JSGlobalProxy>) → v-1, live range: [4-35]
+   [0m   [0m5/10: SmiConstant(100000) → v-1, live range: [5-35]
+   [0m   [0m6/12: Int32Constant(100000) → v-1, live range: [6-35]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m    [0m7/1: InitialValue(<this>) → [stack:-6|t], live range: [7-38]
+   [0m    [0m8/2: InitialValue(<context>) → [stack:-3|t], live range: [8-38]
+   [0m    [0m9/3: InitialValue(<closure>) → [stack:-2|t], live range: [9-38]
+   [0m   [0m10/5: InitialValue(r1) → [stack:4|t], live range: [10-21]
+   [0m   [0m11/8: FunctionEntryStackCheck
+   [0m         ↳ lazy @49 (3 live vars)
+   [0m         ↱ eager @49 (3 live vars)
+   [0m   [0m12/9: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m     [0m53: GapMove([stack:4|t] → [x0|R|t])
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m13/11: CheckedSmiUntag [v10/n5:[x0|R|t]] → [x0|R|w32], live range: [13-21]
+   [0m     [0m54: ConstantGapMove(n12 → [x1|R|w32])
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14/14: BranchIfInt32Compare(LessThan) [v13/n11:[x0|R|w32], v6/n12:[x1|R|w32]] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m     [0m55: GapMove([stack:-3|t] → [x2|R|t])
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m15/18: LoadContextSlot(0x10, mutable) [v8/n2:[x2|R|t]] → [x5|R|t] (spilled: [stack:3|t]), live range: [15-17]
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m16/22: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│  [0m         ↱ eager @34 (3 live vars)
+[0;31m│  [0m         │       @2 (5 live vars)
+[0;31m│  [0m  [0m17/23: CheckedSmiUntag [v15/n18:[x5|R|t]] → [x5|R|w32], live range: [17-18]
+[0;31m│  [0m  [0m18/24: Int32Add [v17/n23:[x5|R|w32], v13/n11:[x0|R|w32]] → [x3|R|w32], live range: [18-19]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m19/27: Int32ToNumber[kCanonicalizeSmi] [v18/n24:[x3|R|w32]] → [x4|R|t], live range: [19-20]
+[0;31m│  [0m     [0m56: GapMove([x2|R|t] → [x1|R|t])
+[0;31m│  [0m  [0m20/28: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v19/n27:[x4|R|t]]
+[0;31m│  [0m         ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m         ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m21/29: Int32IncrementWithOverflow [v13/n11:[x0|R|w32]] → [x3|R|w32] (spilled: [stack:0|w32]), live range: [21-23]
+[0;31m│  [0m     [0m57: ConstantGapMove(n30 → [x0|R|t])
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m22/31: ReduceInterruptBudgetForLoop(26) [v1/n30:[x0|R|t]]
+[0;31m│  [0m         ↳ lazy @49 (3 live vars)
+[0;31m│  [0m     [0m58: ConstantGapMove(n12 → [x4|R|w32])
+[0;31m│  [0m  [0m23/33: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v21/n29:[x3|R|w32] → 35: φᴵ r1 [x3|R|w32]
+[0;31m│  [0m      │  with register merges:
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m24/35: φᴵ r1 (n29, n46) → [x3|R|w32] (spilled: [stack:1|w32]), live range: [24-33]
+[0;31m│[0;32m│ [0m     [0m59: GapMove([x3|R|w32] → [x5|R|w32])
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m25/36: CheckedSmiSizedInt32 [v24/n35:[x3|R|w32]] → [x3|R|w32], live range: [25-33]
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m26/38: BranchIfInt32Compare(LessThan) [v25/n36:[x3|R|w32], v6/n12:[x4|R|w32]] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m27/39: LoadContextSlot(0x10, mutable) [v8/n2:[x1|R|t]] → [x8|R|t] (spilled: [stack:4|t]), live range: [27-29]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m28/40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 01          Add a0, EmbeddedFeedback[1]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m29/41: CheckedSmiUntag [v27/n39:[x8|R|t]] → [x8|R|w32], live range: [29-30]
+[0;31m│[0;32m│[0;33m│[0m  [0m30/42: Int32Add [v25/n36:[x3|R|w32], v29/n41:[x8|R|w32]] → [x6|R|w32], live range: [30-31]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m31/44: Int32ToNumber[kCanonicalizeSmi] [v30/n42:[x6|R|w32]] → [x7|R|t], live range: [31-32]
+[0;31m│[0;32m│[0;33m│[0m  [0m32/45: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v31/n44:[x7|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m33/46: Int32IncrementWithOverflow [v25/n36:[x3|R|w32]] → [x6|R|w32] (spilled: [stack:2|w32]), live range: [33-35]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m34/47: ReduceInterruptBudgetForLoop(26) [v1/n30:[x0|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m35/48: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v33/n46:[x6|R|w32] → 35: φᴵ r1 [x3|R|w32]
+[0;31m│ [0;33m│[0m         with register merges:
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m36/50: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m37/51: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @53 (2 live vars)
+   [0m  [0m38/52: Deopt(Insufficient type feedback for generic global access)
+   [0m
+---------------------------------------------------
+Finished compiling method  using Maglev
+---------------------------------------------------
+Begin compiling method add using Maglev
+Compiling 0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)> with Maglev
+----- Bytecode array -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Maglev graph building -----
+Graph
+
+[0m  [0m12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>), 1 uses
+[0m   [0m4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m5: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Add [n9, n10], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: ReduceInterruptBudgetForReturn(5) [n12]
+[0m  [0m14: Float64ToTagged[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m15: Return [n14]
+[0m
+
+----- Phi untagging -----
+Graph
+
+[0m  [0m12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>), 1 uses
+[0m   [0m4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+[0m   [0m5: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+[0m   [0m6: RootConstant(undefined_value), 0 uses 🪦
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>), 2 uses
+[0m   [0m2: InitialValue(a0), 3 uses
+[0m   [0m3: InitialValue(a1), 4 uses
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [n2], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [n3], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m  [0m11: Float64Add [n9, n10], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: ReduceInterruptBudgetForReturn(5) [n12]
+[0m  [0m14: Float64ToTagged[kCanonicalizeSmi] [n11], 1 uses
+[0m  [0m15: Return [n14]
+[0m
+
+----- AnyUseMarking -----
+Graph
+
+[0m  [0m12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>) → (x)
+[0m   [0m4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → (x)
+[0m   [0m5: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → (x)
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m   [0m1: InitialValue(<this>) → (x)
+[0m   [0m2: InitialValue(a0) → (x)
+[0m   [0m3: InitialValue(a1) → (x)
+[0m   [0m7: FunctionEntryStackCheck
+[0m      ↳ lazy @-1 (4 live vars)
+[0m   [0m8: Jump b1
+[0m   ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m      ↱ eager @2 (5 live vars)
+[0m   [0m9: CheckedNumberToFloat64 [v0/n2:(x)] → (x)
+[0m      ↱ eager @2 (5 live vars)
+[0m  [0m10: CheckedNumberToFloat64 [v0/n3:(x)] → (x)
+[0m  [0m11: Float64Add [v0/n9:(x), v0/n10:(x)] → (x)
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m13: ReduceInterruptBudgetForReturn(5) [v0/n12:(x)]
+[0m  [0m14: Float64ToTagged[kCanonicalizeSmi] [v0/n11:(x)] → (x)
+[0m  [0m15: Return [v0/n14:(x)]
+[0m
+
+----- Dead nodes sweeping -----
+Graph
+
+[0m   [0m1/12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>) → v-1, live range: [1-12]
+[0m    [0m2/4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [2-10]
+[0m    [0m3/5: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [3-10]
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m4/1: InitialValue(<this>) → v-1(=-6S), live range: [4-10]
+[0m    [0m5/2: InitialValue(a0) → v-1(=-7S), live range: [5-10]
+[0m    [0m6/3: InitialValue(a1) → v-1(=-8S), live range: [6-10]
+[0m    [0m7/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m    [0m8/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m    [0m9/9: CheckedNumberToFloat64 [v5/n2:v-1(R)] → v-1(R), live range: [9-11]
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m10/10: CheckedNumberToFloat64 [v6/n3:v-1(R)] → v-1(R), live range: [10-11]
+[0m  [0m11/11: Float64Add [v9/n9:v-1(R), v10/n10:v-1(R)] → v-1(R), live range: [11-13]
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12/13: ReduceInterruptBudgetForReturn(5) [v1/n12:v-1(R)]
+[0m  [0m13/14: Float64ToTagged[kCanonicalizeSmi] [v11/n11:v-1(R)] → v-1(R), live range: [13-14]
+[0m  [0m14/15: Return [v13/n14:v-1(=x0)]
+[0m
+Graph
+
+ [0mBlock b0
+[0m live regs: 
+[0m [holes: 14.]
+[0m Allocating n1 inputs...
+[0m Allocating result...
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m4/1: InitialValue(<this>) → [stack:-6|t], live range: [4-10]
+[0m         live regs: 
+[0m         Allocating n2 inputs...
+[0m         Allocating result...
+[0m    [0m5/2: InitialValue(a0) → [stack:-7|t], live range: [5-10]
+[0m         live regs: 
+[0m         Allocating n3 inputs...
+[0m         Allocating result...
+[0m    [0m6/3: InitialValue(a1) → [stack:-8|t], live range: [6-10]
+[0m         live regs: 
+[0m         Allocating n7 inputs...
+[0m         Fixed Temporaries: {x0}
+[0m         Temporaries: {x1, x2}
+[0m         Allocating lazy deopt inputs...
+[0m         Using n4...
+[0m         Using n1...
+[0m         Using n2...
+[0m         Using n3...
+[0m         Using n5...
+[0m    [0m7/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m         live regs: 
+[0m    [0m8/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m live regs: 
+[0m [holes: 14.]
+[0m Allocating n9 inputs...
+[0m - n2 has arbitrary register
+[0m   gap move: [x0|R|t] ← n2:[stack:-7|t]
+[0m - n2 in clobbered [x0|R|t] ← [x0|R|t]
+[0m Using n2...
+[0m   dropping x0 value n2
+[0m Allocating result...
+[0m Allocating eager deopt inputs...
+[0m Using n4...
+[0m Using n1...
+[0m Using n2...
+[0m Using n3...
+[0m Using n5...
+[0m Using n3...
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m    [0m9/9: CheckedNumberToFloat64 [v5/n2:[x0|R|t]] → [v0|R|f64], live range: [9-11]
+[0m         live regs: v0=v9
+[0m         Allocating n10 inputs...
+[0m         - n3 has arbitrary register
+[0m           gap move: [x0|R|t] ← n3:[stack:-8|t]
+[0m         - n3 in clobbered [x0|R|t] ← [x0|R|t]
+[0m         Using n3...
+[0m           dropping x0 value n3
+[0m         Allocating result...
+[0m         Allocating eager deopt inputs...
+[0m         Using n4...
+[0m           freeing n4
+[0m         Using n1...
+[0m           freeing n1
+[0m         Using n2...
+[0m           freeing n2
+[0m         Using n3...
+[0m         Using n5...
+[0m           freeing n5
+[0m         Using n3...
+[0m           freeing n3
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m10/10: CheckedNumberToFloat64 [v6/n3:[x0|R|t]] → [v1|R|f64], live range: [10-11]
+[0m         live regs: v0=v9, v1=v10
+[0m         Allocating n11 inputs...
+[0m         - n9 has arbitrary register
+[0m         - n10 has arbitrary register
+[0m         - n9 in [v0|R|f64]
+[0m         Using n9...
+[0m           freeing n9
+[0m         - n10 in [v1|R|f64]
+[0m         Using n10...
+[0m           freeing n10
+[0m         Allocating result...
+[0m  [0m11/11: Float64Add [v9/n9:[v0|R|f64], v10/n10:[v1|R|f64]] → [v2|R|f64], live range: [11-13]
+[0m         live regs: v2=v11
+[0m         Allocating n13 inputs...
+[0m         - n12 has arbitrary register
+[0m           constant gap move: [x0|R|t] ← n12
+[0m         - n12 in [x0|R|t] ← [x0|R|t]
+[0m         Using n12...
+[0m           freeing n12
+[0m         Temporaries: {x1}
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12/13: ReduceInterruptBudgetForReturn(5) [v1/n12:[x0|R|t]]
+[0m         live regs: v2=v11
+[0m         Allocating n14 inputs...
+[0m         - n11 has arbitrary register
+[0m         - n11 in [v2|R|f64]
+[0m         Using n11...
+[0m           freeing n11
+[0m         Allocating result...
+[0m  [0m13/14: Float64ToTagged[kCanonicalizeSmi] [v11/n11:[v2|R|f64]] → [x0|R|t], live range: [13-14]
+[0m         live regs: x0=v13
+[0m           forcing x0 to n14...
+[0m         - n14 in forced [x0|R|t]
+[0m         Using n14...
+[0m           freeing n14
+[0m  [0m14/15: Return [v13/n14:[x0|R|t]]
+[0m
+
+----- Register allocation -----
+Graph
+
+[0m   [0m1/12: HeapConstant(0x09b80101e33d <FeedbackCell[one closure]>) → v-1, live range: [1-12]
+[0m    [0m2/4: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [2-10]
+[0m    [0m3/5: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [3-10]
+ [0mBlock b0
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0m    [0m4/1: InitialValue(<this>) → [stack:-6|t], live range: [4-10]
+[0m    [0m5/2: InitialValue(a0) → [stack:-7|t], live range: [5-10]
+[0m    [0m6/3: InitialValue(a1) → [stack:-8|t], live range: [6-10]
+[0m    [0m7/7: FunctionEntryStackCheck
+[0m         ↳ lazy @-1 (4 live vars)
+[0m    [0m8/8: Jump b1
+[0m      ↓
+ [0mBlock b1
+[0m     [0m16: GapMove([stack:-7|t] → [x0|R|t])
+[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0m         ↱ eager @2 (5 live vars)
+[0m    [0m9/9: CheckedNumberToFloat64 [v5/n2:[x0|R|t]] → [v0|R|f64], live range: [9-11]
+[0m     [0m17: GapMove([stack:-8|t] → [x0|R|t])
+[0m         ↱ eager @2 (5 live vars)
+[0m  [0m10/10: CheckedNumberToFloat64 [v6/n3:[x0|R|t]] → [v1|R|f64], live range: [10-11]
+[0m  [0m11/11: Float64Add [v9/n9:[v0|R|f64], v10/n10:[v1|R|f64]] → [v2|R|f64], live range: [11-13]
+[0m     [0m18: ConstantGapMove(n12 → [x0|R|t])
+[0m[0;34m   5 : b9                Return
+[m[0m  [0m12/13: ReduceInterruptBudgetForReturn(5) [v1/n12:[x0|R|t]]
+[0m  [0m13/14: Float64ToTagged[kCanonicalizeSmi] [v11/n11:[v2|R|f64]] → [x0|R|t], live range: [13-14]
+[0m  [0m14/15: Return [v13/n14:[x0|R|t]]
+[0m
+---------------------------------------------------
+Finished compiling method add using Maglev
+---------------------------------------------------
+Begin compiling method  using Maglev
+Compiling 0x09b80101e31d <JSFunction (sfi = 0x9b80101e265)> with Maglev
+----- Bytecode array -----
+Parameter count 1
+Register count 4
+Frame size 32
+         0x31a010000c0 @    0 : 13 00             LdaConstant [0:0x09b80101e2bd <FixedArray[2]>]
+         0x31a010000c2 @    2 : d3                Star2
+         0x31a010000c3 @    3 : 1b fe f6          Mov <closure>, r3
+         0x31a010000c6 @    6 : 70 77 01 f7 02    CallRuntime [DeclareGlobals], r2-r3
+         0x31a010000cb @   11 : 0c                LdaZero
+         0x31a010000cc @   12 : 29 02             StaCurrentContextSlot [2]
+         0x31a010000ce @   14 : 0c                LdaZero
+         0x31a010000cf @   15 : d4                Star1
+         0x31a010000d0 @   16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+         0x31a010000d6 @   22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+         0x31a010000d9 @   25 : a8 1c             JumpIfFalse [28] (0x31a010000f5 @ 53)
+         0x31a010000db @   27 : 23 01 00          LdaGlobal [1:"add"], FBV[0]
+         0x31a010000de @   30 : d3                Star2
+         0x31a010000df @   31 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000e1 @   33 : d2                Star3
+         0x31a010000e2 @   34 : 6e f7 f6 f8 02    CallUndefinedReceiver2 r2, r3, r1, FBV[2]
+         0x31a010000e7 @   39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+         0x31a010000ea @   42 : 29 02             StaCurrentContextSlot [2]
+         0x31a010000ec @   44 : 0b f8             Ldar r1
+         0x31a010000ee @   46 : 5b 04             Inc FBV[4]
+         0x31a010000f0 @   48 : d4                Star1
+         0x31a010000f1 @   49 : 97 21 00 05       JumpLoop [33], [0], FBV[5] (0x31a010000d0 @ 16)
+         0x31a010000f5 @   53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+         0x31a010000f8 @   56 : d3                Star2
+         0x31a010000f9 @   57 : 18 02             LdaCurrentContextSlot [2]
+         0x31a010000fb @   59 : d2                Star3
+         0x31a010000fc @   60 : 6d f7 f6 09       CallUndefinedReceiver1 r2, r3, FBV[9]
+         0x31a01000100 @   64 : d5                Star0
+         0x31a01000101 @   65 : b9                Return
+Constant pool (size = 3)
+0x31a01000085: [TrustedFixedArray]
+ - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>
+ - length: 3
+           0: 0x09b80101e2bd <FixedArray[2]>
+           1: 0x09b800003d75 <String[3]: #add>
+           2: 0x09b801002e31 <String[5]: #print>
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e4cd: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 11
+ - shared function info: 0x09b80101e265 <SharedFunctionInfo>
+ - tiering_in_progress: 0
+ - osr_tiering_in_progress: 0
+ - invocation count: 1
+ - closure feedback cell array: 0x9b80104b16d: [ClosureFeedbackCellArray]
+ - map: 0x09b80000086d <Map(CLOSURE_FEEDBACK_CELL_ARRAY_TYPE)>
+ - length: 1
+ - elements:
+           0: 0x09b80101e33d <FeedbackCell[one closure]>
+
+ - slot #0 LoadGlobalNotInsideTypeof MONOMORPHIC
+   [weak] 0x09b80101e391 <PropertyCell name=0x09b800003d75 <String[3]: #add> value=0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>> {
+     [0]: [weak] 0x09b80101e391 <PropertyCell name=0x09b800003d75 <String[3]: #add> value=0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>>
+     [1]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #2 Call MONOMORPHIC {
+     [2]: [weak] 0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>
+     [3]: 468080
+  }
+ - slot #4 BinaryOp BinaryOp:SignedSmall {
+     [4]: 1
+  }
+ - slot #5 JumpLoop JumpLoop {
+     [5]: [cleared]
+     [6]: 0
+  }
+ - slot #7 LoadGlobalNotInsideTypeof UNINITIALIZED {
+     [7]: [cleared]
+     [8]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+  }
+ - slot #9 Call UNINITIALIZED {
+     [9]: 0x09b800000eb5 <Symbol: (uninitialized_symbol)>
+     [10]: 0
+  }
+
+----- Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode -----
+Parameter count 3
+Register count 0
+Frame size 0
+         0x31a0100012c @    0 : 0b 04             Ldar a1
+         0x31a0100012e @    2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+         0x31a01000131 @    5 : b9                Return
+Constant pool (size = 0)
+Handler Table (size = 0)
+Source Position Table (size = 0)
+0x9b80101e429: [FeedbackVector] in OldSpace
+ - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>
+ - length: 0 (empty)
+
+----- Maglev graph building -----
+Graph
+
+   [0m  [0m17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+   [0m  [0m21: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m19: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m16: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m15: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m32: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m10: SmiConstant(100000), 2 uses
+   [0m  [0m12: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 12 uses
+   [0m   [0m2: InitialValue(<context>), 16 uses
+   [0m   [0m3: InitialValue(<closure>), 12 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 8 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: FunctionEntryStackCheck
+   [0m      ↳ lazy @49 (3 live vars)
+   [0m      ↱ eager @49 (3 live vars)
+   [0m   [0m9: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m11: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m13: Int32Compare[LessThan] [n11, n12], 0 uses 🪦
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14: BranchIfInt32Compare(LessThan) [n11, n12] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m23: CheckedNumberToFloat64 [n18], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m24: ChangeInt32ToFloat64 [n11], 1 uses
+[0;31m│  [0m  [0m25: Float64Add [n23, n24], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│  [0m  [0m26: TruncateFloat64ToInt32 [n25], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m27: Int32ToNumber[kCanonicalizeSmi] [n26], 1 uses
+[0;31m│  [0m  [0m28: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n27]
+[0;31m│  [0m      ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m      ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m29: Int32IncrementWithOverflow [n11], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m31: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│  [0m      ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m34: Int32ToNumber[kCanonicalizeSmi] [n29], 1 uses
+[0;31m│  [0m  [0m33: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n34 → 35: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m35: φᵀ r1 (n34, n50), 7 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m36: CheckedSmiUntag [n35], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m37: Int32Compare[LessThan] [n36, n12], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m38: BranchIfInt32Compare(LessThan) [n36, n12] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m39: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m41: CheckedNumberToFloat64 [n39], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m42: ChangeInt32ToFloat64 [n36], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m43: Float64Add [n41, n42], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44: TruncateFloat64ToInt32 [n43], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m45: Int32ToNumber[kCanonicalizeSmi] [n44], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m46: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n45]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m47: Int32IncrementWithOverflow [n36], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m48: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [n47], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m49: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n50 → 35: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m51: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m52: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @53 (2 live vars)
+   [0m  [0m53: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Truncation propagation -----
+Graph
+
+   [0m  [0m17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+   [0m  [0m21: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m19: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m16: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m15: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m32: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m10: SmiConstant(100000), 2 uses
+   [0m  [0m12: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 12 uses
+   [0m   [0m2: InitialValue(<context>), 16 uses
+   [0m   [0m3: InitialValue(<closure>), 12 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 8 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: FunctionEntryStackCheck
+   [0m      ↳ lazy @49 (3 live vars)
+   [0m      ↱ eager @49 (3 live vars)
+   [0m   [0m9: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m11: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m13: Int32Compare[LessThan] [n11, n12], 0 uses 🪦
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14: BranchIfInt32Compare(LessThan) [n11, n12] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m23: CheckedNumberToFloat64 [n18], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m24: ChangeInt32ToFloat64 [n11], 1 uses
+[0;31m│  [0m  [0m25: Float64Add [n23, n24], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│  [0m  [0m26: TruncateFloat64ToInt32 [n25], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m27: Int32ToNumber[kCanonicalizeSmi] [n26], 1 uses
+[0;31m│  [0m  [0m28: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n27]
+[0;31m│  [0m      ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m      ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m29: Int32IncrementWithOverflow [n11], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m31: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│  [0m      ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m34: Int32ToNumber[kCanonicalizeSmi] [n29], 1 uses
+[0;31m│  [0m  [0m33: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n34 → 35: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m35: φᵀ r1 (n34, n50), 7 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m36: CheckedSmiUntag [n35], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m37: Int32Compare[LessThan] [n36, n12], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m38: BranchIfInt32Compare(LessThan) [n36, n12] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m39: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m41: CheckedNumberToFloat64 [n39], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m42: ChangeInt32ToFloat64 [n36], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m43: Float64Add [n41, n42], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44: TruncateFloat64ToInt32 [n43], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m45: Int32ToNumber[kCanonicalizeSmi] [n44], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m46: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n45]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m47: Int32IncrementWithOverflow [n36], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m48: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [n47], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m49: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n50 → 35: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m51: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m52: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @53 (2 live vars)
+   [0m  [0m53: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Truncation -----
+Graph
+
+   [0m  [0m17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+   [0m  [0m21: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m19: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m16: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m15: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m32: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m10: SmiConstant(100000), 2 uses
+   [0m  [0m12: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 12 uses
+   [0m   [0m2: InitialValue(<context>), 16 uses
+   [0m   [0m3: InitialValue(<closure>), 12 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 8 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: FunctionEntryStackCheck
+   [0m      ↳ lazy @49 (3 live vars)
+   [0m      ↱ eager @49 (3 live vars)
+   [0m   [0m9: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m11: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m13: Int32Compare[LessThan] [n11, n12], 0 uses 🪦
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14: BranchIfInt32Compare(LessThan) [n11, n12] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m23: CheckedNumberToFloat64 [n18], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m24: ChangeInt32ToFloat64 [n11], 1 uses
+[0;31m│  [0m  [0m25: Float64Add [n23, n24], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│  [0m  [0m26: TruncateFloat64ToInt32 [n25], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m27: Int32ToNumber[kCanonicalizeSmi] [n26], 1 uses
+[0;31m│  [0m  [0m28: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n27]
+[0;31m│  [0m      ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m      ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m29: Int32IncrementWithOverflow [n11], 2 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m31: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│  [0m      ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m34: Int32ToNumber[kCanonicalizeSmi] [n29], 1 uses
+[0;31m│  [0m  [0m33: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n34 → 35: φᵀ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m35: φᵀ r1 (n34, n50), 7 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m36: CheckedSmiUntag [n35], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m37: Int32Compare[LessThan] [n36, n12], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m38: BranchIfInt32Compare(LessThan) [n36, n12] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m39: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m41: CheckedNumberToFloat64 [n39], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m42: ChangeInt32ToFloat64 [n36], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m43: Float64Add [n41, n42], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44: TruncateFloat64ToInt32 [n43], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m45: Int32ToNumber[kCanonicalizeSmi] [n44], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m46: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n45]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m47: Int32IncrementWithOverflow [n36], 2 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m48: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [n47], 1 uses
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m49: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n50 → 35: φᵀ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m51: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m52: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @53 (2 live vars)
+   [0m  [0m53: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Phi untagging -----
+Graph
+
+   [0m  [0m17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>), 2 uses
+   [0m  [0m20: HeapConstant(0x09b80101e35d <ScriptContext[3]>), 2 uses
+   [0m  [0m21: HeapConstant(0x09b801004999 <JSGlobalProxy>), 2 uses
+   [0m  [0m30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>), 2 uses
+   [0m  [0m19: RootConstant(undefined_value), 0 uses 🪦
+   [0m  [0m16: RootConstant(true_value), 0 uses 🪦
+   [0m  [0m15: RootConstant(false_value), 0 uses 🪦
+   [0m  [0m32: RootConstant(optimized_out), 0 uses 🪦
+   [0m  [0m10: SmiConstant(100000), 2 uses
+   [0m  [0m12: Int32Constant(100000), 4 uses, cannot truncate to int32
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>), 12 uses
+   [0m   [0m2: InitialValue(<context>), 16 uses
+   [0m   [0m3: InitialValue(<closure>), 12 uses
+   [0m   [0m4: InitialValue(r0), 0 uses 🪦
+   [0m   [0m5: InitialValue(r1), 8 uses
+   [0m   [0m6: InitialValue(r2), 0 uses 🪦
+   [0m   [0m7: InitialValue(r3), 0 uses 🪦
+   [0m   [0m8: FunctionEntryStackCheck
+   [0m      ↳ lazy @49 (3 live vars)
+   [0m      ↱ eager @49 (3 live vars)
+   [0m   [0m9: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m11: CheckedSmiUntag [n5], 4 uses, cannot truncate to int32
+   [0m  [0m13: Int32Compare[LessThan] [n11, n12], 0 uses 🪦
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14: BranchIfInt32Compare(LessThan) [n11, n12] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m23: CheckedNumberToFloat64 [n18], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m  [0m24: ChangeInt32ToFloat64 [n11], 1 uses
+[0;31m│  [0m  [0m25: Float64Add [n23, n24], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│  [0m  [0m26: TruncateFloat64ToInt32 [n25], 1 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m27: Int32ToNumber[kCanonicalizeSmi] [n26], 1 uses
+[0;31m│  [0m  [0m28: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n27]
+[0;31m│  [0m      ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m      ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m29: Int32IncrementWithOverflow [n11], 3 uses, cannot truncate to int32
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m31: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│  [0m      ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m34: Int32ToNumber[kCanonicalizeSmi] [n29], 0 uses 🪦
+[0;31m│  [0m  [0m33: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - n29 → 35: φᴵ r1
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m35: φᴵ r1 (n29, n47), 7 uses
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m36: CheckedSmiSizedInt32 [n35], 4 uses, cannot truncate to int32
+[0;31m│[0;32m│ [0m  [0m37: Int32Compare[LessThan] [n36, n12], 0 uses 🪦
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m38: BranchIfInt32Compare(LessThan) [n36, n12] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m39: LoadContextSlot(0x10, mutable) [n2], 2 uses
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m41: CheckedNumberToFloat64 [n39], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m  [0m42: ChangeInt32ToFloat64 [n36], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m43: Float64Add [n41, n42], 1 uses, cannot truncate to int32 [-∞, +∞]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44: TruncateFloat64ToInt32 [n43], 1 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m45: Int32ToNumber[kCanonicalizeSmi] [n44], 1 uses
+[0;31m│[0;32m│[0;33m│[0m  [0m46: StoreContextSlotWithWriteBarrier(2, mutable) [n2, n45]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m47: Int32IncrementWithOverflow [n36], 3 uses, cannot truncate to int32
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m48: ReduceInterruptBudgetForLoop(26) [n30]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m50: Int32ToNumber[kCanonicalizeSmi] [n47], 0 uses 🪦
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m49: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - n47 → 35: φᴵ r1
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m51: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m52: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @53 (2 live vars)
+   [0m  [0m53: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- AnyUseMarking -----
+Graph
+
+   [0m  [0m17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → (x)
+   [0m  [0m20: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → (x)
+   [0m  [0m21: HeapConstant(0x09b801004999 <JSGlobalProxy>) → (x)
+   [0m  [0m30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>) → (x)
+   [0m  [0m10: SmiConstant(100000) → (x)
+   [0m  [0m12: Int32Constant(100000) → (x)
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m   [0m1: InitialValue(<this>) → (x)
+   [0m   [0m2: InitialValue(<context>) → (x)
+   [0m   [0m3: InitialValue(<closure>) → (x)
+   [0m   [0m5: InitialValue(r1) → (x)
+   [0m   [0m8: FunctionEntryStackCheck
+   [0m      ↳ lazy @49 (3 live vars)
+   [0m      ↱ eager @49 (3 live vars)
+   [0m   [0m9: CheckpointedJump b1
+   [0m   ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m      ↱ eager @22 (4 live vars)
+   [0m  [0m11: CheckedSmiUntag [v0/n5:(x)] → (x)
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14: BranchIfInt32Compare(LessThan) [v0/n11:(x), v0/n12:(x)] b2 b8
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m18: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m22: Jump b3
+[0;31m│  [0m   ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│  [0m      ↱ eager @34 (3 live vars)
+[0;31m│  [0m      │       @2 (5 live vars)
+[0;31m│  [0m  [0m23: CheckedNumberToFloat64 [v0/n18:(x)] → (x)
+[0;31m│  [0m  [0m24: ChangeInt32ToFloat64 [v0/n11:(x)] → (x)
+[0;31m│  [0m  [0m25: Float64Add [v0/n23:(x), v0/n24:(x)] → (x)
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│  [0m  [0m26: TruncateFloat64ToInt32 [v0/n25:(x)] → (x)
+[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m27: Int32ToNumber[kCanonicalizeSmi] [v0/n26:(x)] → (x)
+[0;31m│  [0m  [0m28: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n27:(x)]
+[0;31m│  [0m      ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m      ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m29: Int32IncrementWithOverflow [v0/n11:(x)] → (x)
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m31: ReduceInterruptBudgetForLoop(26) [v0/n30:(x)]
+[0;31m│  [0m      ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m33: Jump b4
+[0;31m│  [0m   │  with gap moves:
+[0;31m│  [0m   │    - v0/n29:(x) → 35: φᴵ r1 (x)
+[0;31m│  [0m   ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m35: φᴵ r1 (n29, n47) → (x)
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m      ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m36: CheckedSmiSizedInt32 [v0/n35:(x)] → (x)
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m38: BranchIfInt32Compare(LessThan) [v0/n36:(x), v0/n12:(x)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m39: LoadContextSlot(0x10, mutable) [v0/n2:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m   ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m41: CheckedNumberToFloat64 [v0/n39:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m42: ChangeInt32ToFloat64 [v0/n36:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m43: Float64Add [v0/n41:(x), v0/n42:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m44: TruncateFloat64ToInt32 [v0/n43:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m45: Int32ToNumber[kCanonicalizeSmi] [v0/n44:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m  [0m46: StoreContextSlotWithWriteBarrier(2, mutable) [v0/n2:(x), v0/n45:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m47: Int32IncrementWithOverflow [v0/n36:(x)] → (x)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m48: ReduceInterruptBudgetForLoop(26) [v0/n30:(x)]
+[0;31m│[0;32m│[0;33m│[0m      ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m      ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m49: JumpLoop b4
+[0;31m│ [0;33m│[0m      with gap moves:
+[0;31m│ [0;33m│[0m        - v0/n47:(x) → 35: φᴵ r1 (x)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m51: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m52: Jump b9
+ [0;32m│ [0m   ↓
+ [0;32m╰─►[0mBlock b9
+   [0m      ↱ eager @53 (2 live vars)
+   [0m  [0m53: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Dead nodes sweeping -----
+Graph
+
+   [0m   [0m1/17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [1-39]
+   [0m   [0m2/20: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [2-39]
+   [0m   [0m3/21: HeapConstant(0x09b801004999 <JSGlobalProxy>) → v-1, live range: [3-39]
+   [0m   [0m4/30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>) → v-1, live range: [4-39]
+   [0m   [0m5/10: SmiConstant(100000) → v-1, live range: [5-39]
+   [0m   [0m6/12: Int32Constant(100000) → v-1, live range: [6-39]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m    [0m7/1: InitialValue(<this>) → v-1(=-6S), live range: [7-42]
+   [0m    [0m8/2: InitialValue(<context>) → v-1(=-3S), live range: [8-42]
+   [0m    [0m9/3: InitialValue(<closure>) → v-1(=-2S), live range: [9-42]
+   [0m   [0m10/5: InitialValue(r1) → v-1(=4S), live range: [10-23]
+   [0m   [0m11/8: FunctionEntryStackCheck
+   [0m         ↳ lazy @49 (3 live vars)
+   [0m         ↱ eager @49 (3 live vars)
+   [0m   [0m12/9: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m13/11: CheckedSmiUntag [v10/n5:v-1(R)] → v-1(0), live range: [13-23]
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14/14: BranchIfInt32Compare(LessThan) [v13/n11:v-1(R), v6/n12:v-1(R)] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m15/18: LoadContextSlot(0x10, mutable) [v8/n2:v-1(R)] → v-1(R), live range: [15-17]
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m16/22: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│  [0m         ↱ eager @34 (3 live vars)
+[0;31m│  [0m         │       @2 (5 live vars)
+[0;31m│  [0m  [0m17/23: CheckedNumberToFloat64 [v15/n18:v-1(R)] → v-1(R), live range: [17-19]
+[0;31m│  [0m  [0m18/24: ChangeInt32ToFloat64 [v13/n11:v-1(R)] → v-1(R), live range: [18-19]
+[0;31m│  [0m  [0m19/25: Float64Add [v17/n23:v-1(R), v18/n24:v-1(R)] → v-1(R), live range: [19-20]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│  [0m  [0m20/26: TruncateFloat64ToInt32 [v19/n25:v-1(R)] → v-1(R), live range: [20-21]
+[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m21/27: Int32ToNumber[kCanonicalizeSmi] [v20/n26:v-1(R)] → v-1(R), live range: [21-22]
+[0;31m│  [0m  [0m22/28: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:v-1(=x1), v21/n27:v-1(R)]
+[0;31m│  [0m         ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m         ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m23/29: Int32IncrementWithOverflow [v13/n11:v-1(R)] → v-1(R), live range: [23-25]
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m24/31: ReduceInterruptBudgetForLoop(26) [v4/n30:v-1(R)]
+[0;31m│  [0m         ↳ lazy @49 (3 live vars)
+[0;31m│  [0m  [0m25/33: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v23/n29:v-1(*) → 35: φᴵ r1 v-1(*)
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m26/35: φᴵ r1 (n29, n47) → v-1(*), live range: [26-37]
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m27/36: CheckedSmiSizedInt32 [v26/n35:v-1(R)] → v-1(0), live range: [27-37]
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m28/38: BranchIfInt32Compare(LessThan) [v27/n36:v-1(R), v6/n12:v-1(R)] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m29/39: LoadContextSlot(0x10, mutable) [v8/n2:v-1(R)] → v-1(R), live range: [29-31]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m30/40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m31/41: CheckedNumberToFloat64 [v29/n39:v-1(R)] → v-1(R), live range: [31-33]
+[0;31m│[0;32m│[0;33m│[0m  [0m32/42: ChangeInt32ToFloat64 [v27/n36:v-1(R)] → v-1(R), live range: [32-33]
+[0;31m│[0;32m│[0;33m│[0m  [0m33/43: Float64Add [v31/n41:v-1(R), v32/n42:v-1(R)] → v-1(R), live range: [33-34]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m34/44: TruncateFloat64ToInt32 [v33/n43:v-1(R)] → v-1(R), live range: [34-35]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m35/45: Int32ToNumber[kCanonicalizeSmi] [v34/n44:v-1(R)] → v-1(R), live range: [35-36]
+[0;31m│[0;32m│[0;33m│[0m  [0m36/46: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:v-1(=x1), v35/n45:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m37/47: Int32IncrementWithOverflow [v27/n36:v-1(R)] → v-1(R), live range: [37-39]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m38/48: ReduceInterruptBudgetForLoop(26) [v4/n30:v-1(R)]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m39/49: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v37/n47:v-1(*) → 35: φᴵ r1 v-1(*)
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m40/51: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m41/52: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @53 (2 live vars)
+   [0m  [0m42/53: Deopt(Insufficient type feedback for generic global access)
+   [0m
+Graph
+
+    [0mBlock b0
+   [0m live regs: 
+   [0m [holes: 42✖️]
+   [0m Allocating n1 inputs...
+   [0m Allocating result...
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m    [0m7/1: InitialValue(<this>) → [stack:-6|t], live range: [7-42]
+   [0m         live regs: 
+   [0m         Allocating n2 inputs...
+   [0m         Allocating result...
+   [0m    [0m8/2: InitialValue(<context>) → [stack:-3|t], live range: [8-42]
+   [0m         live regs: 
+   [0m         Allocating n3 inputs...
+   [0m         Allocating result...
+   [0m    [0m9/3: InitialValue(<closure>) → [stack:-2|t], live range: [9-42]
+   [0m         live regs: 
+   [0m         Allocating n5 inputs...
+   [0m         Allocating result...
+   [0m   [0m10/5: InitialValue(r1) → [stack:4|t], live range: [10-23]
+   [0m         live regs: 
+   [0m         Allocating n8 inputs...
+   [0m         Fixed Temporaries: {x0}
+   [0m         Temporaries: {x1, x2}
+   [0m         Allocating lazy deopt inputs...
+   [0m         Using n3...
+   [0m         Using n1...
+   [0m         Using n2...
+   [0m         Using n5...
+   [0m   [0m11/8: FunctionEntryStackCheck
+   [0m         ↳ lazy @49 (3 live vars)
+   [0m         live regs: 
+   [0m         ↱ eager @49 (3 live vars)
+   [0m   [0m12/9: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m live regs: 
+   [0m [holes: 42✖️]
+   [0m Allocating n11 inputs...
+   [0m - n5 has arbitrary register
+   [0m   gap move: [x0|R|t] ← n5:[stack:4|t]
+   [0m - n5 in [x0|R|t] ← [x0|R|t]
+   [0m Using n5...
+   [0m Allocating result...
+   [0m   dropping x0 value n5
+   [0m   forcing x0 to n11...
+   [0m Allocating eager deopt inputs...
+   [0m Using n3...
+   [0m Using n1...
+   [0m Using n2...
+   [0m Using n5...
+   [0m Using n10...
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m13/11: CheckedSmiUntag [v10/n5:[x0|R|t]] → [x0|R|w32], live range: [13-23]
+   [0m         live regs: x0=v13
+   [0m         - n11 has arbitrary register
+   [0m         - n12 has arbitrary register
+   [0m         - n11 in [x0|R|w32]
+   [0m         Using n11...
+   [0m           constant gap move: [x1|R|w32] ← n12
+   [0m         - n12 in [x1|R|w32] ← [x1|R|w32]
+   [0m         Using n12...
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14/14: BranchIfInt32Compare(LessThan) [v13/n11:[x0|R|w32], v6/n12:[x1|R|w32]] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m live regs: x0=v13, x1=v6
+[0;31m│  [0m [holes: 40-42 42✖️]
+[0;31m│  [0m Allocating n18 inputs...
+[0;31m│  [0m - n2 has arbitrary register
+[0;31m│  [0m   gap move: [x2|R|t] ← n2:[stack:-3|t]
+[0;31m│  [0m - n2 in [x2|R|t] ← [x2|R|t]
+[0;31m│  [0m Using n2...
+[0;31m│  [0m Temporaries: {x3, x4}
+[0;31m│  [0m Double Temporaries: {v0}
+[0;31m│  [0m Allocating result...
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m15/18: LoadContextSlot(0x10, mutable) [v8/n2:[x2|R|t]] → [x5|R|t], live range: [15-17]
+[0;31m│  [0m         live regs: x0=v13, x1=v6, x2=v8, x5=v15
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m16/22: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m live regs: x0=v13, x1=v6, x2=v8, x5=v15
+[0;31m│  [0m [holes: 40-42 42✖️]
+[0;31m│  [0m Allocating n23 inputs...
+[0;31m│  [0m - n18 has arbitrary register
+[0;31m│  [0m - n18 in clobbered [x5|R|t]
+[0;31m│  [0m Using n18...
+[0;31m│  [0m   dropping x5 value n18
+[0;31m│  [0m   gap move: [x3|R|t] ← n18:[x5|R|t]
+[0;31m│  [0m Allocating result...
+[0;31m│  [0m Allocating eager deopt inputs...
+[0;31m│  [0m Using n3...
+[0;31m│  [0m Using n1...
+[0;31m│  [0m Using n2...
+[0;31m│  [0m Using n5...
+[0;31m│  [0m Using n17...
+[0;31m│  [0m Using n21...
+[0;31m│  [0m Using n18...
+[0;31m│  [0m   freeing n18
+[0;31m│  [0m Using n5...
+[0;31m│  [0m Using n20...
+[0;31m│  [0m Using n5...
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│  [0m         ↱ eager @34 (3 live vars)
+[0;31m│  [0m         │       @2 (5 live vars)
+[0;31m│  [0m  [0m17/23: CheckedNumberToFloat64 [v15/n18:[x5|R|t]] → [v0|R|f64], live range: [17-19]
+[0;31m│  [0m         live regs: x0=v13, x1=v6, x2=v8, v0=v17
+[0;31m│  [0m         Allocating n24 inputs...
+[0;31m│  [0m         - n11 has arbitrary register
+[0;31m│  [0m         - n11 in [x0|R|w32]
+[0;31m│  [0m         Using n11...
+[0;31m│  [0m         Allocating result...
+[0;31m│  [0m  [0m18/24: ChangeInt32ToFloat64 [v13/n11:[x0|R|w32]] → [v1|R|f64], live range: [18-19]
+[0;31m│  [0m         live regs: x0=v13, x1=v6, x2=v8, v0=v17, v1=v18
+[0;31m│  [0m         Allocating n25 inputs...
+[0;31m│  [0m         - n23 has arbitrary register
+[0;31m│  [0m         - n24 has arbitrary register
+[0;31m│  [0m         - n23 in [v0|R|f64]
+[0;31m│  [0m         Using n23...
+[0;31m│  [0m           freeing n23
+[0;31m│  [0m         - n24 in [v1|R|f64]
+[0;31m│  [0m         Using n24...
+[0;31m│  [0m           freeing n24
+[0;31m│  [0m         Allocating result...
+[0;31m│  [0m  [0m19/25: Float64Add [v17/n23:[v0|R|f64], v18/n24:[v1|R|f64]] → [v2|R|f64], live range: [19-20]
+[0;31m│  [0m         live regs: x0=v13, x1=v6, x2=v8, v2=v19
+[0;31m│  [0m         Allocating n26 inputs...
+[0;31m│  [0m         - n25 has arbitrary register
+[0;31m│  [0m         - n25 in [v2|R|f64]
+[0;31m│  [0m         Using n25...
+[0;31m│  [0m           freeing n25
+[0;31m│  [0m         Allocating result...
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│  [0m  [0m20/26: TruncateFloat64ToInt32 [v19/n25:[v2|R|f64]] → [x3|R|w32], live range: [20-21]
+[0;31m│  [0m         live regs: x0=v13, x1=v6, x2=v8, x3=v20
+[0;31m│  [0m         Allocating n27 inputs...
+[0;31m│  [0m         - n26 has arbitrary register
+[0;31m│  [0m         - n26 in [x3|R|w32]
+[0;31m│  [0m         Using n26...
+[0;31m│  [0m           freeing n26
+[0;31m│  [0m         Allocating result...
+[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m21/27: Int32ToNumber[kCanonicalizeSmi] [v20/n26:[x3|R|w32]] → [x4|R|t], live range: [21-22]
+[0;31m│  [0m         live regs: x0=v13, x1=v6, x2=v8, x4=v21
+[0;31m│  [0m         Allocating n28 inputs...
+[0;31m│  [0m           forcing x1 to n2...
+[0;31m│  [0m           dropping x1 value n12
+[0;31m│  [0m         - n2 in forced [x1|R|t]
+[0;31m│  [0m           gap move: [x1|R|t] ← n2:[x2|R|t]
+[0;31m│  [0m         Using n2...
+[0;31m│  [0m         - n27 has arbitrary register
+[0;31m│  [0m         - n27 in [x4|R|t]
+[0;31m│  [0m         Using n27...
+[0;31m│  [0m           freeing n27
+[0;31m│  [0m         Temporaries: {x3, x5}
+[0;31m│  [0m         Double Temporaries: {v0}
+[0;31m│  [0m         Allocating lazy deopt inputs...
+[0;31m│  [0m         Using n3...
+[0;31m│  [0m         Using n1...
+[0;31m│  [0m         Using n2...
+[0;31m│  [0m         Using n5...
+[0;31m│  [0m  [0m22/28: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v21/n27:[x4|R|t]]
+[0;31m│  [0m         ↳ lazy @42 (3 live vars)
+[0;31m│  [0m         live regs: x0=v13, x1=v8, x2=v8
+[0;31m│  [0m         Allocating n29 inputs...
+[0;31m│  [0m         - n11 has arbitrary register
+[0;31m│  [0m         - n11 in [x0|R|w32]
+[0;31m│  [0m         Using n11...
+[0;31m│  [0m           freeing n11
+[0;31m│  [0m         Allocating result...
+[0;31m│  [0m         Allocating eager deopt inputs...
+[0;31m│  [0m         Using n3...
+[0;31m│  [0m         Using n1...
+[0;31m│  [0m         Using n2...
+[0;31m│  [0m         Using n5...
+[0;31m│  [0m           freeing n5
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m         ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m23/29: Int32IncrementWithOverflow [v13/n11:[x0|R|w32]] → [x3|R|w32], live range: [23-25]
+[0;31m│  [0m         live regs: x1=v8, x2=v8, x3=v23
+[0;31m│  [0m         Allocating n31 inputs...
+[0;31m│  [0m         - n30 has arbitrary register
+[0;31m│  [0m           constant gap move: [x0|R|t] ← n30
+[0;31m│  [0m         - n30 in [x0|R|t] ← [x0|R|t]
+[0;31m│  [0m         Using n30...
+[0;31m│  [0m         Temporaries: {x4}
+[0;31m│  [0m         Allocating lazy deopt inputs...
+[0;31m│  [0m         Using n3...
+[0;31m│  [0m         Using n1...
+[0;31m│  [0m         Using n2...
+[0;31m│  [0m           spill: [stack:0|w32] ← n29
+[0;31m│  [0m         Using n29...
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m24/31: ReduceInterruptBudgetForLoop(26) [v4/n30:[x0|R|t]]
+[0;31m│  [0m         ↳ lazy @49 (3 live vars)
+[0;31m│  [0m         live regs: x0=v4, x1=v8, x2=v8, x3=v23
+[0;31m│  [0m           constant gap move: [x4|R|w32] ← n12
+[0;31m│  [0m         Using n29...
+[0;31m│  [0m           freeing n29
+[0;31m│  [0m  [0m25/33: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v23/n29:[x3|R|w32] → 35: φᴵ r1 v-1(*)
+[0;31m│  [0m      │  with register merges:
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m live regs: x0=v4, x1=v8, x2=v8, x4=v6
+[0;31m│[0;32m│ [0m [holes: 40-42 42✖️]
+[0;31m│[0;32m│ [0m   forcing x3 to n35...
+[0;31m│[0;32m│ [0m  [0m26/35: φᴵ r1 (n29, n47) → [x3|R|w32], live range: [26-37]
+[0;31m│[0;32m│ [0m         phi (reuse) [x3|R|w32]
+[0;31m│[0;32m│ [0m         live regs: x0=v4, x1=v8, x2=v8, x3=v26, x4=v6
+[0;31m│[0;32m│ [0m         Allocating n36 inputs...
+[0;31m│[0;32m│ [0m         - n35 has arbitrary register
+[0;31m│[0;32m│ [0m         - n35 in clobbered [x3|R|w32]
+[0;31m│[0;32m│ [0m         Using n35...
+[0;31m│[0;32m│ [0m           dropping x3 value n35
+[0;31m│[0;32m│ [0m           gap move: [x5|R|w32] ← n35:[x3|R|w32]
+[0;31m│[0;32m│ [0m         Allocating result...
+[0;31m│[0;32m│ [0m           forcing x3 to n36...
+[0;31m│[0;32m│ [0m         Allocating eager deopt inputs...
+[0;31m│[0;32m│ [0m         Using n3...
+[0;31m│[0;32m│ [0m         Using n1...
+[0;31m│[0;32m│ [0m         Using n2...
+[0;31m│[0;32m│ [0m         Using n35...
+[0;31m│[0;32m│ [0m         Using n10...
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m27/36: CheckedSmiSizedInt32 [v26/n35:[x3|R|w32]] → [x3|R|w32], live range: [27-37]
+[0;31m│[0;32m│ [0m         live regs: x0=v4, x1=v8, x2=v8, x3=v27, x4=v6, x5=v26
+[0;31m│[0;32m│ [0m         - n36 has arbitrary register
+[0;31m│[0;32m│ [0m         - n12 has arbitrary register
+[0;31m│[0;32m│ [0m         - n36 in [x3|R|w32]
+[0;31m│[0;32m│ [0m         Using n36...
+[0;31m│[0;32m│ [0m         - n12 in [x4|R|w32]
+[0;31m│[0;32m│ [0m         Using n12...
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m28/38: BranchIfInt32Compare(LessThan) [v27/n36:[x3|R|w32], v6/n12:[x4|R|w32]] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m live regs: x0=v4, x1=v8, x2=v8, x3=v27, x4=v6, x5=v26
+[0;31m│[0;32m│[0;33m│[0m Allocating n39 inputs...
+[0;31m│[0;32m│[0;33m│[0m - n2 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m - n2 in [x1|R|t]
+[0;31m│[0;32m│[0;33m│[0m Using n2...
+[0;31m│[0;32m│[0;33m│[0m Temporaries: {x6, x7}
+[0;31m│[0;32m│[0;33m│[0m Double Temporaries: {v0}
+[0;31m│[0;32m│[0;33m│[0m Allocating result...
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m29/39: LoadContextSlot(0x10, mutable) [v8/n2:[x1|R|t]] → [x8|R|t], live range: [29-31]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v4, x1=v8, x2=v8, x3=v27, x4=v6, x5=v26, x8=v29
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m30/40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m live regs: x0=v4, x1=v8, x2=v8, x3=v27, x4=v6, x5=v26, x8=v29
+[0;31m│[0;32m│[0;33m│[0m Allocating n41 inputs...
+[0;31m│[0;32m│[0;33m│[0m - n39 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m - n39 in clobbered [x8|R|t]
+[0;31m│[0;32m│[0;33m│[0m Using n39...
+[0;31m│[0;32m│[0;33m│[0m   dropping x8 value n39
+[0;31m│[0;32m│[0;33m│[0m   gap move: [x6|R|t] ← n39:[x8|R|t]
+[0;31m│[0;32m│[0;33m│[0m Allocating result...
+[0;31m│[0;32m│[0;33m│[0m Allocating eager deopt inputs...
+[0;31m│[0;32m│[0;33m│[0m Using n3...
+[0;31m│[0;32m│[0;33m│[0m Using n1...
+[0;31m│[0;32m│[0;33m│[0m Using n2...
+[0;31m│[0;32m│[0;33m│[0m Using n35...
+[0;31m│[0;32m│[0;33m│[0m Using n17...
+[0;31m│[0;32m│[0;33m│[0m Using n21...
+[0;31m│[0;32m│[0;33m│[0m Using n39...
+[0;31m│[0;32m│[0;33m│[0m   freeing n39
+[0;31m│[0;32m│[0;33m│[0m Using n35...
+[0;31m│[0;32m│[0;33m│[0m Using n20...
+[0;31m│[0;32m│[0;33m│[0m Using n35...
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m31/41: CheckedNumberToFloat64 [v29/n39:[x8|R|t]] → [v0|R|f64], live range: [31-33]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v4, x1=v8, x2=v8, x3=v27, x4=v6, x5=v26, v0=v31
+[0;31m│[0;32m│[0;33m│[0m         Allocating n42 inputs...
+[0;31m│[0;32m│[0;33m│[0m         - n36 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n36 in [x3|R|w32]
+[0;31m│[0;32m│[0;33m│[0m         Using n36...
+[0;31m│[0;32m│[0;33m│[0m         Allocating result...
+[0;31m│[0;32m│[0;33m│[0m  [0m32/42: ChangeInt32ToFloat64 [v27/n36:[x3|R|w32]] → [v1|R|f64], live range: [32-33]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v4, x1=v8, x2=v8, x3=v27, x4=v6, x5=v26, v0=v31, v1=v32
+[0;31m│[0;32m│[0;33m│[0m         Allocating n43 inputs...
+[0;31m│[0;32m│[0;33m│[0m         - n41 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n42 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n41 in [v0|R|f64]
+[0;31m│[0;32m│[0;33m│[0m         Using n41...
+[0;31m│[0;32m│[0;33m│[0m           freeing n41
+[0;31m│[0;32m│[0;33m│[0m         - n42 in [v1|R|f64]
+[0;31m│[0;32m│[0;33m│[0m         Using n42...
+[0;31m│[0;32m│[0;33m│[0m           freeing n42
+[0;31m│[0;32m│[0;33m│[0m         Allocating result...
+[0;31m│[0;32m│[0;33m│[0m  [0m33/43: Float64Add [v31/n41:[v0|R|f64], v32/n42:[v1|R|f64]] → [v2|R|f64], live range: [33-34]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v4, x1=v8, x2=v8, x3=v27, x4=v6, x5=v26, v2=v33
+[0;31m│[0;32m│[0;33m│[0m         Allocating n44 inputs...
+[0;31m│[0;32m│[0;33m│[0m         - n43 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n43 in [v2|R|f64]
+[0;31m│[0;32m│[0;33m│[0m         Using n43...
+[0;31m│[0;32m│[0;33m│[0m           freeing n43
+[0;31m│[0;32m│[0;33m│[0m         Allocating result...
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m34/44: TruncateFloat64ToInt32 [v33/n43:[v2|R|f64]] → [x6|R|w32], live range: [34-35]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v4, x1=v8, x2=v8, x3=v27, x4=v6, x5=v26, x6=v34
+[0;31m│[0;32m│[0;33m│[0m         Allocating n45 inputs...
+[0;31m│[0;32m│[0;33m│[0m         - n44 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n44 in [x6|R|w32]
+[0;31m│[0;32m│[0;33m│[0m         Using n44...
+[0;31m│[0;32m│[0;33m│[0m           freeing n44
+[0;31m│[0;32m│[0;33m│[0m         Allocating result...
+[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m35/45: Int32ToNumber[kCanonicalizeSmi] [v34/n44:[x6|R|w32]] → [x7|R|t], live range: [35-36]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v4, x1=v8, x2=v8, x3=v27, x4=v6, x5=v26, x7=v35
+[0;31m│[0;32m│[0;33m│[0m         Allocating n46 inputs...
+[0;31m│[0;32m│[0;33m│[0m           forcing x1 to n2...
+[0;31m│[0;32m│[0;33m│[0m         - n2 in forced [x1|R|t]
+[0;31m│[0;32m│[0;33m│[0m         Using n2...
+[0;31m│[0;32m│[0;33m│[0m         - n45 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n45 in [x7|R|t]
+[0;31m│[0;32m│[0;33m│[0m         Using n45...
+[0;31m│[0;32m│[0;33m│[0m           freeing n45
+[0;31m│[0;32m│[0;33m│[0m         Temporaries: {x6, x8}
+[0;31m│[0;32m│[0;33m│[0m         Double Temporaries: {v0}
+[0;31m│[0;32m│[0;33m│[0m         Allocating lazy deopt inputs...
+[0;31m│[0;32m│[0;33m│[0m         Using n3...
+[0;31m│[0;32m│[0;33m│[0m         Using n1...
+[0;31m│[0;32m│[0;33m│[0m         Using n2...
+[0;31m│[0;32m│[0;33m│[0m           spill: [stack:1|w32] ← n35
+[0;31m│[0;32m│[0;33m│[0m         Using n35...
+[0;31m│[0;32m│[0;33m│[0m  [0m36/46: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v35/n45:[x7|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v4, x1=v8, x2=v8, x3=v27, x4=v6, x5=v26
+[0;31m│[0;32m│[0;33m│[0m         Allocating n47 inputs...
+[0;31m│[0;32m│[0;33m│[0m         - n36 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n36 in [x3|R|w32]
+[0;31m│[0;32m│[0;33m│[0m         Using n36...
+[0;31m│[0;32m│[0;33m│[0m           freeing n36
+[0;31m│[0;32m│[0;33m│[0m         Allocating result...
+[0;31m│[0;32m│[0;33m│[0m         Allocating eager deopt inputs...
+[0;31m│[0;32m│[0;33m│[0m         Using n3...
+[0;31m│[0;32m│[0;33m│[0m         Using n1...
+[0;31m│[0;32m│[0;33m│[0m         Using n2...
+[0;31m│[0;32m│[0;33m│[0m         Using n35...
+[0;31m│[0;32m│[0;33m│[0m           freeing n35
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m37/47: Int32IncrementWithOverflow [v27/n36:[x3|R|w32]] → [x6|R|w32], live range: [37-39]
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v4, x1=v8, x2=v8, x4=v6, x6=v37
+[0;31m│[0;32m│[0;33m│[0m         Allocating n48 inputs...
+[0;31m│[0;32m│[0;33m│[0m         - n30 has arbitrary register
+[0;31m│[0;32m│[0;33m│[0m         - n30 in [x0|R|t]
+[0;31m│[0;32m│[0;33m│[0m         Using n30...
+[0;31m│[0;32m│[0;33m│[0m         Temporaries: {x3}
+[0;31m│[0;32m│[0;33m│[0m         Allocating lazy deopt inputs...
+[0;31m│[0;32m│[0;33m│[0m         Using n3...
+[0;31m│[0;32m│[0;33m│[0m         Using n1...
+[0;31m│[0;32m│[0;33m│[0m         Using n2...
+[0;31m│[0;32m│[0;33m│[0m           spill: [stack:2|w32] ← n47
+[0;31m│[0;32m│[0;33m│[0m         Using n47...
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m38/48: ReduceInterruptBudgetForLoop(26) [v4/n30:[x0|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         live regs: x0=v4, x1=v8, x2=v8, x4=v6, x6=v37
+[0;31m│[0;32m│[0;33m│[0m         Merging registers...
+[0;31m│[0;32m│[0;33m│[0m           x0 - incoming node same as node: n30
+[0;31m│[0;32m│[0;33m│[0m           x1 - incoming node same as node: n2
+[0;31m│[0;32m│[0;33m│[0m           x2 - incoming node same as node: n2
+[0;31m│[0;32m│[0;33m│[0m           x4 - incoming node same as node: n12
+[0;31m│[0;32m│[0;33m│[0m           x6 - incoming node n47 dead at target
+[0;31m│[0;32m│[0;33m│[0m         Using n47...
+[0;31m│[0;32m│[0;33m│[0m           freeing n47
+[0;31m│[0;32m│[0;33m│[0m         Using n30...
+[0;31m│[0;32m│[0;33m│[0m           freeing n30
+[0;31m│[0;32m│[0;33m│[0m         Using n1...
+[0;31m│[0;32m│[0;33m│[0m         Using n2...
+[0;31m│[0;32m│[0;33m│[0m         Using n3...
+[0;31m│[0;32m│[0;33m│[0m         Using n10...
+[0;31m│[0;32m│[0;33m│[0m           freeing n10
+[0;31m│[0;32m│[0;33m│[0m         Using n12...
+[0;31m│[0;32m│[0;33m│[0m           freeing n12
+[0;31m│[0;32m│[0;33m│[0m         Using n17...
+[0;31m│[0;32m│[0;33m│[0m           freeing n17
+[0;31m│[0;32m│[0;33m│[0m         Using n20...
+[0;31m│[0;32m│[0;33m│[0m           freeing n20
+[0;31m│[0;32m│[0;33m│[0m         Using n21...
+[0;31m│[0;32m│[0;33m│[0m           freeing n21
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m39/49: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v37/n47:[x6|R|w32] → 35: φᴵ r1 [x3|R|w32]
+[0;31m│ [0;33m│[0m         with register merges:
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m live regs: x1=v8, x2=v8
+[0;31m│  [0m [holes: 40-42 42✖️]
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m40/51: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m live regs: 
+ [0;32m│ [0m [holes: 42✖️]
+ [0;32m│ [0m Merging registers...
+ [0;32m│ [0m   x1 - new merge: loading n2 from [stack:-3|t] 
+ [0;32m│ [0m   x2 - new merge: loading n2 from [stack:-3|t] 
+ [0;32m│ [0m  [0m41/52: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m live regs: x1=v8, x2=v8
+   [0m [holes: 42✖️]
+   [0m Using n3...
+   [0m   freeing n3
+   [0m Using n1...
+   [0m   freeing n1
+   [0m Using n2...
+   [0m   freeing n2
+   [0m         ↱ eager @53 (2 live vars)
+   [0m  [0m42/53: Deopt(Insufficient type feedback for generic global access)
+   [0m
+
+----- Register allocation -----
+Graph
+
+   [0m   [0m1/17: HeapConstant(0x09b80101e371 <JSFunction add (sfi = 0x9b80101e2cd)>) → v-1, live range: [1-39]
+   [0m   [0m2/20: HeapConstant(0x09b80101e35d <ScriptContext[3]>) → v-1, live range: [2-39]
+   [0m   [0m3/21: HeapConstant(0x09b801004999 <JSGlobalProxy>) → v-1, live range: [3-39]
+   [0m   [0m4/30: HeapConstant(0x09b80101e34d <FeedbackCell[one closure]>) → v-1, live range: [4-39]
+   [0m   [0m5/10: SmiConstant(100000) → v-1, live range: [5-39]
+   [0m   [0m6/12: Int32Constant(100000) → v-1, live range: [6-39]
+    [0mBlock b0
+   [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m   [0m[0;34m  16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]
+[m   [0m    [0m7/1: InitialValue(<this>) → [stack:-6|t], live range: [7-42]
+   [0m    [0m8/2: InitialValue(<context>) → [stack:-3|t], live range: [8-42]
+   [0m    [0m9/3: InitialValue(<closure>) → [stack:-2|t], live range: [9-42]
+   [0m   [0m10/5: InitialValue(r1) → [stack:4|t], live range: [10-23]
+   [0m   [0m11/8: FunctionEntryStackCheck
+   [0m         ↳ lazy @49 (3 live vars)
+   [0m         ↱ eager @49 (3 live vars)
+   [0m   [0m12/9: CheckpointedJump b1
+   [0m      ↓
+    [0mBlock b1
+   [0m     [0m54: GapMove([stack:4|t] → [x0|R|t])
+   [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m   [0m         ↱ eager @22 (4 live vars)
+   [0m  [0m13/11: CheckedSmiUntag [v10/n5:[x0|R|t]] → [x0|R|w32], live range: [13-23]
+   [0m     [0m55: ConstantGapMove(n12 → [x1|R|w32])
+   [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m╭────[0m14/14: BranchIfInt32Compare(LessThan) [v13/n11:[x0|R|w32], v6/n12:[x1|R|w32]] b2 b8
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b2
+[0;31m│  [0m     [0m56: GapMove([stack:-3|t] → [x2|R|t])
+[0;31m│  [0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m15/18: LoadContextSlot(0x10, mutable) [v8/n2:[x2|R|t]] → [x5|R|t], live range: [15-17]
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│  [0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│  [0m  [0m16/22: Jump b3
+[0;31m│  [0m      ↓
+[0;31m│   [0mBlock b3
+[0;31m│  [0m     [0m57: GapMove([x5|R|t] → [x3|R|t])
+[0;31m│  [0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│  [0m         ↱ eager @34 (3 live vars)
+[0;31m│  [0m         │       @2 (5 live vars)
+[0;31m│  [0m  [0m17/23: CheckedNumberToFloat64 [v15/n18:[x5|R|t]] → [v0|R|f64], live range: [17-19]
+[0;31m│  [0m  [0m18/24: ChangeInt32ToFloat64 [v13/n11:[x0|R|w32]] → [v1|R|f64], live range: [18-19]
+[0;31m│  [0m  [0m19/25: Float64Add [v17/n23:[v0|R|f64], v18/n24:[v1|R|f64]] → [v2|R|f64], live range: [19-20]
+[0;31m│  [0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│  [0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│  [0m  [0m20/26: TruncateFloat64ToInt32 [v19/n25:[v2|R|f64]] → [x3|R|w32], live range: [20-21]
+[0;31m│  [0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│  [0m  [0m21/27: Int32ToNumber[kCanonicalizeSmi] [v20/n26:[x3|R|w32]] → [x4|R|t], live range: [21-22]
+[0;31m│  [0m     [0m58: GapMove([x2|R|t] → [x1|R|t])
+[0;31m│  [0m  [0m22/28: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v21/n27:[x4|R|t]]
+[0;31m│  [0m         ↳ lazy @42 (3 live vars)
+[0;31m│  [0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│  [0m         ↱ eager @46 (3 live vars)
+[0;31m│  [0m  [0m23/29: Int32IncrementWithOverflow [v13/n11:[x0|R|w32]] → [x3|R|w32] (spilled: [stack:0|w32]), live range: [23-25]
+[0;31m│  [0m     [0m59: ConstantGapMove(n30 → [x0|R|t])
+[0;31m│  [0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│  [0m  [0m24/31: ReduceInterruptBudgetForLoop(26) [v4/n30:[x0|R|t]]
+[0;31m│  [0m         ↳ lazy @49 (3 live vars)
+[0;31m│  [0m     [0m60: ConstantGapMove(n12 → [x4|R|w32])
+[0;31m│  [0m  [0m25/33: Jump b4
+[0;31m│  [0m      │  with gap moves:
+[0;31m│  [0m      │    - v23/n29:[x3|R|w32] → 35: φᴵ r1 [x3|R|w32]
+[0;31m│  [0m      │  with register merges:
+[0;31m│  [0m      ▼
+[0;31m│[0;32m╭─►[0mBlock b4 peeled (effects: c1)
+[0;31m│[0;32m│ [0m  [0m26/35: φᴵ r1 (n29, n47) → [x3|R|w32] (spilled: [stack:1|w32]), live range: [26-37]
+[0;31m│[0;32m│ [0m     [0m61: GapMove([x3|R|w32] → [x5|R|w32])
+[0;31m│[0;32m│ [0m[0;34m  22 : 79 f8 04          TestLessThan r1, EmbeddedFeedback[4]
+[m[0;31m│[0;32m│ [0m         ↱ eager @22 (4 live vars)
+[0;31m│[0;32m│ [0m  [0m27/36: CheckedSmiSizedInt32 [v26/n35:[x3|R|w32]] → [x3|R|w32], live range: [27-37]
+[0;31m│[0;32m│ [0m[0;34m  25 : a8 1c             JumpIfFalse [28]
+[m[0;31m│[0;32m│[0;33m╭──[0m28/38: BranchIfInt32Compare(LessThan) [v27/n36:[x3|R|w32], v6/n12:[x4|R|w32]] b5 b7
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b5
+[0;31m│[0;32m│[0;33m│[0m[0;34m  31 : 18 02             LdaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m29/39: LoadContextSlot(0x10, mutable) [v8/n2:[x1|R|t]] → [x8|R|t], live range: [29-31]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:2:12)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   0 : 0b 04             Ldar a1
+[m[0;31m│[0;32m│[0;33m│[0m  [0m30/40: Jump b6
+[0;31m│[0;32m│[0;33m│[0m      ↓
+[0;31m│[0;32m│[0;33m│ [0mBlock b6
+[0;31m│[0;32m│[0;33m│[0m     [0m62: GapMove([x8|R|t] → [x6|R|t])
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m   2 : 42 03 03          Add a0, EmbeddedFeedback[3]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @34 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         │       @2 (5 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m31/41: CheckedNumberToFloat64 [v29/n39:[x8|R|t]] → [v0|R|f64], live range: [31-33]
+[0;31m│[0;32m│[0;33m│[0m  [0m32/42: ChangeInt32ToFloat64 [v27/n36:[x3|R|w32]] → [v1|R|f64], live range: [32-33]
+[0;31m│[0;32m│[0;33m│[0m  [0m33/43: Float64Add [v31/n41:[v0|R|f64], v32/n42:[v1|R|f64]] → [v2|R|f64], live range: [33-34]
+[0;31m│[0;32m│[0;33m│[0m[1;34m0x09b80101e265 <SharedFunctionInfo> (0x09b80104a3e5 <String[19]: "workloads/simple.js">:0:0)
+[m[0;31m│[0;32m│[0;33m│[0m[0;34m  39 : 55 00 04          BitwiseOrSmi [0], EmbeddedFeedback[4]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m34/44: TruncateFloat64ToInt32 [v33/n43:[v2|R|f64]] → [x6|R|w32], live range: [34-35]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  42 : 29 02             StaCurrentContextSlot [2]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m35/45: Int32ToNumber[kCanonicalizeSmi] [v34/n44:[x6|R|w32]] → [x7|R|t], live range: [35-36]
+[0;31m│[0;32m│[0;33m│[0m  [0m36/46: StoreContextSlotWithWriteBarrier(2, mutable) [v8/n2:[x1|R|t], v35/n45:[x7|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @42 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m[0;34m  46 : 5b 04             Inc FBV[4]
+[m[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m  [0m37/47: Int32IncrementWithOverflow [v27/n36:[x3|R|w32]] → [x6|R|w32] (spilled: [stack:2|w32]), live range: [37-39]
+[0;31m│[0;32m│[0;33m│[0m[0;34m  49 : 97 21 00 05       JumpLoop [33], [0], FBV[5]
+[m[0;31m│[0;32m│[0;33m│[0m  [0m38/48: ReduceInterruptBudgetForLoop(26) [v4/n30:[x0|R|t]]
+[0;31m│[0;32m│[0;33m│[0m         ↳ lazy @49 (3 live vars)
+[0;31m│[0;32m│[0;33m│[0m         ↱ eager @46 (3 live vars)
+[0;31m│[0;32m╰─◄─[0m39/49: JumpLoop b4
+[0;31m│ [0;33m│[0m         with gap moves:
+[0;31m│ [0;33m│[0m           - v37/n47:[x6|R|w32] → 35: φᴵ r1 [x3|R|w32]
+[0;31m│ [0;33m│[0m         with register merges:
+[0;31m│ [0;33m│[0m
+[0;31m│ [0;33m╰►[0mBlock b7
+[0;31m│  [0m[0;34m  53 : 23 02 07          LdaGlobal [2:"print"], FBV[7]
+[m[0;31m│[0;32m╭───[0m40/51: Jump b9
+[0;31m│[0;32m│ [0m
+[0;31m╰──►[0mBlock b8
+ [0;32m│ [0m  [0m41/52: Jump b9
+ [0;32m│ [0m      ↓
+ [0;32m╰─►[0mBlock b9
+   [0m         ↱ eager @53 (2 live vars)
+   [0m  [0m42/53: Deopt(Insufficient type feedback for generic global access)
+   [0m
+---------------------------------------------------
+Finished compiling method  using Maglev
+704982704

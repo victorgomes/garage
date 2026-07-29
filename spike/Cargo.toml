@@ -1,0 +1,9 @@
+[package]
+name = "spike"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+# Throwaway (TODO 0.3). No dependencies on purpose: the point is to find out
+# what the real d8 output looks like, not to build anything reusable.
+[dependencies]
