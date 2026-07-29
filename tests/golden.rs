@@ -458,6 +458,72 @@ fn inline_decisions_do_not_depend_on_the_id_prefix() {
     );
 }
 
+/// A bounded random fuzz pass (TODO 5.4): many seeds, mutations of real
+/// fixture data — byte flips, splices, truncations — plus pure noise. Every
+/// input must index into a valid partition and parse without panicking.
+/// (A coverage-guided fuzzer would be better; this is the always-on floor.)
+#[test]
+fn fuzz_mutated_fixtures_never_panic() {
+    let base = std::fs::read(fixtures_root().join("arm64-v15.2.0/maglev-graphs.throw.log"))
+        .expect("fixture readable");
+    let base = &base[..base.len().min(64 * 1024)];
+
+    let mut state = 0x9e37_79b9_7f4a_7c15_u64;
+    let mut rand = move || {
+        state ^= state << 13;
+        state ^= state >> 7;
+        state ^= state << 17;
+        state
+    };
+
+    for round in 0..200 {
+        let mut data = base.to_vec();
+        // A handful of random mutations per round.
+        for _ in 0..(rand() % 8 + 1) {
+            match rand() % 4 {
+                0 => {
+                    // Flip a byte.
+                    let at = (rand() as usize) % data.len();
+                    data[at] = (rand() & 0xff) as u8;
+                }
+                1 => {
+                    // Truncate.
+                    let at = (rand() as usize) % data.len();
+                    data.truncate(at.max(1));
+                }
+                2 => {
+                    // Splice a boundary-looking fragment somewhere random.
+                    let fragments: [&[u8]; 4] = [
+                        b"\nCompiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev\n",
+                        b"\n----- Register allocation -----\n",
+                        b"\n      \xe2\x86\xb1 eager @2 (5 live vars)\n",
+                        b"\n[bailout (kind: deopt-eager, reason: x): begin. deoptimizing ",
+                    ];
+                    let frag = fragments[(rand() as usize) % fragments.len()];
+                    let at = (rand() as usize) % data.len();
+                    data.splice(at..at, frag.iter().copied());
+                }
+                _ => {
+                    // Duplicate a random slice (creates weird nesting).
+                    let a = (rand() as usize) % data.len();
+                    let b = ((rand() as usize) % data.len()).max(a);
+                    let slice = data[a..b.min(a + 4096)].to_vec();
+                    data.extend_from_slice(&slice);
+                }
+            }
+        }
+
+        let mut buffer = LogBuffer::new();
+        buffer.append(&data);
+        buffer.finish();
+        let idx = index(&buffer);
+        assert_partition(&idx, buffer.line_count(), &format!("fuzz round {round}"));
+        for c in &idx.compilations {
+            let _ = maglev::parse_compilation(&buffer, c);
+        }
+    }
+}
+
 /// Truncation and garbage must never panic the indexer or parser (TODO 2.6).
 #[test]
 fn truncated_and_garbage_input_is_survivable() {

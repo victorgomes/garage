@@ -27,7 +27,7 @@ use crate::parse::ParseCache;
 use crate::parse::maglev::line_text;
 use crate::source::{LogBuffer, LogSource, SourceEvent};
 use crate::terminal::TerminalGuard;
-use crate::view::{FoldKey, MODEL_LIMIT, ViewModel, model_rows};
+use crate::view::{FoldKey, MODEL_LIMIT, RowKind, ViewModel, model_rows};
 
 /// How many queued events one loop iteration absorbs before redrawing.
 /// A fast producer can deliver chunks faster than the terminal repaints;
@@ -81,6 +81,8 @@ pub enum Row {
 pub enum Prompt {
     Search,
     Filter,
+    /// `E`: filename to export the current view to (TODO 5.3).
+    Export,
 }
 
 #[derive(Debug)]
@@ -222,15 +224,19 @@ impl App {
             // collapsed by default — this is what scales to thousands of
             // compilations (PLAN §5.1).
             let mut seen: Vec<Addr> = Vec::new();
+            let mut members_of: std::collections::HashMap<Addr, Vec<usize>> =
+                std::collections::HashMap::new();
             for (i, c) in idx.compilations.iter().enumerate() {
-                if comp_visible(i) && !seen.contains(&c.key.sfi) {
-                    seen.push(c.key.sfi);
+                if comp_visible(i) {
+                    let members = members_of.entry(c.key.sfi).or_default();
+                    if members.is_empty() {
+                        seen.push(c.key.sfi);
+                    }
+                    members.push(i);
                 }
             }
             for sfi in seen {
-                let members: Vec<usize> = (0..idx.compilations.len())
-                    .filter(|&i| comp_visible(i) && idx.compilations[i].key.sfi == sfi)
-                    .collect();
+                let members = members_of.remove(&sfi).unwrap_or_default();
                 rows.push(Row::Function {
                     sfi,
                     name_comp: members[0],
@@ -476,6 +482,15 @@ impl App {
             Action::CycleConsumers => self.cycle_consumers(),
             Action::JumpBack => self.history_step(-1),
             Action::JumpForward => self.history_step(1),
+
+            Action::Yank => self.yank_line(),
+            Action::YankSection => self.yank_section(),
+            Action::Export => {
+                self.input = Some(InputLine {
+                    prompt: Prompt::Export,
+                    buffer: String::new(),
+                });
+            }
         }
     }
 
@@ -513,6 +528,13 @@ impl App {
                         };
                         self.selected = 0;
                         self.reset_view();
+                    }
+                    Prompt::Export => {
+                        if input.buffer.is_empty() {
+                            self.status = "export cancelled (empty filename)".to_string();
+                        } else {
+                            self.export_to(std::path::PathBuf::from(&input.buffer));
+                        }
                     }
                 }
             }
@@ -897,6 +919,85 @@ impl App {
         self.cycle = None;
     }
 
+    // -----------------------------------------------------------------------
+    // Clipboard and export (TODO 5.2, 5.3)
+    // -----------------------------------------------------------------------
+
+    /// A short description of what the viewport is showing, for export
+    /// headers and messages.
+    pub fn view_title(&self) -> String {
+        let source = &self.sources[self.active];
+        match self.rows().get(self.selected) {
+            Some(Row::Compilation(i)) | Some(Row::Function { name_comp: i, .. }) => {
+                let c = &source.index.compilations[*i];
+                format!(
+                    "{} · {} #{}",
+                    c.display_name(),
+                    c.key.tier.label(),
+                    c.key.ordinal
+                )
+            }
+            Some(Row::Phase { comp, phase }) => {
+                let c = &source.index.compilations[*comp];
+                format!(
+                    "{} · {} #{} · {}",
+                    c.display_name(),
+                    c.key.tier.label(),
+                    c.key.ordinal,
+                    c.phases[*phase].name
+                )
+            }
+            Some(Row::Raw(i)) => format!("raw · {}", source.index.raw[*i].label),
+            None => source.label.clone(),
+        }
+    }
+
+    /// The visible rows of the current view as plain text — folds render as
+    /// their markers, exactly like the screen (PLAN §7.9: "current view").
+    fn visible_view_text(&mut self) -> Vec<String> {
+        let vm = self.view_model();
+        let buffer = &self.sources[self.active].buffer;
+        (0..vm.len())
+            .filter_map(|r| vm.row(r))
+            .map(|row| match row.kind {
+                RowKind::Text => line_text(buffer, row.line),
+                RowKind::BlockFold { block, hidden } => {
+                    format!("[+] b{block} — {hidden} lines hidden")
+                }
+                RowKind::AnnotationFold { count } => format!("[+] {count} trace lines"),
+            })
+            .collect()
+    }
+
+    fn yank_line(&mut self) {
+        let vm = self.view_model();
+        let Some(line) = vm.line_at(self.cursor) else {
+            return;
+        };
+        let text = line_text(&self.sources[self.active].buffer, line);
+        match crate::clipboard::copy(&text) {
+            Ok(how) => self.status = format!("line {how}"),
+            Err(e) => self.status = e.to_string(),
+        }
+    }
+
+    fn yank_section(&mut self) {
+        let text = self.visible_view_text().join("\n");
+        match crate::clipboard::copy(&text) {
+            Ok(how) => self.status = format!("section {how}"),
+            Err(e) => self.status = e.to_string(),
+        }
+    }
+
+    fn export_to(&mut self, path: std::path::PathBuf) {
+        let title = self.view_title();
+        let lines = self.visible_view_text();
+        match crate::clipboard::export(&path, &title, &lines) {
+            Ok(()) => self.status = format!("exported {} lines to {}", lines.len(), path.display()),
+            Err(e) => self.status = e.to_string(),
+        }
+    }
+
     fn handle_source(&mut self, event: SourceEvent) {
         let index = match &event {
             SourceEvent::Mapped { source, .. }
@@ -981,7 +1082,18 @@ pub fn run(guard: &mut TerminalGuard, app: &mut App, rx: Receiver<Event>) -> Res
         if app.quit {
             break;
         }
+        let started = std::time::Instant::now();
         guard.tui().draw(|frame| crate::ui::render(frame, app))?;
+        // The PLAN §12 cursor-latency budget, made observable: any frame that
+        // blows it lands in the debug log with what was on screen.
+        let elapsed = started.elapsed();
+        if elapsed.as_millis() >= 16 {
+            tracing::debug!(
+                millis = elapsed.as_millis(),
+                selected = app.selected,
+                "slow frame"
+            );
+        }
     }
 
     Ok(())
@@ -990,7 +1102,6 @@ pub fn run(guard: &mut TerminalGuard, app: &mut App, rx: Receiver<Event>) -> Res
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::view::RowKind;
     use crossterm::event::{KeyCode, KeyModifiers};
 
     fn app_with(trace: &str) -> App {

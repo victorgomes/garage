@@ -26,6 +26,10 @@ anyhow = "1.0"
 thiserror = "2.0"
 toml = "0.8"
 
+# Local clipboard for :copy. OSC 52 is tried first (it is what works over
+# SSH/tmux, PLAN §3.4); arboard is the local fallback.
+arboard = { version = "3", default-features = false }
+
 # Diagnostics go to a file, never to the screen buffer (TODO 1.2).
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", default-features = false, features = [

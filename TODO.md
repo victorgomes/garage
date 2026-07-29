@@ -311,23 +311,45 @@ Model and deviations worth recording:
 
 ## Phase 5: MVP Hardening & Ship  🏁
 
-- [ ] **5.1. Perf pass** on the large fixture: open 500 MB < 2 s, cursor latency
-  < 16 ms, memory bounded (string interning, no full-file String copies).
-- [ ] **5.2. Clipboard**: `:copy` via **OSC 52** (SSH/tmux) with `arboard` local
-  fallback.
-- [ ] **5.3. Export**: `:export <file>` writes current view/selection as
-  Markdown/plain text (for bugs and Gerrit comments).
-- [ ] **5.4. Robustness**: fuzz parsers with garbage/truncated input; terminal
-  matrix test (80×24, tmux, 16-color, SSH). Must include **Linux and SSH** for
-  the fd-0 terminal handling from 1.5, which so far is only measured on macOS
-  under tmux — including the case where neither stdout nor stderr is a terminal
-  and `/dev/tty` is the only remaining route.
-- [ ] **5.5. README**: install, sample `d8` invocations, keymap, recommended
-  flags for clean traces (`--no-concurrent-recompilation --predictable`, plus
-  `--no-trace-with-compilation-id` when diffing runs). Note that the Maglev
-  graph flags need a build with `V8_ENABLE_MAGLEV_GRAPH_PRINTER`.
+- [x] **5.1. Perf pass**, measured on a 489.5 MiB / 6.85 M-line trace
+  (release build, M-series):
+  - open: 214 ms line index + 328 ms section index ≈ **550 ms** (budget: 2 s);
+  - cursor latency: a **slow-frame detector** now logs any draw ≥ 16 ms; a
+    navigation session over the big trace (jump-to-end, repeated half-pages,
+    expansion, phase views, lazy parses) recorded **zero** slow frames;
+  - memory: max RSS 593 MB ≈ the mmapped file + the 55 MB line index + ~50 MB
+    of everything else — no full-file copies. The 8-bytes/line index remains
+    the first target if memory ever binds.
+  - Grouped-sidebar row building was the one accidental quadratic found
+    (per-SFI membership scans); now linear.
+- [x] **5.2. Clipboard** — `y` (cursor line) / `Y` (visible section). Inside
+  tmux/SSH: OSC 52, with the tmux passthrough wrapper, since that is the only
+  route to the *local* clipboard; locally: `arboard`, falling back to OSC 52.
+  Payloads over 72 KB are refused with a pointer to export — terminals cap
+  OSC 52 and truncate silently.
+- [x] **5.3. Export** — `E` prompts for a filename and writes the current view
+  (folds rendered as their markers, exactly as on screen) as a fenced Markdown
+  block with a provenance title. *Deviation:* bound to keys (`y`/`Y`/`E`)
+  rather than `:copy`/`:export` — the `:` command palette is Phase 6.1, and
+  holding the clipboard hostage to it helped nobody.
+- [x] **5.4. Robustness** (the part reachable from this machine):
+  - always-on bounded fuzz in the test suite: 200 seeded rounds of byte flips,
+    truncations, boundary splices, and slice duplications over real fixture
+    data, plus pure-noise and truncation tests — indexer must produce a valid
+    partition and the parser must not panic, every round;
+  - terminal matrix: 80×24 with `TERM=xterm` (16-colour), 40×10, 200×50,
+    resize mid-run, tmux throughout.
+  - [ ] **Still owed: Linux and SSH** for the fd-0 terminal handling from 1.5
+    — including the case where neither stdout nor stderr is a terminal and
+    `/dev/tty` is the only remaining route. Needs hardware this session does
+    not have; the reasoning says Linux is a no-op (`/dev/tty` + epoll works),
+    but that is reasoning, not measurement.
+- [x] **5.5. README** — install, sample invocations, keymap, clean-trace flag
+  guidance, the `V8_ENABLE_MAGLEV_GRAPH_PRINTER` / `v8_enable_disassembler`
+  build gates, and the flag-implication trap.
 - [ ] **5.6. Dogfood milestone**: author uses `garage` instead of `less` for one
   week of real Maglev work; fix what hurts. **MVP done = you don't go back.**
+  (A user milestone by definition — everything mechanical above is done.)
 
 ---
 

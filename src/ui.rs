@@ -682,6 +682,7 @@ fn status_line(app: &App, vm: &ViewModel) -> Paragraph<'static> {
         let prompt = match input.prompt {
             Prompt::Search => "/",
             Prompt::Filter => "filter: ",
+            Prompt::Export => "export to: ",
         };
         return Paragraph::new(Line::from(vec![
             Span::styled(

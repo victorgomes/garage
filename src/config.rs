@@ -50,6 +50,9 @@ pub enum Action {
     SearchPrev,
     Filter,
     ToggleAnnotations,
+    Yank,
+    YankSection,
+    Export,
 }
 
 impl Action {
@@ -86,6 +89,9 @@ impl Action {
             Action::SearchPrev => "search-prev",
             Action::Filter => "filter",
             Action::ToggleAnnotations => "toggle-annotations",
+            Action::Yank => "yank",
+            Action::YankSection => "yank-section",
+            Action::Export => "export",
         }
     }
 
@@ -112,16 +118,19 @@ impl Action {
             Action::ToggleWrap => "wrap long lines",
             Action::ScrollLeft => "scroll left",
             Action::ScrollRight => "scroll right",
-            Action::FoldBlock => "fold / unfold basic block (Phase 4)",
-            Action::JumpToInput => "jump to input definition (Phase 4)",
-            Action::CycleConsumers => "cycle consumers (Phase 4)",
-            Action::JumpBack => "jump history back (Phase 4)",
-            Action::JumpForward => "jump history forward (Phase 4)",
-            Action::Search => "regex search (Phase 4)",
-            Action::SearchNext => "next match (Phase 4)",
-            Action::SearchPrev => "previous match (Phase 4)",
-            Action::Filter => "filter sidebar (Phase 4)",
-            Action::ToggleAnnotations => "show trace annotations (Phase 4)",
+            Action::FoldBlock => "fold / unfold basic block",
+            Action::JumpToInput => "jump to input definition",
+            Action::CycleConsumers => "cycle consumers",
+            Action::JumpBack => "jump history back",
+            Action::JumpForward => "jump history forward",
+            Action::Search => "regex search",
+            Action::SearchNext => "next match",
+            Action::SearchPrev => "previous match",
+            Action::Filter => "filter sidebar",
+            Action::ToggleAnnotations => "show trace annotations",
+            Action::Yank => "copy the cursor line",
+            Action::YankSection => "copy the whole section",
+            Action::Export => "export section to a file",
         }
     }
 
@@ -158,6 +167,9 @@ impl Action {
             SearchPrev,
             Filter,
             ToggleAnnotations,
+            Yank,
+            YankSection,
+            Export,
         ]
     }
 }
@@ -294,6 +306,9 @@ impl Keymap {
             (Action::SearchPrev, vec!["N"]),
             (Action::Filter, vec!["f"]),
             (Action::ToggleAnnotations, vec!["t"]),
+            (Action::Yank, vec!["y"]),
+            (Action::YankSection, vec!["Y"]),
+            (Action::Export, vec!["E"]),
         ]
     }
 
