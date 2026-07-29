@@ -52,6 +52,7 @@ struct Res {
     ev_deopt_begin: Regex,
     ev_deopt_end: Regex,
     ev_osr: Regex,
+    function_line: Regex,
 }
 
 fn res() -> &'static Res {
@@ -85,6 +86,7 @@ fn res() -> &'static Res {
             )),
             ev_deopt_end: re(r"^\[bailout end\. code_invalidation: (\w+).*\]$"),
             ev_osr: re(r"^\[OSR - ([^.]*)\. function: ([^,\]]*)(?:, osr offset: (\d+))?.*\]$"),
+            function_line: re(&format!(r"^Function: (0x[0-9a-f]+) {FUNC}\s*$")),
         }
     })
 }
@@ -126,6 +128,9 @@ pub struct TraceIndex {
     /// Last `[OSR - compilation started]` offset per function *name* — a weak
     /// key, so anything derived from it is marked [`Confidence::Heuristic`].
     osr_offset_by_name: HashMap<String, u32>,
+    /// A Turbolev compilation opened by its anchor banner whose `Function:`
+    /// identity line has not arrived yet.
+    awaiting_identity: Option<usize>,
     function_filter: Option<Regex>,
 }
 
@@ -144,6 +149,7 @@ impl TraceIndex {
             votes: VersionVotes::default(),
             last_compile_start: None,
             osr_offset_by_name: HashMap::new(),
+            awaiting_identity: None,
             function_filter,
         }
     }
@@ -230,6 +236,12 @@ impl TraceIndex {
         } else if text.starts_with("Finished compiling method ") {
             if r.finished.is_match(text) {
                 self.on_finished(i, text);
+                return;
+            }
+        } else if text.starts_with("Function: ") {
+            if let Some(c) = r.function_line.captures(text) {
+                let (addr, name, sfi) = (c[1].to_string(), c[2].to_string(), c[3].to_string());
+                self.on_function_identity(i, &addr, &name, &sfi);
                 return;
             }
         } else if text.starts_with('[') {
@@ -340,6 +352,70 @@ impl TraceIndex {
         };
     }
 
+    /// Opens a Turbolev compilation at its anchor banner. Identity (name,
+    /// SFI) arrives later on the `Function:` line inside the section, so the
+    /// key is patched in [`Self::on_function_identity`]; ordinals are
+    /// assigned there too, once the SFI is known.
+    fn on_turbolev_anchor(&mut self, i: usize, banner: &str) {
+        let cut = self.pending.take().map(|p| p.start).unwrap_or(i);
+        self.close_all(cut);
+
+        self.compilations.push(CompilationSection {
+            key: CompilationKey {
+                sfi: Addr(0),
+                tier: Tier::Turbolev,
+                ordinal: 0,
+            },
+            name: String::new(),
+            function_addr: None,
+            lines: cut..i + 1,
+            osr: None,
+            phases: vec![PhaseSection {
+                name: banner.to_string(),
+                kind: PhaseKind::Bytecode,
+                lines: i..i + 1,
+            }],
+            preamble: i..i,
+            filtered_out: false,
+        });
+        let comp = self.compilations.len() - 1;
+        self.state = State::InCompilation { comp };
+        self.awaiting_identity = Some(comp);
+    }
+
+    /// `Function: 0x… <JSFunction name (sfi = 0x…)>` — the identity of a
+    /// Turbolev compilation, printed inside its bytecode section.
+    fn on_function_identity(&mut self, i: usize, addr: &str, name: &str, sfi: &str) {
+        let awaiting = match (self.awaiting_identity, self.state) {
+            (Some(comp), State::InCompilation { comp: open }) if comp == open => Some(comp),
+            _ => None,
+        };
+        if let Some(comp) = awaiting {
+            let sfi = Addr::parse(sfi).unwrap_or(Addr(0));
+            let ordinal = {
+                let n = self.ordinals.entry((sfi, Tier::Turbolev)).or_insert(0);
+                *n += 1;
+                *n
+            };
+            let filtered_out = match &self.function_filter {
+                Some(re) => {
+                    let display = if name.is_empty() { "<toplevel>" } else { name };
+                    !re.is_match(display)
+                }
+                None => false,
+            };
+            let section = &mut self.compilations[comp];
+            section.key.sfi = sfi;
+            section.key.ordinal = ordinal;
+            section.name = name.to_string();
+            section.function_addr = Addr::parse(addr);
+            section.filtered_out = filtered_out;
+            self.awaiting_identity = None;
+        }
+        // Either way the line is ordinary content of whatever is open.
+        self.content(i, name.as_bytes());
+    }
+
     fn on_finished(&mut self, i: usize, text: &str) {
         match self.state {
             State::InCompilation { comp } => {
@@ -357,6 +433,12 @@ impl TraceIndex {
     }
 
     fn on_banner(&mut self, i: usize, name: &str) {
+        // The Turbolev frontend has no `Compiling … with <Tier>` line; this
+        // banner *is* the compilation anchor (`--print-turbolev-frontend`).
+        if name == "Bytecode before MaglevGraphBuilding" {
+            self.on_turbolev_anchor(i, name);
+            return;
+        }
         let State::InCompilation { comp } = self.state else {
             // Banner grammar outside a compilation (TurboFan graphs, Phase 8
             // material): raw fallback, never dropped.
@@ -463,6 +545,7 @@ impl TraceIndex {
 
     /// Closes whatever is open so that the sections partition `0..end`.
     fn close_all(&mut self, end: usize) {
+        self.awaiting_identity = None;
         // A rule/begin line still pending at a boundary (e.g. EOF right after
         // it) must not fall out of the partition.
         self.flush_pending_into_current();
@@ -752,6 +835,63 @@ Compiling 0x2 <JSFunction dropme (sfi = 0x20)> with Maglev
         let idx =
             index("\u{1b}[0;32mCompiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev\u{1b}[0m\n");
         assert_eq!(idx.compilations.len(), 1);
+    }
+
+    /// Turbolev-frontend dumps have no `Compiling` line: the anchor is the
+    /// `Bytecode before MaglevGraphBuilding` banner, and identity arrives on
+    /// the `Function:` line inside the section.
+    #[test]
+    fn turbolev_anchor_and_identity() {
+        let idx = index(
+            "\
+warmup
+----- Bytecode before MaglevGraphBuilding -----
+
+Function: 0x9 <JSFunction add (sfi = 0x77)>
+Parameter count 3
+----- Maglev graph building -----
+   1: Foo
+----- Bytecode before MaglevGraphBuilding -----
+
+Function: 0x9 <JSFunction add (sfi = 0x77)>
+----- Maglev graph building -----
+   2: Bar
+",
+        );
+        assert_eq!(idx.compilations.len(), 2);
+        let a = &idx.compilations[0];
+        assert_eq!(a.key.tier, Tier::Turbolev);
+        assert_eq!(a.key.sfi, Addr(0x77));
+        assert_eq!(a.key.ordinal, 1);
+        assert_eq!(a.name, "add");
+        assert_eq!(a.lines, 1..7);
+        assert_eq!(a.phases.len(), 2);
+        assert_eq!(a.phases[0].kind, PhaseKind::Bytecode);
+        assert_eq!(a.phases[1].kind, PhaseKind::Graph { known: true });
+        assert_eq!(idx.compilations[1].key.ordinal, 2);
+        assert_partition(&idx, 12);
+        assert_eq!(idx.detected_version.as_deref(), Some("15.2"));
+    }
+
+    /// A `Function:` line with no awaiting Turbolev compilation is ordinary
+    /// content, and a compilation whose identity never arrives stays visible
+    /// with the placeholder key.
+    #[test]
+    fn turbolev_identity_edge_cases() {
+        let idx = index("Function: 0x9 <JSFunction f (sfi = 0x77)>\n");
+        assert!(idx.compilations.is_empty());
+        assert_eq!(idx.raw.len(), 1);
+
+        let idx = index(
+            "\
+----- Bytecode before MaglevGraphBuilding -----
+Parameter count 3
+",
+        );
+        assert_eq!(idx.compilations.len(), 1);
+        assert_eq!(idx.compilations[0].key.sfi, Addr(0));
+        assert_eq!(idx.compilations[0].display_name(), "<toplevel>");
+        assert_partition(&idx, 2);
     }
 
     /// An event arriving while rule/`Begin` lines are pending must not orphan

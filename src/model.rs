@@ -45,6 +45,11 @@ pub enum Tier {
     Sparkplug,
     Maglev,
     Turbofan,
+    /// The Turbolev frontend (`--turbolev --print-turbolev-frontend`):
+    /// Maglev-style graphs feeding the TurboFan backend. Its dumps have no
+    /// `Compiling … with <Tier>` line; the indexer anchors them on the
+    /// `Bytecode before MaglevGraphBuilding` banner instead.
+    Turbolev,
     /// Never guess: an unrecognised tier is kept verbatim.
     Other(String),
 }
@@ -58,6 +63,7 @@ impl Tier {
             "SPARKPLUG" | "BASELINE" => Tier::Sparkplug,
             "MAGLEV" => Tier::Maglev,
             "TURBOFAN" | "TURBOFAN_JS" => Tier::Turbofan,
+            "TURBOLEV" => Tier::Turbolev,
             _ => Tier::Other(word.to_string()),
         }
     }
@@ -68,6 +74,7 @@ impl Tier {
             Tier::Sparkplug => "Sparkplug",
             Tier::Maglev => "Maglev",
             Tier::Turbofan => "Turbofan",
+            Tier::Turbolev => "Turbolev",
             Tier::Other(s) => s,
         }
     }

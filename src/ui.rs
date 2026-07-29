@@ -93,12 +93,14 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
     };
 
     let mut maglev = 0usize;
+    let mut turbolev = 0usize;
     let mut turbofan = 0usize;
     let mut other = 0usize;
     let mut osr = 0usize;
     for c in &idx.compilations {
         match c.key.tier {
             Tier::Maglev => maglev += 1,
+            Tier::Turbolev => turbolev += 1,
             Tier::Turbofan => turbofan += 1,
             _ => other += 1,
         }
@@ -124,6 +126,9 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
         let mut tiers = Vec::new();
         if maglev > 0 {
             tiers.push(format!("{maglev} Maglev"));
+        }
+        if turbolev > 0 {
+            tiers.push(format!("{turbolev} Turbolev"));
         }
         if turbofan > 0 {
             tiers.push(format!("{turbofan} Turbofan"));

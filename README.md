@@ -34,6 +34,9 @@ d8 --no-concurrent-recompilation --predictable \
 # Richer deopt frames (register → node → location):
 d8 --print-maglev-graphs --print-maglev-deopt-verbose bench.js | garage
 
+# Turbolev-frontend graphs (Maglev IR in the TurboFan pipeline):
+d8 --turbolev --print-turbolev-frontend bench.js | garage
+
 # Tiering + OSR story alongside the graphs:
 d8 --print-maglev-graphs --trace-opt --trace-deopt --trace-osr app.js | garage
 ```

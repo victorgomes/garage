@@ -41,6 +41,8 @@ phases = [
 # Observed in the arm64-v14.9.0 / x64-v14.9.0 fixtures. The full PhaseName()
 # table for 14.9 was not captured before the corpus moved on; unknown 14.9
 # names degrade to unrecognised phases, which is the designed behaviour.
+# The V8.TFTurbolev* names are the 14.9 Turbolev-frontend phases — 15.2
+# reuses the plain Maglev names there.
 phases = [
     "After graph building",
     "After propagating truncation",
@@ -48,4 +50,8 @@ phases = [
     "After use marking",
     "After register allocation pre-processing",
     "After register allocation",
+    "V8.TFTurbolevMaglevGraphBuilder",
+    "V8.TFTurbolevInliner",
+    "V8.TFTurbolevDeadNodeSweeping",
+    "V8.TFTurbolevPostHoc",
 ]
