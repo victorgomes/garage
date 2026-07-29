@@ -10,6 +10,7 @@ version = "0.0.1"
 edition = "2024"
 rust-version = "1.85"
 description = "Terminal UI for viewing, navigating and diffing V8 trace output"
+license = "MIT"
 publish = false
 
 [dependencies]
