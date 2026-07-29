@@ -25,12 +25,12 @@ use regex::Regex;
 use crate::config::{Action, Keymap};
 use crate::event::Event;
 use crate::index::TraceIndex;
-use crate::model::{Addr, IRNode, LineInfo, NodeId, SCHEDULE_ONLY};
+use crate::model::{Addr, EventKind, IRNode, LineInfo, NodeId, PhaseKind, SCHEDULE_ONLY};
 use crate::parse::ParseCache;
 use crate::parse::maglev::line_text;
 use crate::source::{LogBuffer, LogSource, SourceEvent};
 use crate::terminal::TerminalGuard;
-use crate::view::{FoldKey, MODEL_LIMIT, RowKind, ViewModel, model_rows};
+use crate::view::{FoldKey, Lens, MODEL_LIMIT, RowKind, ViewModel, model_rows};
 
 /// How many queued events one loop iteration absorbs before redrawing.
 /// A fast producer can deliver chunks faster than the terminal repaints;
@@ -94,6 +94,8 @@ pub enum Row {
         phase: usize,
     },
     Raw(usize),
+    /// Timeline mode: one row per [`TimelineEvent`] (TODO 6.3).
+    Event(usize),
 }
 
 /// What the input line is collecting.
@@ -103,7 +105,25 @@ pub enum Prompt {
     Filter,
     /// `E`: filename to export the current view to (TODO 5.3).
     Export,
+    /// `:` — the command palette (TODO 6.1).
+    Command,
 }
+
+/// The palette's command table, in completion order. The second column is the
+/// help/candidate hint. Kept as data so completion, dispatch, and the help
+/// modal can never drift apart.
+pub const COMMANDS: &[(&str, &str)] = &[
+    ("checks", "lens: guard nodes, with a count"),
+    ("clear", "clear the lens and timeline filter"),
+    ("copy", "copy the visible section"),
+    ("deopts", "timeline, deopt events only"),
+    ("export", "export the view to <file>"),
+    ("function", "filter the sidebar to <regex>"),
+    ("megamorphic", "lens: megamorphic feedback and ICs"),
+    ("phi", "lens: control/phi backbone"),
+    ("spill", "lens: regalloc spills and reloads"),
+    ("timeline", "toggle the timeline view"),
+];
 
 #[derive(Debug)]
 pub struct InputLine {
@@ -118,6 +138,16 @@ struct Cycle {
     node: NodeId,
     targets: Vec<usize>, // buffer lines
     at: usize,
+}
+
+/// One jump-history entry. Stores the sidebar *mode* alongside the position:
+/// a deopt→graph jump leaves the timeline, and Ctrl+O must land back on the
+/// event row, not interpret a timeline row index against the compilation list.
+#[derive(Debug, Clone, Copy)]
+struct Jump {
+    timeline: bool,
+    selected: usize,
+    line: usize,
 }
 
 pub struct App {
@@ -158,10 +188,20 @@ pub struct App {
     pub sidebar_filter: Option<Regex>,
     /// Active input line, if any.
     pub input: Option<InputLine>,
-    /// Jump history for Ctrl+O / Ctrl+I: (selected row, buffer line).
-    jumps: Vec<(usize, usize)>,
+    /// Jump history for Ctrl+O / Ctrl+I.
+    jumps: Vec<Jump>,
     jump_at: usize,
     cycle: Option<Cycle>,
+
+    // Phase 6 state.
+    /// Timeline mode: the sidebar lists events instead of sections (TODO 6.3).
+    pub timeline: bool,
+    /// The other mode's selection, restored when toggling back.
+    timeline_selected: usize,
+    /// `:deopts`: timeline narrowed to deopt events.
+    pub timeline_deopts_only: bool,
+    /// Active semantic lens (TODO 6.2).
+    pub lens: Option<Lens>,
 
     /// Pane geometry from the last frame, for mouse routing.
     pub sidebar_rect: PaneRect,
@@ -210,6 +250,10 @@ impl App {
             jumps: Vec::new(),
             jump_at: 0,
             cycle: None,
+            timeline: false,
+            timeline_selected: 0,
+            timeline_deopts_only: false,
+            lens: None,
             sidebar_rect: PaneRect::default(),
             viewport_rect: PaneRect::default(),
         }
@@ -239,6 +283,19 @@ impl App {
         let source = &self.sources[self.active];
         let idx = &source.index;
         let mut rows = Vec::new();
+
+        if self.timeline {
+            // Timeline mode (TODO 6.3): one row per event, ordinal order —
+            // which is stream order, because the indexer records them in one
+            // pass.
+            for (i, e) in idx.events.iter().enumerate() {
+                if self.timeline_deopts_only && !matches!(e.kind, EventKind::DeoptBegin { .. }) {
+                    continue;
+                }
+                rows.push(Row::Event(i));
+            }
+            return rows;
+        }
 
         let comp_visible = |i: usize| {
             let c = &idx.compilations[i];
@@ -338,6 +395,11 @@ impl App {
                 let range = self.sources[self.active].index.raw[*i].lines.clone();
                 return ViewModel::Plain { range };
             }
+            Some(Row::Event(i)) => {
+                return ViewModel::Plain {
+                    range: self.event_view_range(*i),
+                };
+            }
             None => {
                 return ViewModel::Plain {
                     range: 0..self.sources[self.active].buffer.line_count(),
@@ -369,8 +431,58 @@ impl App {
             comp,
             &self.folded_blocks,
             self.show_annotations,
+            &source.buffer,
+            self.lens,
         );
         ViewModel::Modeled { rows, parsed, comp }
+    }
+
+    /// What the viewport shows for a selected timeline event: for a deopt,
+    /// the whole bailout block (through the matching `[bailout end]` — under
+    /// `--trace-deopt-verbose` that is the frame-unwinding dump, TODO 6.5);
+    /// for anything else, the enclosing section as context. Ranges are capped
+    /// to the enclosing section so an interleaved stream cannot leak another
+    /// section into the panel.
+    fn event_view_range(&self, ev: usize) -> std::ops::Range<usize> {
+        let idx = &self.sources[self.active].index;
+        let Some(event) = idx.events.get(ev) else {
+            return 0..self.sources[self.active].buffer.line_count();
+        };
+        let section = self
+            .enclosing_section_range(event.line)
+            .unwrap_or(event.line..event.line + 1);
+
+        if matches!(event.kind, EventKind::DeoptBegin { .. }) {
+            let end = idx.events[ev + 1..]
+                .iter()
+                .find(|e| matches!(e.kind, EventKind::DeoptEnd { .. }))
+                .map(|e| e.line + 1)
+                .unwrap_or(section.end)
+                .min(section.end);
+            return event.line..end.max(event.line + 1);
+        }
+        section
+    }
+
+    /// The section (raw or compilation) containing a buffer line. Both lists
+    /// are sorted by start line and the sections partition the file, so in
+    /// each list only the last section starting at or before the line can
+    /// contain it.
+    fn enclosing_section_range(&self, line: usize) -> Option<std::ops::Range<usize>> {
+        let idx = &self.sources[self.active].index;
+        let at = idx.raw.partition_point(|r| r.lines.start <= line);
+        if let Some(r) = at.checked_sub(1).map(|i| &idx.raw[i])
+            && r.lines.contains(&line)
+        {
+            return Some(r.lines.clone());
+        }
+        let at = idx.compilations.partition_point(|c| c.lines.start <= line);
+        if let Some(c) = at.checked_sub(1).map(|i| &idx.compilations[i])
+            && c.lines.contains(&line)
+        {
+            return Some(c.lines.clone());
+        }
+        None
     }
 
     /// The node defined on the cursor row, for tracking and jumps (TODO 4.3).
@@ -597,6 +709,13 @@ impl App {
                     buffer: String::new(),
                 });
             }
+            Action::CommandPalette => {
+                self.input = Some(InputLine {
+                    prompt: Prompt::Command,
+                    buffer: String::new(),
+                });
+            }
+            Action::ToggleTimeline => self.toggle_timeline(),
         }
     }
 
@@ -641,6 +760,37 @@ impl App {
                         } else {
                             self.export_to(std::path::PathBuf::from(&input.buffer));
                         }
+                    }
+                    Prompt::Command => self.run_command(input.buffer.trim().to_string()),
+                }
+            }
+            KeyCode::Tab if input.prompt == Prompt::Command => {
+                // Completion (TODO 6.1): extend to the longest common prefix
+                // of the matching commands; unique match completes fully. The
+                // candidate list itself is rendered live in the status line.
+                let typed = input.buffer.clone();
+                if typed.contains(' ') {
+                    return; // arguments have no completion
+                }
+                let matches: Vec<&str> = COMMANDS
+                    .iter()
+                    .map(|(name, _)| *name)
+                    .filter(|name| name.starts_with(&typed))
+                    .collect();
+                match matches.as_slice() {
+                    [] => {}
+                    [only] => input.buffer = only.to_string(),
+                    several => {
+                        let mut prefix = several[0].to_string();
+                        for name in &several[1..] {
+                            let common = prefix
+                                .chars()
+                                .zip(name.chars())
+                                .take_while(|(a, b)| a == b)
+                                .count();
+                            prefix.truncate(common);
+                        }
+                        input.buffer = prefix;
                     }
                 }
             }
@@ -745,6 +895,7 @@ impl App {
                 }
             }
             Some(Row::Phase { .. } | Row::Raw(_)) => self.focus = Pane::Viewport,
+            Some(Row::Event(i)) => self.event_jump(*i),
             None => {}
         }
     }
@@ -758,6 +909,24 @@ impl App {
         self.scroll_x = 0;
         self.follow = false;
         self.cycle = None;
+        self.sync_event_cursor();
+    }
+
+    /// In timeline mode the view is the event's context, and the cursor
+    /// belongs on the event's own line, not on the top of that context.
+    fn sync_event_cursor(&mut self) {
+        if !self.timeline {
+            return;
+        }
+        let rows = self.rows();
+        let Some(Row::Event(i)) = rows.get(self.selected) else {
+            return;
+        };
+        let line = self.sources[self.active].index.events[*i].line;
+        let vm = self.view_model();
+        if let Some(row) = row_showing(&vm, line) {
+            self.cursor = row;
+        }
     }
 
     // -----------------------------------------------------------------------
@@ -851,6 +1020,321 @@ impl App {
             }
         }
         self.status = format!("no match for {}", re.as_str());
+    }
+
+    // -----------------------------------------------------------------------
+    // Command palette (TODO 6.1, 6.2)
+    // -----------------------------------------------------------------------
+
+    /// Executes one committed `:` command. The status line is the message
+    /// line: every branch ends in a message, including the unknown-command
+    /// case.
+    fn run_command(&mut self, text: String) {
+        let (name, arg) = match text.split_once(char::is_whitespace) {
+            Some((n, a)) => (n, a.trim()),
+            None => (text.as_str(), ""),
+        };
+        match name {
+            "" => self.status = "empty command".to_string(),
+            "checks" => self.toggle_lens(Lens::Checks),
+            "phi" => self.toggle_lens(Lens::Phi),
+            "spill" => self.toggle_lens(Lens::Spill),
+            "megamorphic" => self.toggle_lens(Lens::Megamorphic),
+            "deopts" => {
+                if !self.timeline {
+                    self.toggle_timeline();
+                }
+                self.timeline_deopts_only = true;
+                let rows = self.rows();
+                self.selected = self.selected.min(rows.len().saturating_sub(1));
+                self.reset_view();
+                self.status = match rows.len() {
+                    0 => "no deopt events in this trace".to_string(),
+                    1 => "1 deopt event — Enter jumps to the compilation".to_string(),
+                    n => format!("{n} deopt events — Enter jumps to the compilation"),
+                };
+            }
+            "function" => {
+                if arg.is_empty() {
+                    self.sidebar_filter = None;
+                    self.status = "sidebar filter cleared".to_string();
+                } else {
+                    match Regex::new(arg) {
+                        Ok(re) => {
+                            self.status = format!("sidebar filtered to /{arg}/");
+                            self.sidebar_filter = Some(re);
+                            self.selected = 0;
+                            self.reset_view();
+                        }
+                        Err(_) => self.status = format!("bad regex: {arg}"),
+                    }
+                }
+            }
+            "copy" => self.yank_section(),
+            "export" => {
+                if arg.is_empty() {
+                    self.input = Some(InputLine {
+                        prompt: Prompt::Export,
+                        buffer: String::new(),
+                    });
+                } else {
+                    self.export_to(std::path::PathBuf::from(arg));
+                }
+            }
+            "timeline" => self.toggle_timeline(),
+            "clear" => {
+                self.lens = None;
+                self.timeline_deopts_only = false;
+                self.status = "lens and timeline filter cleared".to_string();
+            }
+            other => self.status = format!("unknown command :{other} (Tab lists commands)"),
+        }
+    }
+
+    /// `:checks` & friends: same lens toggles off, different lens replaces.
+    /// The match count reported is for the *current* view, which is the count
+    /// the user is looking at.
+    fn toggle_lens(&mut self, lens: Lens) {
+        if self.lens == Some(lens) {
+            self.lens = None;
+            self.status = format!("lens :{} cleared", lens.name());
+            return;
+        }
+        self.lens = Some(lens);
+        self.cursor = 0;
+        self.top = 0;
+        self.cycle = None;
+        let vm = self.view_model();
+        let matches = match &vm {
+            ViewModel::Modeled { rows, parsed, .. } => {
+                let buffer = &self.sources[self.active].buffer;
+                rows.iter()
+                    .filter(|row| {
+                        row.kind == RowKind::Text && {
+                            let info = row
+                                .info
+                                .and_then(|(p, i)| parsed.phases.get(p)?.infos.get(i));
+                            lens.matches(info, parsed, buffer, row.line)
+                        }
+                    })
+                    .count()
+            }
+            ViewModel::Plain { .. } => {
+                self.status = format!(
+                    "lens :{} set — applies to parsed compilations (this view is raw)",
+                    lens.name()
+                );
+                return;
+            }
+        };
+        self.status = format!(
+            "lens :{} — {matches} match{} in this view (:clear resets)",
+            lens.name(),
+            if matches == 1 { "" } else { "es" }
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Timeline & the deopt→graph jump (TODO 6.3, 6.4)
+    // -----------------------------------------------------------------------
+
+    /// `Tab`: compilation list ⇄ timeline. Each mode keeps its own selection.
+    fn toggle_timeline(&mut self) {
+        self.timeline = !self.timeline;
+        std::mem::swap(&mut self.selected, &mut self.timeline_selected);
+        self.timeline_deopts_only = false;
+        self.sidebar_scroll = 0;
+        self.focus = Pane::Sidebar;
+        self.reset_view();
+        if self.timeline {
+            let n = self.rows().len();
+            self.selected = self.selected.min(n.saturating_sub(1));
+            self.status = match n {
+                0 => "timeline — no events (needs --trace-opt / --trace-deopt)".to_string(),
+                n => format!("timeline — {n} events · Enter jumps to the compilation"),
+            };
+        } else {
+            let n = self.rows().len();
+            self.selected = self.selected.min(n.saturating_sub(1));
+            self.status = "compilation list".to_string();
+        }
+    }
+
+    /// Enter on a timeline event: jump to the correlated compilation, per
+    /// docs/correlation-keys.md — `(sfi, tier)` + stream position, never a
+    /// guess. Unresolvable events stay timeline entries with a message.
+    fn event_jump(&mut self, ev: usize) {
+        let event = self.sources[self.active].index.events[ev].clone();
+        // Deopts bind strictly backwards (the code being torn down was
+        // compiled earlier); marking/compile events may precede their dump,
+        // so they are allowed to bind forwards.
+        let (sfi, tier, offset, forward_ok) = match &event.kind {
+            EventKind::DeoptBegin {
+                sfi: Some(sfi),
+                tier,
+                bytecode_offset,
+                ..
+            } => (*sfi, tier.clone(), *bytecode_offset, false),
+            EventKind::Marking {
+                sfi: Some(sfi),
+                target,
+                ..
+            }
+            | EventKind::CompileStart {
+                sfi: Some(sfi),
+                target,
+                ..
+            }
+            | EventKind::CompileDone {
+                sfi: Some(sfi),
+                target,
+                ..
+            } => (*sfi, target.clone(), None, true),
+            _ => {
+                self.status =
+                    "this event has no SFI to correlate on — timeline entry only".to_string();
+                return;
+            }
+        };
+
+        let comps = &self.sources[self.active].index.compilations;
+        let matching = |c: &crate::model::CompilationSection| {
+            c.key.sfi == sfi && c.key.tier == tier && !c.filtered_out
+        };
+        // Most recent instance opened before the event line (rule 2).
+        let mut found = comps
+            .iter()
+            .enumerate()
+            .filter(|(_, c)| matching(c) && c.lines.start < event.line)
+            .map(|(i, _)| i)
+            .next_back();
+        if found.is_none() && forward_ok {
+            found = comps
+                .iter()
+                .enumerate()
+                .filter(|(_, c)| matching(c) && c.lines.start >= event.line)
+                .map(|(i, _)| i)
+                .next();
+        }
+        let Some(comp) = found else {
+            self.status = format!(
+                "unresolved: no {} graph for sfi {sfi} in this trace — timeline entry only",
+                tier.label()
+            );
+            return;
+        };
+
+        self.push_history();
+        self.open_compilation(comp);
+        if let Some(offset) = offset {
+            self.jump_to_bytecode_offset(comp, offset);
+        }
+    }
+
+    /// Leaves the timeline (if on) and selects a compilation row, expanding
+    /// its group in grouped mode so the row exists.
+    fn open_compilation(&mut self, comp: usize) {
+        if self.timeline {
+            self.timeline = false;
+            std::mem::swap(&mut self.selected, &mut self.timeline_selected);
+        }
+        let sfi = self.sources[self.active].index.compilations[comp].key.sfi;
+        if self.grouped {
+            self.expanded_groups.insert((self.active, sfi.0));
+        }
+        let mut rows = self.rows();
+        let mut at = rows
+            .iter()
+            .position(|r| matches!(r, Row::Compilation(c) if *c == comp));
+        if at.is_none() && self.sidebar_filter.is_some() {
+            // The target exists but the quick filter hides it. Jumping
+            // somewhere else would be a lie; clearing a display filter is the
+            // honest resolution, and the status says so.
+            self.sidebar_filter = None;
+            rows = self.rows();
+            at = rows
+                .iter()
+                .position(|r| matches!(r, Row::Compilation(c) if *c == comp));
+            self.status = "sidebar filter cleared to show the jump target".to_string();
+        }
+        if let Some(at) = at {
+            self.selected = at;
+        }
+        self.reset_view();
+        self.focus = Pane::Viewport;
+    }
+
+    /// Lands the cursor on `bytecode offset N` inside a compilation, per the
+    /// correlation spec: prefer the earliest *graph* phase containing the
+    /// offset (later phases drop dead bytecode), then a deopt frame at that
+    /// offset, then the bytecode-array dump, then stay at the top.
+    fn jump_to_bytecode_offset(&mut self, comp: usize, offset: u32) {
+        let section = &self.sources[self.active].index.compilations[comp];
+        if section.lines.len() > MODEL_LIMIT {
+            self.status = format!("@{offset}: section too large to model — cursor at the top");
+            return;
+        }
+        let section = section.clone();
+        let source = &mut self.sources[self.active];
+        let parsed = source.parses.get_or_parse(&source.buffer, &section, comp);
+
+        let mut target: Option<(usize, &'static str)> = None;
+        let find_bytecode = |p: usize| {
+            parsed.phases.get(p).and_then(|phase| {
+                phase.infos.iter().position(
+                    |info| matches!(info, LineInfo::Bytecode { offset: o } if *o == offset),
+                )
+            })
+        };
+        for (p, phase_section) in section.phases.iter().enumerate() {
+            if !matches!(phase_section.kind, PhaseKind::Graph { .. }) {
+                continue;
+            }
+            if let Some(i) = find_bytecode(p) {
+                target = Some((phase_section.lines.start + i, "graph"));
+                break;
+            }
+        }
+        if target.is_none() {
+            'frames: for (p, phase_section) in section.phases.iter().enumerate() {
+                let Some(phase) = parsed.phases.get(p) else {
+                    continue;
+                };
+                for (i, info) in phase.infos.iter().enumerate() {
+                    if let LineInfo::Frame { frame, .. } = info
+                        && parsed
+                            .frames
+                            .get(*frame as usize)
+                            .is_some_and(|f| f.bytecode_offset == Some(offset as i32))
+                    {
+                        target = Some((phase_section.lines.start + i, "deopt frame"));
+                        break 'frames;
+                    }
+                }
+            }
+        }
+        if target.is_none() {
+            for (p, phase_section) in section.phases.iter().enumerate() {
+                if !matches!(phase_section.kind, PhaseKind::Bytecode) {
+                    continue;
+                }
+                if let Some(i) = find_bytecode(p) {
+                    target = Some((phase_section.lines.start + i, "bytecode array"));
+                    break;
+                }
+            }
+        }
+
+        match target {
+            Some((line, where_)) => {
+                self.goto_line(line);
+                self.status = format!("bytecode offset {offset} ({where_})");
+            }
+            None => {
+                self.status =
+                    format!("bytecode offset {offset} not in this dump — cursor at the top");
+            }
+        }
     }
 
     // -----------------------------------------------------------------------
@@ -1007,14 +1491,25 @@ impl App {
                 }
             }
         }
-        // Unfolding the block may already be enough; only flip the *global*
-        // annotation toggle if the target is still hidden (i.e. it lives in a
-        // collapsed annotation run).
+        // Unfolding the block may already be enough; only reach for the wider
+        // hammers if the target is still hidden.
         let vm = self.view_model();
         if let Some(row) = row_showing(&vm, line) {
             self.cursor = row;
             self.follow = false;
             return;
+        }
+        // A lens can hide the target (e.g. `i` from a guard to a plain value
+        // node under `:checks`); the jump wins over the lens.
+        if self.lens.is_some() {
+            self.lens = None;
+            self.status = "lens cleared by jump".to_string();
+            let vm = self.view_model();
+            if let Some(row) = row_showing(&vm, line) {
+                self.cursor = row;
+                self.follow = false;
+                return;
+            }
         }
         self.show_annotations = true;
         let vm = self.view_model();
@@ -1039,9 +1534,13 @@ impl App {
         self.jump_at = self.jumps.len();
     }
 
-    fn history_position(&mut self) -> (usize, usize) {
+    fn history_position(&mut self) -> Jump {
         let line = self.view_model().line_at(self.cursor).unwrap_or(0);
-        (self.selected, line)
+        Jump {
+            timeline: self.timeline,
+            selected: self.selected,
+            line,
+        }
     }
 
     fn history_step(&mut self, direction: isize) {
@@ -1063,9 +1562,12 @@ impl App {
             }
             self.jump_at += 1;
         }
-        let (selected, line) = self.jumps[self.jump_at];
-        self.selected = selected;
-        self.goto_line(line);
+        let jump = self.jumps[self.jump_at];
+        // Restore the sidebar mode the entry was recorded in; the stored
+        // selection is only meaningful in that mode.
+        self.timeline = jump.timeline;
+        self.selected = jump.selected;
+        self.goto_line(jump.line);
         self.follow = false;
         self.cycle = None;
     }
@@ -1099,6 +1601,10 @@ impl App {
                 )
             }
             Some(Row::Raw(i)) => format!("raw · {}", source.index.raw[*i].label),
+            Some(Row::Event(i)) => {
+                let event = &source.index.events[*i];
+                format!("event #{} · {}", i + 1, event_summary(&event.kind))
+            }
             None => source.label.clone(),
         }
     }
@@ -1220,7 +1726,7 @@ impl App {
                 }
             }
             self.selected = self.selected.min(rows.len().saturating_sub(1));
-            if self.follow && !self.grouped {
+            if self.follow && !self.grouped && !self.timeline {
                 // Streaming, chronological: the last row is the newest
                 // section (the merge is ordered by start line). The cursor
                 // pin to the last display row happens at render time. In
@@ -1228,6 +1734,72 @@ impl App {
                 // grouping breaks follow instead.
                 self.selected = rows.len().saturating_sub(1);
             }
+        }
+    }
+}
+
+/// One-line human summary of an event, shared by the timeline sidebar and
+/// the view title.
+pub fn event_summary(kind: &EventKind) -> String {
+    let display = |name: &str| {
+        if name.is_empty() {
+            "<toplevel>".to_string()
+        } else {
+            name.to_string()
+        }
+    };
+    match kind {
+        EventKind::Marking {
+            name,
+            target,
+            reason,
+            ..
+        } => format!("mark {} → {} ({reason})", display(name), target.label()),
+        EventKind::CompileStart {
+            name, target, osr, ..
+        } => format!(
+            "compile {} {}{}",
+            display(name),
+            target.label(),
+            if *osr { " OSR" } else { "" }
+        ),
+        EventKind::CompileDone {
+            name, target, osr, ..
+        } => format!(
+            "done {} {}{}",
+            display(name),
+            target.label(),
+            if *osr { " OSR" } else { "" }
+        ),
+        EventKind::DeoptBegin {
+            kind,
+            reason,
+            name,
+            tier,
+            bytecode_offset,
+            ..
+        } => {
+            let at = bytecode_offset
+                .map(|o| format!(" @{o}"))
+                .unwrap_or_default();
+            format!("{kind} {} {}{at} — {reason}", display(name), tier.label())
+        }
+        EventKind::DeoptEnd { invalidated } => format!(
+            "bailout end ({})",
+            if *invalidated {
+                "code invalidated"
+            } else {
+                "code unaffected"
+            }
+        ),
+        EventKind::Osr {
+            what,
+            name,
+            osr_offset,
+            ..
+        } => {
+            let at = osr_offset.map(|o| format!(" @{o}")).unwrap_or_default();
+            format!("OSR {what} {}{at}", display(name))
         }
     }
 }
@@ -1664,5 +2236,180 @@ Compiling 0x2 <JSFunction g (sfi = 0x20)> with Maglev
         let vm = app.view_model();
         let node = app.cursor_node(&vm).expect("node on row 4");
         assert_eq!(node.id, 2);
+    }
+
+    /// A trace with lifecycle events, a graph with an interleaved bytecode
+    /// line, and a verbose deopt block — the Phase 6 material.
+    const EVENTS_TRACE: &str = "\
+[marking 0x09b8 <JSFunction f (sfi = 0x10)> for optimization to MAGLEV, ConcurrencyMode::kConcurrent, reason: hot and stable]
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+ Block b0
+   2 : 0b 04             Ldar a1
+   1: CheckSmth [n0]
+[bailout (kind: deopt-eager, reason: not a Smi): begin. deoptimizing 0x09b8 <JSFunction f (sfi = 0x10)>, 0x031a <Code MAGLEV>, opt id 1, bytecode offset 2, deopt exit 0, FP to SP delta 32, caller SP 0x0001, pc 0x0002]
+            ;;; deoptimize at <test.js:14:1>
+  reading input frame  => bytecode_offset=2, args=1, height=6, retval=0(#0); inputs:
+      0: 0x09b8 ;  [fp -  16]  0x09b8 <JSFunction (sfi = 0x10)>
+[bailout end. code_invalidation: unaffected, took 0.024 ms]
+";
+
+    #[test]
+    fn command_palette_completes_and_toggles_a_lens() {
+        let mut app = app_with(EVENTS_TRACE);
+        app.follow = false;
+        app.selected = 1; // the compilation
+
+        key(&mut app, KeyCode::Char(':'));
+        for c in "che".chars() {
+            key(&mut app, KeyCode::Char(c));
+        }
+        key(&mut app, KeyCode::Tab);
+        assert_eq!(app.input.as_ref().unwrap().buffer, "checks");
+        key(&mut app, KeyCode::Enter);
+        assert_eq!(app.lens, Some(Lens::Checks));
+        assert!(app.status.contains("1 match"), "{}", app.status);
+
+        // The lens keeps the skeleton + the guard; the bytecode line is gone.
+        let vm = app.view_model();
+        let lines: Vec<usize> = (0..vm.len()).filter_map(|r| vm.line_at(r)).collect();
+        assert_eq!(lines, vec![1, 2, 3, 5]);
+
+        // Ambiguous prefix completes to the common prefix and stays open.
+        key(&mut app, KeyCode::Char(':'));
+        key(&mut app, KeyCode::Char('c'));
+        key(&mut app, KeyCode::Tab);
+        assert_eq!(
+            app.input.as_ref().unwrap().buffer,
+            "c",
+            "checks/clear/copy share only c"
+        );
+        for c in "lear".chars() {
+            key(&mut app, KeyCode::Char(c));
+        }
+        key(&mut app, KeyCode::Enter);
+        assert_eq!(app.lens, None);
+    }
+
+    #[test]
+    fn unknown_command_reports_and_does_nothing() {
+        let mut app = app_with(EVENTS_TRACE);
+        app.follow = false;
+        key(&mut app, KeyCode::Char(':'));
+        for c in "bogus".chars() {
+            key(&mut app, KeyCode::Char(c));
+        }
+        key(&mut app, KeyCode::Enter);
+        assert!(
+            app.status.contains("unknown command :bogus"),
+            "{}",
+            app.status
+        );
+        assert!(app.input.is_none());
+    }
+
+    #[test]
+    fn timeline_lists_events_and_enter_jumps_to_the_offset() {
+        let mut app = app_with(EVENTS_TRACE);
+        app.follow = false;
+
+        key(&mut app, KeyCode::Tab);
+        assert!(app.timeline);
+        let rows = app.rows();
+        assert_eq!(rows.len(), 3, "marking, bailout, bailout end");
+
+        // Move onto the deopt event; the viewport shows the bailout block
+        // with the cursor on the event line (the 6.5 panel).
+        key(&mut app, KeyCode::Char('j'));
+        assert_eq!(app.rows()[app.selected], Row::Event(1));
+        let vm = app.view_model();
+        match &vm {
+            ViewModel::Plain { range } => assert_eq!(
+                range.clone(),
+                6..11,
+                "bailout begin through bailout end, verbose block included"
+            ),
+            _ => panic!("event views are plain"),
+        }
+        assert_eq!(vm.line_at(app.cursor), Some(6));
+
+        // Enter: correlation puts us in f's Maglev graph at bytecode offset 2.
+        key(&mut app, KeyCode::Enter);
+        assert!(!app.timeline);
+        assert_eq!(app.focus, Pane::Viewport);
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(4), "the `2 :` bytecode line");
+        assert!(app.status.contains("offset 2"), "{}", app.status);
+
+        // Ctrl+O returns to the timeline, on the event row.
+        ctrl(&mut app, 'o');
+        assert!(app.timeline);
+        assert_eq!(app.rows()[app.selected], Row::Event(1));
+    }
+
+    #[test]
+    fn deopts_command_filters_the_timeline() {
+        let mut app = app_with(EVENTS_TRACE);
+        app.follow = false;
+        key(&mut app, KeyCode::Char(':'));
+        for c in "deopts".chars() {
+            key(&mut app, KeyCode::Char(c));
+        }
+        key(&mut app, KeyCode::Enter);
+        assert!(app.timeline && app.timeline_deopts_only);
+        assert_eq!(app.rows(), vec![Row::Event(1)]);
+        assert!(app.status.contains("1 deopt event"), "{}", app.status);
+
+        // Tab back out clears the narrowing.
+        key(&mut app, KeyCode::Tab);
+        key(&mut app, KeyCode::Tab);
+        assert_eq!(app.rows().len(), 3);
+    }
+
+    #[test]
+    fn function_command_filters_the_sidebar() {
+        let mut app = app_with(TRACE);
+        app.follow = false;
+        key(&mut app, KeyCode::Char(':'));
+        for c in "function g".chars() {
+            key(&mut app, KeyCode::Char(c));
+        }
+        key(&mut app, KeyCode::Enter);
+        assert_eq!(app.rows(), vec![Row::Compilation(1)]);
+        key(&mut app, KeyCode::Char(':'));
+        for c in "function".chars() {
+            key(&mut app, KeyCode::Char(c));
+        }
+        key(&mut app, KeyCode::Enter);
+        assert_eq!(app.rows().len(), 3, "no argument clears the filter");
+    }
+
+    #[test]
+    fn marking_event_jump_binds_forward_to_the_dump() {
+        let mut app = app_with(EVENTS_TRACE);
+        app.follow = false;
+        key(&mut app, KeyCode::Tab);
+        // Row 0 is the marking event at line 0, before the compilation.
+        key(&mut app, KeyCode::Enter);
+        assert!(!app.timeline);
+        let rows = app.rows();
+        assert_eq!(rows[app.selected], Row::Compilation(0));
+    }
+
+    #[test]
+    fn lens_cleared_when_a_jump_targets_a_hidden_line() {
+        let mut app = app_with(TRACE);
+        app.follow = false;
+        app.selected = 1;
+        app.focus = Pane::Viewport;
+        // `:phi` hides everything in this graph except headers.
+        app.lens = Some(Lens::Phi);
+        let vm = app.view_model();
+        assert!(vm.len() < 9);
+        // A search for a hidden node line still lands: the jump wins.
+        app.goto_line(5); // `2: Bar [n1]`
+        assert_eq!(app.lens, None);
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(5));
     }
 }

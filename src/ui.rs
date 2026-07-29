@@ -21,10 +21,10 @@ use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Borders, Clear, Paragraph, Wrap};
 
-use crate::app::{App, Pane, Prompt, Row, SourceState};
-use crate::model::{LineInfo, NodeId, ParsedCompilation, PhaseKind, Tier};
+use crate::app::{App, COMMANDS, Pane, Prompt, Row, SourceState, event_summary};
+use crate::model::{EventKind, LineInfo, NodeId, ParsedCompilation, PhaseKind, Tier};
 use crate::parse::maglev::line_text;
-use crate::view::{RowKind, ViewModel};
+use crate::view::{RowKind, ViewModel, is_control_opcode, is_guard_opcode, is_phi_opcode};
 
 const BAR_BG: Color = Color::Indexed(236);
 const DIM: Color = Color::Indexed(244);
@@ -310,6 +310,26 @@ fn sidebar_row(app: &App, row: &Row, selected: bool, focused: bool) -> Line<'sta
             spans.push(Span::styled("~ ", Style::new().fg(DIM)));
             spans.push(Span::styled(label, Style::new().fg(DIM)));
         }
+        Row::Event(i) => {
+            // Severity colours (TODO 6.3): deopts red, completions green,
+            // OSR yellow, bookkeeping dim.
+            let event = &idx.events[*i];
+            let style = match &event.kind {
+                EventKind::DeoptBegin { .. } => {
+                    Style::new().fg(Color::Red).add_modifier(Modifier::BOLD)
+                }
+                EventKind::DeoptEnd { invalidated: true } => Style::new().fg(Color::Red),
+                EventKind::DeoptEnd { invalidated: false } => Style::new().fg(DIM),
+                EventKind::CompileDone { .. } => Style::new().fg(Color::Green),
+                EventKind::Osr { .. } => Style::new().fg(Color::Yellow),
+                EventKind::Marking { .. } | EventKind::CompileStart { .. } => Style::new().fg(DIM),
+            };
+            spans.push(Span::styled(
+                format!("#{:03} ", i + 1),
+                Style::new().fg(DIM),
+            ));
+            spans.push(Span::styled(event_summary(&event.kind), style));
+        }
     }
 
     let mut line = Line::from(spans);
@@ -423,22 +443,20 @@ impl Palette {
 }
 
 /// Opcode → class, by name shape. The vocabulary is open (V8 adds opcodes
-/// freely), so this matches on structure, not a fixed list.
+/// freely), so this matches on structure, not a fixed list. The guard /
+/// control / phi shape tests live in `view` so the `:checks` and `:phi`
+/// lenses count exactly what gets coloured here.
 fn opcode_class(name: &str) -> Class {
-    if name.starts_with('φ') {
+    if name.starts_with("GapMove") || name.starts_with("ConstantGapMove") {
+        return Class::Dim;
+    }
+    if is_phi_opcode(name) {
         return Class::PhiOp;
     }
-    if name.starts_with("Check") || name.contains("Deopt") || name.starts_with("Assert") {
+    if is_guard_opcode(name) {
         return Class::Guard;
     }
-    if name.starts_with("Jump")
-        || name.starts_with("Branch")
-        || name.starts_with("Return")
-        || name.starts_with("Switch")
-        || name.starts_with("CheckpointedJump")
-        || name.starts_with("Abort")
-        || name.starts_with("Throw")
-    {
+    if is_control_opcode(name) {
         return Class::ControlOp;
     }
     if name.contains("Constant") {
@@ -447,10 +465,51 @@ fn opcode_class(name: &str) -> Class {
     if name.starts_with("Call") || name.starts_with("Construct") {
         return Class::CallOp;
     }
-    if name.starts_with("GapMove") || name.starts_with("ConstantGapMove") {
-        return Class::Dim;
-    }
     Class::Opcode
+}
+
+/// Shape-based styling for lines the graph parser never sees — raw sections,
+/// which is where lifecycle events and the `--trace-deopt-verbose` frame
+/// dumps live (TODO 6.5). Display-only: a stray program line that happens to
+/// match one of these shapes just picks up a harmless colour.
+fn raw_line_class(text: &str) -> Option<Class> {
+    let t = text.trim_start();
+    if t.starts_with("[bailout (") {
+        return Some(Class::Guard);
+    }
+    if t.starts_with("[bailout end") {
+        return Some(Class::FrameLine);
+    }
+    if t.starts_with(";;; deoptimize at") {
+        return Some(Class::Annotation);
+    }
+    if t.starts_with("reading input frame")
+        || t.starts_with("reading output frame")
+        || t.starts_with("translating ")
+        || t.starts_with("materialization ")
+    {
+        return Some(Class::Banner);
+    }
+    if t.starts_with("[marking ")
+        || t.starts_with("[compiling ")
+        || t.starts_with("[completed ")
+        || t.starts_with("[OSR ")
+    {
+        return Some(Class::Dim);
+    }
+    // `      3: 0x… ; x5 0x… <HeapNumber 5000050000.0>` — frame input rows.
+    if let Some((index, rest)) = t.split_once(": ")
+        && !index.is_empty()
+        && index.bytes().all(|b| b.is_ascii_digit())
+        && (rest.starts_with("0x") || rest.starts_with("(optimized out)"))
+    {
+        return Some(Class::BytecodeLine);
+    }
+    // `    0x…: [top + 96] <- value ; comment` — frame translation rows.
+    if t.starts_with("0x") && t.contains("] <- ") {
+        return Some(Class::Dim);
+    }
+    None
 }
 
 /// The cursor node's def-use context (TODO 4.4), computed once per frame.
@@ -614,7 +673,11 @@ fn paint_line(
             paint.fill(Class::Dim)
         }
         Some(LineInfo::Annotation { .. }) => paint.fill(Class::Annotation),
-        None => {}
+        None => {
+            if let Some(class) = raw_line_class(text) {
+                paint.fill(class);
+            }
+        }
     }
 
     // Def-use overlay (TODO 4.4): definition, inputs, and consumers of the
@@ -701,20 +764,52 @@ fn status_line(app: &App, vm: &ViewModel) -> Paragraph<'static> {
             Prompt::Search => "/",
             Prompt::Filter => "filter: ",
             Prompt::Export => "export to: ",
+            Prompt::Command => ":",
         };
-        return Paragraph::new(Line::from(vec![
+        let mut spans = vec![
             Span::styled(
                 format!(" {prompt}{}", input.buffer),
                 Style::new().add_modifier(Modifier::BOLD),
             ),
             Span::styled("█", Style::new().fg(ACCENT)),
-            Span::styled("  Enter apply · Esc cancel", Style::new().fg(DIM)),
-        ]))
-        .block(Block::new().style(Style::new().bg(BAR_BG)));
+        ];
+        // The palette shows its matching commands live (TODO 6.1); a unique
+        // match shows that command's one-line description instead.
+        if input.prompt == Prompt::Command && !input.buffer.contains(' ') {
+            let matches: Vec<&(&str, &str)> = COMMANDS
+                .iter()
+                .filter(|(name, _)| name.starts_with(input.buffer.as_str()))
+                .collect();
+            let hint = match matches.as_slice() {
+                [] => "no such command".to_string(),
+                [(name, describe)] => format!("{name} — {describe}"),
+                several => several
+                    .iter()
+                    .map(|(name, _)| *name)
+                    .collect::<Vec<_>>()
+                    .join(" "),
+            };
+            spans.push(Span::styled(format!("  {hint}"), Style::new().fg(DIM)));
+        }
+        spans.push(Span::styled(
+            "  Enter apply · Esc cancel".to_string(),
+            Style::new().fg(DIM),
+        ));
+        return Paragraph::new(Line::from(spans))
+            .block(Block::new().style(Style::new().bg(BAR_BG)));
     }
 
     let line = vm.line_at(app.cursor).unwrap_or(0);
     let mut left = format!(" L{}", line + 1);
+    if app.timeline {
+        left.push_str("  TIMELINE");
+        if app.timeline_deopts_only {
+            left.push_str(":deopts");
+        }
+    }
+    if let Some(lens) = app.lens {
+        left.push_str(&format!("  lens::{}", lens.name()));
+    }
     if app.follow {
         left.push_str("  FOLLOW");
     }
@@ -760,7 +855,7 @@ fn status_line(app: &App, vm: &ViewModel) -> Paragraph<'static> {
 
 fn render_help(frame: &mut Frame, app: &App, screen: Rect) {
     let rows = app.keys.help_rows();
-    let height = (rows.len() as u16 + 5).min(screen.height.saturating_sub(2));
+    let height = (rows.len() as u16 + 6).min(screen.height.saturating_sub(2));
     let width = 58u16.min(screen.width.saturating_sub(4));
     let area = Rect::new(
         screen.x + (screen.width.saturating_sub(width)) / 2,
@@ -789,6 +884,17 @@ fn render_help(frame: &mut Frame, app: &App, screen: Rect) {
         " mouse: wheel scrolls · click places the cursor",
         Style::new().fg(DIM),
     )));
+    lines.push(Line::from(vec![
+        Span::styled(" : commands — ", Style::new().fg(DIM)),
+        Span::styled(
+            COMMANDS
+                .iter()
+                .map(|(name, _)| *name)
+                .collect::<Vec<_>>()
+                .join(" "),
+            Style::new().fg(ACCENT),
+        ),
+    ]));
     lines.push(Line::from(Span::styled(
         " any key to close",
         Style::new().fg(DIM),

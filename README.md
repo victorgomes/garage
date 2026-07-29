@@ -62,7 +62,7 @@ Notes that save an afternoon:
 | `?` | help (generated from the live keymap) |
 | `j`/`k`, `↑`/`↓` | move |
 | `h`/`l`, `←`/`→` | focus sidebar ⇄ viewport |
-| `Enter` | expand/collapse compilation, function group |
+| `Enter` | expand/collapse compilation · on a timeline event: jump to it |
 | `Ctrl+D`/`Ctrl+U`, `PgDn`/`PgUp`, `g`/`G` | paging, top/bottom |
 | `c` | sidebar: chronological ⇄ grouped by function |
 | `f` | filter sidebar by regex |
@@ -76,8 +76,39 @@ Notes that save an afternoon:
 | `E` | export the current view as Markdown |
 | `w` | wrap long lines · `<`/`>` scroll horizontally |
 | `F` | follow the stream end (on for piped input) |
-| `Tab` | next source (multi-file runs) |
+| `Tab` | timeline ⇄ compilation list |
+| `:` | command palette (Tab completes) |
+| `]` | next source (multi-file runs) |
 | `q`, `Esc` | quit / back |
+
+## Timeline & commands
+
+`Tab` swaps the sidebar for the **timeline**: every `--trace-opt` /
+`--trace-deopt` / `--trace-osr` event in stream order, colour-coded by
+severity (deopts red, completions green, OSR yellow). Selecting a deopt shows
+its whole bailout block — under `--trace-deopt-verbose` that is the full
+frame-unwinding dump, styled — and `Enter` jumps to the correlated
+compilation at the deopt's bytecode offset, per the `(SFI, tier, ordinal)`
+rule in `docs/correlation-keys.md`. Events that cannot be resolved honestly
+(no graph in the trace, Turbofan-only deopts) say so instead of guessing.
+
+`:` opens the command palette (Tab completes, the status line shows live
+candidates):
+
+| Command | Effect |
+| :-- | :-- |
+| `:deopts` | timeline, narrowed to deopt events, with a count |
+| `:checks` | lens: only guard nodes (`Check*`/`Assert*`/`*Deopt*`), counted |
+| `:phi` | lens: the control/phi backbone of the graph |
+| `:spill` | lens: regalloc spill/reload traffic |
+| `:megamorphic` | lens: megamorphic feedback and slow-path ICs |
+| `:function <re>` | filter the sidebar (same as `f`) |
+| `:copy`, `:export <file>` | clipboard / Markdown export |
+| `:clear` | drop the lens and the timeline narrowing |
+
+A lens filters the modeled view down to the banner/block skeleton plus
+matching lines; any jump whose target a lens hides clears the lens rather
+than failing.
 
 The mouse works too: the wheel scrolls the pane under the pointer, and a
 left click focuses a pane and places the selection or cursor — clicking a

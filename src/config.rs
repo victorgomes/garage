@@ -53,6 +53,8 @@ pub enum Action {
     Yank,
     YankSection,
     Export,
+    CommandPalette,
+    ToggleTimeline,
 }
 
 impl Action {
@@ -92,6 +94,8 @@ impl Action {
             Action::Yank => "yank",
             Action::YankSection => "yank-section",
             Action::Export => "export",
+            Action::CommandPalette => "command-palette",
+            Action::ToggleTimeline => "toggle-timeline",
         }
     }
 
@@ -131,6 +135,8 @@ impl Action {
             Action::Yank => "copy the cursor line",
             Action::YankSection => "copy the whole section",
             Action::Export => "export section to a file",
+            Action::CommandPalette => "command palette (:checks, :deopts, …)",
+            Action::ToggleTimeline => "timeline ⇄ compilation list",
         }
     }
 
@@ -170,6 +176,8 @@ impl Action {
             Yank,
             YankSection,
             Export,
+            CommandPalette,
+            ToggleTimeline,
         ]
     }
 }
@@ -290,7 +298,9 @@ impl Keymap {
             (Action::FocusSidebar, vec!["h", "Left"]),
             (Action::FocusViewport, vec!["l", "Right"]),
             (Action::Select, vec!["Enter"]),
-            (Action::NextSource, vec!["Tab"]),
+            // Tab belongs to the timeline per PLAN §8; source switching moved
+            // to `]` when the timeline landed (Phase 6.3).
+            (Action::NextSource, vec!["]"]),
             (Action::ToggleFollow, vec!["F"]),
             (Action::ToggleGrouping, vec!["c"]),
             (Action::ToggleWrap, vec!["w"]),
@@ -309,6 +319,8 @@ impl Keymap {
             (Action::Yank, vec!["y"]),
             (Action::YankSection, vec!["Y"]),
             (Action::Export, vec!["E"]),
+            (Action::CommandPalette, vec![":"]),
+            (Action::ToggleTimeline, vec!["Tab"]),
         ]
     }
 

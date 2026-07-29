@@ -20,10 +20,109 @@ use std::ops::Range;
 use std::sync::Arc;
 
 use crate::model::{BlockId, LineInfo, ParsedCompilation, PhaseKind};
+use crate::source::LogBuffer;
 
 /// Sections larger than this are never modeled row-by-row. Far above any real
 /// compilation (the corpus maximum is ~1 000 lines); a guard, not a tune.
 pub const MODEL_LIMIT: usize = 200_000;
+
+// ---------------------------------------------------------------------------
+// Opcode shape predicates (shared by styling and the semantic lenses)
+// ---------------------------------------------------------------------------
+//
+// The opcode vocabulary is open — V8 adds opcodes freely — so these match on
+// name shape, not a fixed list. `ui::opcode_class` styles through the same
+// predicates so the `:checks` count and the red guard styling can never
+// disagree about what a guard is.
+
+pub fn is_guard_opcode(name: &str) -> bool {
+    name.starts_with("Check") || name.contains("Deopt") || name.starts_with("Assert")
+}
+
+pub fn is_control_opcode(name: &str) -> bool {
+    name.starts_with("Jump")
+        || name.starts_with("Branch")
+        || name.starts_with("Return")
+        || name.starts_with("Switch")
+        || name.starts_with("CheckpointedJump")
+        || name.starts_with("Abort")
+        || name.starts_with("Throw")
+}
+
+pub fn is_phi_opcode(name: &str) -> bool {
+    name.starts_with('φ')
+}
+
+/// A semantic viewport lens (TODO 6.2): the modeled view keeps only the
+/// banner/block-header skeleton plus rows the lens matches. Deliberately a
+/// *filter* rather than pure highlighting — guards are already styled red by
+/// default, so the value of `:checks` is the count and the narrowed view, and
+/// the same holds for the others.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Lens {
+    /// Guard nodes: `Check*`, `Assert*`, anything with `Deopt` in the name.
+    Checks,
+    /// The control/phi backbone: block headers, phis, and control flow.
+    Phi,
+    /// Regalloc spill traffic: `spill:` lines and gap moves touching a stack
+    /// slot (both spills and reloads).
+    Spill,
+    /// Megamorphic feedback and slow-path ICs, matched on the text because it
+    /// appears in feedback preambles and in `CallBuiltin(*_Megamorphic)`
+    /// nodes alike.
+    Megamorphic,
+}
+
+impl Lens {
+    pub fn name(self) -> &'static str {
+        match self {
+            Lens::Checks => "checks",
+            Lens::Phi => "phi",
+            Lens::Spill => "spill",
+            Lens::Megamorphic => "megamorphic",
+        }
+    }
+
+    /// Does the lens keep this row? Structure rows (banner, block header) are
+    /// the caller's business; this judges content only.
+    pub fn matches(
+        self,
+        info: Option<&LineInfo>,
+        parsed: &ParsedCompilation,
+        buffer: &LogBuffer,
+        line: usize,
+    ) -> bool {
+        let opcode_name = |node: &crate::model::IRNode| {
+            parsed
+                .opcodes
+                .get(node.opcode as usize)
+                .map(String::as_str)
+                .unwrap_or("")
+        };
+        match self {
+            Lens::Checks => match info {
+                Some(LineInfo::Node(node)) => is_guard_opcode(opcode_name(node)),
+                _ => false,
+            },
+            Lens::Phi => match info {
+                Some(LineInfo::Node(node)) => {
+                    let name = opcode_name(node);
+                    is_phi_opcode(name) || is_control_opcode(name)
+                }
+                Some(LineInfo::PhiMove { .. }) => true,
+                _ => false,
+            },
+            Lens::Spill => {
+                let text = crate::parse::maglev::line_text(buffer, line);
+                text.contains("spill: ") || (text.contains("GapMove") && text.contains("[stack:"))
+            }
+            Lens::Megamorphic => {
+                let text = crate::parse::maglev::line_text(buffer, line);
+                text.to_ascii_lowercase().contains("megamorphic")
+            }
+        }
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum RowKind {
@@ -119,7 +218,11 @@ impl ViewModel {
 pub type FoldKey = (usize, usize, usize, BlockId); // (source, comp, phase, block)
 
 /// Builds the modeled rows for one compilation section (or a sub-range of it,
-/// for a phase selection).
+/// for a phase selection). With a lens, only the skeleton (anchor lines,
+/// banners, block headers) and matching rows survive; annotation folding is
+/// bypassed because a matching annotation is exactly what the user asked to
+/// see.
+#[allow(clippy::too_many_arguments)]
 pub fn model_rows(
     parsed: &Arc<ParsedCompilation>,
     section: &crate::model::CompilationSection,
@@ -128,6 +231,8 @@ pub fn model_rows(
     comp: usize,
     folded: &HashSet<FoldKey>,
     show_annotations: bool,
+    buffer: &LogBuffer,
+    lens: Option<Lens>,
 ) -> Vec<ViewRow> {
     let mut rows = Vec::new();
 
@@ -173,6 +278,16 @@ pub fn model_rows(
 
     for (line, info) in section.preamble.clone().zip_longest_infos(&parsed.preamble) {
         if !only_lines.contains(&line) {
+            continue;
+        }
+        if let Some(lens) = lens {
+            if lens.matches(info, parsed, buffer, line) {
+                rows.push(ViewRow {
+                    line,
+                    info: None,
+                    kind: RowKind::Text,
+                });
+            }
             continue;
         }
         match info {
@@ -224,6 +339,21 @@ pub fn model_rows(
 
             if let Some((_, hidden)) = &mut current_fold {
                 *hidden += 1;
+                continue;
+            }
+
+            if let Some(lens) = lens {
+                let structure = matches!(
+                    info,
+                    Some(LineInfo::Banner) | Some(LineInfo::BlockHeader { .. })
+                );
+                if structure || lens.matches(info, parsed, buffer, line) {
+                    rows.push(ViewRow {
+                        line,
+                        info: Some((p, i)),
+                        kind: RowKind::Text,
+                    });
+                }
                 continue;
             }
 
@@ -322,7 +452,53 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
             0,
             folded,
             show_annotations,
+            buffer,
+            None,
         )
+    }
+
+    #[test]
+    fn lens_keeps_skeleton_and_matches_only() {
+        let trace = "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+ Block b0
+   1: CheckMaps [n0]
+   2: Int32Add [n1, n1]
+ Block b1
+   3: Jump b0
+";
+        let (buffer, idx) = setup(trace);
+        let section = &idx.compilations[0];
+        let parsed = Arc::new(crate::parse::maglev::parse_compilation(&buffer, section));
+        let rows = model_rows(
+            &parsed,
+            section,
+            &section.lines.clone(),
+            0,
+            0,
+            &HashSet::new(),
+            false,
+            &buffer,
+            Some(Lens::Checks),
+        );
+        // Anchor + banner + b0 + CheckMaps + b1: Int32Add and Jump are gone.
+        let lines: Vec<usize> = rows.iter().map(|r| r.line).collect();
+        assert_eq!(lines, vec![0, 1, 2, 3, 5]);
+
+        let rows = model_rows(
+            &parsed,
+            section,
+            &section.lines.clone(),
+            0,
+            0,
+            &HashSet::new(),
+            false,
+            &buffer,
+            Some(Lens::Phi),
+        );
+        let lines: Vec<usize> = rows.iter().map(|r| r.line).collect();
+        assert_eq!(lines, vec![0, 1, 2, 5, 6], "backbone: headers + Jump");
     }
 
     #[test]

@@ -394,15 +394,42 @@ the golden mask covers `[pid:isolate]` prefixes.
 
 ---
 
-## Phase 6 (post-MVP): Command Palette & Timeline
+## Phase 6 (post-MVP): Command Palette & Timeline  ✅ done
 
-- [ ] **6.1. `:` palette** with completion and message line.
-- [ ] **6.2. Semantic filters**: `:deopts`, `:checks` (with count), `:spill`,
-  `:phi`, `:megamorphic`, `:function <name>`.
-- [ ] **6.3. Timeline view** (`Tab`): ordinal event list, severity colors.
-- [ ] **6.4. Deopt→graph jump** (`g`) using the Phase 0.5 correlation spec;
-  show expected vs actual map when the trace provides it.
-- [ ] **6.5. Deopt frame unwinding panel** (`--trace-deopt-verbose`).
+- [x] **6.1. `:` palette** with completion and message line. Tab completes to
+  the longest common prefix; the status line doubles as the message line and
+  shows live candidates (or the unique match's description) while typing. The
+  command table is one data structure so completion, dispatch and the help
+  modal cannot drift.
+- [x] **6.2. Semantic filters**: `:deopts`, `:checks` (with count), `:spill`,
+  `:phi`, `:megamorphic`, `:function <name>`, plus `:copy`/`:export`/`:clear`/
+  `:timeline`. *Deviation:* `:checks` is a **lens** (filter + count), not
+  highlight-only as PLAN §7.2 sketched — guards are already red by default,
+  so the added value is the count and the narrowed view. A lens keeps the
+  banner/block-header skeleton plus matching rows; `:checks`/`:phi` match on
+  parsed opcode shape (through the same predicates the styling uses, so the
+  count and the colours cannot disagree), `:spill`/`:megamorphic` on line
+  text, which also catches feedback preambles. Jumps whose target a lens
+  hides clear the lens (same rule as folded blocks).
+- [x] **6.3. Timeline view** (`Tab`): ordinal event list, severity colors,
+  per-mode selection memory. Source switching moved from `Tab` to `]` as
+  PLAN §8 always intended. Selecting an event shows it in context (cursor on
+  the event line); jump history records the sidebar *mode*, so Ctrl+O from a
+  deopt jump lands back on the event row.
+- [x] **6.4. Deopt→graph jump** on `Enter` (PLAN §5.2 "selecting an event
+  jumps"; `g` stays top-of-view). Follows docs/correlation-keys.md rule 3:
+  most recent `(sfi, tier)` instance before the event; marking/compile events
+  may bind forward to their dump; anything unresolvable reports why instead
+  of guessing. Offset landing prefers the earliest graph phase's interleaved
+  bytecode line, then a deopt frame at that offset, then the bytecode-array
+  dump. *Not done:* "expected vs actual map" — the corpus traces do not print
+  map addresses on both sides, so there is nothing honest to show yet.
+- [x] **6.5. Deopt frame unwinding panel** (`--trace-deopt-verbose`): the
+  panel *is* the event view — selecting a deopt shows `[bailout begin]`
+  through `[bailout end]`, which under the verbose flag is the full
+  reading/translating frame dump, with shape-based styling for the block
+  (headers bold, input rows green, translation rows dim). Zero new pane
+  machinery, and `y`/`Y`/`E`/search work on it for free.
 
 ---
 
