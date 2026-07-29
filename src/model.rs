@@ -245,6 +245,13 @@ impl EventKind {
 /// A node id `nN` — the stable identity across phases.
 pub type NodeId = u32;
 
+/// Sentinel id for schedule-only lines (`16: GapMove(…)`): they occupy a
+/// schedule position but define nothing another line can reference. Anything
+/// resolving "the node here" must treat this as "no node" — several lines can
+/// share it (found in review: the cursor once highlighted every gap move at
+/// once).
+pub const SCHEDULE_ONLY: NodeId = u32::MAX;
+
 /// A basic-block id `bN`.
 pub type BlockId = u32;
 
@@ -404,9 +411,6 @@ pub struct ParsedCompilation {
     pub inline_decisions: Vec<InlineDecision>,
     /// Script and position from the first SFI-context line, when present.
     pub script: Option<String>,
-    /// Lines the parser could not even classify structurally. Nonzero means
-    /// the `[unparsed]` badge (TODO 2.6) — the content still renders raw.
-    pub unparsed_lines: u32,
 }
 
 #[cfg(test)]

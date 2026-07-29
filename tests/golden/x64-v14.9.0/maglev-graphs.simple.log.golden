@@ -7,7 +7,7 @@ compilation 0 L0..155 sfi=0x9b80101e031 tier=Maglev ord=1 name="add"
   phase L59..90 "After use marking" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L90..121 "After register allocation pre-processing" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L121..155 "After register allocation" [graph]: 18 nodes, 2 blocks, 4 frame-lines, 0 annotations
-  totals: 12 opcodes, 2 distinct frames, 0 unparsed
+  totals: 12 opcodes, 2 distinct frames
 compilation 1 L155..998 sfi=0x9b80101dfc9 tier=Maglev ord=1 name=""
   script "workloads/simple.js"
   phase L156..238 "Bytecode array" [bytecode]
@@ -19,7 +19,7 @@ compilation 1 L155..998 sfi=0x9b80101dfc9 tier=Maglev ord=1 name=""
   phase L663..772 "After use marking" [graph]: 40 nodes, 10 blocks, 16 frame-lines, 2 annotations
   phase L772..881 "After register allocation pre-processing" [graph]: 40 nodes, 10 blocks, 16 frame-lines, 2 annotations
   phase L881..998 "After register allocation" [graph]: 47 nodes, 10 blocks, 16 frame-lines, 4 annotations
-  totals: 24 opcodes, 8 distinct frames, 0 unparsed
+  totals: 24 opcodes, 8 distinct frames
 compilation 2 L998..1148 sfi=0x9b80101e031 tier=Maglev ord=2 name="add"
   script "workloads/simple.js"
   phase L999..1025 "Bytecode array" [bytecode]
@@ -27,7 +27,7 @@ compilation 2 L998..1148 sfi=0x9b80101e031 tier=Maglev ord=2 name="add"
   phase L1056..1086 "After use marking" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L1086..1116 "After register allocation pre-processing" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L1116..1148 "After register allocation" [graph]: 17 nodes, 2 blocks, 3 frame-lines, 0 annotations
-  totals: 12 opcodes, 2 distinct frames, 0 unparsed
+  totals: 12 opcodes, 2 distinct frames
 compilation 3 L1148..2009 sfi=0x9b80101dfc9 tier=Maglev ord=2 name=""
   script "workloads/simple.js"
   phase L1149..1231 "Bytecode array" [bytecode]
@@ -39,4 +39,4 @@ compilation 3 L1148..2009 sfi=0x9b80101dfc9 tier=Maglev ord=2 name=""
   phase L1655..1770 "After use marking" [graph]: 44 nodes, 10 blocks, 16 frame-lines, 2 annotations
   phase L1770..1885 "After register allocation pre-processing" [graph]: 44 nodes, 10 blocks, 16 frame-lines, 2 annotations
   phase L1885..2009 "After register allocation" [graph]: 51 nodes, 10 blocks, 16 frame-lines, 5 annotations
-  totals: 25 opcodes, 8 distinct frames, 0 unparsed
+  totals: 25 opcodes, 8 distinct frames

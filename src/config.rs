@@ -347,7 +347,11 @@ impl Keymap {
         let mut bindings = HashMap::new();
         for (&action, chords) in &by_action {
             for &chord in chords {
-                if let Some(previous) = bindings.insert(chord, action) {
+                // A chord listed twice for the *same* action is harmless
+                // redundancy, not a conflict.
+                if let Some(previous) = bindings.insert(chord, action)
+                    && previous != action
+                {
                     bail!(
                         "key {:?} is bound to both {} and {}",
                         chord.display(),
@@ -393,14 +397,26 @@ pub struct Config {
 
 impl Config {
     /// Loads `--config <path>` (must exist), else the default location (may
-    /// be absent), else pure defaults.
+    /// be absent), else pure defaults. Only a genuinely *missing* default
+    /// config falls back silently — an unreadable or non-UTF-8 one is an
+    /// error, not a silent shrug that makes the user's remaps vanish.
     pub fn load(explicit: Option<&Path>) -> Result<Config> {
         let text = match explicit {
             Some(path) => Some(
                 std::fs::read_to_string(path)
                     .with_context(|| format!("cannot read config {}", path.display()))?,
             ),
-            None => default_path().and_then(|p| std::fs::read_to_string(p).ok()),
+            None => match default_path() {
+                Some(path) => match std::fs::read_to_string(&path) {
+                    Ok(text) => Some(text),
+                    Err(e) if e.kind() == std::io::ErrorKind::NotFound => None,
+                    Err(e) => {
+                        return Err(e)
+                            .with_context(|| format!("cannot read config {}", path.display()));
+                    }
+                },
+                None => None,
+            },
         };
         match text {
             Some(text) => Self::parse(&text),

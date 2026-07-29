@@ -7,7 +7,7 @@ compilation 0 L0..158 sfi=0x9b80101e175 tier=Maglev ord=1 name="read"
   phase L67..97 "After use marking" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L97..127 "After register allocation pre-processing" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L127..158 "After register allocation" [graph]: 16 nodes, 2 blocks, 3 frame-lines, 0 annotations
-  totals: 14 opcodes, 2 distinct frames, 0 unparsed
+  totals: 14 opcodes, 2 distinct frames
 compilation 1 L158..1009 sfi=0x9b80101e10d tier=Maglev ord=1 name=""
   script "workloads/deopt-eager.js"
   phase L159..317 "Bytecode array" [bytecode]
@@ -17,7 +17,7 @@ compilation 1 L158..1009 sfi=0x9b80101e10d tier=Maglev ord=1 name=""
   phase L547..695 "After use marking" [graph]: 66 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L695..843 "After register allocation pre-processing" [graph]: 66 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L843..1009 "After register allocation" [graph]: 83 nodes, 10 blocks, 19 frame-lines, 4 annotations
-  totals: 32 opcodes, 18 distinct frames, 0 unparsed
+  totals: 32 opcodes, 18 distinct frames
 compilation 2 L1009..1248 sfi=0x9b80101e175 tier=Maglev ord=2 name="read"
   script "workloads/deopt-eager.js"
   phase L1010..1046 "Bytecode array" [bytecode]
@@ -25,7 +25,7 @@ compilation 2 L1009..1248 sfi=0x9b80101e175 tier=Maglev ord=2 name="read"
   phase L1096..1145 "After use marking" [graph]: 22 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1145..1194 "After register allocation pre-processing" [graph]: 22 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1194..1248 "After register allocation" [graph]: 26 nodes, 5 blocks, 4 frame-lines, 4 annotations
-  totals: 17 opcodes, 4 distinct frames, 0 unparsed
+  totals: 17 opcodes, 4 distinct frames
 compilation 3 L1248..2101 sfi=0x9b80101e10d tier=Maglev ord=2 name=""
   script "workloads/deopt-eager.js"
   phase L1249..1409 "Bytecode array" [bytecode]
@@ -35,4 +35,4 @@ compilation 3 L1248..2101 sfi=0x9b80101e10d tier=Maglev ord=2 name=""
   phase L1640..1787 "After use marking" [graph]: 67 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L1787..1934 "After register allocation pre-processing" [graph]: 67 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L1934..2101 "After register allocation" [graph]: 85 nodes, 10 blocks, 19 frame-lines, 5 annotations
-  totals: 32 opcodes, 18 distinct frames, 0 unparsed
+  totals: 32 opcodes, 18 distinct frames

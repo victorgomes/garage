@@ -174,10 +174,9 @@ fn summarize(buffer: &LogBuffer, idx: &TraceIndex) -> String {
         }
         let _ = writeln!(
             w,
-            "  totals: {} opcodes, {} distinct frames, {} unparsed",
+            "  totals: {} opcodes, {} distinct frames",
             parsed.opcodes.len(),
             parsed.frames.len(),
-            parsed.unparsed_lines
         );
     }
 
@@ -271,7 +270,9 @@ fn mask(label: &str) -> String {
             out.push_str("0x*");
             continue;
         }
-        // Decimal numbers with a fractional part (timings) → `*`.
+        // Decimal numbers with a fractional part (timings) → `*`, and bare
+        // integers directly followed by `:0x` (the `[pid:isolate]` prefix of
+        // --trace-gc lines) → `*`.
         if c.is_ascii_digit() {
             let start = i;
             let mut end = i + 1;
@@ -288,7 +289,7 @@ fn mask(label: &str) -> String {
                     break;
                 }
             }
-            if fractional {
+            if fractional || label[end..].starts_with(":0x") {
                 out.push('*');
             } else {
                 out.push_str(&label[start..end]);

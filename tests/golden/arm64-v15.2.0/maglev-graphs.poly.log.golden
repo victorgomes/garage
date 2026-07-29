@@ -8,7 +8,7 @@ compilation 0 L1..166 sfi=0x9b80101e2e9 tier=Maglev ord=1 name="load"
   phase L87..112 "AnyUseMarking" [graph]: 11 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L112..137 "Dead nodes sweeping" [graph]: 11 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L137..166 "Register allocation" [graph]: 14 nodes, 2 blocks, 2 frame-lines, 2 annotations
-  totals: 11 opcodes, 2 distinct frames, 0 unparsed
+  totals: 11 opcodes, 2 distinct frames
 compilation 1 L166..483 sfi=0x9b80101e2e9 tier=Maglev ord=2 name="load"
   script "workloads/poly.js"
   phase L169..202 "Bytecode array" [bytecode]
@@ -17,7 +17,7 @@ compilation 1 L166..483 sfi=0x9b80101e2e9 tier=Maglev ord=2 name="load"
   phase L312..366 "AnyUseMarking" [graph]: 23 nodes, 6 blocks, 3 frame-lines, 4 annotations
   phase L366..420 "Dead nodes sweeping" [graph]: 23 nodes, 6 blocks, 3 frame-lines, 4 annotations
   phase L420..483 "Register allocation" [graph]: 28 nodes, 6 blocks, 3 frame-lines, 9 annotations
-  totals: 14 opcodes, 2 distinct frames, 0 unparsed
+  totals: 14 opcodes, 2 distinct frames
 compilation 2 L483..648 sfi=0x9b80101e2e9 tier=Maglev ord=3 name="load"
   script "workloads/poly.js"
   phase L486..516 "Bytecode array" [bytecode]
@@ -26,7 +26,7 @@ compilation 2 L483..648 sfi=0x9b80101e2e9 tier=Maglev ord=3 name="load"
   phase L568..593 "AnyUseMarking" [graph]: 11 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L593..618 "Dead nodes sweeping" [graph]: 11 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L618..648 "Register allocation" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 2 annotations
-  totals: 10 opcodes, 2 distinct frames, 0 unparsed
+  totals: 10 opcodes, 2 distinct frames
 compilation 3 L648..1739 sfi=0x9b80101e279 tier=Maglev ord=1 name=""
   script "workloads/poly.js"
   phase L651..831 "Bytecode array" [bytecode]
@@ -37,6 +37,6 @@ compilation 3 L648..1739 sfi=0x9b80101e279 tier=Maglev ord=1 name=""
   phase L1237..1394 "AnyUseMarking" [graph]: 63 nodes, 10 blocks, 30 frame-lines, 2 annotations
   phase L1394..1551 "Dead nodes sweeping" [graph]: 63 nodes, 10 blocks, 30 frame-lines, 2 annotations
   phase L1551..1739 "Register allocation" [graph]: 91 nodes, 10 blocks, 30 frame-lines, 6 annotations
-  totals: 33 opcodes, 9 distinct frames, 0 unparsed
+  totals: 33 opcodes, 9 distinct frames
 raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."
 raw L1739..1740 "269999"

@@ -353,6 +353,47 @@ Model and deviations worth recording:
 
 ---
 
+## MVP review pass  ✅ done
+
+Five independent reviews, one per phase commit, each instructed to verify
+findings against HEAD before reporting. 20 findings survived their
+verification (0 critical / 6 major / 14 minor); all are resolved in the
+review-fixes commit. The majors, for the record:
+
+- **tmux clipboard silently dead on tmux ≥ 3.3**: OSC 52 was always wrapped in
+  the DCS passthrough, which `allow-passthrough` (default *off* since 3.3)
+  discards. Now: plain OSC 52 (handled by tmux's default `set-clipboard
+  external`), passthrough only when tmux confirms it is enabled.
+- **`Y` on a huge raw section** materialised ~1 GB of Strings to earn a
+  guaranteed 72 KB refusal; the size is now checked in O(1) from the line
+  index first.
+- **Partition invariant hole**: an event line closing a compilation with
+  pending rule/`Begin` lines orphaned those lines from every section
+  (regression test added).
+- **Follow in grouped mode** pinned to the last row, which grouped ordering
+  makes a stale section; grouping now breaks follow, and the newest-section
+  pin only runs in chronological mode.
+- **`SCHEDULE_ONLY` leak**: every GapMove line shares the sentinel id, so the
+  cursor on one highlighted them all and the status line read `n4294967295`;
+  the sentinel now means "no node" everywhere it is consumed.
+- **`i` could never reach the second input** — the cycle re-anchored on the
+  node it had just jumped to; it now stays anchored like `u`, and jump history
+  stores buffer lines instead of display rows so Ctrl+O survives unfolds.
+
+Also fixed from the minors: help modal now closes on genuinely any key;
+sidebar selection re-locates by identity when grouped rows shift mid-stream;
+`n<digits>` inside `<…>` descriptors / quoted strings is no longer a node ref
+(minified-JS names like `n1` corrupted def/use maps); duplicate chords within
+one action no longer a fatal "conflict"; unreadable default config errors
+instead of silently vanishing; jumps into folded blocks no longer flip the
+global annotation toggle; phase selection works on oversized compilations;
+search clears the `u` cycle and stopped allocating per line; `--help` no
+longer claims `/dev/tty`; the `line_starts` comment states the real streaming
+invariant; the dead `unparsed_lines` field is gone (48 goldens regenerated);
+the golden mask covers `[pid:isolate]` prefixes.
+
+---
+
 ## Phase 6 (post-MVP): Command Palette & Timeline
 
 - [ ] **6.1. `:` palette** with completion and message line.

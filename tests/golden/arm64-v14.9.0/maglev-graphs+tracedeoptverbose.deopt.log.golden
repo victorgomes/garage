@@ -7,7 +7,7 @@ compilation 0 L0..179 sfi=0x9b80101e1d5 tier=Maglev ord=1 name="read"
   phase L73..108 "After use marking" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L108..143 "After register allocation pre-processing" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L143..179 "After register allocation" [graph]: 16 nodes, 2 blocks, 3 frame-lines, 0 annotations
-  totals: 14 opcodes, 2 distinct frames, 0 unparsed
+  totals: 14 opcodes, 2 distinct frames
 compilation 1 L179..1137 sfi=0x9b80101e16d tier=Maglev ord=1 name=""
   script "workloads/deopt-eager.js"
   phase L180..339 "Bytecode array" [bytecode]
@@ -17,7 +17,7 @@ compilation 1 L179..1137 sfi=0x9b80101e16d tier=Maglev ord=1 name=""
   phase L597..771 "After use marking" [graph]: 66 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L771..945 "After register allocation pre-processing" [graph]: 66 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L945..1137 "After register allocation" [graph]: 83 nodes, 10 blocks, 19 frame-lines, 4 annotations
-  totals: 32 opcodes, 18 distinct frames, 0 unparsed
+  totals: 32 opcodes, 18 distinct frames
 compilation 2 L1193..1457 sfi=0x9b80101e1d5 tier=Maglev ord=2 name="read"
   script "workloads/deopt-eager.js"
   phase L1194..1231 "Bytecode array" [bytecode]
@@ -25,7 +25,7 @@ compilation 2 L1193..1457 sfi=0x9b80101e1d5 tier=Maglev ord=2 name="read"
   phase L1287..1342 "After use marking" [graph]: 22 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1342..1397 "After register allocation pre-processing" [graph]: 22 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1397..1457 "After register allocation" [graph]: 26 nodes, 5 blocks, 4 frame-lines, 4 annotations
-  totals: 17 opcodes, 4 distinct frames, 0 unparsed
+  totals: 17 opcodes, 4 distinct frames
 compilation 3 L1457..2416 sfi=0x9b80101e16d tier=Maglev ord=2 name=""
   script "workloads/deopt-eager.js"
   phase L1458..1619 "Bytecode array" [bytecode]
@@ -35,7 +35,7 @@ compilation 3 L1457..2416 sfi=0x9b80101e16d tier=Maglev ord=2 name=""
   phase L1878..2051 "After use marking" [graph]: 67 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L2051..2224 "After register allocation pre-processing" [graph]: 67 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L2224..2416 "After register allocation" [graph]: 85 nodes, 10 blocks, 19 frame-lines, 4 annotations
-  totals: 32 opcodes, 18 distinct frames, 0 unparsed
+  totals: 32 opcodes, 18 distinct frames
 raw L1137..1193 "[bailout (kind: deopt-eager, reason: Insufficient type feedback for object literal): begin. deop…"
 raw L2416..2450 "[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begi…"
 event L1137 deopt kind=deopt-eager reason="Insufficient type feedback for object literal" name="" sfi=0x9b80101e16d tier=Maglev opt_id=Some(2) offset=Some(70)

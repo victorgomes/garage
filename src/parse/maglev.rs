@@ -307,9 +307,7 @@ fn parse_interleaved_bytecode(content: &str) -> Option<u32> {
     }
 }
 
-/// Sentinel node id for schedule-only lines (`16: GapMove(…)`): they define
-/// nothing another line can reference.
-const SCHEDULE_ONLY: NodeId = u32::MAX;
+pub use crate::model::SCHEDULE_ONLY;
 
 fn parse_node_line(
     text: &str,
@@ -425,11 +423,40 @@ fn parse_uses(tail: &str) -> Option<u32> {
 }
 
 /// Every `nN` token from `from` to the end of the line, with absolute spans.
+///
+/// Tokens inside `<…>` heap-object descriptors and quoted strings are
+/// skipped: `<JSFunction n1 (sfi = …)>` names a *JS function called `n1`*
+/// (minified code does this constantly), not a reference to node 1, and
+/// counting it corrupted the def/use maps (found in review).
 fn node_refs(text: &str, from: usize) -> Vec<NodeRef> {
     let mut refs = Vec::new();
     let bytes = text.as_bytes();
     let mut i = from;
+    let mut angle_depth = 0usize;
+    let mut in_string = false;
     while i < bytes.len() {
+        match bytes[i] {
+            b'<' if !in_string => {
+                angle_depth += 1;
+                i += 1;
+                continue;
+            }
+            b'>' if !in_string => {
+                angle_depth = angle_depth.saturating_sub(1);
+                i += 1;
+                continue;
+            }
+            b'"' => {
+                in_string = !in_string;
+                i += 1;
+                continue;
+            }
+            _ => {}
+        }
+        if angle_depth > 0 || in_string {
+            i += 1;
+            continue;
+        }
         if bytes[i] == b'n'
             && i + 1 < bytes.len()
             && bytes[i + 1].is_ascii_digit()
@@ -935,6 +962,28 @@ mod tests {
                     reason: "big function, size (174) >= max-size (100)".into(),
                 },
             ]
+        );
+    }
+
+    /// Review regression: `n<digits>` inside a heap-object descriptor is a
+    /// JS identifier, not a node reference.
+    #[test]
+    fn object_descriptor_text_is_not_a_node_ref() {
+        let (phase, _) = parse_lines(&[
+            "  12: CallKnownJSFunction(0x1 <JSFunction n1 (sfi = 0x2)>) [n3, n4], 1 uses",
+            "  13: LoadField(0x3 <String[4]: \"n9x\">) [n12], 1 uses",
+        ]);
+        let call = node(&phase.infos[1]);
+        assert_eq!(
+            call.inputs.iter().map(|r| r.node).collect::<Vec<_>>(),
+            vec![3, 4],
+            "the callee named n1 must not become an input"
+        );
+        let load = node(&phase.infos[2]);
+        assert_eq!(
+            load.inputs.iter().map(|r| r.node).collect::<Vec<_>>(),
+            vec![12],
+            "quoted string content must not become an input"
         );
     }
 

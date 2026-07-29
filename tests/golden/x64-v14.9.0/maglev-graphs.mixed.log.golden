@@ -7,7 +7,7 @@ compilation 0 L0..502 sfi=0x9b80101e0b9 tier=Maglev ord=1 name="sum"
   phase L175..280 "After use marking" [graph]: 44 nodes, 8 blocks, 14 frame-lines, 4 annotations
   phase L280..385 "After register allocation pre-processing" [graph]: 44 nodes, 8 blocks, 14 frame-lines, 4 annotations
   phase L385..502 "After register allocation" [graph]: 51 nodes, 8 blocks, 14 frame-lines, 10 annotations
-  totals: 26 opcodes, 4 distinct frames, 0 unparsed
+  totals: 26 opcodes, 4 distinct frames
 compilation 1 L502..665 sfi=0x9b80101e119 tier=Maglev ord=1 name="flipflop"
   script "workloads/mixed.js"
   phase L503..533 "Bytecode array" [bytecode]
@@ -15,7 +15,7 @@ compilation 1 L502..665 sfi=0x9b80101e119 tier=Maglev ord=1 name="flipflop"
   phase L566..598 "After use marking" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L598..630 "After register allocation pre-processing" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L630..665 "After register allocation" [graph]: 18 nodes, 2 blocks, 4 frame-lines, 0 annotations
-  totals: 14 opcodes, 2 distinct frames, 0 unparsed
+  totals: 14 opcodes, 2 distinct frames
 compilation 2 L665..1306 sfi=0x9b80101e0e9 tier=Maglev ord=1 name="scale"
   script "workloads/mixed.js"
   phase L666..749 "Bytecode array" [bytecode]
@@ -23,7 +23,7 @@ compilation 2 L665..1306 sfi=0x9b80101e0e9 tier=Maglev ord=1 name="scale"
   phase L891..1025 "After use marking" [graph]: 64 nodes, 11 blocks, 21 frame-lines, 2 annotations
   phase L1025..1159 "After register allocation pre-processing" [graph]: 64 nodes, 11 blocks, 21 frame-lines, 2 annotations
   phase L1159..1306 "After register allocation" [graph]: 74 nodes, 11 blocks, 21 frame-lines, 6 annotations
-  totals: 35 opcodes, 7 distinct frames, 0 unparsed
+  totals: 35 opcodes, 7 distinct frames
 compilation 3 L1306..1465 sfi=0x9b80101e119 tier=Maglev ord=2 name="flipflop"
   script "workloads/mixed.js"
   phase L1307..1337 "Bytecode array" [bytecode]
@@ -31,7 +31,7 @@ compilation 3 L1306..1465 sfi=0x9b80101e119 tier=Maglev ord=2 name="flipflop"
   phase L1369..1400 "After use marking" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L1400..1431 "After register allocation pre-processing" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L1431..1465 "After register allocation" [graph]: 19 nodes, 2 blocks, 2 frame-lines, 0 annotations
-  totals: 14 opcodes, 2 distinct frames, 0 unparsed
+  totals: 14 opcodes, 2 distinct frames
 compilation 4 L1465..4128 sfi=0x9b80101e039 tier=Maglev ord=1 name=""
   script "workloads/mixed.js"
   phase L1466..1672 "Bytecode array" [bytecode]
@@ -44,4 +44,4 @@ compilation 4 L1465..4128 sfi=0x9b80101e039 tier=Maglev ord=1 name=""
   phase L2489..3012 "After use marking" [graph]: 196 nodes, 39 blocks, 111 frame-lines, 18 annotations
   phase L3012..3535 "After register allocation pre-processing" [graph]: 196 nodes, 39 blocks, 111 frame-lines, 18 annotations
   phase L3535..4128 "After register allocation" [graph]: 224 nodes, 39 blocks, 111 frame-lines, 61 annotations
-  totals: 49 opcodes, 28 distinct frames, 0 unparsed
+  totals: 49 opcodes, 28 distinct frames

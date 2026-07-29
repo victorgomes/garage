@@ -8,7 +8,7 @@ compilation 0 L1..217 sfi=0x9b80101e32d tier=Maglev ord=1 name="read"
   phase L109..144 "AnyUseMarking" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L144..179 "Dead nodes sweeping" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L179..217 "Register allocation" [graph]: 16 nodes, 2 blocks, 3 frame-lines, 2 annotations
-  totals: 14 opcodes, 2 distinct frames, 0 unparsed
+  totals: 14 opcodes, 2 distinct frames
 compilation 1 L217..1335 sfi=0x9b80101e2c5 tier=Maglev ord=1 name=""
   script "workloads/deopt-eager.js"
   phase L220..372 "Bytecode array" [bytecode]
@@ -19,7 +19,7 @@ compilation 1 L217..1335 sfi=0x9b80101e2c5 tier=Maglev ord=1 name=""
   phase L805..975 "AnyUseMarking" [graph]: 64 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L975..1145 "Dead nodes sweeping" [graph]: 64 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L1145..1335 "Register allocation" [graph]: 81 nodes, 10 blocks, 18 frame-lines, 6 annotations
-  totals: 33 opcodes, 17 distinct frames, 0 unparsed
+  totals: 33 opcodes, 17 distinct frames
 compilation 2 L1391..1715 sfi=0x9b80101e32d tier=Maglev ord=2 name="read"
   script "workloads/deopt-eager.js"
   phase L1394..1428 "Bytecode array" [bytecode]
@@ -28,7 +28,7 @@ compilation 2 L1391..1715 sfi=0x9b80101e32d tier=Maglev ord=2 name="read"
   phase L1541..1597 "AnyUseMarking" [graph]: 23 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1597..1653 "Dead nodes sweeping" [graph]: 23 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1653..1715 "Register allocation" [graph]: 26 nodes, 5 blocks, 4 frame-lines, 6 annotations
-  totals: 18 opcodes, 4 distinct frames, 0 unparsed
+  totals: 18 opcodes, 4 distinct frames
 compilation 3 L1715..2833 sfi=0x9b80101e2c5 tier=Maglev ord=2 name=""
   script "workloads/deopt-eager.js"
   phase L1718..1872 "Bytecode array" [bytecode]
@@ -39,7 +39,7 @@ compilation 3 L1715..2833 sfi=0x9b80101e2c5 tier=Maglev ord=2 name=""
   phase L2305..2474 "AnyUseMarking" [graph]: 65 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L2474..2643 "Dead nodes sweeping" [graph]: 65 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L2643..2833 "Register allocation" [graph]: 83 nodes, 10 blocks, 18 frame-lines, 6 annotations
-  totals: 33 opcodes, 17 distinct frames, 0 unparsed
+  totals: 33 opcodes, 17 distinct frames
 raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."
 raw L1335..1391 "[bailout (kind: deopt-eager, reason: Insufficient type feedback for object literal): begin. deop…"
 raw L2833..2867 "[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begi…"

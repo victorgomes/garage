@@ -9,7 +9,7 @@ compilation 0 L0..312 sfi=0x9b80101e031 tier=Maglev ord=1 name="trunc"
   phase L181..223 "After use marking" [graph]: 20 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L223..265 "After register allocation pre-processing" [graph]: 20 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L265..312 "After register allocation" [graph]: 26 nodes, 2 blocks, 4 frame-lines, 0 annotations
-  totals: 16 opcodes, 2 distinct frames, 0 unparsed
+  totals: 16 opcodes, 2 distinct frames
 compilation 1 L312..1495 sfi=0x9b80101dfc9 tier=Maglev ord=1 name=""
   script "workloads/truncation.js"
   phase L313..413 "Bytecode array" [bytecode]
@@ -21,7 +21,7 @@ compilation 1 L312..1495 sfi=0x9b80101dfc9 tier=Maglev ord=1 name=""
   phase L1016..1170 "After use marking" [graph]: 65 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L1170..1324 "After register allocation pre-processing" [graph]: 65 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L1324..1495 "After register allocation" [graph]: 81 nodes, 10 blocks, 18 frame-lines, 4 annotations
-  totals: 28 opcodes, 9 distinct frames, 0 unparsed
+  totals: 28 opcodes, 9 distinct frames
 compilation 2 L1495..1812 sfi=0x9b80101e031 tier=Maglev ord=2 name="trunc"
   script "workloads/truncation.js"
   phase L1496..1547 "Bytecode array" [bytecode]
@@ -31,7 +31,7 @@ compilation 2 L1495..1812 sfi=0x9b80101e031 tier=Maglev ord=2 name="trunc"
   phase L1679..1722 "After use marking" [graph]: 22 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L1722..1765 "After register allocation pre-processing" [graph]: 22 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L1765..1812 "After register allocation" [graph]: 27 nodes, 2 blocks, 3 frame-lines, 0 annotations
-  totals: 16 opcodes, 2 distinct frames, 0 unparsed
+  totals: 16 opcodes, 2 distinct frames
 compilation 3 L1812..2973 sfi=0x9b80101dfc9 tier=Maglev ord=2 name=""
   script "workloads/truncation.js"
   phase L1813..1913 "Bytecode array" [bytecode]
@@ -43,4 +43,4 @@ compilation 3 L1812..2973 sfi=0x9b80101dfc9 tier=Maglev ord=2 name=""
   phase L2510..2659 "After use marking" [graph]: 64 nodes, 10 blocks, 14 frame-lines, 2 annotations
   phase L2659..2808 "After register allocation pre-processing" [graph]: 64 nodes, 10 blocks, 14 frame-lines, 2 annotations
   phase L2808..2973 "After register allocation" [graph]: 78 nodes, 10 blocks, 14 frame-lines, 5 annotations
-  totals: 27 opcodes, 7 distinct frames, 0 unparsed
+  totals: 27 opcodes, 7 distinct frames

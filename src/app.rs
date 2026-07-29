@@ -22,7 +22,7 @@ use regex::Regex;
 use crate::config::{Action, Keymap};
 use crate::event::Event;
 use crate::index::TraceIndex;
-use crate::model::{Addr, IRNode, LineInfo, NodeId};
+use crate::model::{Addr, IRNode, LineInfo, NodeId, SCHEDULE_ONLY};
 use crate::parse::ParseCache;
 use crate::parse::maglev::line_text;
 use crate::source::{LogBuffer, LogSource, SourceEvent};
@@ -138,7 +138,7 @@ pub struct App {
     pub sidebar_filter: Option<Regex>,
     /// Active input line, if any.
     pub input: Option<InputLine>,
-    /// Jump history for Ctrl+O / Ctrl+I: (selected row, cursor row).
+    /// Jump history for Ctrl+O / Ctrl+I: (selected row, buffer line).
     jumps: Vec<(usize, usize)>,
     jump_at: usize,
     cycle: Option<Cycle>,
@@ -322,9 +322,13 @@ impl App {
         let source = &mut self.sources[self.active];
         let section = &source.index.compilations[comp];
         if section.lines.len() > MODEL_LIMIT {
-            return ViewModel::Plain {
-                range: section.lines.clone(),
+            // Oversized: no row modeling, but a phase selection must still
+            // show *that phase*, not the whole compilation.
+            let range = match only_phase {
+                Some(p) => section.phases[p].lines.clone(),
+                None => section.lines.clone(),
             };
+            return ViewModel::Plain { range };
         }
         let parsed = source.parses.get_or_parse(&source.buffer, section, comp);
         let only_lines = match only_phase {
@@ -344,12 +348,15 @@ impl App {
     }
 
     /// The node defined on the cursor row, for tracking and jumps (TODO 4.3).
+    /// Schedule-only lines (GapMove & co) share the [`SCHEDULE_ONLY`]
+    /// sentinel and define nothing — treating them as "a node" once
+    /// highlighted every gap move on screen at the same time.
     pub fn cursor_node(&self, vm: &ViewModel) -> Option<IRNode> {
         let row = vm.row(self.cursor)?;
         let (p, i) = row.info?;
         let parsed = vm.parsed()?;
         match parsed.phases.get(p)?.infos.get(i)? {
-            LineInfo::Node(node) => Some(node.clone()),
+            LineInfo::Node(node) if node.id != SCHEDULE_ONLY => Some(node.clone()),
             _ => None,
         }
     }
@@ -378,16 +385,16 @@ impl App {
             return;
         }
 
-        let Some(action) = self.keys.lookup(&key) else {
-            return;
-        };
-
+        // Before the keymap lookup, so that genuinely *any* key closes the
+        // modal — unbound keys included, and `q` closes rather than quits.
         if self.help {
-            // Any key closes the modal — including `q`, which would otherwise
-            // quit the whole app from inside a help screen.
             self.help = false;
             return;
         }
+
+        let Some(action) = self.keys.lookup(&key) else {
+            return;
+        };
 
         match action {
             Action::Quit => self.quit = true,
@@ -414,6 +421,10 @@ impl App {
                 self.grouped = !self.grouped;
                 self.selected = 0;
                 self.sidebar_scroll = 0;
+                // Follow means "pin to the newest section", and grouped mode
+                // does not order rows by recency — the pin has no honest
+                // target there, so switching modes breaks follow.
+                self.follow = false;
                 self.status = format!(
                     "sidebar: {}",
                     if self.grouped {
@@ -735,9 +746,11 @@ impl App {
             let Some(line) = vm.line_at(at as usize) else {
                 continue;
             };
-            if re.is_match(&line_text(buffer, line)) {
+            if line_matches(buffer, line, &re) {
                 self.cursor = at as usize;
                 self.follow = false;
+                // A search jump re-targets any i/u cycle to the new cursor.
+                self.cycle = None;
                 self.status = format!("match at L{}", line + 1);
                 return;
             }
@@ -750,32 +763,55 @@ impl App {
     // -----------------------------------------------------------------------
 
     /// `i`: jump to the definition of the cursor node's inputs, cycling
-    /// through them on repeat.
+    /// through them on repeat. Like `u`, the cycle stays anchored to the node
+    /// it started from — the first jump moves the cursor onto an input, and
+    /// without the anchor a second `i` would ask for *that* node's inputs
+    /// instead of the next input of the original.
     fn jump_to_input(&mut self) {
         let vm = self.view_model();
-        let Some(node) = self.cursor_node(&vm) else {
-            self.status = "no node under cursor".to_string();
-            return;
-        };
         let Some(row) = vm.row(self.cursor) else {
             return;
         };
         let Some((p, _)) = row.info else { return };
         let Some(parsed) = vm.parsed() else { return };
 
+        let anchor = match (&self.cycle, self.cursor_node(&vm)) {
+            (Some(cycle), _) => cycle.node,
+            (None, Some(node)) => node.id,
+            (None, None) => {
+                self.status = "no node under cursor".to_string();
+                return;
+            }
+        };
+
         let phase = &parsed.phases[p];
+        // The anchor's inputs come from its definition line, which may not be
+        // the cursor line any more.
+        let Some(anchor_node) = phase
+            .defs
+            .get(&anchor)
+            .and_then(|&idx| phase.infos.get(idx as usize))
+            .and_then(|info| match info {
+                LineInfo::Node(node) => Some(node),
+                _ => None,
+            })
+        else {
+            self.status = format!("n{anchor} is not defined in this phase");
+            return;
+        };
+
         let phase_start = self.phase_start(&vm, p);
-        let targets: Vec<usize> = node
+        let targets: Vec<usize> = anchor_node
             .inputs
             .iter()
             .filter_map(|r| phase.defs.get(&r.node))
             .map(|&info_idx| phase_start + info_idx as usize)
             .collect();
         if targets.is_empty() {
-            self.status = format!("n{} has no inputs defined in this phase", node.id);
+            self.status = format!("n{anchor} has no inputs defined in this phase");
             return;
         }
-        self.cycle_jump(node.id, targets, "input");
+        self.cycle_jump(anchor, targets, "input");
     }
 
     /// `u`: cycle through the consumers of the cursor node (TODO 4.5). The
@@ -876,6 +912,15 @@ impl App {
                 }
             }
         }
+        // Unfolding the block may already be enough; only flip the *global*
+        // annotation toggle if the target is still hidden (i.e. it lives in a
+        // collapsed annotation run).
+        let vm = self.view_model();
+        if let Some(row) = row_showing(&vm, line) {
+            self.cursor = row;
+            self.follow = false;
+            return;
+        }
         self.show_annotations = true;
         let vm = self.view_model();
         if let Some(row) = row_showing(&vm, line) {
@@ -888,10 +933,20 @@ impl App {
     // Jump history (TODO 4.5)
     // -----------------------------------------------------------------------
 
+    /// History entries store **buffer lines**, not display rows: a jump can
+    /// unfold blocks or expand annotations, which shifts every later display
+    /// row — a stored row index would land Ctrl+O off by the hidden count
+    /// (found in review).
     fn push_history(&mut self) {
+        let here = self.history_position();
         self.jumps.truncate(self.jump_at);
-        self.jumps.push((self.selected, self.cursor));
+        self.jumps.push(here);
         self.jump_at = self.jumps.len();
+    }
+
+    fn history_position(&mut self) -> (usize, usize) {
+        let line = self.view_model().line_at(self.cursor).unwrap_or(0);
+        (self.selected, line)
     }
 
     fn history_step(&mut self, direction: isize) {
@@ -902,7 +957,8 @@ impl App {
             }
             // Record where we are so Ctrl+I can come back.
             if self.jump_at == self.jumps.len() {
-                self.jumps.push((self.selected, self.cursor));
+                let here = self.history_position();
+                self.jumps.push(here);
             }
             self.jump_at -= 1;
         } else {
@@ -912,9 +968,9 @@ impl App {
             }
             self.jump_at += 1;
         }
-        let (selected, cursor) = self.jumps[self.jump_at];
+        let (selected, line) = self.jumps[self.jump_at];
         self.selected = selected;
-        self.cursor = cursor;
+        self.goto_line(line);
         self.follow = false;
         self.cycle = None;
     }
@@ -982,6 +1038,23 @@ impl App {
     }
 
     fn yank_section(&mut self) {
+        // Refuse oversized sections *before* materialising anything: the size
+        // of a plain window is O(1) from the line-offset index, and without
+        // this check a Y on a multi-million-line raw section froze the UI to
+        // build a gigabyte of Strings whose only possible fate was the same
+        // refusal (found in review).
+        let vm = self.view_model();
+        if let ViewModel::Plain { range } = &vm {
+            let bytes = self.sources[self.active].buffer.span_bytes(range.clone());
+            if bytes > crate::clipboard::MAX_COPY {
+                self.status = format!(
+                    "section is {} KB; the clipboard path tops out at {} KB — use export instead",
+                    bytes / 1024,
+                    crate::clipboard::MAX_COPY / 1024
+                );
+                return;
+            }
+        }
         let text = self.visible_view_text().join("\n");
         match crate::clipboard::copy(&text) {
             Ok(how) => self.status = format!("section {how}"),
@@ -1006,10 +1079,16 @@ impl App {
             | SourceEvent::Failed { source, .. } => *source,
         };
 
-        let Some(target) = self.sources.get_mut(index) else {
+        if self.sources.get(index).is_none() {
             tracing::error!(index, "event for an unknown source");
             return;
-        };
+        }
+        // Captured before ingest mutates the index, so the selection can be
+        // re-located by identity afterwards.
+        let prev_row = (index == self.active)
+            .then(|| self.rows().get(self.selected).cloned())
+            .flatten();
+        let target = &mut self.sources[index];
 
         match event {
             SourceEvent::Mapped { map, .. } => {
@@ -1034,16 +1113,53 @@ impl App {
         }
 
         if index == self.active {
-            let rows = self.rows().len();
-            self.selected = self.selected.min(rows.saturating_sub(1));
-            if self.follow {
-                // Streaming: stick to the newest section's end. The cursor
-                // pin to the last display row happens at render time, where
-                // the view model is built anyway.
-                self.selected = rows.saturating_sub(1);
+            let rows = self.rows();
+            // Re-locate the selection by identity, not by index: grouped mode
+            // inserts new Function rows *before* the raw rows, so a kept index
+            // silently lands on a different item as the stream grows (found in
+            // review). Chronological mode is append-only, where this is a
+            // no-op.
+            if let Some(prev) = prev_row {
+                if let Some(at) = rows.iter().position(|r| same_row(r, &prev)) {
+                    self.selected = at;
+                }
+            }
+            self.selected = self.selected.min(rows.len().saturating_sub(1));
+            if self.follow && !self.grouped {
+                // Streaming, chronological: the last row is the newest
+                // section (the merge is ordered by start line). The cursor
+                // pin to the last display row happens at render time. In
+                // grouped mode there is no "newest" row to pin — toggling
+                // grouping breaks follow instead.
+                self.selected = rows.len().saturating_sub(1);
             }
         }
     }
+}
+
+/// Row identity across rebuilds: `Function` rows compare by SFI only — their
+/// `count` grows as the stream does, which is exactly when re-location
+/// matters.
+fn same_row(a: &Row, b: &Row) -> bool {
+    match (a, b) {
+        (Row::Function { sfi: a, .. }, Row::Function { sfi: b, .. }) => a == b,
+        _ => a == b,
+    }
+}
+
+/// Regex match on one line without materialising a String when avoidable:
+/// escape-free valid-UTF-8 lines (all of a plain-text trace) match borrowed.
+/// d8's colored graph lines still pay the strip, but `n` over a large raw
+/// section stops allocating per line (found in review: ~56 ms per keypress
+/// on a 2M-line section).
+fn line_matches(buffer: &LogBuffer, line: usize, re: &Regex) -> bool {
+    let bytes = buffer.line(line).unwrap_or(b"");
+    if !bytes.contains(&0x1b)
+        && let Ok(text) = std::str::from_utf8(bytes)
+    {
+        return re.is_match(text);
+    }
+    re.is_match(&line_text(buffer, line))
 }
 
 /// The display row showing a buffer line, regardless of row kind (fold
@@ -1233,16 +1349,29 @@ Compiling 0x2 <JSFunction g (sfi = 0x20)> with Maglev
         key(&mut app, KeyCode::Char('i'));
         let vm = app.view_model();
         assert_eq!(vm.line_at(app.cursor), Some(4), "def of n1 (first input)");
+        // The cycle stays anchored to Quux, so the second `i` reaches the
+        // *second* input's definition (review finding: it used to restart
+        // from the node under the cursor and report "no inputs").
         key(&mut app, KeyCode::Char('i'));
-        // Cursor is now on `1: Foo`; a fresh cycle from n1's line... the
-        // cursor node changed, so `i` restarts from Foo — which has no inputs.
-        // Instead test Ctrl+O returns to the jump origin.
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(7), "def of n3 (second input)");
+        // History unwinds jump by jump, in buffer-line coordinates.
         ctrl(&mut app, 'o');
         let vm = app.view_model();
-        assert_eq!(vm.line_at(app.cursor), Some(9), "Ctrl+O returns");
+        assert_eq!(vm.line_at(app.cursor), Some(4), "back to the first jump");
+        ctrl(&mut app, 'o');
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(9), "back to the origin");
 
-        // Consumers of n1: Bar (line 5) and Quux (line 9).
-        app.cursor = 3; // on `1: Foo`
+        // Consumers of n1: Bar (line 5) and Quux (line 9). Move onto Foo via
+        // keys so the stale cycle is cleared the way real navigation clears
+        // it.
+        key(&mut app, KeyCode::Char('g'));
+        for _ in 0..3 {
+            key(&mut app, KeyCode::Char('j'));
+        }
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(4), "on `1: Foo`");
         key(&mut app, KeyCode::Char('u'));
         let vm = app.view_model();
         assert_eq!(vm.line_at(app.cursor), Some(5), "first consumer");

@@ -29,8 +29,8 @@ use regex::Regex;
     long_about = "Terminal UI for viewing, navigating, searching and diffing d8 \
                   trace output.\n\n\
                   Reads trace files, or stdin when d8 output is piped in. \
-                  Keyboard input comes from /dev/tty in that case, so \
-                  `d8 ... | garage` is fully interactive."
+                  Keyboard input comes from the controlling terminal in that \
+                  case, so `d8 ... | garage` is fully interactive."
 )]
 pub struct Cli {
     /// Trace files to open. Omit to read the trace from stdin.

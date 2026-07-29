@@ -8,7 +8,7 @@ compilation 0 L1..607 sfi=0x9b80101e355 tier=Maglev ord=1 name="sum"
   phase L288..390 "AnyUseMarking" [graph]: 41 nodes, 8 blocks, 14 frame-lines, 4 annotations
   phase L390..492 "Dead nodes sweeping" [graph]: 41 nodes, 8 blocks, 14 frame-lines, 4 annotations
   phase L492..607 "Register allocation" [graph]: 47 nodes, 8 blocks, 14 frame-lines, 12 annotations
-  totals: 28 opcodes, 4 distinct frames, 0 unparsed
+  totals: 28 opcodes, 4 distinct frames
 compilation 1 L607..792 sfi=0x9b80101e3b5 tier=Maglev ord=1 name="flipflop"
   script "workloads/mixed.js"
   phase L610..625 "Bytecode array" [bytecode]
@@ -17,7 +17,7 @@ compilation 1 L607..792 sfi=0x9b80101e3b5 tier=Maglev ord=1 name="flipflop"
   phase L691..723 "AnyUseMarking" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L723..755 "Dead nodes sweeping" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L755..792 "Register allocation" [graph]: 18 nodes, 2 blocks, 4 frame-lines, 2 annotations
-  totals: 14 opcodes, 2 distinct frames, 0 unparsed
+  totals: 14 opcodes, 2 distinct frames
 compilation 2 L792..1568 sfi=0x9b80101e385 tier=Maglev ord=1 name="scale"
   script "workloads/mixed.js"
   phase L795..876 "Bytecode array" [bytecode]
@@ -26,7 +26,7 @@ compilation 2 L792..1568 sfi=0x9b80101e385 tier=Maglev ord=1 name="scale"
   phase L1160..1292 "AnyUseMarking" [graph]: 62 nodes, 11 blocks, 21 frame-lines, 2 annotations
   phase L1292..1424 "Dead nodes sweeping" [graph]: 62 nodes, 11 blocks, 21 frame-lines, 2 annotations
   phase L1424..1568 "Register allocation" [graph]: 71 nodes, 11 blocks, 21 frame-lines, 6 annotations
-  totals: 37 opcodes, 7 distinct frames, 0 unparsed
+  totals: 37 opcodes, 7 distinct frames
 compilation 3 L1568..1748 sfi=0x9b80101e3b5 tier=Maglev ord=2 name="flipflop"
   script "workloads/mixed.js"
   phase L1571..1586 "Bytecode array" [bytecode]
@@ -35,7 +35,7 @@ compilation 3 L1568..1748 sfi=0x9b80101e3b5 tier=Maglev ord=2 name="flipflop"
   phase L1650..1681 "AnyUseMarking" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L1681..1712 "Dead nodes sweeping" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L1712..1748 "Register allocation" [graph]: 19 nodes, 2 blocks, 2 frame-lines, 2 annotations
-  totals: 14 opcodes, 2 distinct frames, 0 unparsed
+  totals: 14 opcodes, 2 distinct frames
 compilation 4 L1748..4891 sfi=0x9b80101e2d5 tier=Maglev ord=1 name=""
   script "workloads/mixed.js"
   phase L1751..1945 "Bytecode array" [bytecode]
@@ -49,6 +49,6 @@ compilation 4 L1748..4891 sfi=0x9b80101e2d5 tier=Maglev ord=1 name=""
   phase L3277..3792 "AnyUseMarking" [graph]: 186 nodes, 39 blocks, 113 frame-lines, 18 annotations
   phase L3792..4307 "Dead nodes sweeping" [graph]: 186 nodes, 39 blocks, 113 frame-lines, 18 annotations
   phase L4307..4891 "Register allocation" [graph]: 218 nodes, 39 blocks, 113 frame-lines, 56 annotations
-  totals: 53 opcodes, 28 distinct frames, 0 unparsed
+  totals: 53 opcodes, 28 distinct frames
 raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."
 raw L4891..4892 "68235400"

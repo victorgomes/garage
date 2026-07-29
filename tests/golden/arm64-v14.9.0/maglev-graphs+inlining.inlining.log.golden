@@ -7,7 +7,7 @@ compilation 0 L0..141 sfi=0x9b80101e1bd tier=Maglev ord=1 name="tiny"
   phase L56..84 "After use marking" [graph]: 12 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L84..112 "After register allocation pre-processing" [graph]: 12 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L112..141 "After register allocation" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
-  totals: 12 opcodes, 2 distinct frames, 0 unparsed
+  totals: 12 opcodes, 2 distinct frames
 compilation 1 L141..617 sfi=0x9b80101e24d tier=Maglev ord=1 name="outer"
   script "workloads/inlining.js"
   inline L196 INLINE callee="small" reason="Small function, skipping max-depth"
@@ -22,7 +22,7 @@ compilation 1 L141..617 sfi=0x9b80101e24d tier=Maglev ord=1 name="outer"
   phase L379..456 "After use marking" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
   phase L456..533 "After register allocation pre-processing" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
   phase L533..617 "After register allocation" [graph]: 35 nodes, 5 blocks, 18 frame-lines, 0 annotations
-  totals: 15 opcodes, 7 distinct frames, 0 unparsed
+  totals: 15 opcodes, 7 distinct frames
 compilation 2 L617..1523 sfi=0x9b80101e21d tier=Maglev ord=1 name="big"
   script "workloads/inlining.js"
   phase L618..821 "Bytecode array" [bytecode]
@@ -32,7 +32,7 @@ compilation 2 L617..1523 sfi=0x9b80101e21d tier=Maglev ord=1 name="big"
   phase L1178..1292 "After use marking" [graph]: 52 nodes, 2 blocks, 14 frame-lines, 0 annotations
   phase L1292..1406 "After register allocation pre-processing" [graph]: 52 nodes, 2 blocks, 14 frame-lines, 0 annotations
   phase L1406..1523 "After register allocation" [graph]: 56 nodes, 2 blocks, 14 frame-lines, 0 annotations
-  totals: 19 opcodes, 2 distinct frames, 0 unparsed
+  totals: 19 opcodes, 2 distinct frames
 compilation 3 L1523..3231 sfi=0x9b80101e13d tier=Maglev ord=1 name=""
   script "workloads/inlining.js"
   inline L1622 INLINE callee="outer" reason="Small function, skipping max-depth"
@@ -60,4 +60,4 @@ compilation 3 L1523..3231 sfi=0x9b80101e13d tier=Maglev ord=1 name=""
   phase L2600..2803 "After use marking" [graph]: 66 nodes, 16 blocks, 42 frame-lines, 2 annotations
   phase L2803..3006 "After register allocation pre-processing" [graph]: 66 nodes, 16 blocks, 42 frame-lines, 2 annotations
   phase L3006..3231 "After register allocation" [graph]: 86 nodes, 16 blocks, 42 frame-lines, 5 annotations
-  totals: 27 opcodes, 13 distinct frames, 0 unparsed
+  totals: 27 opcodes, 13 distinct frames

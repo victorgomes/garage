@@ -426,6 +426,15 @@ impl TraceIndex {
         if matches!(self.state, State::InCompilation { .. }) {
             let cut = self.pending.take().map(|p| p.start).unwrap_or(i);
             self.close_all(cut);
+            // Pending rule/Begin lines between the cut and the event would
+            // otherwise belong to no section, breaking the partition
+            // invariant; they open the raw section the event lands in.
+            if cut < i {
+                self.state = State::Idle {
+                    raw_since: Some(cut),
+                };
+                self.raw_label = None;
+            }
         }
         self.content(i, text.as_bytes());
     }
@@ -743,6 +752,27 @@ Compiling 0x2 <JSFunction dropme (sfi = 0x20)> with Maglev
         let idx =
             index("\u{1b}[0;32mCompiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev\u{1b}[0m\n");
         assert_eq!(idx.compilations.len(), 1);
+    }
+
+    /// An event arriving while rule/`Begin` lines are pending must not orphan
+    /// them from the partition (found in review: the cut used to end the
+    /// compilation before the pending lines while raw opened at the event).
+    #[test]
+    fn event_after_pending_lines_keeps_the_partition() {
+        let idx = index(
+            "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+   1: Foo
+---------------------------------------------------
+Begin compiling method g using Maglev
+[bailout (kind: deopt-eager, reason: x): begin. deoptimizing 0x2 <JSFunction g (sfi = 0x20)>, 0x3 <Code MAGLEV>, opt id 1, bytecode offset 2, deopt exit 0, FP to SP delta 32, caller SP 0x4, pc 0x5]
+",
+        );
+        assert_eq!(idx.compilations[0].lines, 0..3);
+        // The rule + Begin lines land in the raw section with the event.
+        assert_eq!(idx.raw[0].lines, 3..6);
+        assert_partition(&idx, 6);
     }
 
     #[test]

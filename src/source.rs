@@ -225,8 +225,12 @@ enum Storage {
 /// still refer to the file on disk. Stripping happens at display time.
 pub struct LogBuffer {
     storage: Storage,
-    /// Byte offset of the first byte of each line. Never holds an offset equal
-    /// to the buffer length, so `line_starts.len()` is the line count.
+    /// Byte offset of the first byte of each line. Offsets are `<= len()`;
+    /// while a stream is live, an offset *equal* to `len()` can exist and
+    /// means "a line whose bytes have not arrived yet" — `line_count()`
+    /// includes it as a phantom empty line until [`LogBuffer::finish`] pops
+    /// it at EOF. Consumers that must not see the phantom hold the last line
+    /// back until EOF, as the indexer does.
     line_starts: Vec<usize>,
     /// How far the line index has been built.
     scanned: usize,
@@ -320,6 +324,26 @@ impl LogBuffer {
             }
         }
         self.scanned = bytes.len();
+    }
+
+    /// Total bytes spanned by a line range — O(1) from the offset index.
+    /// The size answer for "can this even be copied?" without materialising
+    /// a single line.
+    pub fn span_bytes(&self, lines: std::ops::Range<usize>) -> usize {
+        if lines.is_empty() {
+            return 0;
+        }
+        let start = self
+            .line_starts
+            .get(lines.start)
+            .copied()
+            .unwrap_or(self.len());
+        let end = self
+            .line_starts
+            .get(lines.end)
+            .copied()
+            .unwrap_or(self.len());
+        end.saturating_sub(start)
     }
 
     /// The bytes of line `i`, without its terminator.

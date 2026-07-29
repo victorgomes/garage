@@ -83,15 +83,20 @@ pub fn copy(text: &str) -> Result<&'static str> {
     }
 }
 
-/// Emits the OSC 52 sequence on the terminal. Written to the same screen
-/// handle the TUI draws on, inside a tmux passthrough wrapper when needed.
+/// Emits the OSC 52 sequence on the terminal, written to the same screen
+/// handle the TUI draws on.
+///
+/// Inside tmux the *plain* sequence is the right default: tmux's own
+/// `set-clipboard external` (on by default) interprets it, sets the paste
+/// buffer, and forwards to the outer terminal. The DCS passthrough wrapper is
+/// only correct when `allow-passthrough` is enabled — and that option
+/// *defaults to off* since tmux 3.3, where a wrapped sequence is silently
+/// discarded. So passthrough is used only when tmux confirms it is on.
 fn osc52(text: &str) -> Result<()> {
     let payload = b64::encode(text.as_bytes());
     let mut screen = crate::tty::Screen::open().context("no terminal for OSC 52")?;
 
-    // tmux swallows OSC 52 from panes unless it is wrapped in its passthrough
-    // escape (and set-clipboard is on, which is its default).
-    if std::env::var_os("TMUX").is_some() {
+    if std::env::var_os("TMUX").is_some() && tmux_allows_passthrough() {
         let inner = format!("\x1b]52;c;{payload}\x07");
         let wrapped = format!("\x1bPtmux;{}\x1b\\", inner.replace('\x1b', "\x1b\x1b"));
         screen.write_all(wrapped.as_bytes())?;
@@ -100,6 +105,17 @@ fn osc52(text: &str) -> Result<()> {
     }
     screen.flush()?;
     Ok(())
+}
+
+fn tmux_allows_passthrough() -> bool {
+    std::process::Command::new("tmux")
+        .args(["show", "-Ap", "allow-passthrough"])
+        .output()
+        .map(|out| {
+            let text = String::from_utf8_lossy(&out.stdout);
+            text.contains(" on") || text.contains("all")
+        })
+        .unwrap_or(false)
 }
 
 /// Writes the current view as Markdown (TODO 5.3): a fenced block with a
