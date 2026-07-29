@@ -235,17 +235,40 @@ Notes on what the fixtures taught beyond the spike, and the deviations:
 
 ---
 
-## Phase 3: TUI Layout & Navigation
+## Phase 3: TUI Layout & Navigation  ✅ done
 
-- [ ] **3.1. Layout grid**: telemetry bar / sidebar + viewport / status line.
-- [ ] **3.2. Telemetry bar**: compilations per tier, deopt count, source status.
-- [ ] **3.3. Sidebar**: chronological ⇄ grouped-by-function toggle, OSR and
-  `[unparsed]` badges, selection highlight, scrollbar.
-- [ ] **3.4. Viewport**: vertical/horizontal scroll, `PgUp`/`PgDn`/`Home`/`End`,
-  line wrapping toggle.
-- [ ] **3.5. Keybindings** per PLAN §8 (**`?` = help; `h`/`l` = pane focus — the
-  v1 double-binding of `h` is resolved**); bindings remappable via config TOML.
-- [ ] **3.6. Help modal** (`?`) with keymap + command reference.
+- [x] **3.1. Layout grid**: telemetry bar / sidebar + viewport / status line.
+- [x] **3.2. Telemetry bar**: compilations per tier, deopt count, OSR count,
+  source status, detected V8 version (from the marker-table votes).
+- [x] **3.3. Sidebar**: chronological ⇄ grouped-by-function toggle, OSR and
+  `[unparsed]` badges, selection highlight, scrollbar. Grouped mode keys on the
+  SFI address (names can be empty/duplicated) and collapses groups by default —
+  that is the mode that scales to thousands of compilations. Raw sections are
+  interleaved chronologically and never hidden.
+- [x] **3.4. Viewport**: vertical scroll with a cursor line (Phase 4 needs the
+  cursor anyway), horizontal scroll, `PgUp`/`PgDn`/`Home`/`End`, wrap toggle,
+  line numbers.
+- [x] **3.5. Keybindings** per PLAN §8, remappable via `[keys]` in
+  `~/.config/garage/config.toml` (or `--config`). Remapping an action *frees*
+  its default chords; a chord bound to two actions is a startup error. Config
+  parses before the alt screen, so a typo is an error message, not a broken
+  TUI.
+- [x] **3.6. Help modal** (`?`) generated from the live keymap, so remaps show
+  up in it automatically.
+
+Model and deviations worth recording:
+
+- **Selection is the view**: moving the sidebar selection immediately points
+  the viewport at that section; `Enter` only expands/collapses (compilations →
+  phases, function groups → compilations). There is no "open" step.
+- **Keys beyond the PLAN §8 fixed map** (all visible in `?`): `c` grouping
+  toggle, `w` wrap, `<`/`>` horizontal scroll, `F` follow, and `Tab` = next
+  source *for now* — §8 gives Tab to the timeline, which is Phase 6; the
+  binding moves there when the timeline exists.
+- Two live-stream UX traps found in tmux and fixed: sidebar navigation now
+  breaks follow (otherwise the next chunk yanks the selection back to the
+  newest section), and any key closes the help modal — `q` used to quit the
+  whole app from inside it.
 
 ---
 

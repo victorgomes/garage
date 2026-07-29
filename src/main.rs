@@ -32,14 +32,9 @@ fn run() -> Result<()> {
         tracing::debug!(path = %path.display(), "diagnostics enabled");
     }
 
-    if let Some(config) = &invocation.cli.config {
-        // Parsed and validated so the flag is not silently ignored; the config
-        // format itself lands with the keymap (TODO 3.5).
-        if !config.exists() {
-            bail!("config file not found: {}", config.display());
-        }
-        tracing::warn!(path = %config.display(), "config files are not read yet");
-    }
+    // Config (keymap) parses before the terminal: a typo in config.toml is a
+    // normal error message, not a broken TUI.
+    let config = garage::config::Config::load(invocation.cli.config.as_deref())?;
 
     // Before `tty::acquire`, which makes stdin a terminal.
     let sources = choose_sources(&invocation)?;
@@ -58,7 +53,7 @@ fn run() -> Result<()> {
     event::spawn_input_thread(tx.clone())?;
     source::spawn_readers(&sources, access.data, tx.clone());
 
-    let mut state = app::App::new(&sources, invocation.function);
+    let mut state = app::App::new(&sources, invocation.function, config.keys);
     let result = app::run(&mut guard, &mut state, rx);
 
     // Explicit, so the terminal is back before anything is printed. The guard's
