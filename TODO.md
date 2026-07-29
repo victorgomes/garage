@@ -433,18 +433,44 @@ the golden mask covers `[pid:isolate]` prefixes.
 
 ---
 
-## Phase 7 (post-MVP): Splits & Diff Engine
+## Phase 7 (post-MVP): Splits & Diff Engine  ✅ done
 
-- [ ] **7.1. Pane manager**: `v`/`s` splits, `Ctrl+W` focus moves, synced scroll
-  option.
-- [ ] **7.2. Canonicalizer**: strip/normalize addresses, timestamps, compilation
-  ids; canonical node renumbering. (Prerequisite for useful diffs — see PLAN
-  §7.4; **do not ship raw Myers line diff of IR**.)
-- [ ] **7.3. Node-identity diff**: match by preserved IDs where available, else
-  structural hash (opcode + canonical inputs); `similar` line-diff fallback for
-  unmatched regions.
-- [ ] **7.4. Phase diff mode** (`d`): insert/delete/modify styling, synced
-  scrolling, diff summary counts.
+- [x] **7.1. Pane manager**: `v`/`s` splits (same key closes, other key flips
+  orientation), `Ctrl+W` focus moves, per-pane selection driven by the
+  sidebar. Implementation note: the active pane lives in the App's flat
+  view fields and the inactive pane is a parked snapshot (the same swap
+  pattern as the timeline selection), so every existing keybinding operates
+  on "the current view" unchanged. *Deviation:* synced scroll exists only in
+  diff mode, where it is structural (both panes walk one aligned row list);
+  free-scrolling panes scroll independently.
+- [x] **7.2. Canonicalizer** (`src/diff.rs`): hex addresses → `0x·`,
+  `(addr:0x…)` host pointers, `[ML:n]` prefixes stripped, timing decimals
+  masked; canonical node renumbering by definition order feeds the
+  cross-compilation structural keys.
+- [x] **7.3. Node-identity diff**: nodes keyed by `nN` id within one
+  compilation (what `IRNode::id` preserves across phases), by structural
+  hash (opcode + canonically renumbered inputs) across compilations;
+  `similar`/Myers aligns the key sequences, and non-node rows are keyed by
+  canonicalized text — the line-diff fallback and the aligner are one
+  mechanism. Never a raw Myers over IR text: schedule ids, registers, live
+  ranges and use counts are invisible to the diff by construction (verified
+  against the corpus: graph building vs dead-nodes-sweeping shows exactly
+  the dead node removed, zero false "changed" rows).
+- [x] **7.4. Phase diff mode** (`d`): row-aligned two-column view with
+  gutters and 256-colour row tints (`+` added, `−` deleted, `~` changed,
+  `→` replaced, `≈` moved), synced by construction, summary counts in the
+  status line plus a per-row story ("n9 inputs rerouted via Identity:
+  [n5] → [n12]"). The states the diff distinguishes, per the design goal:
+  added, deleted, opcode-changed, input-changed, input-*rerouted* (both
+  sides' inputs resolve equal through the Identity maps), replaced-by-
+  Identity (`nA: Identity [nB]`, chains resolved with a cycle guard), and
+  moved (same id realigned elsewhere — not deleted+added). `d` without a
+  split picks the pair: previous graph phase vs this one on a phase row,
+  first vs last on a compilation. Search walks the aligned rows (either
+  side matches); `y`/`Y`/`E` are diff-aware; folds and node jumps are
+  disabled inside the diff with a pointer out. No `Identity` nodes exist in
+  the corpus workloads, so that path is pinned by unit tests against the
+  documented printer format.
 
 ---
 

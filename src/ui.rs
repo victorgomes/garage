@@ -21,7 +21,7 @@ use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Borders, Clear, Paragraph, Wrap};
 
-use crate::app::{App, COMMANDS, Pane, Prompt, Row, SourceState, event_summary};
+use crate::app::{App, COMMANDS, Pane, Prompt, Row, SourceState, SplitDir, event_summary};
 use crate::model::{EventKind, LineInfo, NodeId, ParsedCompilation, PhaseKind, Tier};
 use crate::parse::maglev::line_text;
 use crate::view::{RowKind, ViewModel, is_control_opcode, is_guard_opcode, is_phi_opcode};
@@ -43,35 +43,92 @@ pub fn render(frame: &mut Frame, app: &mut App) {
     let [sidebar, viewport] =
         Layout::horizontal([Constraint::Length(sidebar_width), Constraint::Min(1)]).areas(body);
 
+    // Pane areas: the split halves the viewport region (TODO 7.1).
+    let (area0, area1) = match app.split {
+        None => (viewport, None),
+        Some(SplitDir::Vertical) => {
+            let [a, b] = Layout::horizontal([Constraint::Percentage(50), Constraint::Min(1)])
+                .areas(viewport);
+            (a, Some(b))
+        }
+        Some(SplitDir::Horizontal) => {
+            let [a, b] =
+                Layout::vertical([Constraint::Percentage(50), Constraint::Min(1)]).areas(viewport);
+            (a, Some(b))
+        }
+    };
+
     // Heights recorded for paging, rects for mouse routing: they are
     // properties of the frame, and the frame is the only thing that knows
     // them.
+    let rect_of = |r: Rect| crate::app::PaneRect {
+        x: r.x,
+        y: r.y,
+        width: r.width,
+        height: r.height,
+    };
     app.sidebar_height = sidebar.height as usize;
-    app.viewport_height = viewport.height as usize;
-    app.sidebar_rect = crate::app::PaneRect {
-        x: sidebar.x,
-        y: sidebar.y,
-        width: sidebar.width,
-        height: sidebar.height,
+    app.sidebar_rect = rect_of(sidebar);
+    app.viewport_rect = rect_of(area0);
+    app.viewport2_rect = area1.map(rect_of).unwrap_or_default();
+    let active_area = if app.active_pane == 1 {
+        area1.unwrap_or(area0)
+    } else {
+        area0
     };
-    app.viewport_rect = crate::app::PaneRect {
-        x: viewport.x,
-        y: viewport.y,
-        width: viewport.width,
-        height: viewport.height,
-    };
+    app.viewport_height = active_area.height as usize;
+
+    // The diff model revalidates its two sides; losing one (a pane moved off
+    // a graph phase) drops out of diff mode rather than showing a stale diff.
+    let diff_model = app.diff_model();
+    if app.diff && diff_model.is_none() {
+        app.diff = false;
+    }
 
     // One view model per frame: it drives the viewport, the status line, and
     // the follow pin.
     let vm = app.view_model();
-    if app.follow {
+    if app.follow && !app.diff {
         app.cursor = vm.len().saturating_sub(1);
     }
 
     frame.render_widget(telemetry_bar(app), telemetry);
     render_sidebar(frame, app, sidebar);
-    render_viewport(frame, app, &vm, viewport);
-    frame.render_widget(status_line(app, &vm), status);
+
+    match (&diff_model, area1) {
+        (Some(model), Some(area1)) => render_diff(frame, app, model, area0, area1),
+        _ => {
+            let mut state = app.view_state();
+            render_viewport(
+                frame,
+                app,
+                &vm,
+                active_area,
+                &mut state,
+                true,
+                app.split.map(|_| app.active_pane),
+            );
+            app.set_view_state(state);
+            if let Some(a1) = area1 {
+                let inactive_area = if app.active_pane == 1 { area0 } else { a1 };
+                let mut other = app.other_view;
+                let ovm = app.view_model_for(other.selected);
+                let inactive_pane = 1 - app.active_pane;
+                render_viewport(
+                    frame,
+                    app,
+                    &ovm,
+                    inactive_area,
+                    &mut other,
+                    false,
+                    Some(inactive_pane),
+                );
+                app.other_view = other;
+            }
+        }
+    }
+
+    frame.render_widget(status_line(app, &vm, diff_model.as_deref()), status);
 
     if app.help {
         render_help(frame, app, frame.area());
@@ -522,35 +579,70 @@ struct DefUse {
 // Viewport (TODO 3.4, 4.x)
 // ---------------------------------------------------------------------------
 
-fn render_viewport(frame: &mut Frame, app: &mut App, vm: &ViewModel, area: Rect) {
+/// Renders one viewport pane. `state` is the pane's own navigation state
+/// (clamping writes back into it); `active` says whether this pane owns the
+/// cursor; `pane_title` labels split panes with what they show.
+fn render_viewport(
+    frame: &mut Frame,
+    app: &App,
+    vm: &ViewModel,
+    area: Rect,
+    state: &mut crate::app::ViewState,
+    active: bool,
+    pane_title: Option<usize>,
+) {
+    // Split panes get a title bar naming their content; single view doesn't
+    // spend the row.
+    let area = match pane_title {
+        Some(_) => {
+            let title = format!(
+                " {}{} ",
+                app.view_title_for(state.selected),
+                if active { " ●" } else { "" }
+            );
+            let block = Block::new()
+                .borders(Borders::TOP)
+                .border_style(Style::new().fg(if active { ACCENT } else { DIM }))
+                .title(title);
+            let inner = block.inner(area);
+            frame.render_widget(block, area);
+            inner
+        }
+        None => area,
+    };
+
     let height = area.height as usize;
     let len = vm.len();
-    app.cursor = app.cursor.min(len.saturating_sub(1));
+    state.cursor = state.cursor.min(len.saturating_sub(1));
 
-    if app.top >= len {
-        app.top = 0;
+    if state.top >= len {
+        state.top = 0;
     }
-    if app.cursor < app.top {
-        app.top = app.cursor;
+    if state.cursor < state.top {
+        state.top = state.cursor;
     }
-    if height > 0 && app.cursor >= app.top + height {
-        app.top = app.cursor + 1 - height;
+    if height > 0 && state.cursor >= state.top + height {
+        state.top = state.cursor + 1 - height;
     }
 
     let palette = Palette::detect();
-    let defuse = app.cursor_node(vm).map(|node| DefUse {
-        node: node.id,
-        inputs: node.inputs.iter().map(|r| r.node).collect(),
-    });
+    let defuse = if active {
+        crate::app::node_at(vm, state.cursor).map(|node| DefUse {
+            node: node.id,
+            inputs: node.inputs.iter().map(|r| r.node).collect(),
+        })
+    } else {
+        None
+    };
 
     let source = app.active_source();
     let last_line = vm.line_at(len.saturating_sub(1)).unwrap_or(0);
     let number_width = digits(last_line + 1);
     let mut lines = Vec::with_capacity(height);
 
-    for row_idx in app.top..len.min(app.top + height) {
+    for row_idx in state.top..len.min(state.top + height) {
         let Some(row) = vm.row(row_idx) else { break };
-        let cursor_here = row_idx == app.cursor && app.focus == Pane::Viewport;
+        let cursor_here = active && row_idx == state.cursor && app.focus == Pane::Viewport;
 
         let number_style = if cursor_here {
             Style::new().fg(ACCENT)
@@ -592,7 +684,7 @@ fn render_viewport(frame: &mut Frame, app: &mut App, vm: &ViewModel, area: Rect)
                     defuse.as_ref(),
                     app.search.as_ref(),
                     &palette,
-                    app.scroll_x,
+                    state.scroll_x,
                 ));
             }
         }
@@ -616,6 +708,163 @@ fn render_viewport(frame: &mut Frame, app: &mut App, vm: &ViewModel, area: Rect)
         paragraph = paragraph.wrap(Wrap { trim: false });
     }
     frame.render_widget(paragraph, area);
+}
+
+// ---------------------------------------------------------------------------
+// Phase diff rendering (TODO 7.4)
+// ---------------------------------------------------------------------------
+
+/// Row background tints for diff statuses. 256-colour only; the 16-colour
+/// fallback relies on the gutter symbols alone.
+fn diff_tint(status: &crate::diff::RowStatus, palette: &Palette) -> Option<Color> {
+    use crate::diff::RowStatus;
+    if !palette.indexed {
+        return None;
+    }
+    match status {
+        RowStatus::Same => None,
+        RowStatus::Added => Some(Color::Indexed(22)),
+        RowStatus::Deleted => Some(Color::Indexed(52)),
+        RowStatus::Changed { .. } => Some(Color::Indexed(58)),
+        RowStatus::Replaced { .. } => Some(Color::Indexed(53)),
+        RowStatus::Moved => Some(Color::Indexed(23)),
+    }
+}
+
+fn diff_gutter_style(status: &crate::diff::RowStatus) -> Style {
+    use crate::diff::RowStatus;
+    match status {
+        RowStatus::Same => Style::new().fg(DIM),
+        RowStatus::Added => Style::new().fg(Color::Green).add_modifier(Modifier::BOLD),
+        RowStatus::Deleted => Style::new().fg(Color::Red).add_modifier(Modifier::BOLD),
+        RowStatus::Changed { .. } => Style::new().fg(Color::Yellow).add_modifier(Modifier::BOLD),
+        RowStatus::Replaced { .. } => Style::new().fg(Color::Magenta).add_modifier(Modifier::BOLD),
+        RowStatus::Moved => Style::new().fg(Color::Cyan),
+    }
+}
+
+/// The aligned two-column diff view: both panes walk the same row list, so
+/// scrolling is synced by construction (PLAN §7.4). The shared cursor lives
+/// in the app's flat fields.
+fn render_diff(
+    frame: &mut Frame,
+    app: &mut App,
+    model: &crate::diff::DiffModel,
+    area0: Rect,
+    area1: Rect,
+) {
+    let palette = Palette::detect();
+    let len = model.rows.len();
+    app.cursor = app.cursor.min(len.saturating_sub(1));
+
+    // Clamp against the smaller pane so the cursor stays visible in both.
+    let height = (area0.height.min(area1.height) as usize).saturating_sub(1);
+    if app.top >= len {
+        app.top = 0;
+    }
+    if app.cursor < app.top {
+        app.top = app.cursor;
+    }
+    if height > 0 && app.cursor >= app.top + height {
+        app.top = app.cursor + 1 - height;
+    }
+
+    for (pane, area) in [(0, area0), (1, area1)] {
+        let (side, own) = if pane == 0 {
+            (
+                &model.left,
+                model.rows.iter().map(|r| r.left).collect::<Vec<_>>(),
+            )
+        } else {
+            (
+                &model.right,
+                model.rows.iter().map(|r| r.right).collect::<Vec<_>>(),
+            )
+        };
+        let own = own.as_slice();
+        let active = pane == app.active_pane;
+        let title_selected = app.pane_state(pane).selected;
+
+        let title = format!(
+            " {}{} ",
+            app.view_title_for(title_selected),
+            if active { " ●" } else { "" }
+        );
+        let block = Block::new()
+            .borders(Borders::TOP)
+            .border_style(Style::new().fg(if active { ACCENT } else { DIM }))
+            .title(title);
+        let inner = block.inner(area);
+        frame.render_widget(block, area);
+
+        let defuse = app.diff_cursor_node(model, pane).map(|node| DefUse {
+            node: node.id,
+            inputs: node.inputs.iter().map(|r| r.node).collect(),
+        });
+
+        let source = app.active_source();
+        let number_width = digits(source.buffer.line_count().max(1));
+        let mut lines = Vec::with_capacity(inner.height as usize);
+
+        let visible = app.top..len.min(app.top + inner.height as usize);
+        for (i, own_idx) in own[visible.clone()].iter().enumerate() {
+            let i = i + visible.start;
+            let own_idx = *own_idx;
+            let diff_row = &model.rows[i];
+            let cursor_here = i == app.cursor && app.focus == Pane::Viewport;
+            let mut spans = vec![Span::styled(
+                crate::app::diff_gutter(&diff_row.status).to_string(),
+                diff_gutter_style(&diff_row.status),
+            )];
+
+            match own_idx.and_then(|idx| side.rows.get(idx)) {
+                Some(row) => {
+                    spans.push(Span::styled(
+                        format!("{:>number_width$} ", row.line + 1),
+                        Style::new().fg(if cursor_here { ACCENT } else { DIM }),
+                    ));
+                    let text = line_text(&source.buffer, row.line);
+                    let info = row.info.and_then(|(p, j)| {
+                        side.parsed
+                            .phases
+                            .get(p)
+                            .and_then(|phase| phase.infos.get(j))
+                    });
+                    spans.extend(paint_line(
+                        &text,
+                        info,
+                        Some(side.parsed.as_ref()),
+                        defuse.as_ref(),
+                        app.search.as_ref(),
+                        &palette,
+                        app.scroll_x,
+                    ));
+                }
+                None => {
+                    spans.push(Span::styled(
+                        "·".repeat(inner.width.saturating_sub(2) as usize),
+                        Style::new().fg(Color::Indexed(238)),
+                    ));
+                }
+            }
+
+            let mut line = Line::from(spans);
+            if cursor_here {
+                line = line.style(Style::new().bg(CURSOR_BG));
+            } else if let Some(tint) = diff_tint(&diff_row.status, &palette) {
+                line = line.style(Style::new().bg(tint));
+            }
+            lines.push(line);
+        }
+
+        if lines.is_empty() {
+            lines.push(Line::from(Span::styled(
+                "  (no rows)",
+                Style::new().fg(DIM),
+            )));
+        }
+        frame.render_widget(Paragraph::new(lines), inner);
+    }
 }
 
 /// Builds the styled spans for one line: a per-byte class array painted in
@@ -757,7 +1006,11 @@ fn digits(mut n: usize) -> usize {
 // Status line (with the input prompt and cursor-node tracking, TODO 4.3)
 // ---------------------------------------------------------------------------
 
-fn status_line(app: &App, vm: &ViewModel) -> Paragraph<'static> {
+fn status_line(
+    app: &App,
+    vm: &ViewModel,
+    diff: Option<&crate::diff::DiffModel>,
+) -> Paragraph<'static> {
     // An active input line takes over the whole status bar.
     if let Some(input) = &app.input {
         let prompt = match input.prompt {
@@ -793,6 +1046,26 @@ fn status_line(app: &App, vm: &ViewModel) -> Paragraph<'static> {
         }
         spans.push(Span::styled(
             "  Enter apply · Esc cancel".to_string(),
+            Style::new().fg(DIM),
+        ));
+        return Paragraph::new(Line::from(spans))
+            .block(Block::new().style(Style::new().bg(BAR_BG)));
+    }
+
+    // Diff mode swaps the whole layout: summary + the cursor row's story.
+    if let Some(model) = diff {
+        let mut spans = vec![Span::styled(
+            format!(" DIFF  {}", model.summary.describe()),
+            Style::new().add_modifier(Modifier::BOLD),
+        )];
+        if let Some(detail) = model.describe_row(app.cursor) {
+            spans.push(Span::styled(
+                format!("   {detail}"),
+                Style::new().fg(ACCENT),
+            ));
+        }
+        spans.push(Span::styled(
+            "   d exits · Ctrl+W other side".to_string(),
             Style::new().fg(DIM),
         ));
         return Paragraph::new(Line::from(spans))

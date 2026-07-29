@@ -27,6 +27,11 @@ anyhow = "1.0"
 thiserror = "2.0"
 toml = "0.8"
 
+# Sequence alignment for the phase-diff engine (PLAN §7.4). Node rows are
+# keyed by identity before similar ever sees them — this is only the aligner,
+# never a raw Myers-over-text diff of IR.
+similar = "2"
+
 # Local clipboard for :copy. OSC 52 is tried first (it is what works over
 # SSH/tmux, PLAN §3.4); arboard is the local fallback.
 arboard = { version = "3", default-features = false }

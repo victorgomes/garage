@@ -55,6 +55,10 @@ pub enum Action {
     Export,
     CommandPalette,
     ToggleTimeline,
+    SplitVertical,
+    SplitHorizontal,
+    OtherPane,
+    Diff,
 }
 
 impl Action {
@@ -96,6 +100,10 @@ impl Action {
             Action::Export => "export",
             Action::CommandPalette => "command-palette",
             Action::ToggleTimeline => "toggle-timeline",
+            Action::SplitVertical => "split-vertical",
+            Action::SplitHorizontal => "split-horizontal",
+            Action::OtherPane => "other-pane",
+            Action::Diff => "diff",
         }
     }
 
@@ -137,6 +145,10 @@ impl Action {
             Action::Export => "export section to a file",
             Action::CommandPalette => "command palette (:checks, :deopts, …)",
             Action::ToggleTimeline => "timeline ⇄ compilation list",
+            Action::SplitVertical => "vertical split (again: close)",
+            Action::SplitHorizontal => "horizontal split (again: close)",
+            Action::OtherPane => "focus the other pane",
+            Action::Diff => "phase diff mode",
         }
     }
 
@@ -178,6 +190,10 @@ impl Action {
             Export,
             CommandPalette,
             ToggleTimeline,
+            SplitVertical,
+            SplitHorizontal,
+            OtherPane,
+            Diff,
         ]
     }
 }
@@ -321,6 +337,10 @@ impl Keymap {
             (Action::Export, vec!["E"]),
             (Action::CommandPalette, vec![":"]),
             (Action::ToggleTimeline, vec!["Tab"]),
+            (Action::SplitVertical, vec!["v"]),
+            (Action::SplitHorizontal, vec!["s"]),
+            (Action::OtherPane, vec!["Ctrl+w"]),
+            (Action::Diff, vec!["d"]),
         ]
     }
 

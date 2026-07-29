@@ -9,6 +9,7 @@ pub mod app;
 pub mod cli;
 pub mod clipboard;
 pub mod config;
+pub mod diff;
 pub mod event;
 pub mod index;
 pub mod logging;

@@ -78,6 +78,9 @@ Notes that save an afternoon:
 | `F` | follow the stream end (on for piped input) |
 | `Tab` | timeline ⇄ compilation list |
 | `:` | command palette (Tab completes) |
+| `v` / `s` | vertical / horizontal split (same key closes) |
+| `Ctrl+W` | focus the other pane |
+| `d` | phase diff mode |
 | `]` | next source (multi-file runs) |
 | `q`, `Esc` | quit / back |
 
@@ -109,6 +112,36 @@ candidates):
 A lens filters the modeled view down to the banner/block skeleton plus
 matching lines; any jump whose target a lens hides clears the lens rather
 than failing.
+
+## Splits & the phase diff
+
+`v`/`s` split the viewport; each pane has its own section selection (the
+sidebar drives the focused pane, `Ctrl+W` switches), and the same key closes
+the split again.
+
+`d` is the reason splits exist. On a phase row it diffs that phase against
+the previous graph phase; on a compilation it diffs the first graph phase
+against the last; with a split already open it diffs whatever graph phases
+the two panes show — including phases of *different* compilations of the
+same function. The diff is **node-identity based**, never a raw text diff:
+
+- nodes match by their `nN` id within a compilation (V8 preserves it across
+  phases), or by structural hash (opcode + canonically renumbered inputs)
+  across compilations;
+- registers, schedule ids, live ranges and `, N uses` decorations do not
+  count as changes — a node is `~ changed` only when its opcode or its
+  actual inputs changed;
+- `nA: Identity [nB]` replacements render as `→ n5 replaced by n12`, and a
+  consumer whose inputs merely followed such a replacement is reported as
+  "rerouted via Identity", not as a real input change;
+- a node that moved blocks is `≈ moved`, not deleted-and-added;
+- non-node lines fall back to a canonicalized text diff (addresses, `[ML:…]`
+  ids and timings masked).
+
+The two columns are row-aligned (scrolling is synced by construction), the
+gutter and row tint encode the status (`+` `−` `~` `→` `≈`), the status line
+shows the summary counts and the story of the row under the cursor, and
+`Y`/`E` export the aligned view with its gutters.
 
 The mouse works too: the wheel scrolls the pane under the pointer, and a
 left click focuses a pane and places the selection or cursor — clicking a

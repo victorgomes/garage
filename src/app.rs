@@ -150,6 +150,27 @@ struct Jump {
     line: usize,
 }
 
+/// Split orientation (TODO 7.1). `Vertical` = side by side (the diff shape),
+/// `Horizontal` = stacked.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SplitDir {
+    Vertical,
+    Horizontal,
+}
+
+/// One viewport's complete navigation state. The *active* pane lives in the
+/// App's flat fields (`selected`/`cursor`/`top`/`scroll_x`) so every existing
+/// keybinding keeps operating on "the current view"; the inactive pane is a
+/// parked snapshot, swapped in by [`App::activate_pane`] — the same pattern
+/// the timeline uses for its selection.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct ViewState {
+    pub selected: usize,
+    pub cursor: usize,
+    pub top: usize,
+    pub scroll_x: usize,
+}
+
 pub struct App {
     pub sources: Vec<Source>,
     pub active: usize,
@@ -203,10 +224,29 @@ pub struct App {
     /// Active semantic lens (TODO 6.2).
     pub lens: Option<Lens>,
 
+    // Phase 7 state.
+    /// Open split, if any (TODO 7.1).
+    pub split: Option<SplitDir>,
+    /// The inactive pane's parked view state (meaningful only when split).
+    pub other_view: ViewState,
+    /// Which physical pane (0 = left/top, 1 = right/bottom) the flat fields
+    /// currently drive.
+    pub active_pane: usize,
+    /// Phase diff mode (TODO 7.4); requires a split.
+    pub diff: bool,
+    /// Aligned model cache: recomputed only when a side changes.
+    diff_cache: Option<(DiffKey, std::sync::Arc<crate::diff::DiffModel>)>,
+
     /// Pane geometry from the last frame, for mouse routing.
     pub sidebar_rect: PaneRect,
     pub viewport_rect: PaneRect,
+    /// The second pane's rect; zero-sized (never matching) without a split.
+    pub viewport2_rect: PaneRect,
 }
+
+/// `(source, comp, phase, section end line)` per side: any content change on
+/// either side changes the key.
+type DiffKey = ((usize, usize, usize, usize), (usize, usize, usize, usize));
 
 impl App {
     pub fn new(sources: &[LogSource], function_filter: Option<Regex>, keys: Keymap) -> Self {
@@ -254,8 +294,14 @@ impl App {
             timeline_selected: 0,
             timeline_deopts_only: false,
             lens: None,
+            split: None,
+            other_view: ViewState::default(),
+            active_pane: 0,
+            diff: false,
+            diff_cache: None,
             sidebar_rect: PaneRect::default(),
             viewport_rect: PaneRect::default(),
+            viewport2_rect: PaneRect::default(),
         }
     }
 
@@ -386,8 +432,14 @@ impl App {
     /// modeled (parsed, foldable) form; raw sections and oversized sections
     /// stay a plain O(1) window.
     pub fn view_model(&mut self) -> ViewModel {
+        self.view_model_for(self.selected)
+    }
+
+    /// The view model for an arbitrary sidebar row — the split's inactive
+    /// pane renders through this without disturbing the active view.
+    pub fn view_model_for(&mut self, selected: usize) -> ViewModel {
         let rows = self.rows();
-        let (comp, only_phase) = match rows.get(self.selected) {
+        let (comp, only_phase) = match rows.get(selected) {
             Some(Row::Compilation(i)) => (*i, None),
             Some(Row::Phase { comp, phase }) => (*comp, Some(*phase)),
             Some(Row::Function { name_comp, .. }) => (*name_comp, None),
@@ -490,10 +542,19 @@ impl App {
     /// sentinel and define nothing — treating them as "a node" once
     /// highlighted every gap move on screen at the same time.
     pub fn cursor_node(&self, vm: &ViewModel) -> Option<IRNode> {
-        let row = vm.row(self.cursor)?;
-        let (p, i) = row.info?;
-        let parsed = vm.parsed()?;
-        match parsed.phases.get(p)?.infos.get(i)? {
+        node_at(vm, self.cursor)
+    }
+
+    /// The node under the shared diff cursor, on one side of the diff.
+    pub fn diff_cursor_node(&self, model: &crate::diff::DiffModel, pane: usize) -> Option<IRNode> {
+        let row = model.rows.get(self.cursor)?;
+        let (side, idx) = if pane == 0 {
+            (&model.left, row.left?)
+        } else {
+            (&model.right, row.right?)
+        };
+        let (p, i) = side.rows.get(idx)?.info?;
+        match side.parsed.phases.get(p)?.infos.get(i)? {
             LineInfo::Node(node) if node.id != SCHEDULE_ONLY => Some(node.clone()),
             _ => None,
         }
@@ -531,18 +592,27 @@ impl App {
             return;
         }
 
+        // Viewport hits carry the pane index; a hit on the inactive pane
+        // activates it first (focus follows the pointer).
         let at_pane = if self.sidebar_rect.contains(mouse.column, mouse.row) {
-            Some(Pane::Sidebar)
+            Some((Pane::Sidebar, 0))
         } else if self.viewport_rect.contains(mouse.column, mouse.row) {
-            Some(Pane::Viewport)
+            Some((Pane::Viewport, 0))
+        } else if self.viewport2_rect.contains(mouse.column, mouse.row) {
+            Some((Pane::Viewport, 1))
         } else {
             None
         };
 
         match mouse.kind {
             MouseEventKind::ScrollUp | MouseEventKind::ScrollDown => {
-                let Some(pane) = at_pane else { return };
+                let Some((pane, viewport)) = at_pane else {
+                    return;
+                };
                 self.focus = pane;
+                if pane == Pane::Viewport {
+                    self.activate_pane(viewport);
+                }
                 let delta = if mouse.kind == MouseEventKind::ScrollUp {
                     -3
                 } else {
@@ -551,7 +621,7 @@ impl App {
                 self.move_by(delta);
             }
             MouseEventKind::Down(MouseButton::Left) => match at_pane {
-                Some(Pane::Sidebar) => {
+                Some((Pane::Sidebar, _)) => {
                     self.focus = Pane::Sidebar;
                     let offset = (mouse.row - self.sidebar_rect.y) as usize;
                     let rows = self.rows().len();
@@ -564,10 +634,16 @@ impl App {
                         self.reset_view();
                     }
                 }
-                Some(Pane::Viewport) => {
+                Some((Pane::Viewport, viewport)) => {
                     self.focus = Pane::Viewport;
-                    let offset = (mouse.row - self.viewport_rect.y) as usize;
-                    let len = self.view_model().len();
+                    self.activate_pane(viewport);
+                    let rect = if viewport == 0 {
+                        self.viewport_rect
+                    } else {
+                        self.viewport2_rect
+                    };
+                    let offset = (mouse.row - rect.y) as usize;
+                    let len = self.viewport_len();
                     if len == 0 {
                         return;
                     }
@@ -716,6 +792,17 @@ impl App {
                 });
             }
             Action::ToggleTimeline => self.toggle_timeline(),
+            Action::SplitVertical => self.toggle_split(SplitDir::Vertical),
+            Action::SplitHorizontal => self.toggle_split(SplitDir::Horizontal),
+            Action::OtherPane => {
+                if self.split.is_some() {
+                    self.activate_pane(1 - self.active_pane);
+                    self.focus = Pane::Viewport;
+                } else {
+                    self.status = "no split — v or s opens one".to_string();
+                }
+            }
+            Action::Diff => self.toggle_diff(),
         }
     }
 
@@ -840,7 +927,7 @@ impl App {
                 self.reset_view();
             }
             Pane::Viewport => {
-                let len = self.view_model().len();
+                let len = self.viewport_len();
                 if len == 0 {
                     return;
                 }
@@ -873,7 +960,7 @@ impl App {
                 self.reset_view();
             }
             Pane::Viewport => {
-                self.cursor = self.view_model().len().saturating_sub(1);
+                self.cursor = self.viewport_len().saturating_sub(1);
                 self.cycle = None;
             }
         }
@@ -935,6 +1022,10 @@ impl App {
 
     /// `Space`: fold/unfold the block containing the cursor.
     fn fold_block(&mut self) {
+        if self.diff {
+            self.status = "folding is off in diff view (d to leave)".to_string();
+            return;
+        }
         let vm = self.view_model();
         let Some(row) = vm.row(self.cursor) else {
             return;
@@ -991,6 +1082,44 @@ impl App {
             return;
         };
         self.focus = Pane::Viewport;
+
+        // In diff view, search walks the aligned rows and matches either
+        // side — a hit only on the left is still a hit.
+        if self.diff
+            && let Some(model) = self.diff_model()
+        {
+            let len = model.rows.len();
+            if len == 0 {
+                return;
+            }
+            let buffer = &self.sources[self.active].buffer;
+            let mut at = self.cursor as isize;
+            for _ in 0..len {
+                at += direction;
+                if at < 0 {
+                    at = len as isize - 1;
+                } else if at >= len as isize {
+                    at = 0;
+                }
+                let row = &model.rows[at as usize];
+                let hit = [
+                    row.left.and_then(|i| model.left.rows.get(i)),
+                    row.right.and_then(|i| model.right.rows.get(i)),
+                ]
+                .iter()
+                .flatten()
+                .any(|r| line_matches(buffer, r.line, &re));
+                if hit {
+                    self.cursor = at as usize;
+                    self.cycle = None;
+                    self.status = format!("match at diff row {}", at + 1);
+                    return;
+                }
+            }
+            self.status = format!("no match for {}", re.as_str());
+            return;
+        }
+
         let vm = self.view_model();
         let len = vm.len();
         if len == 0 {
@@ -1338,6 +1467,268 @@ impl App {
     }
 
     // -----------------------------------------------------------------------
+    // Splits & phase diff (TODO 7.1, 7.4)
+    // -----------------------------------------------------------------------
+
+    /// Snapshot of the live (active-pane) view fields.
+    pub fn view_state(&self) -> ViewState {
+        ViewState {
+            selected: self.selected,
+            cursor: self.cursor,
+            top: self.top,
+            scroll_x: self.scroll_x,
+        }
+    }
+
+    pub fn set_view_state(&mut self, v: ViewState) {
+        self.selected = v.selected;
+        self.cursor = v.cursor;
+        self.top = v.top;
+        self.scroll_x = v.scroll_x;
+    }
+
+    /// The state of a physical pane, active or parked.
+    pub fn pane_state(&self, pane: usize) -> ViewState {
+        if pane == self.active_pane {
+            self.view_state()
+        } else {
+            self.other_view
+        }
+    }
+
+    /// Makes `pane` the one the flat fields (and thus every key) drive.
+    pub fn activate_pane(&mut self, pane: usize) {
+        if self.split.is_none() || pane == self.active_pane {
+            return;
+        }
+        let (cursor, top) = (self.cursor, self.top);
+        let current = self.view_state();
+        let parked = std::mem::replace(&mut self.other_view, current);
+        self.set_view_state(parked);
+        if self.diff {
+            // The diff cursor ranges over the *shared* aligned rows; pane
+            // switching changes which side yank/status read, not the row.
+            self.cursor = cursor;
+            self.top = top;
+        }
+        self.active_pane = pane;
+        self.cycle = None;
+    }
+
+    /// `v` / `s`: open a split, flip its orientation, or close it (same key
+    /// again). Closing keeps the active pane's view.
+    fn toggle_split(&mut self, dir: SplitDir) {
+        match self.split {
+            None => {
+                self.split = Some(dir);
+                self.other_view = self.view_state();
+                self.status = format!(
+                    "{} split — Ctrl+W switches panes, d diffs two graph phases",
+                    if dir == SplitDir::Vertical {
+                        "vertical"
+                    } else {
+                        "horizontal"
+                    }
+                );
+            }
+            Some(d) if d == dir => {
+                self.split = None;
+                self.diff = false;
+                self.active_pane = 0;
+                self.status = "split closed".to_string();
+            }
+            Some(_) => {
+                self.split = Some(dir);
+                self.status = "split direction switched".to_string();
+            }
+        }
+    }
+
+    /// Resolves a sidebar row to `(comp, graph phase)` — what the diff can
+    /// consume.
+    fn pane_phase(&self, selected: usize) -> Option<(usize, usize)> {
+        match self.rows().get(selected)? {
+            Row::Phase { comp, phase } => {
+                let section = &self.sources[self.active].index.compilations[*comp];
+                matches!(section.phases.get(*phase)?.kind, PhaseKind::Graph { .. })
+                    .then_some((*comp, *phase))
+            }
+            _ => None,
+        }
+    }
+
+    /// `d`: toggle phase diff mode (TODO 7.4). Without a split it picks the
+    /// obvious pair itself: on a phase row, the previous graph phase vs this
+    /// one; on a compilation row, first vs last graph phase — J1's "what did
+    /// the pipeline do" in one keystroke.
+    fn toggle_diff(&mut self) {
+        if self.diff {
+            self.diff = false;
+            self.status = "diff off".to_string();
+            return;
+        }
+
+        if self.split.is_none() && !self.auto_split_for_diff() {
+            return;
+        }
+
+        let left = self.pane_phase(self.pane_state(0).selected);
+        let right = self.pane_phase(self.pane_state(1).selected);
+        if left.is_none() || right.is_none() {
+            self.status =
+                "diff needs a graph phase selected in each pane (Enter expands a compilation)"
+                    .to_string();
+            return;
+        }
+        self.diff = true;
+        self.cursor = 0;
+        self.top = 0;
+        self.cycle = None;
+        self.follow = false;
+        self.focus = Pane::Viewport;
+        if let Some(model) = self.diff_model() {
+            self.status = format!("diff: {}", model.summary.describe());
+        }
+    }
+
+    /// Picks the diff pair when `d` is pressed without a split. Returns false
+    /// (with a status message) when the selection offers no pair.
+    fn auto_split_for_diff(&mut self) -> bool {
+        let rows = self.rows();
+        let graph_phases = |comp: usize| -> Vec<usize> {
+            self.sources[self.active].index.compilations[comp]
+                .phases
+                .iter()
+                .enumerate()
+                .filter(|(_, p)| matches!(p.kind, PhaseKind::Graph { .. }))
+                .map(|(i, _)| i)
+                .collect()
+        };
+        let (comp, left_phase, right_phase) = match rows.get(self.selected) {
+            Some(Row::Phase { comp, phase }) => {
+                let graphs = graph_phases(*comp);
+                let Some(at) = graphs.iter().position(|p| p == phase) else {
+                    self.status = "diff needs a graph phase (this is a dump section)".to_string();
+                    return false;
+                };
+                if at == 0 {
+                    self.status = "no earlier graph phase to diff against".to_string();
+                    return false;
+                }
+                (*comp, graphs[at - 1], *phase)
+            }
+            Some(Row::Compilation(comp))
+            | Some(Row::Function {
+                name_comp: comp, ..
+            }) => {
+                let graphs = graph_phases(*comp);
+                let (Some(&first), Some(&last)) = (graphs.first(), graphs.last()) else {
+                    self.status = "no graph phases in this compilation".to_string();
+                    return false;
+                };
+                if first == last {
+                    self.status = "only one graph phase — nothing to diff against".to_string();
+                    return false;
+                }
+                self.expanded.insert((self.active, *comp));
+                (*comp, first, last)
+            }
+            _ => {
+                self.status = "diff works on compilations and their graph phases".to_string();
+                return false;
+            }
+        };
+
+        let rows = self.rows();
+        let row_of = |phase: usize| {
+            rows.iter().position(
+                |r| matches!(r, Row::Phase { comp: c, phase: p } if *c == comp && *p == phase),
+            )
+        };
+        let (Some(left_row), Some(right_row)) = (row_of(left_phase), row_of(right_phase)) else {
+            self.status = "could not locate the phase rows".to_string();
+            return false;
+        };
+
+        // Left pane parked on the earlier phase, live fields = right pane.
+        self.split = Some(SplitDir::Vertical);
+        self.other_view = ViewState {
+            selected: left_row,
+            ..Default::default()
+        };
+        self.selected = right_row;
+        self.active_pane = 1;
+        true
+    }
+
+    /// The aligned diff of the two panes, cached until either side changes.
+    pub fn diff_model(&mut self) -> Option<std::sync::Arc<crate::diff::DiffModel>> {
+        if !self.diff {
+            return None;
+        }
+        let (lc, lp) = self.pane_phase(self.pane_state(0).selected)?;
+        let (rc, rp) = self.pane_phase(self.pane_state(1).selected)?;
+        let source = &self.sources[self.active];
+        let key: DiffKey = (
+            (self.active, lc, lp, source.index.compilations[lc].lines.end),
+            (self.active, rc, rp, source.index.compilations[rc].lines.end),
+        );
+        if let Some((cached_key, model)) = &self.diff_cache
+            && *cached_key == key
+        {
+            return Some(std::sync::Arc::clone(model));
+        }
+
+        // Oversized compilations are never modeled (5.1 guard); the diff
+        // path inherits that.
+        let too_big = |c: usize| source.index.compilations[c].lines.len() > MODEL_LIMIT;
+        if too_big(lc) || too_big(rc) {
+            self.status = "section too large to diff".to_string();
+            return None;
+        }
+
+        let source = &mut self.sources[self.active];
+        let left_section = source.index.compilations[lc].clone();
+        let right_section = source.index.compilations[rc].clone();
+        let left_parsed = source
+            .parses
+            .get_or_parse(&source.buffer, &left_section, lc);
+        let right_parsed = source
+            .parses
+            .get_or_parse(&source.buffer, &right_section, rc);
+        let model = crate::diff::diff_phases(
+            &crate::diff::SideInput {
+                buffer: &source.buffer,
+                parsed: &left_parsed,
+                section: &left_section,
+                phase: lp,
+                comp_id: (self.active, lc),
+            },
+            &crate::diff::SideInput {
+                buffer: &source.buffer,
+                parsed: &right_parsed,
+                section: &right_section,
+                phase: rp,
+                comp_id: (self.active, rc),
+            },
+        );
+        let model = std::sync::Arc::new(model);
+        self.diff_cache = Some((key, std::sync::Arc::clone(&model)));
+        Some(model)
+    }
+
+    /// Rows the viewport cursor ranges over — the aligned diff when it is
+    /// on, the normal view model otherwise.
+    fn viewport_len(&mut self) -> usize {
+        if self.diff {
+            if let Some(model) = self.diff_model() {
+                return model.rows.len();
+            }
+        }
+        self.view_model().len()
+    }
+
+    // -----------------------------------------------------------------------
     // Node jumps (TODO 4.5)
     // -----------------------------------------------------------------------
 
@@ -1347,6 +1738,10 @@ impl App {
     /// without the anchor a second `i` would ask for *that* node's inputs
     /// instead of the next input of the original.
     fn jump_to_input(&mut self) {
+        if self.diff {
+            self.status = "node jumps are off in diff view (d to leave)".to_string();
+            return;
+        }
         let vm = self.view_model();
         let Some(row) = vm.row(self.cursor) else {
             return;
@@ -1396,6 +1791,10 @@ impl App {
     /// `u`: cycle through the consumers of the cursor node (TODO 4.5). The
     /// cycle stays anchored to the node it started from.
     fn cycle_consumers(&mut self) {
+        if self.diff {
+            self.status = "node jumps are off in diff view (d to leave)".to_string();
+            return;
+        }
         let vm = self.view_model();
         let Some(row) = vm.row(self.cursor) else {
             return;
@@ -1579,8 +1978,13 @@ impl App {
     /// A short description of what the viewport is showing, for export
     /// headers and messages.
     pub fn view_title(&self) -> String {
+        self.view_title_for(self.selected)
+    }
+
+    /// Title for an arbitrary sidebar row (split panes have two).
+    pub fn view_title_for(&self, selected: usize) -> String {
         let source = &self.sources[self.active];
-        match self.rows().get(self.selected) {
+        match self.rows().get(selected) {
             Some(Row::Compilation(i)) | Some(Row::Function { name_comp: i, .. }) => {
                 let c = &source.index.compilations[*i];
                 format!(
@@ -1611,7 +2015,28 @@ impl App {
 
     /// The visible rows of the current view as plain text — folds render as
     /// their markers, exactly like the screen (PLAN §7.9: "current view").
+    /// In diff view: the aligned rows with their `+`/`−`/`~`/`→` gutters,
+    /// showing the changed side (unified-ish, ready for a ticket).
     fn visible_view_text(&mut self) -> Vec<String> {
+        if self.diff
+            && let Some(model) = self.diff_model()
+        {
+            let buffer = &self.sources[self.active].buffer;
+            return model
+                .rows
+                .iter()
+                .map(|row| {
+                    let side_text = |side: &crate::diff::DiffSide, idx: Option<usize>| {
+                        idx.and_then(|i| side.rows.get(i))
+                            .map(|r| line_text(buffer, r.line))
+                    };
+                    let left = side_text(&model.left, row.left);
+                    let right = side_text(&model.right, row.right);
+                    let text = right.or(left).unwrap_or_default();
+                    format!("{} {text}", diff_gutter(&row.status))
+                })
+                .collect();
+        }
         let vm = self.view_model();
         let buffer = &self.sources[self.active].buffer;
         (0..vm.len())
@@ -1627,6 +2052,25 @@ impl App {
     }
 
     fn yank_line(&mut self) {
+        if self.diff {
+            if let Some(model) = self.diff_model()
+                && let Some(row) = model.rows.get(self.cursor)
+            {
+                let side = if self.active_pane == 0 {
+                    (&model.left, row.left)
+                } else {
+                    (&model.right, row.right)
+                };
+                if let Some(r) = side.1.and_then(|i| side.0.rows.get(i)) {
+                    let text = line_text(&self.sources[self.active].buffer, r.line);
+                    match crate::clipboard::copy(&text) {
+                        Ok(how) => self.status = format!("line {how}"),
+                        Err(e) => self.status = e.to_string(),
+                    }
+                }
+            }
+            return;
+        }
         let vm = self.view_model();
         let Some(line) = vm.line_at(self.cursor) else {
             return;
@@ -1643,9 +2087,10 @@ impl App {
         // of a plain window is O(1) from the line-offset index, and without
         // this check a Y on a multi-million-line raw section froze the UI to
         // build a gigabyte of Strings whose only possible fate was the same
-        // refusal (found in review).
+        // refusal (found in review). Diff views are always modeled (bounded),
+        // so the guard only applies to the plain path.
         let vm = self.view_model();
-        if let ViewModel::Plain { range } = &vm {
+        if let (false, ViewModel::Plain { range }) = (self.diff, &vm) {
             let bytes = self.sources[self.active].buffer.span_bytes(range.clone());
             if bytes > crate::clipboard::MAX_COPY {
                 self.status = format!(
@@ -1735,6 +2180,30 @@ impl App {
                 self.selected = rows.len().saturating_sub(1);
             }
         }
+    }
+}
+
+/// The node defined on a display row (see [`App::cursor_node`]).
+pub fn node_at(vm: &ViewModel, at: usize) -> Option<IRNode> {
+    let row = vm.row(at)?;
+    let (p, i) = row.info?;
+    let parsed = vm.parsed()?;
+    match parsed.phases.get(p)?.infos.get(i)? {
+        LineInfo::Node(node) if node.id != SCHEDULE_ONLY => Some(node.clone()),
+        _ => None,
+    }
+}
+
+/// The two-character diff gutter, shared by rendering and export.
+pub fn diff_gutter(status: &crate::diff::RowStatus) -> &'static str {
+    use crate::diff::RowStatus;
+    match status {
+        RowStatus::Same => "  ",
+        RowStatus::Added => "+ ",
+        RowStatus::Deleted => "− ",
+        RowStatus::Changed { .. } => "~ ",
+        RowStatus::Replaced { .. } => "→ ",
+        RowStatus::Moved => "≈ ",
     }
 }
 
@@ -2394,6 +2863,99 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
         assert!(!app.timeline);
         let rows = app.rows();
         assert_eq!(rows[app.selected], Row::Compilation(0));
+    }
+
+    /// Two graph phases with a replacement, an addition, and a deletion —
+    /// the Phase 7 material.
+    const DIFF_TRACE: &str = "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+ Block b0
+   1: InitialValue(a0)
+   5: Int32Add [n1, n1]
+   6: CheckSmth [n5]
+----- Phi untagging -----
+ Block b0
+   1: InitialValue(a0)
+   5: Identity [n12]
+  12: Float64Add [n1, n1]
+";
+
+    #[test]
+    fn split_opens_switches_direction_and_closes() {
+        let mut app = app_with(DIFF_TRACE);
+        app.follow = false;
+        key(&mut app, KeyCode::Char('v'));
+        assert_eq!(app.split, Some(SplitDir::Vertical));
+        assert_eq!(app.other_view.selected, app.selected, "clone on open");
+
+        ctrl(&mut app, 'w');
+        assert_eq!(app.active_pane, 1);
+        assert_eq!(app.focus, Pane::Viewport);
+
+        key(&mut app, KeyCode::Char('s'));
+        assert_eq!(app.split, Some(SplitDir::Horizontal), "direction switch");
+        key(&mut app, KeyCode::Char('s'));
+        assert_eq!(app.split, None, "same key closes");
+        assert_eq!(app.active_pane, 0);
+    }
+
+    #[test]
+    fn d_on_a_phase_diffs_against_the_previous_graph_phase() {
+        let mut app = app_with(DIFF_TRACE);
+        app.follow = false;
+        key(&mut app, KeyCode::Enter); // expand the compilation
+        let rows = app.rows();
+        assert_eq!(rows.len(), 3, "compilation + two phase rows");
+        app.selected = 2; // Phi untagging
+
+        key(&mut app, KeyCode::Char('d'));
+        assert!(app.diff);
+        assert_eq!(app.split, Some(SplitDir::Vertical));
+        assert_eq!(app.active_pane, 1, "the newer phase is the active side");
+        assert_eq!(app.pane_state(0).selected, 1, "left pane: graph building");
+        assert_eq!(app.pane_state(1).selected, 2, "right pane: phi untagging");
+
+        let model = app.diff_model().expect("model builds");
+        assert_eq!(model.summary.nodes_replaced, 1, "n5 → Identity [n12]");
+        assert_eq!(model.summary.nodes_added, 1, "n12");
+        assert_eq!(model.summary.nodes_deleted, 1, "n6");
+        assert!(app.status.starts_with("diff:"), "{}", app.status);
+
+        // Movement ranges over the aligned rows, not either pane's own list.
+        let len = model.rows.len();
+        key(&mut app, KeyCode::Char('G'));
+        assert_eq!(app.cursor, len - 1);
+
+        // Node jumps refuse politely instead of corrupting the shared cursor.
+        key(&mut app, KeyCode::Char('i'));
+        assert!(app.status.contains("diff view"), "{}", app.status);
+
+        key(&mut app, KeyCode::Char('d'));
+        assert!(!app.diff, "d toggles off, split remains");
+        assert_eq!(app.split, Some(SplitDir::Vertical));
+    }
+
+    #[test]
+    fn d_on_a_compilation_diffs_first_vs_last_graph_phase() {
+        let mut app = app_with(DIFF_TRACE);
+        app.follow = false;
+        assert_eq!(app.selected, 0);
+        key(&mut app, KeyCode::Char('d'));
+        assert!(app.diff);
+        assert!(app.compilation_expanded(0), "auto-expanded to show phases");
+        assert_eq!(app.pane_state(0).selected, 1);
+        assert_eq!(app.pane_state(1).selected, 2);
+    }
+
+    #[test]
+    fn d_without_a_diffable_selection_explains() {
+        let mut app = app_with(TRACE);
+        app.follow = false;
+        app.selected = 0; // the raw warmup section
+        key(&mut app, KeyCode::Char('d'));
+        assert!(!app.diff);
+        assert!(app.status.contains("diff works on"), "{}", app.status);
     }
 
     #[test]
