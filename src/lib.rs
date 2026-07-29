@@ -18,3 +18,4 @@ pub mod source;
 pub mod terminal;
 pub mod tty;
 pub mod ui;
+pub mod view;

@@ -25,7 +25,7 @@ use std::collections::HashMap;
 
 use crate::ansi;
 use crate::model::{
-    BlockId, CompilationSection, DeoptFrame, FrameArrow, IRNode, InlineDecision, LineInfo, NodeId,
+    BlockRef, CompilationSection, DeoptFrame, FrameArrow, IRNode, InlineDecision, LineInfo, NodeId,
     NodeRef, ParsedCompilation, ParsedPhase, PhaseKind,
 };
 use crate::source::LogBuffer;
@@ -408,7 +408,7 @@ fn parse_node_line(
         inputs: node_refs(text, start + tail_start),
         uses: parse_uses(tail),
         dead: tail.contains('🪦'),
-        targets: block_refs(tail),
+        targets: block_refs(tail, start + tail_start),
     })
 }
 
@@ -455,8 +455,9 @@ fn node_refs(text: &str, from: usize) -> Vec<NodeRef> {
     refs
 }
 
-/// Every `bN` block token in a tail (`Jump b1`, `BranchIf… b2 b8`).
-fn block_refs(tail: &str) -> Vec<BlockId> {
+/// Every `bN` block token in a tail (`Jump b1`, `BranchIf… b2 b8`), with
+/// absolute spans (`base` is the tail's offset within the line).
+fn block_refs(tail: &str, base: usize) -> Vec<BlockRef> {
     let mut out = Vec::new();
     let bytes = tail.as_bytes();
     let mut i = 0;
@@ -473,7 +474,10 @@ fn block_refs(tail: &str) -> Vec<BlockId> {
             if (end >= bytes.len() || !bytes[end].is_ascii_alphanumeric())
                 && let Ok(block) = tail[i + 1..end].parse()
             {
-                out.push(block);
+                out.push(BlockRef {
+                    block,
+                    span: (base + i) as u32..(base + end) as u32,
+                });
             }
             i = end;
         } else {
@@ -700,7 +704,10 @@ mod tests {
     fn branch_targets_are_collected() {
         let (phase, _) = parse_lines(&["╭────16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8"]);
         let n = node(&phase.infos[1]);
-        assert_eq!(n.targets, vec![2, 8]);
+        assert_eq!(
+            n.targets.iter().map(|t| t.block).collect::<Vec<_>>(),
+            vec![2, 8]
+        );
         assert_eq!(
             n.inputs.iter().map(|r| r.node).collect::<Vec<_>>(),
             vec![13, 14]

@@ -272,25 +272,40 @@ Model and deviations worth recording:
 
 ---
 
-## Phase 4: Syntax Highlighting & Node Interactivity
+## Phase 4: Syntax Highlighting & Node Interactivity  ✅ done
 
-- [ ] **4.1. IR tokenizer** → styled spans: opcodes, block labels, registers,
-  node IDs, types/maps; 16/256/TrueColor palettes with detection + fallback.
-  Register vocabulary is the one arch-dependent axis (`x0`/`rax`); detect it
-  from the trace, not the host. Strip d8's own SGR escapes first — it colorizes
-  even when piped — and re-emit `garage`'s own styling.
-- [ ] **4.2. Basic block folding** (`Space`), per-block persisted state,
-  `[+] b1 (loop) — 14 hidden` summaries.
-- [ ] **4.3. Cursor node tracking**: resolve node ID under cursor.
-- [ ] **4.4. Def-use / use-def highlighting**: definition vs inputs vs consumers
-  in distinct styles, computed from the parsed graph (not regex-on-view).
-- [ ] **4.5. Node jumps**: `i` to input, `u` cycles consumers, `Ctrl+O`/`Ctrl+I`
-  history stack.
-- [ ] **4.6. Search**: `/` regex prompt, incremental highlight, `n`/`N`; works in
-  parsed *and* raw sections.
-- [ ] **4.7. Sidebar quick filter** (`f`) by function/script/tier.
-- [ ] **4.8. Annotation rendering (minimal)**: dimmed, folded by default
-  (`[+] 12 trace lines`); `t` toggles inline visibility.
+- [x] **4.1. IR tokenizer** → styled spans. Not a second tokenizer: the Phase 2
+  parse already records opcode/id/input/target spans per line, and rendering
+  paints those (a per-byte class array, layered base → def-use → search, then
+  run-length encoded). Opcode classes match on name *shape* (`Check*`/`*Deopt*`
+  guards, `Jump/Branch/Return` control, `*Constant*`, `φ*`, `Call*`) because
+  the vocabulary is open. 256-colour palette with named-ANSI fallback via
+  TERM/COLORTERM. *Deviation:* the planned register-vocabulary arch detection
+  dissolved — span-based styling never enumerates register names, so there is
+  nothing arch-dependent left to detect.
+- [x] **4.2. Basic block folding** (`Space` anywhere in the block), state
+  persisted per `(source, compilation, phase, block)`, `[+] b1 — 14 lines
+  hidden` markers. This is why the cursor became a *display row*: folded views
+  are not contiguous line ranges. Fold state survives navigating away.
+- [x] **4.3. Cursor node tracking**: the status line shows
+  `n11 Int32AddWithOverflow · 2 in · 1 uses` for the node defined under the
+  cursor.
+- [x] **4.4. Def-use / use-def highlighting** from the parsed def/use maps:
+  the cursor node's definition (green), its inputs' definitions (blue), and
+  every reference to it (yellow) — including references inside verbose deopt
+  frames and phi moves.
+- [x] **4.5. Node jumps**: `i` cycles through input definitions, `u` cycles
+  consumers — anchored to the node the cycle *started* from, so `u u` visits
+  the second consumer instead of the first consumer's consumers.
+  `Ctrl+O`/`Ctrl+I` history. A jump into a folded block unfolds it.
+- [x] **4.6. Search**: `/` prompt with incremental highlight while typing,
+  `n`/`N` with wrap-around; works in parsed and raw sections (matching runs on
+  the stripped text either way).
+- [x] **4.7. Sidebar quick filter** (`f`): regex over function names and raw
+  labels; empty input clears. Filters compilations, groups, and raw rows.
+- [x] **4.8. Annotation rendering (minimal)**: dimmed italic; runs collapse to
+  `[+] N trace lines (t to show)`; `t` toggles inline. Deopt frames are never
+  folded as annotations — they are structure (spike-findings.md §6).
 
 ---
 

@@ -257,6 +257,14 @@ pub struct NodeRef {
     pub span: Span,
 }
 
+/// A `bN` block reference inside a line (branch/jump targets), with its span
+/// for styling.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct BlockRef {
+    pub block: BlockId,
+    pub span: Span,
+}
+
 /// Byte range within one stripped line.
 pub type Span = Range<u32>;
 
@@ -279,7 +287,7 @@ pub struct IRNode {
     /// `🪦` — zero uses, kept only for rendering.
     pub dead: bool,
     /// Branch/jump targets (`Jump b1`, `BranchIf… b2 b8`).
-    pub targets: Vec<BlockId>,
+    pub targets: Vec<BlockRef>,
 }
 
 /// Eager / lazy / throw — the three deopt-frame arrows (§6, §12).

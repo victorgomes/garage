@@ -1,4 +1,4 @@
-//! The Phase 3 layout (TODO 3.1–3.4, 3.6).
+//! Layout and rendering (Phases 3–4).
 //!
 //! ```text
 //! ┌ telemetry bar ─────────────────────────────────┐
@@ -6,9 +6,14 @@
 //! └ status line ───────────────────────────────────┘
 //! ```
 //!
-//! Rendering never allocates per *file* line — the viewport materialises only
-//! the rows on screen, which is the shape the lazy-parse design needs anyway:
-//! a 500 MB source costs the same to draw as a 5 KB one.
+//! The viewport paints per *span*, not per regex-on-view: token classes come
+//! from the parse (opcode/input/target spans recorded by Phase 2), def-use
+//! highlighting comes from the parsed graph's def/use maps (TODO 4.4), and
+//! search matches overlay both. Styling is a per-byte class array per visible
+//! line, run-length encoded into ratatui spans — O(line length), no
+//! allocation proportional to the file.
+
+use std::collections::HashSet;
 
 use ratatui::Frame;
 use ratatui::layout::{Constraint, Layout, Rect};
@@ -16,12 +21,15 @@ use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Borders, Clear, Paragraph, Wrap};
 
-use crate::app::{App, Pane, Row, SourceState};
-use crate::model::{PhaseKind, Tier};
+use crate::app::{App, Pane, Prompt, Row, SourceState};
+use crate::model::{LineInfo, NodeId, ParsedCompilation, PhaseKind, Tier};
+use crate::parse::maglev::line_text;
+use crate::view::{RowKind, ViewModel};
 
 const BAR_BG: Color = Color::Indexed(236);
 const DIM: Color = Color::Indexed(244);
 const ACCENT: Color = Color::Cyan;
+const CURSOR_BG: Color = Color::Indexed(237);
 
 pub fn render(frame: &mut Frame, app: &mut App) {
     let [telemetry, body, status] = Layout::vertical([
@@ -40,10 +48,17 @@ pub fn render(frame: &mut Frame, app: &mut App) {
     app.sidebar_height = sidebar.height as usize;
     app.viewport_height = viewport.height as usize;
 
+    // One view model per frame: it drives the viewport, the status line, and
+    // the follow pin.
+    let vm = app.view_model();
+    if app.follow {
+        app.cursor = vm.len().saturating_sub(1);
+    }
+
     frame.render_widget(telemetry_bar(app), telemetry);
     render_sidebar(frame, app, sidebar);
-    render_viewport(frame, app, viewport);
-    frame.render_widget(status_line(app), status);
+    render_viewport(frame, app, &vm, viewport);
+    frame.render_widget(status_line(app, &vm), status);
 
     if app.help {
         render_help(frame, app, frame.area());
@@ -129,14 +144,13 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
 }
 
 // ---------------------------------------------------------------------------
-// Sidebar (TODO 3.3)
+// Sidebar (TODO 3.3, 4.7)
 // ---------------------------------------------------------------------------
 
 fn render_sidebar(frame: &mut Frame, app: &mut App, area: Rect) {
     let focused = app.focus == Pane::Sidebar;
     let rows = app.rows();
 
-    // Keep the selection on screen.
     let height = area.height as usize;
     if height > 0 {
         if app.selected < app.sidebar_scroll {
@@ -157,13 +171,15 @@ fn render_sidebar(frame: &mut Frame, app: &mut App, area: Rect) {
         lines.push(sidebar_row(app, row, at == app.selected, focused));
     }
     if rows.is_empty() {
-        lines.push(Line::from(Span::styled(
+        let text = if app.sidebar_filter.is_some() {
+            " (nothing matches the filter)"
+        } else {
             match app.active_source().state {
                 SourceState::Loading => " waiting for input…",
                 _ => " (no sections)",
-            },
-            Style::new().fg(DIM),
-        )));
+            }
+        };
+        lines.push(Line::from(Span::styled(text, Style::new().fg(DIM))));
     }
 
     let border_style = if focused {
@@ -291,19 +307,151 @@ fn sidebar_row(app: &App, row: &Row, selected: bool, focused: bool) -> Line<'sta
 }
 
 // ---------------------------------------------------------------------------
-// Viewport (TODO 3.4)
+// Token classes and palette (TODO 4.1)
 // ---------------------------------------------------------------------------
 
-fn render_viewport(frame: &mut Frame, app: &mut App, area: Rect) {
-    let range = app.view_range();
-    let height = area.height as usize;
+/// Byte-level style class. Painted in layers: base classes from the parse,
+/// then def-use, then search — later layers win.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+enum Class {
+    Base,
+    Dim,
+    Annotation,
+    Banner,
+    BlockHeader,
+    BytecodeLine,
+    FrameLine,
+    Opcode,
+    Guard,
+    ControlOp,
+    ConstantOp,
+    PhiOp,
+    CallOp,
+    NodeDef,
+    NodeRef,
+    BlockRef,
+    DefHl,
+    InputHl,
+    ConsumerHl,
+    SearchHl,
+}
 
-    // Keep the cursor on screen; `top` trails it.
-    app.cursor = app
-        .cursor
-        .clamp(range.start, range.end.saturating_sub(1).max(range.start));
-    if app.top < range.start || app.top >= range.end {
-        app.top = range.start;
+/// Colour-depth detection (TODO 4.1): 256-colour indexes where available,
+/// named ANSI colours otherwise. Truecolor terminals accept both.
+#[derive(Debug, Clone, Copy)]
+pub struct Palette {
+    indexed: bool,
+}
+
+impl Palette {
+    pub fn detect() -> Self {
+        let term = std::env::var("TERM").unwrap_or_default();
+        let colorterm = std::env::var("COLORTERM").unwrap_or_default();
+        Palette {
+            indexed: term.contains("256") || term.contains("color") || !colorterm.is_empty(),
+        }
+    }
+
+    fn dim(&self) -> Color {
+        if self.indexed { DIM } else { Color::DarkGray }
+    }
+
+    fn style(&self, class: Class) -> Style {
+        match class {
+            Class::Base => Style::new(),
+            Class::Dim => Style::new().fg(self.dim()),
+            Class::Annotation => Style::new().fg(self.dim()).add_modifier(Modifier::ITALIC),
+            Class::Banner => Style::new().add_modifier(Modifier::BOLD),
+            Class::BlockHeader => Style::new().fg(Color::Blue).add_modifier(Modifier::BOLD),
+            Class::BytecodeLine => Style::new()
+                .fg(if self.indexed {
+                    Color::Indexed(108)
+                } else {
+                    Color::Green
+                })
+                .add_modifier(Modifier::DIM),
+            Class::FrameLine => Style::new()
+                .fg(if self.indexed {
+                    Color::Indexed(131)
+                } else {
+                    Color::Red
+                })
+                .add_modifier(Modifier::DIM),
+            Class::Opcode => Style::new().add_modifier(Modifier::BOLD),
+            Class::Guard => Style::new().fg(Color::Red).add_modifier(Modifier::BOLD),
+            Class::ControlOp => Style::new().fg(Color::Blue).add_modifier(Modifier::BOLD),
+            Class::ConstantOp => Style::new().fg(Color::Magenta),
+            Class::PhiOp => Style::new().fg(Color::Yellow).add_modifier(Modifier::BOLD),
+            Class::CallOp => Style::new().fg(Color::Cyan).add_modifier(Modifier::BOLD),
+            Class::NodeDef => Style::new().fg(Color::Green).add_modifier(Modifier::BOLD),
+            Class::NodeRef => Style::new().fg(Color::Green),
+            Class::BlockRef => Style::new().fg(Color::Blue),
+            Class::DefHl => Style::new()
+                .fg(Color::Black)
+                .bg(Color::Green)
+                .add_modifier(Modifier::BOLD),
+            Class::InputHl => Style::new()
+                .fg(Color::Black)
+                .bg(Color::Blue)
+                .add_modifier(Modifier::BOLD),
+            Class::ConsumerHl => Style::new()
+                .fg(Color::Black)
+                .bg(Color::Yellow)
+                .add_modifier(Modifier::BOLD),
+            Class::SearchHl => Style::new().add_modifier(Modifier::REVERSED),
+        }
+    }
+}
+
+/// Opcode → class, by name shape. The vocabulary is open (V8 adds opcodes
+/// freely), so this matches on structure, not a fixed list.
+fn opcode_class(name: &str) -> Class {
+    if name.starts_with('φ') {
+        return Class::PhiOp;
+    }
+    if name.starts_with("Check") || name.contains("Deopt") || name.starts_with("Assert") {
+        return Class::Guard;
+    }
+    if name.starts_with("Jump")
+        || name.starts_with("Branch")
+        || name.starts_with("Return")
+        || name.starts_with("Switch")
+        || name.starts_with("CheckpointedJump")
+        || name.starts_with("Abort")
+        || name.starts_with("Throw")
+    {
+        return Class::ControlOp;
+    }
+    if name.contains("Constant") {
+        return Class::ConstantOp;
+    }
+    if name.starts_with("Call") || name.starts_with("Construct") {
+        return Class::CallOp;
+    }
+    if name.starts_with("GapMove") || name.starts_with("ConstantGapMove") {
+        return Class::Dim;
+    }
+    Class::Opcode
+}
+
+/// The cursor node's def-use context (TODO 4.4), computed once per frame.
+struct DefUse {
+    node: NodeId,
+    inputs: HashSet<NodeId>,
+}
+
+// ---------------------------------------------------------------------------
+// Viewport (TODO 3.4, 4.x)
+// ---------------------------------------------------------------------------
+
+fn render_viewport(frame: &mut Frame, app: &mut App, vm: &ViewModel, area: Rect) {
+    let height = area.height as usize;
+    let len = vm.len();
+    app.cursor = app.cursor.min(len.saturating_sub(1));
+
+    if app.top >= len {
+        app.top = 0;
     }
     if app.cursor < app.top {
         app.top = app.cursor;
@@ -312,29 +460,69 @@ fn render_viewport(frame: &mut Frame, app: &mut App, area: Rect) {
         app.top = app.cursor + 1 - height;
     }
 
+    let palette = Palette::detect();
+    let defuse = app.cursor_node(vm).map(|node| DefUse {
+        node: node.id,
+        inputs: node.inputs.iter().map(|r| r.node).collect(),
+    });
+
     let source = app.active_source();
-    let number_width = digits(range.end.max(1));
+    let last_line = vm.line_at(len.saturating_sub(1)).unwrap_or(0);
+    let number_width = digits(last_line + 1);
     let mut lines = Vec::with_capacity(height);
 
-    for line_no in app.top..range.end.min(app.top + height) {
-        let raw = source.buffer.line(line_no).unwrap_or(b"");
-        let mut text = crate::ansi::to_display_string(raw);
-        if !app.wrap && app.scroll_x > 0 {
-            text = text.chars().skip(app.scroll_x).collect();
-        }
+    for row_idx in app.top..len.min(app.top + height) {
+        let Some(row) = vm.row(row_idx) else { break };
+        let cursor_here = row_idx == app.cursor && app.focus == Pane::Viewport;
 
-        let cursor_here = line_no == app.cursor && app.focus == Pane::Viewport;
         let number_style = if cursor_here {
             Style::new().fg(ACCENT)
         } else {
             Style::new().fg(DIM)
         };
-        let mut line = Line::from(vec![
-            Span::styled(format!("{:>number_width$} ", line_no + 1), number_style),
-            Span::raw(text),
-        ]);
+        let mut spans = vec![Span::styled(
+            format!("{:>number_width$} ", row.line + 1),
+            number_style,
+        )];
+
+        match row.kind {
+            RowKind::BlockFold { block, hidden } => {
+                spans.push(Span::styled(
+                    format!("[+] b{block} — {hidden} lines hidden"),
+                    palette.style(Class::BlockHeader),
+                ));
+            }
+            RowKind::AnnotationFold { count } => {
+                spans.push(Span::styled(
+                    format!(
+                        "[+] {count} trace line{} (t to show)",
+                        if count == 1 { "" } else { "s" }
+                    ),
+                    palette.style(Class::Annotation),
+                ));
+            }
+            RowKind::Text => {
+                let text = line_text(&source.buffer, row.line);
+                let info = row.info.and_then(|(p, i)| {
+                    vm.parsed()
+                        .and_then(|parsed| parsed.phases.get(p))
+                        .and_then(|phase| phase.infos.get(i))
+                });
+                spans.extend(paint_line(
+                    &text,
+                    info,
+                    vm.parsed().map(|p| p.as_ref()),
+                    defuse.as_ref(),
+                    app.search.as_ref(),
+                    &palette,
+                    app.scroll_x,
+                ));
+            }
+        }
+
+        let mut line = Line::from(spans);
         if cursor_here {
-            line = line.style(Style::new().bg(Color::Indexed(237)));
+            line = line.style(Style::new().bg(CURSOR_BG));
         }
         lines.push(line);
     }
@@ -353,6 +541,128 @@ fn render_viewport(frame: &mut Frame, app: &mut App, area: Rect) {
     frame.render_widget(paragraph, area);
 }
 
+/// Builds the styled spans for one line: a per-byte class array painted in
+/// layers, then run-length encoded at char granularity.
+fn paint_line(
+    text: &str,
+    info: Option<&LineInfo>,
+    parsed: Option<&ParsedCompilation>,
+    defuse: Option<&DefUse>,
+    search: Option<&regex::Regex>,
+    palette: &Palette,
+    skip_chars: usize,
+) -> Vec<Span<'static>> {
+    let mut paint = vec![Class::Base; text.len()];
+
+    let fill = |range: &std::ops::Range<u32>, class: Class, paint: &mut Vec<Class>| {
+        let start = range.start as usize;
+        let end = (range.end as usize).min(paint.len());
+        if start < end {
+            paint[start..end].fill(class);
+        }
+    };
+
+    match info {
+        Some(LineInfo::Node(node)) => {
+            fill(&node.def_span, Class::NodeDef, &mut paint);
+            let opcode_name = parsed
+                .and_then(|p| p.opcodes.get(node.opcode as usize))
+                .map(String::as_str)
+                .unwrap_or("");
+            fill(&node.opcode_span, opcode_class(opcode_name), &mut paint);
+            for input in &node.inputs {
+                fill(&input.span, Class::NodeRef, &mut paint);
+            }
+            for target in &node.targets {
+                fill(&target.span, Class::BlockRef, &mut paint);
+            }
+        }
+        Some(LineInfo::Frame { refs, .. }) => {
+            paint.fill(Class::FrameLine);
+            for r in refs {
+                fill(&r.span, Class::NodeRef, &mut paint);
+            }
+        }
+        Some(LineInfo::PhiMove { refs }) => {
+            paint.fill(Class::Dim);
+            for r in refs {
+                fill(&r.span, Class::NodeRef, &mut paint);
+            }
+        }
+        Some(LineInfo::Bytecode { .. }) => paint.fill(Class::BytecodeLine),
+        Some(LineInfo::BlockHeader { .. }) => paint.fill(Class::BlockHeader),
+        Some(LineInfo::Banner) => paint.fill(Class::Banner),
+        Some(LineInfo::SfiContext | LineInfo::Control | LineInfo::VirtualObjects) => {
+            paint.fill(Class::Dim)
+        }
+        Some(LineInfo::Annotation { .. }) => paint.fill(Class::Annotation),
+        None => {}
+    }
+
+    // Def-use overlay (TODO 4.4): definition, inputs, and consumers of the
+    // cursor node in distinct styles — from the parsed graph, not regex.
+    if let (Some(du), Some(LineInfo::Node(node))) = (defuse, info) {
+        if node.id == du.node {
+            fill(&node.def_span, Class::DefHl, &mut paint);
+        } else if du.inputs.contains(&node.id) {
+            fill(&node.def_span, Class::InputHl, &mut paint);
+        }
+    }
+    if let Some(du) = defuse {
+        let refs: Vec<crate::model::Span> = match info {
+            Some(LineInfo::Node(node)) => node
+                .inputs
+                .iter()
+                .filter(|r| r.node == du.node)
+                .map(|r| r.span.clone())
+                .collect(),
+            Some(LineInfo::Frame { refs, .. } | LineInfo::PhiMove { refs }) => refs
+                .iter()
+                .filter(|r| r.node == du.node)
+                .map(|r| r.span.clone())
+                .collect(),
+            _ => Vec::new(),
+        };
+        for span in refs {
+            fill(&span, Class::ConsumerHl, &mut paint);
+        }
+    }
+
+    // Search overlay (TODO 4.6) — wins over everything.
+    if let Some(re) = search {
+        for m in re.find_iter(text) {
+            let range = m.start() as u32..m.end() as u32;
+            fill(&range, Class::SearchHl, &mut paint);
+        }
+    }
+
+    // RLE at char granularity, honouring horizontal scroll.
+    let mut spans = Vec::new();
+    let mut current: Option<(Class, String)> = None;
+    for (skipped, (at, ch)) in text.char_indices().enumerate() {
+        if skipped < skip_chars {
+            continue;
+        }
+        // Control characters would corrupt the terminal; width-preserving
+        // replacement keeps spans aligned.
+        let ch = if ch.is_control() { '\u{fffd}' } else { ch };
+        let class = paint[at];
+        match &mut current {
+            Some((c, buf)) if *c == class => buf.push(ch),
+            _ => {
+                if let Some((c, buf)) = current.take() {
+                    spans.push(Span::styled(buf, palette.style(c)));
+                }
+                current = Some((class, ch.to_string()));
+            }
+        }
+    }
+    if let Some((c, buf)) = current.take() {
+        spans.push(Span::styled(buf, palette.style(c)));
+    }
+    spans
+}
+
 fn digits(mut n: usize) -> usize {
     let mut width = 1;
     while n >= 10 {
@@ -363,28 +673,63 @@ fn digits(mut n: usize) -> usize {
 }
 
 // ---------------------------------------------------------------------------
-// Status line
+// Status line (with the input prompt and cursor-node tracking, TODO 4.3)
 // ---------------------------------------------------------------------------
 
-fn status_line(app: &App) -> Paragraph<'static> {
-    let range = app.view_range();
-    let total = range.len();
-    let at = (app.cursor + 1).saturating_sub(range.start);
+fn status_line(app: &App, vm: &ViewModel) -> Paragraph<'static> {
+    // An active input line takes over the whole status bar.
+    if let Some(input) = &app.input {
+        let prompt = match input.prompt {
+            Prompt::Search => "/",
+            Prompt::Filter => "filter: ",
+        };
+        return Paragraph::new(Line::from(vec![
+            Span::styled(
+                format!(" {prompt}{}", input.buffer),
+                Style::new().add_modifier(Modifier::BOLD),
+            ),
+            Span::styled("█", Style::new().fg(ACCENT)),
+            Span::styled("  Enter apply · Esc cancel", Style::new().fg(DIM)),
+        ]))
+        .block(Block::new().style(Style::new().bg(BAR_BG)));
+    }
 
-    let mut left = format!(" L{at}/{total}");
+    let line = vm.line_at(app.cursor).unwrap_or(0);
+    let mut left = format!(" L{}", line + 1);
     if app.follow {
         left.push_str("  FOLLOW");
     }
     if app.wrap {
         left.push_str("  WRAP");
     }
-    if let Some(re) = &app.function_filter {
-        left.push_str(&format!("  --function {}", re.as_str()));
+    if let Some(re) = &app.sidebar_filter {
+        left.push_str(&format!("  filter:{}", re.as_str()));
+    }
+    if let Some(re) = &app.search {
+        left.push_str(&format!("  /{}", re.as_str()));
+    }
+
+    // Cursor node tracking (TODO 4.3).
+    let mut node_info = String::new();
+    if let Some(node) = app.cursor_node(vm) {
+        if let Some(parsed) = vm.parsed() {
+            let opcode = parsed
+                .opcodes
+                .get(node.opcode as usize)
+                .map(String::as_str)
+                .unwrap_or("?");
+            node_info = format!("n{} {opcode} · {} in", node.id, node.inputs.len());
+            if let Some(uses) = node.uses {
+                node_info.push_str(&format!(" · {uses} uses"));
+            }
+            node_info.push_str("   ");
+        }
     }
 
     Paragraph::new(Line::from(vec![
         Span::styled(left, Style::new().add_modifier(Modifier::BOLD)),
         Span::raw("   "),
+        Span::styled(node_info, Style::new().fg(ACCENT)),
         Span::styled(app.status.clone(), Style::new().fg(Color::Gray)),
     ]))
     .block(Block::new().style(Style::new().bg(BAR_BG)))
@@ -438,4 +783,67 @@ fn render_help(frame: &mut Frame, app: &App, screen: Rect) {
             .style(Style::new().bg(Color::Indexed(235))),
         area,
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn opcode_classes_by_shape() {
+        assert_eq!(opcode_class("CheckedSmiUntag"), Class::Guard);
+        assert_eq!(opcode_class("Deopt"), Class::Guard);
+        assert_eq!(opcode_class("BranchIfInt32Compare"), Class::ControlOp);
+        assert_eq!(opcode_class("Jump"), Class::ControlOp);
+        assert_eq!(opcode_class("HeapConstant"), Class::ConstantOp);
+        assert_eq!(opcode_class("φᵀ"), Class::PhiOp);
+        assert_eq!(opcode_class("CallRuntime"), Class::CallOp);
+        assert_eq!(opcode_class("GapMove"), Class::Dim);
+        assert_eq!(opcode_class("Int32AddWithOverflow"), Class::Opcode);
+    }
+
+    #[test]
+    fn paint_line_slices_at_spans() {
+        use crate::model::{IRNode, NodeRef};
+        let text = "  11: Int32AddWithOverflow [n9, n10], 1 uses";
+        let node = IRNode {
+            id: 11,
+            schedule_pos: None,
+            def_span: 2..4,
+            opcode: 0,
+            opcode_span: 6..26,
+            inputs: vec![
+                NodeRef {
+                    node: 9,
+                    span: 28..30,
+                },
+                NodeRef {
+                    node: 10,
+                    span: 32..35,
+                },
+            ],
+            uses: Some(1),
+            dead: false,
+            targets: vec![],
+        };
+        let parsed = ParsedCompilation {
+            opcodes: vec!["Int32AddWithOverflow".to_string()],
+            ..Default::default()
+        };
+        let info = LineInfo::Node(node);
+        let palette = Palette { indexed: true };
+        let spans = paint_line(text, Some(&info), Some(&parsed), None, None, &palette, 0);
+        let joined: String = spans.iter().map(|s| s.content.as_ref()).collect();
+        assert_eq!(joined, text, "painting must not lose characters");
+        assert!(spans.len() >= 5, "def/opcode/inputs painted separately");
+    }
+
+    #[test]
+    fn horizontal_scroll_skips_chars_not_bytes() {
+        let text = "│╭─►Block b4";
+        let palette = Palette { indexed: true };
+        let spans = paint_line(text, None, None, None, None, &palette, 2);
+        let joined: String = spans.iter().map(|s| s.content.as_ref()).collect();
+        assert_eq!(joined, "─►Block b4");
+    }
 }
