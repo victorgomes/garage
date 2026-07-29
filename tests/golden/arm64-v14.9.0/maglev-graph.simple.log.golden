@@ -1,0 +1,26 @@
+lines: 632
+version: 14.9
+compilation 0 L0..60 sfi=0x9b80101e175 tier=Maglev ord=1 name="add"
+  script "workloads/simple.js"
+  phase L1..27 "Bytecode array" [bytecode]
+  phase L27..60 "After register allocation" [graph]: 17 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  totals: 11 opcodes, 2 distinct frames, 0 unparsed
+compilation 1 L60..312 sfi=0x9b80101e10d tier=Maglev ord=1 name=""
+  script "workloads/simple.js"
+  phase L61..143 "Bytecode array" [bytecode]
+  phase L143..169 "Inlining 0x09b80101e175 <SharedFunctionInfo add> with bytecode" [inlining "add"]
+  phase L169..195 "Inlining 0x09b80101e175 <SharedFunctionInfo add> with bytecode" [inlining "add"]
+  phase L195..312 "After register allocation" [graph]: 47 nodes, 10 blocks, 16 frame-lines, 4 annotations
+  totals: 20 opcodes, 8 distinct frames, 0 unparsed
+compilation 2 L312..371 sfi=0x9b80101e175 tier=Maglev ord=2 name="add"
+  script "workloads/simple.js"
+  phase L313..339 "Bytecode array" [bytecode]
+  phase L339..371 "After register allocation" [graph]: 17 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  totals: 11 opcodes, 2 distinct frames, 0 unparsed
+compilation 3 L371..632 sfi=0x9b80101e10d tier=Maglev ord=2 name=""
+  script "workloads/simple.js"
+  phase L372..454 "Bytecode array" [bytecode]
+  phase L454..480 "Inlining 0x09b80101e175 <SharedFunctionInfo add> with bytecode" [inlining "add"]
+  phase L480..506 "Inlining 0x09b80101e175 <SharedFunctionInfo add> with bytecode" [inlining "add"]
+  phase L506..632 "After register allocation" [graph]: 53 nodes, 10 blocks, 16 frame-lines, 5 annotations
+  totals: 23 opcodes, 8 distinct frames, 0 unparsed

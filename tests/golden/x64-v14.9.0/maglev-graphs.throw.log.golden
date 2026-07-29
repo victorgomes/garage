@@ -1,0 +1,76 @@
+lines: 5037
+version: 14.9
+compilation 0 L0..732 sfi=0x9b80101e091 tier=Maglev ord=1 name="mayThrow"
+  script "workloads/throw.js"
+  phase L1..143 "Bytecode array" [bytecode]
+  phase L143..249 "After graph building" [graph]: 56 nodes, 4 blocks, 12 frame-lines, 0 annotations
+  phase L249..355 "After propagating truncation" [graph]: 56 nodes, 4 blocks, 12 frame-lines, 0 annotations
+  phase L355..453 "After truncation" [graph]: 56 nodes, 4 blocks, 4 frame-lines, 0 annotations
+  phase L453..545 "After use marking" [graph]: 51 nodes, 4 blocks, 4 frame-lines, 0 annotations
+  phase L545..637 "After register allocation pre-processing" [graph]: 51 nodes, 4 blocks, 4 frame-lines, 0 annotations
+  phase L637..732 "After register allocation" [graph]: 55 nodes, 4 blocks, 4 frame-lines, 0 annotations
+  totals: 21 opcodes, 3 distinct frames, 0 unparsed
+compilation 1 L732..985 sfi=0x9b80101e0c1 tier=Maglev ord=1 name="risky"
+  script "workloads/throw.js"
+  phase L733..802 "Bytecode array" [bytecode]
+  phase L802..846 "After graph building" [graph]: 20 nodes, 3 blocks, 6 frame-lines, 0 annotations
+  phase L846..890 "After use marking" [graph]: 20 nodes, 3 blocks, 6 frame-lines, 0 annotations
+  phase L890..934 "After register allocation pre-processing" [graph]: 20 nodes, 3 blocks, 6 frame-lines, 0 annotations
+  phase L934..985 "After register allocation" [graph]: 28 nodes, 3 blocks, 6 frame-lines, 0 annotations
+  totals: 15 opcodes, 4 distinct frames, 0 unparsed
+compilation 2 L985..1173 sfi=0x9b80101e0f1 tier=Maglev ord=1 name="bare"
+  script "workloads/throw.js"
+  phase L986..1037 "Bytecode array" [bytecode]
+  phase L1037..1070 "After graph building" [graph]: 15 nodes, 3 blocks, 2 frame-lines, 0 annotations
+  phase L1070..1103 "After use marking" [graph]: 15 nodes, 3 blocks, 2 frame-lines, 0 annotations
+  phase L1103..1136 "After register allocation pre-processing" [graph]: 15 nodes, 3 blocks, 2 frame-lines, 0 annotations
+  phase L1136..1173 "After register allocation" [graph]: 20 nodes, 3 blocks, 2 frame-lines, 0 annotations
+  totals: 10 opcodes, 2 distinct frames, 0 unparsed
+compilation 3 L1173..1957 sfi=0x9b80101e091 tier=Maglev ord=2 name="mayThrow"
+  script "workloads/throw.js"
+  phase L1174..1317 "Bytecode array" [bytecode]
+  phase L1317..1431 "After graph building" [graph]: 61 nodes, 4 blocks, 14 frame-lines, 0 annotations
+  phase L1431..1545 "After propagating truncation" [graph]: 61 nodes, 4 blocks, 14 frame-lines, 0 annotations
+  phase L1545..1651 "After truncation" [graph]: 61 nodes, 4 blocks, 6 frame-lines, 0 annotations
+  phase L1651..1751 "After use marking" [graph]: 56 nodes, 4 blocks, 6 frame-lines, 0 annotations
+  phase L1751..1851 "After register allocation pre-processing" [graph]: 56 nodes, 4 blocks, 6 frame-lines, 0 annotations
+  phase L1851..1957 "After register allocation" [graph]: 63 nodes, 4 blocks, 6 frame-lines, 0 annotations
+  totals: 22 opcodes, 6 distinct frames, 0 unparsed
+compilation 4 L1957..2308 sfi=0x9b80101e0c1 tier=Maglev ord=2 name="risky"
+  script "workloads/throw.js"
+  phase L1958..2027 "Bytecode array" [bytecode]
+  phase L2027..2101 "After graph building" [graph]: 38 nodes, 4 blocks, 8 frame-lines, 2 annotations
+  phase L2101..2173 "After use marking" [graph]: 36 nodes, 4 blocks, 8 frame-lines, 2 annotations
+  phase L2173..2235 "After register allocation pre-processing" [graph]: 27 nodes, 4 blocks, 8 frame-lines, 2 annotations
+  phase L2235..2308 "After register allocation" [graph]: 37 nodes, 4 blocks, 8 frame-lines, 4 annotations
+  totals: 25 opcodes, 6 distinct frames, 0 unparsed
+compilation 5 L2308..2553 sfi=0x9b80101e0f1 tier=Maglev ord=2 name="bare"
+  script "workloads/throw.js"
+  phase L2309..2360 "Bytecode array" [bytecode]
+  phase L2360..2414 "After graph building" [graph]: 30 nodes, 4 blocks, 3 frame-lines, 0 annotations
+  phase L2414..2466 "After use marking" [graph]: 28 nodes, 4 blocks, 3 frame-lines, 0 annotations
+  phase L2466..2507 "After register allocation pre-processing" [graph]: 18 nodes, 4 blocks, 3 frame-lines, 0 annotations
+  phase L2507..2553 "After register allocation" [graph]: 24 nodes, 4 blocks, 3 frame-lines, 0 annotations
+  totals: 18 opcodes, 4 distinct frames, 0 unparsed
+compilation 6 L2553..4050 sfi=0x9b80101e019 tier=Maglev ord=1 name=""
+  script "workloads/throw.js"
+  phase L2554..2647 "Bytecode array" [bytecode]
+  phase L2647..2716 "Inlining 0x09b80101e0c1 <SharedFunctionInfo risky> with bytecode" [inlining "risky"]
+  phase L2716..2767 "Inlining 0x09b80101e0f1 <SharedFunctionInfo bare> with bytecode" [inlining "bare"]
+  phase L2767..2836 "Inlining 0x09b80101e0c1 <SharedFunctionInfo risky> with bytecode" [inlining "risky"]
+  phase L2836..2887 "Inlining 0x09b80101e0f1 <SharedFunctionInfo bare> with bytecode" [inlining "bare"]
+  phase L2887..3188 "After graph building" [graph]: 130 nodes, 20 blocks, 47 frame-lines, 8 annotations
+  phase L3188..3479 "After use marking" [graph]: 120 nodes, 20 blocks, 47 frame-lines, 8 annotations
+  phase L3479..3733 "After register allocation pre-processing" [graph]: 87 nodes, 20 blocks, 47 frame-lines, 8 annotations
+  phase L3733..4050 "After register allocation" [graph]: 137 nodes, 20 blocks, 47 frame-lines, 22 annotations
+  totals: 33 opcodes, 20 distinct frames, 0 unparsed
+compilation 7 L4050..5037 sfi=0x9b80101e019 tier=Maglev ord=2 name=""
+  script "workloads/throw.js"
+  phase L4051..4144 "Bytecode array" [bytecode]
+  phase L4144..4195 "Inlining 0x09b80101e0f1 <SharedFunctionInfo bare> with bytecode" [inlining "bare"]
+  phase L4195..4246 "Inlining 0x09b80101e0f1 <SharedFunctionInfo bare> with bytecode" [inlining "bare"]
+  phase L4246..4450 "After graph building" [graph]: 95 nodes, 14 blocks, 25 frame-lines, 4 annotations
+  phase L4450..4644 "After use marking" [graph]: 85 nodes, 14 blocks, 25 frame-lines, 4 annotations
+  phase L4644..4818 "After register allocation pre-processing" [graph]: 67 nodes, 14 blocks, 25 frame-lines, 4 annotations
+  phase L4818..5037 "After register allocation" [graph]: 107 nodes, 14 blocks, 25 frame-lines, 10 annotations
+  totals: 34 opcodes, 14 distinct frames, 0 unparsed

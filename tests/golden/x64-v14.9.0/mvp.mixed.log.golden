@@ -1,0 +1,51 @@
+lines: 4320
+version: 14.9
+compilation 0 L0..523 sfi=0x9b80101e149 tier=Maglev ord=1 name="sum"
+  script "workloads/mixed.js"
+  phase L1..65 "Bytecode array" [bytecode]
+  phase L65..181 "After graph building" [graph]: 50 nodes, 8 blocks, 14 frame-lines, 4 annotations
+  phase L181..291 "After use marking" [graph]: 44 nodes, 8 blocks, 14 frame-lines, 4 annotations
+  phase L291..401 "After register allocation pre-processing" [graph]: 44 nodes, 8 blocks, 14 frame-lines, 4 annotations
+  phase L401..523 "After register allocation" [graph]: 51 nodes, 8 blocks, 14 frame-lines, 10 annotations
+  totals: 26 opcodes, 4 distinct frames, 0 unparsed
+compilation 1 L523..695 sfi=0x9b80101e1a9 tier=Maglev ord=1 name="flipflop"
+  script "workloads/mixed.js"
+  phase L524..555 "Bytecode array" [bytecode]
+  phase L555..590 "After graph building" [graph]: 15 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L590..624 "After use marking" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L624..658 "After register allocation pre-processing" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L658..695 "After register allocation" [graph]: 18 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  totals: 14 opcodes, 2 distinct frames, 0 unparsed
+compilation 2 L695..1369 sfi=0x9b80101e179 tier=Maglev ord=1 name="scale"
+  script "workloads/mixed.js"
+  phase L696..780 "Bytecode array" [bytecode]
+  phase L780..930 "After graph building" [graph]: 71 nodes, 11 blocks, 21 frame-lines, 2 annotations
+  phase L930..1072 "After use marking" [graph]: 64 nodes, 11 blocks, 21 frame-lines, 2 annotations
+  phase L1072..1214 "After register allocation pre-processing" [graph]: 64 nodes, 11 blocks, 21 frame-lines, 2 annotations
+  phase L1214..1369 "After register allocation" [graph]: 74 nodes, 11 blocks, 21 frame-lines, 6 annotations
+  totals: 35 opcodes, 7 distinct frames, 0 unparsed
+compilation 3 L1370..1538 sfi=0x9b80101e1a9 tier=Maglev ord=2 name="flipflop"
+  script "workloads/mixed.js"
+  phase L1371..1402 "Bytecode array" [bytecode]
+  phase L1402..1436 "After graph building" [graph]: 16 nodes, 2 blocks, 2 frame-lines, 0 annotations
+  phase L1436..1469 "After use marking" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 0 annotations
+  phase L1469..1502 "After register allocation pre-processing" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 0 annotations
+  phase L1502..1538 "After register allocation" [graph]: 19 nodes, 2 blocks, 2 frame-lines, 0 annotations
+  totals: 14 opcodes, 2 distinct frames, 0 unparsed
+compilation 4 L1538..4318 sfi=0x9b80101e0c9 tier=Maglev ord=1 name=""
+  script "workloads/mixed.js"
+  phase L1539..1746 "Bytecode array" [bytecode]
+  phase L1746..1810 "Inlining 0x09b80101e149 <SharedFunctionInfo sum> with bytecode" [inlining "sum"]
+  phase L1810..1894 "Inlining 0x09b80101e179 <SharedFunctionInfo scale> with bytecode" [inlining "scale"]
+  phase L1894..1958 "Inlining 0x09b80101e149 <SharedFunctionInfo sum> with bytecode" [inlining "sum"]
+  phase L1958..1989 "Inlining 0x09b80101e1a9 <SharedFunctionInfo flipflop> with bytecode" [inlining "flipflop"]
+  phase L1989..2020 "Inlining 0x09b80101e1a9 <SharedFunctionInfo flipflop> with bytecode" [inlining "flipflop"]
+  phase L2020..2596 "After graph building" [graph]: 220 nodes, 39 blocks, 111 frame-lines, 18 annotations
+  phase L2596..3147 "After use marking" [graph]: 196 nodes, 39 blocks, 111 frame-lines, 18 annotations
+  phase L3147..3698 "After register allocation pre-processing" [graph]: 196 nodes, 39 blocks, 111 frame-lines, 18 annotations
+  phase L3698..4318 "After register allocation" [graph]: 224 nodes, 39 blocks, 111 frame-lines, 60 annotations
+  totals: 49 opcodes, 28 distinct frames, 0 unparsed
+raw L1369..1370 "[bailout (kind: deopt-eager, reason: not a Smi): begin. deoptimizing 0x* <JSFunction …"
+raw L4318..4320 "[bailout (kind: deopt-eager, reason: Insufficient type feedback for generic global access): begi…"
+event L1369 deopt kind=deopt-eager reason="not a Smi" name="flipflop" sfi=0x9b80101e1a9 tier=Maglev opt_id=Some(1) offset=Some(2)
+event L4318 deopt kind=deopt-eager reason="Insufficient type feedback for generic global access" name="" sfi=0x9b80101e0c9 tier=Maglev opt_id=Some(7) offset=Some(185)

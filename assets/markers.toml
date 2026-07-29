@@ -1,0 +1,51 @@
+# Version-keyed Maglev phase-banner names (TODO 0.6, folded into 2.2).
+#
+# The banner *grammar* (`----- <name> -----`) is stable across versions and
+# shared with TurboFan; the *names* are not: every one of them changed between
+# V8 14.9 and 15.2 (spike-findings.md §3). The names come from
+# `src/maglev/maglev-phase.h` `PhaseName()` — a generated-from-source table —
+# not from observed output, which only shows the phases a given workload ran
+# (printer-parser-contract.md §3).
+#
+# A banner whose name is in no version's list still opens a phase (the grammar
+# decides that); it is just marked unrecognised, which is what journey J5
+# ("parser breaks on a new V8 version") needs. The version whose list matches
+# the most banners in a trace is reported as the detected V8 version.
+#
+# Two banners share the grammar but are not phases, and are matched in code,
+# not here: `----- Bytecode array -----` and
+# `----- Inlining 0x… <SharedFunctionInfo …> with bytecode -----`.
+
+[maglev."15.2"]
+# maglev-phase.h PhaseName() at V8 15.2.0 (b80a7539b73), pipeline order.
+phases = [
+    "Maglev graph building",
+    "Non-eager inlining",
+    "Non-eager loop peeling",
+    "Truncation propagation",
+    "Truncation",
+    "Post optimizer",
+    "Loop optimization (LICM)",
+    "Pre phi untagging",
+    "Phi untagging",
+    "Escape analysis",
+    "Range analysis",
+    "AnyUseMarking",
+    "Dead nodes sweeping",
+    "During register allocation",
+    "Register allocation",
+    "Code generation",
+]
+
+[maglev."14.9"]
+# Observed in the arm64-v14.9.0 / x64-v14.9.0 fixtures. The full PhaseName()
+# table for 14.9 was not captured before the corpus moved on; unknown 14.9
+# names degrade to unrecognised phases, which is the designed behaviour.
+phases = [
+    "After graph building",
+    "After propagating truncation",
+    "After truncation",
+    "After use marking",
+    "After register allocation pre-processing",
+    "After register allocation",
+]

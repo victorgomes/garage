@@ -1,0 +1,38 @@
+lines: 2100
+version: 14.9
+compilation 0 L0..158 sfi=0x9b80101e031 tier=Maglev ord=1 name="read"
+  script "workloads/deopt-eager.js"
+  phase L1..36 "Bytecode array" [bytecode]
+  phase L36..67 "After graph building" [graph]: 15 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L67..97 "After use marking" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L97..127 "After register allocation pre-processing" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L127..158 "After register allocation" [graph]: 16 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  totals: 14 opcodes, 2 distinct frames, 0 unparsed
+compilation 1 L158..1008 sfi=0x9b80101dfc9 tier=Maglev ord=1 name=""
+  script "workloads/deopt-eager.js"
+  phase L159..317 "Bytecode array" [bytecode]
+  phase L317..352 "Inlining 0x09b80101e031 <SharedFunctionInfo read> with bytecode" [inlining "read"]
+  phase L352..387 "Inlining 0x09b80101e031 <SharedFunctionInfo read> with bytecode" [inlining "read"]
+  phase L387..547 "After graph building" [graph]: 78 nodes, 10 blocks, 19 frame-lines, 2 annotations
+  phase L547..695 "After use marking" [graph]: 66 nodes, 10 blocks, 19 frame-lines, 2 annotations
+  phase L695..843 "After register allocation pre-processing" [graph]: 66 nodes, 10 blocks, 19 frame-lines, 2 annotations
+  phase L843..1008 "After register allocation" [graph]: 82 nodes, 10 blocks, 19 frame-lines, 4 annotations
+  totals: 32 opcodes, 18 distinct frames, 0 unparsed
+compilation 2 L1008..1247 sfi=0x9b80101e031 tier=Maglev ord=2 name="read"
+  script "workloads/deopt-eager.js"
+  phase L1009..1045 "Bytecode array" [bytecode]
+  phase L1045..1095 "After graph building" [graph]: 23 nodes, 5 blocks, 4 frame-lines, 2 annotations
+  phase L1095..1144 "After use marking" [graph]: 22 nodes, 5 blocks, 4 frame-lines, 2 annotations
+  phase L1144..1193 "After register allocation pre-processing" [graph]: 22 nodes, 5 blocks, 4 frame-lines, 2 annotations
+  phase L1193..1247 "After register allocation" [graph]: 26 nodes, 5 blocks, 4 frame-lines, 4 annotations
+  totals: 17 opcodes, 4 distinct frames, 0 unparsed
+compilation 3 L1247..2100 sfi=0x9b80101dfc9 tier=Maglev ord=2 name=""
+  script "workloads/deopt-eager.js"
+  phase L1248..1408 "Bytecode array" [bytecode]
+  phase L1408..1444 "Inlining 0x09b80101e031 <SharedFunctionInfo read> with bytecode" [inlining "read"]
+  phase L1444..1480 "Inlining 0x09b80101e031 <SharedFunctionInfo read> with bytecode" [inlining "read"]
+  phase L1480..1639 "After graph building" [graph]: 79 nodes, 10 blocks, 19 frame-lines, 2 annotations
+  phase L1639..1786 "After use marking" [graph]: 67 nodes, 10 blocks, 19 frame-lines, 2 annotations
+  phase L1786..1933 "After register allocation pre-processing" [graph]: 67 nodes, 10 blocks, 19 frame-lines, 2 annotations
+  phase L1933..2100 "After register allocation" [graph]: 83 nodes, 10 blocks, 19 frame-lines, 7 annotations
+  totals: 32 opcodes, 18 distinct frames, 0 unparsed

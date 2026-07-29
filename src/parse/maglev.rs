@@ -1,0 +1,946 @@
+//! The Maglev graph parser (TODO 2.4, 2.6, 2.8).
+//!
+//! Line-oriented and total: every line of a compilation gets classified into
+//! exactly one [`LineInfo`], unmatched lines become positioned annotations
+//! (never dropped, never exiled — TODO 2.8), and no input can panic it. The
+//! parser works on ANSI-stripped text (spike-findings.md §1) and records
+//! *spans* into that text rather than re-rendered strings, because Phase 4
+//! styles the original line, not a reconstruction of it.
+//!
+//! Grammar facts this encodes, all measured in the corpus:
+//!
+//! - Node-line syntax varies per phase (§5): `11:` becomes `12/13:` after
+//!   scheduling, inputs grow `v0/n9:(x)` decoration, `, N uses` becomes
+//!   `→ <loc>` and `live range: [a-b]`. Identity is the `nN` id.
+//! - Deopt frames are node-attached structure, not annotations (§6): eager
+//!   frames print *before* their node, lazy/throw frames *after* it.
+//! - Frames are interned on the `(addr:0x…)` host pointer when present, else
+//!   on their canonical payload (§12).
+//! - `↳ throw` has its own arms: `@N (bN) : {reg:node, …}` with phis, bare
+//!   `(bN)` without; the catch-block id is the exception edge (§12).
+//! - Graph lines sit behind a control-flow gutter of box-drawing characters
+//!   (`│╭─►Block b4`); classification happens after the gutter.
+
+use std::collections::HashMap;
+
+use crate::ansi;
+use crate::model::{
+    BlockId, CompilationSection, DeoptFrame, FrameArrow, IRNode, InlineDecision, LineInfo, NodeId,
+    NodeRef, ParsedCompilation, ParsedPhase, PhaseKind,
+};
+use crate::source::LogBuffer;
+
+/// Parses one compilation's full line range. Total: never panics, never skips
+/// a line.
+pub fn parse_compilation(buffer: &LogBuffer, section: &CompilationSection) -> ParsedCompilation {
+    let mut parsed = ParsedCompilation::default();
+    let mut interner = Interner::default();
+
+    for line in section.preamble.clone() {
+        let text = line_text(buffer, line);
+        let info = classify_preamble(&text, line, &mut parsed.inline_decisions);
+        parsed.preamble.push(info);
+    }
+
+    for phase in &section.phases {
+        let parsed_phase = match phase.kind {
+            PhaseKind::Graph { .. } => {
+                parse_graph_phase(buffer, phase.lines.clone(), &mut interner, &mut parsed)
+            }
+            // Bytecode dumps and inlined-callee bytecode share the banner
+            // grammar but not the body grammar; their lines are expected dump
+            // content, not stray annotations.
+            PhaseKind::Bytecode | PhaseKind::Inlining { .. } => {
+                parse_dump_phase(buffer, phase.lines.clone(), &mut parsed)
+            }
+        };
+        parsed.phases.push(parsed_phase);
+    }
+
+    parsed.opcodes = interner.opcodes;
+    parsed.frames = interner.frames;
+    parsed
+}
+
+/// The stripped, lossily-decoded text of one line — the exact coordinate
+/// space every [`Span`] in the parse refers to.
+pub fn line_text(buffer: &LogBuffer, line: usize) -> String {
+    let bytes = buffer.line(line).unwrap_or(b"");
+    String::from_utf8_lossy(&ansi::strip(bytes)).into_owned()
+}
+
+#[derive(Default)]
+struct Interner {
+    opcodes: Vec<String>,
+    opcode_ids: HashMap<String, u32>,
+    frames: Vec<DeoptFrame>,
+    frame_ids: HashMap<FrameKey, u32>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+enum FrameKey {
+    /// The `(addr:0x…)` host pointer — the printer's own identity for the
+    /// frame, shared across every line that renders it.
+    Addr(u64),
+    /// No pointer printed: the payload text is the best available key;
+    /// identical summaries collapse.
+    Payload(String),
+}
+
+impl Interner {
+    fn opcode(&mut self, name: &str) -> u32 {
+        if let Some(&id) = self.opcode_ids.get(name) {
+            return id;
+        }
+        let id = self.opcodes.len() as u32;
+        self.opcodes.push(name.to_string());
+        self.opcode_ids.insert(name.to_string(), id);
+        id
+    }
+
+    fn frame(&mut self, frame: DeoptFrame, key: FrameKey) -> u32 {
+        if let Some(&id) = self.frame_ids.get(&key) {
+            self.frames[id as usize].occurrences += 1;
+            return id;
+        }
+        let id = self.frames.len() as u32;
+        self.frames.push(frame);
+        self.frame_ids.insert(key, id);
+        id
+    }
+}
+
+fn parse_dump_phase(
+    buffer: &LogBuffer,
+    lines: std::ops::Range<usize>,
+    parsed: &mut ParsedCompilation,
+) -> ParsedPhase {
+    let mut phase = ParsedPhase::default();
+    for (offset, line) in lines.enumerate() {
+        let text = line_text(buffer, line);
+        let info = if offset == 0 {
+            LineInfo::Banner
+        } else if let Some(bc) = parse_bytecode_array_line(&text) {
+            LineInfo::Bytecode { offset: bc }
+        } else {
+            // Inlining-trace lines print between banners, inside the bytecode
+            // and inlined-callee sections — not only in the preamble.
+            record_inline_decision(&text, line, &mut parsed.inline_decisions);
+            LineInfo::Control
+        };
+        phase.infos.push(info);
+    }
+    phase
+}
+
+/// `         0x31a0100012c @    0 : 0b 04             Ldar a1`
+fn parse_bytecode_array_line(text: &str) -> Option<u32> {
+    let rest = text.trim_start();
+    let rest = rest.strip_prefix("0x")?;
+    let (addr, rest) = rest.split_once(" @ ")?;
+    if addr.is_empty() || !addr.bytes().all(|b| b.is_ascii_hexdigit()) {
+        return None;
+    }
+    let rest = rest.trim_start();
+    let (offset, rest) = rest.split_once(" : ")?;
+    let _ = rest;
+    offset.trim().parse().ok()
+}
+
+fn parse_graph_phase(
+    buffer: &LogBuffer,
+    lines: std::ops::Range<usize>,
+    interner: &mut Interner,
+    parsed: &mut ParsedCompilation,
+) -> ParsedPhase {
+    let mut phase = ParsedPhase::default();
+    // Once a phase prints `sched/node:` ids, a bare `N:` is a schedule-only
+    // line (GapMove and friends), not a node id (spike-findings.md §5).
+    let mut saw_dual_id = false;
+    let mut last_node: Option<NodeId> = None;
+    let mut last_arrow = FrameArrow::Eager;
+    // Eager frames print before the node they belong to; their attachment is
+    // patched when that node line arrives.
+    let mut pending_eager: Vec<usize> = Vec::new();
+
+    for (offset, line) in lines.clone().enumerate() {
+        let text = line_text(buffer, line);
+        let info = if offset == 0 {
+            LineInfo::Banner
+        } else {
+            classify_graph_line(
+                &text,
+                interner,
+                &mut saw_dual_id,
+                &mut last_node,
+                &mut last_arrow,
+            )
+        };
+
+        let at = phase.infos.len();
+        match &info {
+            LineInfo::Node(node) => {
+                phase.node_count += 1;
+                if node.id != SCHEDULE_ONLY {
+                    phase.defs.insert(node.id, at as u32);
+                }
+                for input in &node.inputs {
+                    phase.users.entry(input.node).or_default().push(at as u32);
+                }
+                for pending in pending_eager.drain(..) {
+                    if let Some(LineInfo::Frame { after_node, .. }) = phase.infos.get_mut(pending) {
+                        *after_node = Some(node.id);
+                    }
+                }
+            }
+            LineInfo::Frame { refs, .. } | LineInfo::PhiMove { refs } => {
+                for r in refs {
+                    phase.users.entry(r.node).or_default().push(at as u32);
+                }
+                if matches!(
+                    &info,
+                    LineInfo::Frame {
+                        after_node: None,
+                        ..
+                    }
+                ) {
+                    pending_eager.push(at);
+                }
+            }
+            LineInfo::BlockHeader { .. } => phase.block_count += 1,
+            LineInfo::SfiContext if parsed.script.is_none() => {
+                parsed.script = parse_script(&text);
+            }
+            LineInfo::Annotation { .. } => {
+                phase.annotation_count += 1;
+                record_inline_decision(&text, line, &mut parsed.inline_decisions);
+            }
+            _ => {}
+        }
+        phase.infos.push(info);
+    }
+    phase
+}
+
+/// Splits off the control-flow gutter (`│╭─►`, arrows, indentation) and
+/// returns the content start byte offset.
+fn content_start(text: &str) -> usize {
+    for (i, ch) in text.char_indices() {
+        match ch {
+            ' ' | '│' | '╭' | '╰' | '╮' | '╯' | '─' | '►' | '◄' | '↓' | '▼' | '▲' | '═' =>
+                {}
+            _ => return i,
+        }
+    }
+    text.len()
+}
+
+fn classify_graph_line(
+    text: &str,
+    interner: &mut Interner,
+    saw_dual_id: &mut bool,
+    last_node: &mut Option<NodeId>,
+    last_arrow: &mut FrameArrow,
+) -> LineInfo {
+    let start = content_start(text);
+    let content = &text[start..];
+
+    if content.is_empty() || content == "Graph" {
+        return LineInfo::Control;
+    }
+
+    if let Some(rest) = content.strip_prefix("Block b") {
+        if let Some(block) = leading_number(rest) {
+            return LineInfo::BlockHeader { block };
+        }
+    }
+
+    if content.starts_with("↱") || content.starts_with("↳") || content.starts_with('@') {
+        return parse_frame_line(text, start, interner, *last_node, last_arrow);
+    }
+
+    if content.starts_with("VOs ") || content == "VOs" {
+        return LineInfo::VirtualObjects;
+    }
+
+    if content.starts_with("- ") && content.contains('→') && content.contains('φ') {
+        return LineInfo::PhiMove {
+            refs: node_refs(text, start),
+        };
+    }
+
+    if content.starts_with("0x") && content.contains("<SharedFunctionInfo") {
+        return LineInfo::SfiContext;
+    }
+
+    if let Some(node) = parse_node_line(text, start, interner, saw_dual_id) {
+        if node.id != SCHEDULE_ONLY {
+            *last_node = Some(node.id);
+            return LineInfo::Node(node);
+        }
+        return LineInfo::Node(node);
+    }
+
+    if let Some(offset) = parse_interleaved_bytecode(content) {
+        return LineInfo::Bytecode { offset };
+    }
+
+    // The attachment rule (2.8): anything unmatched is an annotation on the
+    // node it follows — regalloc traces, graph-building traces, whatever a
+    // future flag prints. Attached in place, dimmed later, never dropped.
+    LineInfo::Annotation {
+        after_node: *last_node,
+    }
+}
+
+/// Bare `N : hh hh …` source-bytecode lines interleaved into graph blocks
+/// (offset, space, colon — node lines have no space before the colon).
+fn parse_interleaved_bytecode(content: &str) -> Option<u32> {
+    let (num, rest) = content.split_once(" : ")?;
+    let offset = num.parse().ok()?;
+    let mut hex = rest.trim_start().splitn(2, ' ');
+    let first = hex.next()?;
+    if first.len() == 2 && first.bytes().all(|b| b.is_ascii_hexdigit()) {
+        Some(offset)
+    } else {
+        None
+    }
+}
+
+/// Sentinel node id for schedule-only lines (`16: GapMove(…)`): they define
+/// nothing another line can reference.
+const SCHEDULE_ONLY: NodeId = u32::MAX;
+
+fn parse_node_line(
+    text: &str,
+    start: usize,
+    interner: &mut Interner,
+    saw_dual_id: &mut bool,
+) -> Option<IRNode> {
+    let content = &text[start..];
+
+    // `11:` / `12/13:` — digits (optionally slash digits) then a colon with
+    // no space before it, then a space.
+    let mut it = content.char_indices().peekable();
+    let mut first_end = 0;
+    while let Some(&(i, c)) = it.peek() {
+        if c.is_ascii_digit() {
+            first_end = i + 1;
+            it.next();
+        } else {
+            break;
+        }
+    }
+    if first_end == 0 {
+        return None;
+    }
+    let first: u32 = content[..first_end].parse().ok()?;
+    let (second, ids_end) = match content[first_end..].strip_prefix('/') {
+        Some(rest) => {
+            let digits = rest.bytes().take_while(|b| b.is_ascii_digit()).count();
+            if digits == 0 {
+                return None;
+            }
+            let second: u32 = rest[..digits].parse().ok()?;
+            (Some(second), first_end + 1 + digits)
+        }
+        None => (None, first_end),
+    };
+    let after_ids = &content[ids_end..];
+    if !after_ids.starts_with(": ") {
+        return None;
+    }
+    let opcode_start = ids_end + 2;
+
+    let (schedule_pos, id) = match second {
+        Some(node_id) => {
+            *saw_dual_id = true;
+            (Some(first), node_id)
+        }
+        None => (None, first),
+    };
+
+    // Opcode token: up to the first space or attached `(`; an *attached*
+    // `[Tag]` (`Int32Compare[LessThan]`) is part of the opcode, a detached
+    // ` [n1, n2]` is the input list.
+    let opcode_text = &content[opcode_start..];
+    let mut opcode_end = opcode_text.len();
+    let mut depth = 0usize;
+    for (i, c) in opcode_text.char_indices() {
+        match c {
+            '[' => depth += 1,
+            ']' => depth = depth.saturating_sub(1),
+            ' ' | '(' if depth == 0 => {
+                opcode_end = i;
+                break;
+            }
+            _ => {}
+        }
+    }
+    let opcode_name = &opcode_text[..opcode_end];
+    if opcode_name.is_empty() {
+        return None;
+    }
+
+    let id = if second.is_none() && *saw_dual_id {
+        // Late-phase bare id: schedule position only (GapMove & co).
+        SCHEDULE_ONLY
+    } else if opcode_name.starts_with("GapMove") || opcode_name.starts_with("ConstantGapMove") {
+        SCHEDULE_ONLY
+    } else {
+        id
+    };
+
+    let abs = |o: usize| (start + o) as u32;
+    let tail_start = opcode_start + opcode_end;
+    let tail = &content[tail_start..];
+
+    Some(IRNode {
+        id,
+        schedule_pos: if id == SCHEDULE_ONLY && second.is_none() {
+            Some(first)
+        } else {
+            schedule_pos
+        },
+        def_span: abs(0)..abs(ids_end),
+        opcode: interner.opcode(opcode_name),
+        opcode_span: abs(opcode_start)..abs(tail_start),
+        inputs: node_refs(text, start + tail_start),
+        uses: parse_uses(tail),
+        dead: tail.contains('🪦'),
+        targets: block_refs(tail),
+    })
+}
+
+fn parse_uses(tail: &str) -> Option<u32> {
+    let at = tail.find(" uses")?;
+    let digits_end = at;
+    let digits_start = tail[..digits_end]
+        .rfind(|c: char| !c.is_ascii_digit())
+        .map(|i| i + 1)?;
+    if digits_start == digits_end {
+        return None;
+    }
+    tail[digits_start..digits_end].parse().ok()
+}
+
+/// Every `nN` token from `from` to the end of the line, with absolute spans.
+fn node_refs(text: &str, from: usize) -> Vec<NodeRef> {
+    let mut refs = Vec::new();
+    let bytes = text.as_bytes();
+    let mut i = from;
+    while i < bytes.len() {
+        if bytes[i] == b'n'
+            && i + 1 < bytes.len()
+            && bytes[i + 1].is_ascii_digit()
+            && (i == 0 || !bytes[i - 1].is_ascii_alphanumeric())
+        {
+            let mut end = i + 1;
+            while end < bytes.len() && bytes[end].is_ascii_digit() {
+                end += 1;
+            }
+            if end >= bytes.len() || !bytes[end].is_ascii_alphabetic() {
+                if let Ok(node) = text[i + 1..end].parse::<NodeId>() {
+                    refs.push(NodeRef {
+                        node,
+                        span: i as u32..end as u32,
+                    });
+                }
+            }
+            i = end;
+        } else {
+            i += 1;
+        }
+    }
+    refs
+}
+
+/// Every `bN` block token in a tail (`Jump b1`, `BranchIf… b2 b8`).
+fn block_refs(tail: &str) -> Vec<BlockId> {
+    let mut out = Vec::new();
+    let bytes = tail.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'b'
+            && i + 1 < bytes.len()
+            && bytes[i + 1].is_ascii_digit()
+            && (i == 0 || !bytes[i - 1].is_ascii_alphanumeric())
+        {
+            let mut end = i + 1;
+            while end < bytes.len() && bytes[end].is_ascii_digit() {
+                end += 1;
+            }
+            if (end >= bytes.len() || !bytes[end].is_ascii_alphanumeric())
+                && let Ok(block) = tail[i + 1..end].parse()
+            {
+                out.push(block);
+            }
+            i = end;
+        } else {
+            i += 1;
+        }
+    }
+    out
+}
+
+fn leading_number<T: std::str::FromStr>(s: &str) -> Option<T> {
+    let digits = s.bytes().take_while(|b| b.is_ascii_digit()).count();
+    if digits == 0 {
+        return None;
+    }
+    s[..digits].parse().ok()
+}
+
+/// Parses the three deopt-frame arrows and their continuation lines.
+///
+/// Payload syntaxes (spike-findings.md §12): `(N live vars)` summary,
+/// `{reg:node:loc, …} (addr:0x…)` verbose (loc phase-dependent, possibly
+/// empty), `{reg:node, …}` for `↳ throw`, plus bare `↳ throw (bN)`.
+fn parse_frame_line(
+    text: &str,
+    start: usize,
+    interner: &mut Interner,
+    last_node: Option<NodeId>,
+    last_arrow: &mut FrameArrow,
+) -> LineInfo {
+    let content = &text[start..];
+
+    let (arrow, rest, attach_backwards) = if let Some(r) = content.strip_prefix("↱ eager") {
+        (FrameArrow::Eager, r, false)
+    } else if let Some(r) = content.strip_prefix("↳ lazy") {
+        (FrameArrow::Lazy, r, true)
+    } else if let Some(r) = content.strip_prefix("↳ throw") {
+        (FrameArrow::Throw, r, true)
+    } else {
+        // A continuation line (`@2 (5 live vars)` behind depth bars): part of
+        // the innermost preceding arrow's frame chain.
+        (
+            *last_arrow,
+            content,
+            !matches!(*last_arrow, FrameArrow::Eager),
+        )
+    };
+    *last_arrow = arrow;
+
+    let rest = rest.trim_start();
+    let bytecode_offset = rest.strip_prefix('@').and_then(|r| {
+        let end = r
+            .bytes()
+            .take_while(|b| b.is_ascii_digit() || *b == b'-')
+            .count();
+        r[..end].parse::<i32>().ok()
+    });
+
+    // `(bN)` — the catch block; only throw frames print one, and looking for
+    // it elsewhere would false-positive on payload text.
+    let catch_block = if arrow == FrameArrow::Throw {
+        rest.find("(b").and_then(|i| leading_number(&rest[i + 2..]))
+    } else {
+        None
+    };
+
+    let addr = rest.find("(addr:0x").and_then(|i| {
+        let hex = &rest[i + 8..];
+        let end = hex.bytes().take_while(|b| b.is_ascii_hexdigit()).count();
+        u64::from_str_radix(&hex[..end], 16).ok()
+    });
+
+    let key = match addr {
+        Some(a) => FrameKey::Addr(a),
+        None => FrameKey::Payload(format!("{arrow:?} {rest}")),
+    };
+    let frame = interner.frame(
+        DeoptFrame {
+            arrow,
+            bytecode_offset,
+            catch_block,
+            addr,
+            occurrences: 1,
+        },
+        key,
+    );
+
+    LineInfo::Frame {
+        frame,
+        after_node: if attach_backwards { last_node } else { None },
+        refs: node_refs(text, start),
+    }
+}
+
+/// `0x… <SharedFunctionInfo name> (0x… <String[N]: "path">:line:col)`
+fn parse_script(text: &str) -> Option<String> {
+    let at = text.find("<String[")?;
+    let rest = &text[at..];
+    let open = rest.find('"')?;
+    let close = rest[open + 1..].find('"')?;
+    Some(rest[open + 1..open + 1 + close].to_string())
+}
+
+fn classify_preamble(text: &str, line: usize, decisions: &mut Vec<InlineDecision>) -> LineInfo {
+    let content = text.trim_start();
+    if content.is_empty() {
+        return LineInfo::Control;
+    }
+    record_inline_decision(text, line, decisions);
+    LineInfo::Annotation { after_node: None }
+}
+
+/// `⚡ INLINE small   reason…` / `❌ SKIP big   reason…`, optionally behind a
+/// `[ML:38564] ` prefix — which is volatile and stripped entirely by
+/// `--no-trace-with-compilation-id`, so it must never be load-bearing
+/// (spike-findings.md §8).
+fn record_inline_decision(text: &str, line: usize, decisions: &mut Vec<InlineDecision>) {
+    let content = text.trim_start();
+    let body = match content.strip_prefix("[ML:") {
+        Some(rest) => rest.split_once("] ").map(|(_, b)| b).unwrap_or(content),
+        None => content,
+    };
+    let verdict = if let Some(rest) = body.strip_prefix("⚡ INLINE") {
+        Some((true, rest))
+    } else {
+        body.strip_prefix("❌ SKIP").map(|rest| (false, rest))
+    };
+    if let Some((inlined, rest)) = verdict {
+        let rest = rest.trim_start();
+        let (callee, reason) = match rest.split_once("  ") {
+            Some((c, r)) => (c.trim(), r.trim()),
+            None => (rest.trim(), ""),
+        };
+        decisions.push(InlineDecision {
+            line,
+            inlined,
+            callee: callee.to_string(),
+            reason: reason.to_string(),
+        });
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn parse_lines(lines: &[&str]) -> (ParsedPhase, ParsedCompilation) {
+        let mut text = String::from("----- Maglev graph building -----\n");
+        for l in lines {
+            text.push_str(l);
+            text.push('\n');
+        }
+        let mut buffer = LogBuffer::new();
+        buffer.append(text.as_bytes());
+        buffer.finish();
+        let mut parsed = ParsedCompilation::default();
+        let mut interner = Interner::default();
+        let phase = parse_graph_phase(&buffer, 0..buffer.line_count(), &mut interner, &mut parsed);
+        parsed.opcodes = interner.opcodes;
+        parsed.frames = interner.frames;
+        (phase, parsed)
+    }
+
+    fn node(info: &LineInfo) -> &IRNode {
+        match info {
+            LineInfo::Node(n) => n,
+            other => panic!("expected node, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn early_phase_node_line() {
+        let (phase, parsed) = parse_lines(&[
+            "  11: Int32AddWithOverflow [n9, n10], 1 uses, can truncate to int32 [-2147483648, 2147483647]",
+        ]);
+        let n = node(&phase.infos[1]);
+        assert_eq!(n.id, 11);
+        assert_eq!(n.schedule_pos, None);
+        assert_eq!(parsed.opcodes[n.opcode as usize], "Int32AddWithOverflow");
+        assert_eq!(
+            n.inputs.iter().map(|r| r.node).collect::<Vec<_>>(),
+            vec![9, 10]
+        );
+        assert_eq!(n.uses, Some(1));
+        assert!(!n.dead);
+    }
+
+    #[test]
+    fn scheduled_node_line_with_decorated_inputs() {
+        let (phase, parsed) = parse_lines(&[
+            "    9/9: CheckedSmiUntag [v5/n2:[x0|R|t]] → [x0|R|w32], live range: [9-11]",
+        ]);
+        let n = node(&phase.infos[1]);
+        assert_eq!(n.id, 9);
+        assert_eq!(n.schedule_pos, Some(9));
+        assert_eq!(parsed.opcodes[n.opcode as usize], "CheckedSmiUntag");
+        assert_eq!(n.inputs.iter().map(|r| r.node).collect::<Vec<_>>(), vec![2]);
+        assert_eq!(n.uses, None);
+    }
+
+    #[test]
+    fn opcode_tag_is_attached_bracket_not_inputs() {
+        let (phase, parsed) =
+            parse_lines(&["  14: Int32ToNumber[kCanonicalizeSmi] [v0/n11:(x)] → (x)"]);
+        let n = node(&phase.infos[1]);
+        assert_eq!(
+            parsed.opcodes[n.opcode as usize],
+            "Int32ToNumber[kCanonicalizeSmi]"
+        );
+        assert_eq!(
+            n.inputs.iter().map(|r| r.node).collect::<Vec<_>>(),
+            vec![11]
+        );
+    }
+
+    #[test]
+    fn dead_marker_and_zero_uses() {
+        let (phase, _) = parse_lines(&["   6: RootConstant(undefined_value), 0 uses 🪦"]);
+        let n = node(&phase.infos[1]);
+        assert_eq!(n.uses, Some(0));
+        assert!(n.dead);
+    }
+
+    #[test]
+    fn branch_targets_are_collected() {
+        let (phase, _) = parse_lines(&["╭────16: BranchIfInt32Compare(LessThan) [n13, n14] b2 b8"]);
+        let n = node(&phase.infos[1]);
+        assert_eq!(n.targets, vec![2, 8]);
+        assert_eq!(
+            n.inputs.iter().map(|r| r.node).collect::<Vec<_>>(),
+            vec![13, 14]
+        );
+    }
+
+    #[test]
+    fn phi_line_with_paren_inputs() {
+        let (phase, parsed) = parse_lines(&["││   30: φᵀ r0 (n28, n44), 3 uses"]);
+        let n = node(&phase.infos[1]);
+        assert_eq!(parsed.opcodes[n.opcode as usize], "φᵀ");
+        assert_eq!(
+            n.inputs.iter().map(|r| r.node).collect::<Vec<_>>(),
+            vec![28, 44]
+        );
+        assert_eq!(n.uses, Some(3));
+    }
+
+    #[test]
+    fn gap_moves_define_no_node() {
+        let (phase, _) = parse_lines(&[
+            "    1/12: HeapConstant(0x1 <FeedbackCell>) → v-1, live range: [1-12]",
+            "     16: GapMove([stack:-7|t] → [x0|R|t])",
+        ]);
+        let dual = node(&phase.infos[1]);
+        assert_eq!(dual.id, 12);
+        let gap = node(&phase.infos[2]);
+        assert_eq!(gap.id, SCHEDULE_ONLY);
+        assert!(!phase.defs.contains_key(&SCHEDULE_ONLY));
+        // But its input reference (none here — locations only) is fine.
+        assert_eq!(phase.node_count, 2);
+    }
+
+    #[test]
+    fn block_headers_behind_gutter() {
+        let (phase, _) = parse_lines(&["│╭─►Block b4 peeled (effects: c1)", " Block b0"]);
+        assert!(matches!(phase.infos[1], LineInfo::BlockHeader { block: 4 }));
+        assert!(matches!(phase.infos[2], LineInfo::BlockHeader { block: 0 }));
+        assert_eq!(phase.block_count, 2);
+    }
+
+    #[test]
+    fn eager_frame_attaches_forward_lazy_backward() {
+        let (phase, parsed) = parse_lines(&[
+            "   7: FunctionEntryStackCheck",
+            "      ↳ lazy @-1 (4 live vars)",
+            "      ↱ eager @2 (5 live vars)",
+            "   9: CheckedSmiUntag [n2], 1 uses, cannot truncate to int32",
+        ]);
+        let LineInfo::Frame {
+            after_node: lazy_at,
+            frame: lazy_frame,
+            ..
+        } = &phase.infos[2]
+        else {
+            panic!("lazy frame expected");
+        };
+        assert_eq!(*lazy_at, Some(7));
+        assert_eq!(parsed.frames[*lazy_frame as usize].arrow, FrameArrow::Lazy);
+        assert_eq!(
+            parsed.frames[*lazy_frame as usize].bytecode_offset,
+            Some(-1)
+        );
+        let LineInfo::Frame {
+            after_node: eager_at,
+            ..
+        } = &phase.infos[3]
+        else {
+            panic!("eager frame expected");
+        };
+        assert_eq!(
+            *eager_at,
+            Some(9),
+            "eager frames belong to the node after them"
+        );
+    }
+
+    #[test]
+    fn verbose_frames_intern_on_addr() {
+        let (phase, parsed) = parse_lines(&[
+            "   1: A",
+            "      ↱ eager @0 : {<closure>:n3:, <this>:n1:, a0:n2:} (addr:0x124011b0fb8)",
+            "   2: B",
+            "      ↳ lazy @0 : {<closure>:n3:[stack:-2|t], <this>:n1:[stack:-6|t], a0:n2:[x1|R|t]} (addr:0x124011b0fb8)",
+        ]);
+        let LineInfo::Frame {
+            frame: f1, refs, ..
+        } = &phase.infos[2]
+        else {
+            panic!()
+        };
+        let LineInfo::Frame { frame: f2, .. } = &phase.infos[4] else {
+            panic!()
+        };
+        assert_eq!(f1, f2, "same (addr:…) is the same frame");
+        assert_eq!(parsed.frames.len(), 1);
+        assert_eq!(parsed.frames[0].occurrences, 2);
+        assert_eq!(
+            refs.iter().map(|r| r.node).collect::<Vec<_>>(),
+            vec![3, 1, 2],
+            "verbose payload node refs are collected"
+        );
+    }
+
+    #[test]
+    fn throw_frames_both_forms() {
+        let (phase, parsed) = parse_lines(&[
+            "   5: CallRuntime",
+            "      ↳ throw @26 (b2) : {<this>:n1, a0:n2, <context>:n4, r0:n10}",
+            "      ↳ throw (b3)",
+        ]);
+        let LineInfo::Frame { frame: f1, .. } = &phase.infos[2] else {
+            panic!()
+        };
+        let LineInfo::Frame { frame: f2, .. } = &phase.infos[3] else {
+            panic!()
+        };
+        assert_eq!(parsed.frames[*f1 as usize].catch_block, Some(2));
+        assert_eq!(parsed.frames[*f1 as usize].bytecode_offset, Some(26));
+        assert_eq!(parsed.frames[*f2 as usize].catch_block, Some(3));
+        assert_eq!(parsed.frames[*f2 as usize].bytecode_offset, None);
+    }
+
+    #[test]
+    fn continuation_frame_lines_join_the_chain() {
+        let (phase, _) = parse_lines(&[
+            "        ↱ eager @46 (4 live vars)",
+            "        │       @24 (6 live vars)",
+            "   38: Int32AddWithOverflow [n34, n37], 2 uses",
+        ]);
+        assert!(matches!(phase.infos[1], LineInfo::Frame { .. }));
+        assert!(matches!(phase.infos[2], LineInfo::Frame { .. }));
+        // Both belong to node 38 (they print before it).
+        for i in [1, 2] {
+            let LineInfo::Frame { after_node, .. } = &phase.infos[i] else {
+                panic!()
+            };
+            assert_eq!(*after_node, Some(38));
+        }
+    }
+
+    #[test]
+    fn interleaved_bytecode_and_sfi_context() {
+        let (phase, parsed) = parse_lines(&[
+            "   2 : 42 03 01          Add a0, EmbeddedFeedback[1]",
+            "0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: \"workloads/simple.js\">:2:12)",
+        ]);
+        assert!(matches!(phase.infos[1], LineInfo::Bytecode { offset: 2 }));
+        assert!(matches!(phase.infos[2], LineInfo::SfiContext));
+        assert_eq!(parsed.script.as_deref(), Some("workloads/simple.js"));
+    }
+
+    #[test]
+    fn unmatched_lines_attach_to_the_preceding_node() {
+        let (phase, _) = parse_lines(&[
+            "  10: Foo [n2]",
+            "     allocating v5 to x0 (regalloc trace)",
+        ]);
+        let LineInfo::Annotation { after_node } = &phase.infos[2] else {
+            panic!("expected annotation, got {:?}", phase.infos[2]);
+        };
+        assert_eq!(*after_node, Some(10));
+        assert_eq!(phase.annotation_count, 1);
+    }
+
+    #[test]
+    fn def_use_maps_are_built() {
+        let (phase, _) = parse_lines(&[
+            "   9: CheckedSmiUntag [n2], 1 uses",
+            "  11: Int32AddWithOverflow [n9, n10], 1 uses",
+        ]);
+        assert_eq!(phase.defs[&9], 1);
+        assert_eq!(phase.defs[&11], 2);
+        assert_eq!(phase.users[&9], vec![2]);
+        assert_eq!(phase.users[&2], vec![1]);
+    }
+
+    #[test]
+    fn spans_index_the_stripped_text() {
+        let (phase, _) = parse_lines(&["  11: Int32AddWithOverflow [n9, n10], 1 uses"]);
+        let n = node(&phase.infos[1]);
+        let text = "  11: Int32AddWithOverflow [n9, n10], 1 uses";
+        assert_eq!(
+            &text[n.def_span.start as usize..n.def_span.end as usize],
+            "11"
+        );
+        assert_eq!(
+            &text[n.opcode_span.start as usize..n.opcode_span.end as usize],
+            "Int32AddWithOverflow"
+        );
+        let spans: Vec<&str> = n
+            .inputs
+            .iter()
+            .map(|r| &text[r.span.start as usize..r.span.end as usize])
+            .collect();
+        assert_eq!(spans, vec!["n9", "n10"]);
+    }
+
+    #[test]
+    fn preamble_inline_decisions_with_and_without_ids() {
+        let mut decisions = Vec::new();
+        classify_preamble(
+            "⚡ INLINE small                          Small function, skipping max-depth",
+            5,
+            &mut decisions,
+        );
+        classify_preamble(
+            "[ML:38612] ❌ SKIP   big                            big function, size (174) >= max-size (100)",
+            6,
+            &mut decisions,
+        );
+        assert_eq!(
+            decisions,
+            vec![
+                InlineDecision {
+                    line: 5,
+                    inlined: true,
+                    callee: "small".into(),
+                    reason: "Small function, skipping max-depth".into(),
+                },
+                InlineDecision {
+                    line: 6,
+                    inlined: false,
+                    callee: "big".into(),
+                    reason: "big function, size (174) >= max-size (100)".into(),
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn garbage_is_annotations_not_panics() {
+        let (phase, _) = parse_lines(&[
+            "\u{fffd}\u{fffd}\u{fffd}",
+            "1234567890123456789012345678901234567890: ",
+            "-9/x: huh",
+            "↱",
+            "@@",
+            ": no ids",
+        ]);
+        assert_eq!(phase.infos.len(), 7);
+    }
+}

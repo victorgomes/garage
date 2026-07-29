@@ -1,0 +1,49 @@
+lines: 3217
+version: 14.9
+compilation 0 L0..141 sfi=0x9b80101e1bd tier=Maglev ord=1 name="tiny"
+  script "workloads/inlining.js"
+  phase L1..27 "Bytecode array" [bytecode]
+  phase L27..56 "After graph building" [graph]: 13 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L56..84 "After use marking" [graph]: 12 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L84..112 "After register allocation pre-processing" [graph]: 12 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L112..141 "After register allocation" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  totals: 12 opcodes, 2 distinct frames, 0 unparsed
+compilation 1 L141..613 sfi=0x9b80101e24d tier=Maglev ord=1 name="outer"
+  script "workloads/inlining.js"
+  phase L142..197 "Bytecode array" [bytecode]
+  phase L197..246 "Inlining 0x09b80101e1ed <SharedFunctionInfo small> with bytecode" [inlining "small"]
+  phase L246..272 "Inlining 0x09b80101e1bd <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L272..298 "Inlining 0x09b80101e1bd <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L298..375 "After graph building" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
+  phase L375..452 "After use marking" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
+  phase L452..529 "After register allocation pre-processing" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
+  phase L529..613 "After register allocation" [graph]: 35 nodes, 5 blocks, 18 frame-lines, 0 annotations
+  totals: 15 opcodes, 7 distinct frames, 0 unparsed
+compilation 2 L613..1519 sfi=0x9b80101e21d tier=Maglev ord=1 name="big"
+  script "workloads/inlining.js"
+  phase L614..817 "Bytecode array" [bytecode]
+  phase L817..938 "After graph building" [graph]: 53 nodes, 2 blocks, 20 frame-lines, 0 annotations
+  phase L938..1059 "After propagating truncation" [graph]: 53 nodes, 2 blocks, 20 frame-lines, 0 annotations
+  phase L1059..1174 "After truncation" [graph]: 53 nodes, 2 blocks, 14 frame-lines, 0 annotations
+  phase L1174..1288 "After use marking" [graph]: 52 nodes, 2 blocks, 14 frame-lines, 0 annotations
+  phase L1288..1402 "After register allocation pre-processing" [graph]: 52 nodes, 2 blocks, 14 frame-lines, 0 annotations
+  phase L1402..1519 "After register allocation" [graph]: 56 nodes, 2 blocks, 14 frame-lines, 0 annotations
+  totals: 19 opcodes, 2 distinct frames, 0 unparsed
+compilation 3 L1519..3217 sfi=0x9b80101e13d tier=Maglev ord=1 name=""
+  script "workloads/inlining.js"
+  phase L1520..1619 "Bytecode array" [bytecode]
+  phase L1619..1674 "Inlining 0x09b80101e24d <SharedFunctionInfo outer> with bytecode" [inlining "outer"]
+  phase L1674..1723 "Inlining 0x09b80101e1ed <SharedFunctionInfo small> with bytecode" [inlining "small"]
+  phase L1723..1749 "Inlining 0x09b80101e1bd <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L1749..1775 "Inlining 0x09b80101e1bd <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L1775..1830 "Inlining 0x09b80101e24d <SharedFunctionInfo outer> with bytecode" [inlining "outer"]
+  phase L1830..1879 "Inlining 0x09b80101e1ed <SharedFunctionInfo small> with bytecode" [inlining "small"]
+  phase L1879..1905 "Inlining 0x09b80101e1bd <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L1905..1931 "Inlining 0x09b80101e1bd <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L1931..2152 "After graph building" [graph]: 78 nodes, 16 blocks, 46 frame-lines, 2 annotations
+  phase L2152..2373 "After propagating truncation" [graph]: 78 nodes, 16 blocks, 46 frame-lines, 2 annotations
+  phase L2373..2586 "After truncation" [graph]: 76 nodes, 16 blocks, 42 frame-lines, 2 annotations
+  phase L2586..2789 "After use marking" [graph]: 66 nodes, 16 blocks, 42 frame-lines, 2 annotations
+  phase L2789..2992 "After register allocation pre-processing" [graph]: 66 nodes, 16 blocks, 42 frame-lines, 2 annotations
+  phase L2992..3217 "After register allocation" [graph]: 86 nodes, 16 blocks, 42 frame-lines, 5 annotations
+  totals: 27 opcodes, 13 distinct frames, 0 unparsed

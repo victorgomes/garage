@@ -1,0 +1,23 @@
+lines: 104
+version: unknown
+raw L0..104 "[marking 0x* <JSFunction read (sfi = 0x*)> for optimization to MAGLEV, Conc…"
+event L0 marking name="read" sfi=0x9b80101e1d5 target=Maglev reason="hot and stable"
+event L1 compile-start name="read" sfi=0x9b80101e1d5 target=Maglev osr=false
+event L2 compile-done name="read" sfi=0x9b80101e1d5 target=Maglev osr=false
+event L3 marking name="" sfi=0x9b80101e16d target=Maglev reason="hot and stable"
+event L4 marking name="read" sfi=0x9b80101e1d5 target=Turbofan reason="hot and stable"
+event L5 compile-start name="read" sfi=0x9b80101e1d5 target=Turbofan osr=false
+event L6 compile-done name="read" sfi=0x9b80101e1d5 target=Turbofan osr=false
+event L7 compile-start name="" sfi=0x9b80101e16d target=Maglev osr=true
+event L8 compile-done name="" sfi=0x9b80101e16d target=Maglev osr=true
+event L9 deopt kind=deopt-eager reason="Insufficient type feedback for object literal" name="" sfi=0x9b80101e16d tier=Maglev opt_id=Some(2) offset=Some(70)
+event L41 deopt-end invalidated=false
+event L42 deopt kind=deopt-eager reason="wrong map" name="read" sfi=0x9b80101e1d5 tier=Turbofan opt_id=Some(1) offset=Some(0)
+event L64 deopt-end invalidated=true
+event L65 marking name="read" sfi=0x9b80101e1d5 target=Maglev reason="hot and stable"
+event L66 compile-start name="read" sfi=0x9b80101e1d5 target=Maglev osr=false
+event L67 compile-done name="read" sfi=0x9b80101e1d5 target=Maglev osr=false
+event L68 compile-start name="" sfi=0x9b80101e16d target=Maglev osr=true
+event L69 compile-done name="" sfi=0x9b80101e16d target=Maglev osr=true
+event L70 deopt kind=deopt-eager reason="Insufficient type feedback for generic global access" name="" sfi=0x9b80101e16d tier=Maglev opt_id=Some(4) offset=Some(133)
+event L102 deopt-end invalidated=false

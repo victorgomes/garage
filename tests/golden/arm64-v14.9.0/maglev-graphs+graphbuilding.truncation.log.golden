@@ -1,0 +1,46 @@
+lines: 3586
+version: 14.9
+compilation 0 L0..354 sfi=0x9b80101e175 tier=Maglev ord=1 name="trunc"
+  script "workloads/truncation.js"
+  phase L1..96 "Bytecode array" [bytecode]
+  phase L96..139 "After graph building" [graph]: 21 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L139..182 "After propagating truncation" [graph]: 21 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L182..225 "After truncation" [graph]: 21 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L225..267 "After use marking" [graph]: 20 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L267..309 "After register allocation pre-processing" [graph]: 20 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L309..354 "After register allocation" [graph]: 24 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  totals: 16 opcodes, 2 distinct frames, 0 unparsed
+compilation 1 L354..1798 sfi=0x9b80101e10d tier=Maglev ord=1 name=""
+  script "workloads/truncation.js"
+  phase L355..518 "Bytecode array" [bytecode]
+  phase L518..673 "Inlining 0x09b80101e175 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
+  phase L673..822 "Inlining 0x09b80101e175 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
+  phase L822..989 "After graph building" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
+  phase L989..1156 "After propagating truncation" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
+  phase L1156..1323 "After truncation" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
+  phase L1323..1477 "After use marking" [graph]: 65 nodes, 10 blocks, 18 frame-lines, 2 annotations
+  phase L1477..1631 "After register allocation pre-processing" [graph]: 65 nodes, 10 blocks, 18 frame-lines, 2 annotations
+  phase L1631..1798 "After register allocation" [graph]: 77 nodes, 10 blocks, 18 frame-lines, 4 annotations
+  totals: 28 opcodes, 9 distinct frames, 0 unparsed
+compilation 2 L1798..2160 sfi=0x9b80101e175 tier=Maglev ord=2 name="trunc"
+  script "workloads/truncation.js"
+  phase L1799..1896 "Bytecode array" [bytecode]
+  phase L1896..1940 "After graph building" [graph]: 23 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L1940..1984 "After propagating truncation" [graph]: 23 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L1984..2028 "After truncation" [graph]: 23 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L2028..2071 "After use marking" [graph]: 22 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L2071..2114 "After register allocation pre-processing" [graph]: 22 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L2114..2160 "After register allocation" [graph]: 26 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  totals: 16 opcodes, 2 distinct frames, 0 unparsed
+compilation 3 L2160..3586 sfi=0x9b80101e10d tier=Maglev ord=2 name=""
+  script "workloads/truncation.js"
+  phase L2161..2324 "Bytecode array" [bytecode]
+  phase L2324..2480 "Inlining 0x09b80101e175 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
+  phase L2480..2630 "Inlining 0x09b80101e175 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
+  phase L2630..2795 "After graph building" [graph]: 80 nodes, 10 blocks, 14 frame-lines, 2 annotations
+  phase L2795..2960 "After propagating truncation" [graph]: 80 nodes, 10 blocks, 14 frame-lines, 2 annotations
+  phase L2960..3125 "After truncation" [graph]: 80 nodes, 10 blocks, 14 frame-lines, 2 annotations
+  phase L3125..3274 "After use marking" [graph]: 64 nodes, 10 blocks, 14 frame-lines, 2 annotations
+  phase L3274..3423 "After register allocation pre-processing" [graph]: 64 nodes, 10 blocks, 14 frame-lines, 2 annotations
+  phase L3423..3586 "After register allocation" [graph]: 76 nodes, 10 blocks, 14 frame-lines, 5 annotations
+  totals: 27 opcodes, 7 distinct frames, 0 unparsed

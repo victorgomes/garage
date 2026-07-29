@@ -1,0 +1,85 @@
+lines: 5804
+version: 15.2
+compilation 0 L1..784 sfi=0x9b80101e32d tier=Maglev ord=1 name="mayThrow"
+  script "workloads/throw.js"
+  phase L4..89 "Bytecode array" [bytecode]
+  phase L89..195 "Maglev graph building" [graph]: 56 nodes, 4 blocks, 12 frame-lines, 0 annotations
+  phase L195..301 "Truncation propagation" [graph]: 56 nodes, 4 blocks, 12 frame-lines, 0 annotations
+  phase L301..399 "Truncation" [graph]: 56 nodes, 4 blocks, 4 frame-lines, 0 annotations
+  phase L399..497 "Phi untagging" [graph]: 56 nodes, 4 blocks, 4 frame-lines, 0 annotations
+  phase L497..589 "AnyUseMarking" [graph]: 51 nodes, 4 blocks, 4 frame-lines, 0 annotations
+  phase L589..681 "Dead nodes sweeping" [graph]: 51 nodes, 4 blocks, 4 frame-lines, 0 annotations
+  phase L681..784 "Register allocation" [graph]: 61 nodes, 4 blocks, 4 frame-lines, 2 annotations
+  totals: 21 opcodes, 3 distinct frames, 0 unparsed
+compilation 1 L784..1076 sfi=0x9b80101e35d tier=Maglev ord=1 name="risky"
+  script "workloads/throw.js"
+  phase L787..847 "Bytecode array" [bytecode]
+  phase L847..891 "Maglev graph building" [graph]: 20 nodes, 3 blocks, 6 frame-lines, 0 annotations
+  phase L891..935 "Phi untagging" [graph]: 20 nodes, 3 blocks, 6 frame-lines, 0 annotations
+  phase L935..979 "AnyUseMarking" [graph]: 20 nodes, 3 blocks, 6 frame-lines, 0 annotations
+  phase L979..1023 "Dead nodes sweeping" [graph]: 20 nodes, 3 blocks, 6 frame-lines, 0 annotations
+  phase L1023..1076 "Register allocation" [graph]: 28 nodes, 3 blocks, 6 frame-lines, 2 annotations
+  totals: 15 opcodes, 4 distinct frames, 0 unparsed
+compilation 2 L1076..1301 sfi=0x9b80101e38d tier=Maglev ord=1 name="bare"
+  script "workloads/throw.js"
+  phase L1079..1130 "Bytecode array" [bytecode]
+  phase L1130..1163 "Maglev graph building" [graph]: 15 nodes, 3 blocks, 2 frame-lines, 0 annotations
+  phase L1163..1196 "Phi untagging" [graph]: 15 nodes, 3 blocks, 2 frame-lines, 0 annotations
+  phase L1196..1229 "AnyUseMarking" [graph]: 15 nodes, 3 blocks, 2 frame-lines, 0 annotations
+  phase L1229..1262 "Dead nodes sweeping" [graph]: 15 nodes, 3 blocks, 2 frame-lines, 0 annotations
+  phase L1262..1301 "Register allocation" [graph]: 20 nodes, 3 blocks, 2 frame-lines, 2 annotations
+  totals: 10 opcodes, 2 distinct frames, 0 unparsed
+compilation 3 L1301..2144 sfi=0x9b80101e32d tier=Maglev ord=2 name="mayThrow"
+  script "workloads/throw.js"
+  phase L1304..1390 "Bytecode array" [bytecode]
+  phase L1390..1504 "Maglev graph building" [graph]: 61 nodes, 4 blocks, 14 frame-lines, 0 annotations
+  phase L1504..1618 "Truncation propagation" [graph]: 61 nodes, 4 blocks, 14 frame-lines, 0 annotations
+  phase L1618..1724 "Truncation" [graph]: 61 nodes, 4 blocks, 6 frame-lines, 0 annotations
+  phase L1724..1830 "Phi untagging" [graph]: 61 nodes, 4 blocks, 6 frame-lines, 0 annotations
+  phase L1830..1930 "AnyUseMarking" [graph]: 56 nodes, 4 blocks, 6 frame-lines, 0 annotations
+  phase L1930..2030 "Dead nodes sweeping" [graph]: 56 nodes, 4 blocks, 6 frame-lines, 0 annotations
+  phase L2030..2144 "Register allocation" [graph]: 69 nodes, 4 blocks, 6 frame-lines, 2 annotations
+  totals: 22 opcodes, 6 distinct frames, 0 unparsed
+compilation 4 L2144..2562 sfi=0x9b80101e35d tier=Maglev ord=2 name="risky"
+  script "workloads/throw.js"
+  phase L2147..2207 "Bytecode array" [bytecode]
+  phase L2207..2280 "Maglev graph building" [graph]: 37 nodes, 4 blocks, 8 frame-lines, 2 annotations
+  phase L2280..2353 "Phi untagging" [graph]: 37 nodes, 4 blocks, 8 frame-lines, 2 annotations
+  phase L2353..2425 "AnyUseMarking" [graph]: 36 nodes, 4 blocks, 8 frame-lines, 2 annotations
+  phase L2425..2487 "Dead nodes sweeping" [graph]: 27 nodes, 4 blocks, 8 frame-lines, 2 annotations
+  phase L2487..2562 "Register allocation" [graph]: 37 nodes, 4 blocks, 8 frame-lines, 6 annotations
+  totals: 25 opcodes, 6 distinct frames, 0 unparsed
+compilation 5 L2562..2862 sfi=0x9b80101e38d tier=Maglev ord=2 name="bare"
+  script "workloads/throw.js"
+  phase L2565..2616 "Bytecode array" [bytecode]
+  phase L2616..2669 "Maglev graph building" [graph]: 29 nodes, 4 blocks, 3 frame-lines, 0 annotations
+  phase L2669..2722 "Phi untagging" [graph]: 29 nodes, 4 blocks, 3 frame-lines, 0 annotations
+  phase L2722..2773 "AnyUseMarking" [graph]: 27 nodes, 4 blocks, 3 frame-lines, 0 annotations
+  phase L2773..2814 "Dead nodes sweeping" [graph]: 18 nodes, 4 blocks, 3 frame-lines, 0 annotations
+  phase L2814..2862 "Register allocation" [graph]: 24 nodes, 4 blocks, 3 frame-lines, 2 annotations
+  totals: 17 opcodes, 4 distinct frames, 0 unparsed
+compilation 6 L2862..4623 sfi=0x9b80101e2b5 tier=Maglev ord=1 name=""
+  script "workloads/throw.js"
+  phase L2865..2953 "Bytecode array" [bytecode]
+  phase L2953..3013 "Inlining 0x09b80101e35d <SharedFunctionInfo risky> with bytecode" [inlining "risky"]
+  phase L3013..3064 "Inlining 0x09b80101e38d <SharedFunctionInfo bare> with bytecode" [inlining "bare"]
+  phase L3064..3124 "Inlining 0x09b80101e35d <SharedFunctionInfo risky> with bytecode" [inlining "risky"]
+  phase L3124..3175 "Inlining 0x09b80101e38d <SharedFunctionInfo bare> with bytecode" [inlining "bare"]
+  phase L3175..3475 "Maglev graph building" [graph]: 129 nodes, 20 blocks, 47 frame-lines, 8 annotations
+  phase L3475..3777 "Phi untagging" [graph]: 131 nodes, 20 blocks, 47 frame-lines, 8 annotations
+  phase L3777..4062 "AnyUseMarking" [graph]: 114 nodes, 20 blocks, 47 frame-lines, 8 annotations
+  phase L4062..4312 "Dead nodes sweeping" [graph]: 83 nodes, 20 blocks, 47 frame-lines, 8 annotations
+  phase L4312..4623 "Register allocation" [graph]: 129 nodes, 20 blocks, 47 frame-lines, 24 annotations
+  totals: 35 opcodes, 33 distinct frames, 0 unparsed
+compilation 7 L4623..5804 sfi=0x9b80101e2b5 tier=Maglev ord=2 name=""
+  script "workloads/throw.js"
+  phase L4626..4714 "Bytecode array" [bytecode]
+  phase L4714..4765 "Inlining 0x09b80101e38d <SharedFunctionInfo bare> with bytecode" [inlining "bare"]
+  phase L4765..4816 "Inlining 0x09b80101e38d <SharedFunctionInfo bare> with bytecode" [inlining "bare"]
+  phase L4816..5019 "Maglev graph building" [graph]: 94 nodes, 14 blocks, 25 frame-lines, 4 annotations
+  phase L5019..5223 "Phi untagging" [graph]: 95 nodes, 14 blocks, 25 frame-lines, 4 annotations
+  phase L5223..5414 "AnyUseMarking" [graph]: 82 nodes, 14 blocks, 25 frame-lines, 4 annotations
+  phase L5414..5587 "Dead nodes sweeping" [graph]: 66 nodes, 14 blocks, 25 frame-lines, 4 annotations
+  phase L5587..5804 "Register allocation" [graph]: 103 nodes, 14 blocks, 25 frame-lines, 12 annotations
+  totals: 36 opcodes, 23 distinct frames, 0 unparsed
+raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."

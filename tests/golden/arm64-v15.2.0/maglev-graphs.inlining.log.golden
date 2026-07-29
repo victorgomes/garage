@@ -1,0 +1,55 @@
+lines: 3402
+version: 15.2
+compilation 0 L1..163 sfi=0x9b80101e315 tier=Maglev ord=1 name="tiny"
+  script "workloads/inlining.js"
+  phase L4..18 "Bytecode array" [bytecode]
+  phase L18..47 "Maglev graph building" [graph]: 13 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L47..76 "Phi untagging" [graph]: 13 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L76..104 "AnyUseMarking" [graph]: 12 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L104..132 "Dead nodes sweeping" [graph]: 12 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L132..163 "Register allocation" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 2 annotations
+  totals: 12 opcodes, 2 distinct frames, 0 unparsed
+compilation 1 L163..686 sfi=0x9b80101e3a5 tier=Maglev ord=1 name="outer"
+  script "workloads/inlining.js"
+  phase L166..218 "Bytecode array" [bytecode]
+  phase L218..264 "Inlining 0x09b80101e345 <SharedFunctionInfo small> with bytecode" [inlining "small"]
+  phase L264..278 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L278..292 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L292..369 "Maglev graph building" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
+  phase L369..446 "Phi untagging" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
+  phase L446..523 "AnyUseMarking" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
+  phase L523..600 "Dead nodes sweeping" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
+  phase L600..686 "Register allocation" [graph]: 35 nodes, 5 blocks, 18 frame-lines, 2 annotations
+  totals: 15 opcodes, 7 distinct frames, 0 unparsed
+compilation 2 L686..1564 sfi=0x9b80101e375 tier=Maglev ord=1 name="big"
+  script "workloads/inlining.js"
+  phase L689..775 "Bytecode array" [bytecode]
+  phase L775..896 "Maglev graph building" [graph]: 53 nodes, 2 blocks, 20 frame-lines, 0 annotations
+  phase L896..1017 "Truncation propagation" [graph]: 53 nodes, 2 blocks, 20 frame-lines, 0 annotations
+  phase L1017..1126 "Truncation" [graph]: 53 nodes, 2 blocks, 8 frame-lines, 0 annotations
+  phase L1126..1235 "Phi untagging" [graph]: 53 nodes, 2 blocks, 8 frame-lines, 0 annotations
+  phase L1235..1343 "AnyUseMarking" [graph]: 52 nodes, 2 blocks, 8 frame-lines, 0 annotations
+  phase L1343..1451 "Dead nodes sweeping" [graph]: 52 nodes, 2 blocks, 8 frame-lines, 0 annotations
+  phase L1451..1564 "Register allocation" [graph]: 56 nodes, 2 blocks, 8 frame-lines, 2 annotations
+  totals: 20 opcodes, 2 distinct frames, 0 unparsed
+compilation 3 L1564..3401 sfi=0x9b80101e295 tier=Maglev ord=1 name=""
+  script "workloads/inlining.js"
+  phase L1567..1655 "Bytecode array" [bytecode]
+  phase L1655..1707 "Inlining 0x09b80101e3a5 <SharedFunctionInfo outer> with bytecode" [inlining "outer"]
+  phase L1707..1753 "Inlining 0x09b80101e345 <SharedFunctionInfo small> with bytecode" [inlining "small"]
+  phase L1753..1767 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L1767..1781 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L1781..1833 "Inlining 0x09b80101e3a5 <SharedFunctionInfo outer> with bytecode" [inlining "outer"]
+  phase L1833..1879 "Inlining 0x09b80101e345 <SharedFunctionInfo small> with bytecode" [inlining "small"]
+  phase L1879..1893 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L1893..1907 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L1907..2128 "Maglev graph building" [graph]: 78 nodes, 16 blocks, 46 frame-lines, 2 annotations
+  phase L2128..2349 "Truncation propagation" [graph]: 78 nodes, 16 blocks, 46 frame-lines, 2 annotations
+  phase L2349..2562 "Truncation" [graph]: 76 nodes, 16 blocks, 42 frame-lines, 2 annotations
+  phase L2562..2775 "Phi untagging" [graph]: 76 nodes, 16 blocks, 42 frame-lines, 2 annotations
+  phase L2775..2976 "AnyUseMarking" [graph]: 64 nodes, 16 blocks, 42 frame-lines, 2 annotations
+  phase L2976..3177 "Dead nodes sweeping" [graph]: 64 nodes, 16 blocks, 42 frame-lines, 2 annotations
+  phase L3177..3401 "Register allocation" [graph]: 84 nodes, 16 blocks, 42 frame-lines, 6 annotations
+  totals: 29 opcodes, 13 distinct frames, 0 unparsed
+raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."
+raw L3401..3402 "81635"

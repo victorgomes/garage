@@ -1,0 +1,52 @@
+lines: 3204
+version: 15.2
+compilation 0 L1..331 sfi=0x9b80101e2cd tier=Maglev ord=1 name="trunc"
+  script "workloads/truncation.js"
+  phase L4..28 "Bytecode array" [bytecode]
+  phase L28..71 "Maglev graph building" [graph]: 21 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L71..114 "Truncation propagation" [graph]: 21 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L114..157 "Truncation" [graph]: 21 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L157..200 "Phi untagging" [graph]: 21 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L200..242 "AnyUseMarking" [graph]: 20 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L242..284 "Dead nodes sweeping" [graph]: 20 nodes, 2 blocks, 4 frame-lines, 0 annotations
+  phase L284..331 "Register allocation" [graph]: 24 nodes, 2 blocks, 4 frame-lines, 2 annotations
+  totals: 16 opcodes, 2 distinct frames, 0 unparsed
+compilation 1 L331..1610 sfi=0x9b80101e265 tier=Maglev ord=1 name=""
+  script "workloads/truncation.js"
+  phase L334..423 "Bytecode array" [bytecode]
+  phase L423..447 "Inlining 0x09b80101e2cd <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
+  phase L447..471 "Inlining 0x09b80101e2cd <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
+  phase L471..638 "Maglev graph building" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
+  phase L638..805 "Truncation propagation" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
+  phase L805..972 "Truncation" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
+  phase L972..1139 "Phi untagging" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
+  phase L1139..1291 "AnyUseMarking" [graph]: 63 nodes, 10 blocks, 18 frame-lines, 2 annotations
+  phase L1291..1443 "Dead nodes sweeping" [graph]: 63 nodes, 10 blocks, 18 frame-lines, 2 annotations
+  phase L1443..1610 "Register allocation" [graph]: 75 nodes, 10 blocks, 18 frame-lines, 6 annotations
+  totals: 30 opcodes, 9 distinct frames, 0 unparsed
+compilation 2 L1610..1947 sfi=0x9b80101e2cd tier=Maglev ord=2 name="trunc"
+  script "workloads/truncation.js"
+  phase L1613..1637 "Bytecode array" [bytecode]
+  phase L1637..1681 "Maglev graph building" [graph]: 23 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L1681..1725 "Truncation propagation" [graph]: 23 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L1725..1769 "Truncation" [graph]: 23 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L1769..1813 "Phi untagging" [graph]: 23 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L1813..1856 "AnyUseMarking" [graph]: 22 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L1856..1899 "Dead nodes sweeping" [graph]: 22 nodes, 2 blocks, 3 frame-lines, 0 annotations
+  phase L1899..1947 "Register allocation" [graph]: 26 nodes, 2 blocks, 3 frame-lines, 2 annotations
+  totals: 16 opcodes, 2 distinct frames, 0 unparsed
+compilation 3 L1947..3203 sfi=0x9b80101e265 tier=Maglev ord=2 name=""
+  script "workloads/truncation.js"
+  phase L1950..2039 "Bytecode array" [bytecode]
+  phase L2039..2063 "Inlining 0x09b80101e2cd <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
+  phase L2063..2087 "Inlining 0x09b80101e2cd <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
+  phase L2087..2252 "Maglev graph building" [graph]: 80 nodes, 10 blocks, 14 frame-lines, 2 annotations
+  phase L2252..2417 "Truncation propagation" [graph]: 80 nodes, 10 blocks, 14 frame-lines, 2 annotations
+  phase L2417..2582 "Truncation" [graph]: 80 nodes, 10 blocks, 14 frame-lines, 2 annotations
+  phase L2582..2747 "Phi untagging" [graph]: 80 nodes, 10 blocks, 14 frame-lines, 2 annotations
+  phase L2747..2894 "AnyUseMarking" [graph]: 62 nodes, 10 blocks, 14 frame-lines, 2 annotations
+  phase L2894..3041 "Dead nodes sweeping" [graph]: 62 nodes, 10 blocks, 14 frame-lines, 2 annotations
+  phase L3041..3203 "Register allocation" [graph]: 74 nodes, 10 blocks, 14 frame-lines, 6 annotations
+  totals: 29 opcodes, 7 distinct frames, 0 unparsed
+raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."
+raw L3203..3204 "-309698352"

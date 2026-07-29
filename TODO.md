@@ -48,12 +48,10 @@ spanning every feature in the plan.
 
 ### Carried into Phase 2 from Phase 0
 
-- [ ] **0.6. Version-keyed marker TOML**: phase names come from
-  `src/maglev/maglev-phase.h` `PhaseName()`, which is a generated-from-source
-  table, not an observed one. Needs a version axis (14.9 and 15.2 share no phase
-  names). Folds into 2.2.
-- [ ] **0.7. Golden-test harness** over the corpus, keyed off `manifest.json`'s
-  `reproducible` flag. Folds into 2.7.
+- [x] **0.6. Version-keyed marker TOML** — done in 2.2
+  ([`assets/markers.toml`](assets/markers.toml)).
+- [x] **0.7. Golden-test harness** — done in 2.7, with one deliberate deviation
+  from "key off the `reproducible` flag"; see the Phase 2 notes.
 
 ---
 
@@ -147,9 +145,39 @@ memory becomes the binding constraint.
 
 ---
 
-## Phase 2: Data Model, Indexer & Maglev Parser (only)
+## Phase 2: Data Model, Indexer & Maglev Parser (only)  ✅ done
 
-- [ ] **2.1. Core types**: `CompilationKey` (**SFI address** — the correlation
+Notes on what the fixtures taught beyond the spike, and the deviations:
+
+- **Deopt frames print asymmetrically**: eager frames come *before* the node
+  they belong to, lazy/throw frames *after* it. The spike said "attach to the
+  preceding node" (§6); that is only true for half of them. The parser patches
+  eager-frame attachment forward when the node line arrives.
+- **Inlining-trace lines are not confined to the preamble.** They print
+  *between* the `Bytecode array` / `Inlining …` banners too, so the decision
+  scanner runs over every unmatched line, not just pre-phase ones. An
+  invariant test locks in that `[ML:<id>]`-prefixed and prefix-free runs yield
+  identical decisions (2.8).
+- **`▼`/`▲` are gutter glyphs** the spike's box-drawing list missed, and
+  `with gap moves:` is a phi-edge sub-header that classifies as an annotation
+  (visible in goldens as the constant per-phase annotation counts).
+- **Golden coverage is wider than planned** (0.7 said "key off the
+  `reproducible` flag"): the summary is a canonicalized projection — no
+  timings, no host pointers, hex/decimal masking in raw labels — so all 27
+  fixtures per build except `concurrent.*` are goldens, including the
+  timing-volatile `mvp.*`/`trace-opt+deopt.*`/`trace-osr.*` ones. That is what
+  gives the 2.5 event parser golden coverage at all; spike §10 ("run through
+  the canonicalizer rather than trusting the flag") is the justification.
+  83 goldens total; `UPDATE_GOLDENS=1 cargo test --test golden` regenerates.
+- **Open-path cost measured** (release, M-series): 489.5 MiB / 6.85 M lines =
+  214 ms line index + 328 ms section index ≈ **550 ms**, ~4× inside the §12
+  budget, with 7 000 compilations found. ANSI-stripping allocations on
+  escape-bearing lines did not matter at this scale.
+- The event-line binder records `(sfi, tier, ordinal)` per compilation and the
+  OSR flag/offset with explicit [`Confidence`], per docs/correlation-keys.md —
+  the deopt→graph *jump* stays Phase 6.
+
+- [x] **2.1. Core types**: `CompilationKey` (**SFI address** — the correlation
   key, and the only stable identity when the function name is empty — function
   name, script, line, tier, compilation index, **OSR offset: Option**), `Tier`
   enum (incl. distinguishing OSR), `FunctionCompilation`, `Phase`, `BasicBlock`,
@@ -173,7 +201,7 @@ memory becomes the binding constraint.
     Phase 0.3 §12.
   - `RawSection` keeps both the original byte range (ANSI preserved, for the raw
     view) and a stripped view (for matching). d8 colorizes piped output.
-- [ ] **2.2. Section indexer**: single streaming pass that finds section
+- [x] **2.2. Section indexer**: single streaming pass that finds section
   boundaries (table-driven markers, embedded TOML) and records byte ranges —
   **without parsing bodies**. This is what makes 1 GB files open instantly.
   - Anchor compilations on `Compiling 0x… <JSFunction …> with <Tier>`, not on
@@ -182,20 +210,20 @@ memory becomes the binding constraint.
     affects register names inside node lines.
   - `----- Bytecode array -----` and `----- Inlining 0x… with bytecode -----`
     share the phase-banner grammar but are not phases; match them specially.
-- [ ] **2.3. Lazy per-compilation parsing** on first view; parsed results cached.
-- [ ] **2.4. Maglev graph parser**: blocks (`b0:`, loop headers), node defs
+- [x] **2.3. Lazy per-compilation parsing** on first view; parsed results cached.
+- [x] **2.4. Maglev graph parser**: blocks (`b0:`, loop headers), node defs
   (`n10 = Int32Add n8, n9`), inputs/users, register allocation output, bytecode
   offsets, type feedback.
-- [ ] **2.5. Deopt/opt line parser** (`--trace-opt`, `--trace-deopt`) into
+- [x] **2.5. Deopt/opt line parser** (`--trace-opt`, `--trace-deopt`) into
   `TimelineEvent`s (timeline *UI* comes later; the data is cheap to keep now).
-- [ ] **2.6. Fallback raw sections** for anything unmatched, with `[unparsed]`
+- [x] **2.6. Fallback raw sections** for anything unmatched, with `[unparsed]`
   status; malformed input must never panic (fuzz test, see 5.4).
-- [ ] **2.7. Golden-file tests** over the Phase 0 corpus for everything above.
+- [x] **2.7. Golden-file tests** over the Phase 0 corpus for everything above.
   - Key off `manifest.json`'s `"reproducible"` flag (0.7). Note the
     `+deoptverbose` fixtures are `false` **only** because of the `(addr:0x…)`
     host pointer — masking it makes them exact, so they are still usable as
     goldens through the canonicalizer. Phase 0.3 §12.
-- [ ] **2.8. Annotation attachment rule (minimal)** (PLAN §6.1): unmatched lines
+- [x] **2.8. Annotation attachment rule (minimal)** (PLAN §6.1): unmatched lines
   inside an open compilation attach to the enclosing phase/transition as
   positioned annotations — never dropped, never exiled to an orphan raw
   section. Must handle "inside a compilation, no phase open yet": inlining

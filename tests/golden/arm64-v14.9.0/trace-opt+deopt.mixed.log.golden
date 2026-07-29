@@ -1,0 +1,29 @@
+lines: 27
+version: unknown
+raw L0..27 "[marking 0x* <JSFunction sum (sfi = 0x*)> for optimization to MAGLEV, Concu…"
+event L0 marking name="sum" sfi=0x9b80101e28d target=Maglev reason="hot and stable"
+event L1 compile-start name="sum" sfi=0x9b80101e28d target=Maglev osr=false
+event L2 compile-done name="sum" sfi=0x9b80101e28d target=Maglev osr=false
+event L3 marking name="flipflop" sfi=0x9b80101e2ed target=Maglev reason="hot and stable"
+event L4 compile-start name="flipflop" sfi=0x9b80101e2ed target=Maglev osr=false
+event L5 compile-done name="flipflop" sfi=0x9b80101e2ed target=Maglev osr=false
+event L6 marking name="scale" sfi=0x9b80101e2bd target=Maglev reason="hot and stable"
+event L7 compile-start name="scale" sfi=0x9b80101e2bd target=Maglev osr=false
+event L8 compile-done name="scale" sfi=0x9b80101e2bd target=Maglev osr=false
+event L9 deopt kind=deopt-eager reason="not a Smi" name="flipflop" sfi=0x9b80101e2ed tier=Maglev opt_id=Some(1) offset=Some(2)
+event L10 marking name="" sfi=0x9b80101e20d target=Maglev reason="hot and stable"
+event L11 marking name="flipflop" sfi=0x9b80101e2ed target=Maglev reason="hot and stable"
+event L12 compile-start name="flipflop" sfi=0x9b80101e2ed target=Maglev osr=false
+event L13 compile-done name="flipflop" sfi=0x9b80101e2ed target=Maglev osr=false
+event L14 marking name="sum" sfi=0x9b80101e28d target=Turbofan reason="hot and stable"
+event L15 compile-start name="sum" sfi=0x9b80101e28d target=Turbofan osr=false
+event L16 compile-done name="sum" sfi=0x9b80101e28d target=Turbofan osr=false
+event L17 marking name="flipflop" sfi=0x9b80101e2ed target=Turbofan reason="hot and stable"
+event L18 compile-start name="flipflop" sfi=0x9b80101e2ed target=Turbofan osr=false
+event L19 compile-done name="flipflop" sfi=0x9b80101e2ed target=Turbofan osr=false
+event L20 marking name="scale" sfi=0x9b80101e2bd target=Turbofan reason="hot and stable"
+event L21 compile-start name="scale" sfi=0x9b80101e2bd target=Turbofan osr=false
+event L22 compile-done name="scale" sfi=0x9b80101e2bd target=Turbofan osr=false
+event L23 compile-start name="" sfi=0x9b80101e20d target=Maglev osr=true
+event L24 compile-done name="" sfi=0x9b80101e20d target=Maglev osr=true
+event L25 deopt kind=deopt-eager reason="Insufficient type feedback for generic global access" name="" sfi=0x9b80101e20d tier=Maglev opt_id=Some(7) offset=Some(181)

@@ -12,6 +12,8 @@ use crossterm::event::{Event as CtEvent, KeyCode, KeyEvent, KeyEventKind, KeyMod
 use regex::Regex;
 
 use crate::event::Event;
+use crate::index::TraceIndex;
+use crate::parse::ParseCache;
 use crate::source::{LogBuffer, LogSource, SourceEvent};
 use crate::terminal::TerminalGuard;
 
@@ -34,6 +36,11 @@ pub struct Source {
     pub label: String,
     pub buffer: LogBuffer,
     pub state: SourceState,
+    /// Section boundaries and timeline events, built incrementally as bytes
+    /// arrive (TODO 2.2). Bodies stay unparsed until viewed.
+    pub index: TraceIndex,
+    /// Lazily parsed compilations (TODO 2.3), filled on first view.
+    pub parses: ParseCache,
 }
 
 pub struct App {
@@ -68,6 +75,8 @@ impl App {
                     label: s.label(),
                     buffer: LogBuffer::new(),
                     state: SourceState::Loading,
+                    index: TraceIndex::new(function_filter.clone()),
+                    parses: ParseCache::default(),
                 })
                 .collect(),
             active: 0,
@@ -183,10 +192,17 @@ impl App {
         };
 
         match event {
-            SourceEvent::Mapped { map, .. } => target.buffer.adopt_map(map),
-            SourceEvent::Chunk { bytes, .. } => target.buffer.append(&bytes),
+            SourceEvent::Mapped { map, .. } => {
+                target.buffer.adopt_map(map);
+                target.index.ingest(&target.buffer, false);
+            }
+            SourceEvent::Chunk { bytes, .. } => {
+                target.buffer.append(&bytes);
+                target.index.ingest(&target.buffer, false);
+            }
             SourceEvent::Eof { .. } => {
                 target.buffer.finish();
+                target.index.ingest(&target.buffer, true);
                 target.state = SourceState::Complete;
             }
             SourceEvent::Failed { error, .. } => {

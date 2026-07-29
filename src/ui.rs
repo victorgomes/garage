@@ -57,6 +57,14 @@ fn header_line(app: &App) -> Paragraph<'static> {
         )),
     ];
 
+    if !source.index.compilations.is_empty() {
+        spans.push(Span::raw(format!(
+            "   {} compilations, {} events",
+            source.index.compilations.len(),
+            source.index.events.len()
+        )));
+    }
+
     if app.sources.len() > 1 {
         spans.push(Span::raw(format!(
             "   [{}/{}] Tab to switch",

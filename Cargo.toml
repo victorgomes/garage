@@ -24,6 +24,7 @@ regex = "1.13"
 memmap2 = "0.9"
 anyhow = "1.0"
 thiserror = "2.0"
+toml = "0.8"
 
 # Diagnostics go to a file, never to the screen buffer (TODO 1.2).
 tracing = "0.1"
@@ -38,6 +39,11 @@ tracing-subscriber = { version = "0.3", default-features = false, features = [
 # on macOS — see the comment at the top of src/tty.rs.
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"
+
+[dev-dependencies]
+# The golden harness (tests/golden.rs) reads fixtures/*/manifest.json to key
+# tests off the recorded "reproducible" flag.
+serde_json = "1.0"
 
 [profile.release]
 lto = "fat"
