@@ -57,22 +57,93 @@ spanning every feature in the plan.
 
 ---
 
-## Phase 1: Project Skeleton & Terminal Infrastructure
+## Phase 1: Project Skeleton & Terminal Infrastructure  ✅ done
 
-- [ ] **1.1. Crate setup**: binary crate, MVP deps only (`ratatui`, `crossterm`,
-  `clap`, `regex`, `memmap2`, `anyhow`, `thiserror`); release profile with LTO.
-- [ ] **1.2. File-based internal logging** (`tracing` → `garage.log`) so
-  diagnostics never touch the TUI screen buffer.
-- [ ] **1.3. CLI parsing** (`clap`): `garage [FILE...]`, `garage -- <cmd>...`,
-  `--config`, `--debug`, `--function <name>` (parse-time prefilter).
-- [ ] **1.4. Input abstraction**: `LogSource` = `File` (mmap), `Stdin`, later
-  `Process`. Reader thread + channel into app state (no `tokio` unless wrapper
-  mode later justifies it).
-- [ ] **1.5. `/dev/tty` keyboard input** when stdin is the data pipe
-  (`d8 | garage`). Day-one requirement; test in tmux and over SSH.
-- [ ] **1.6. Terminal lifecycle**: raw mode, alt screen, **event-driven** redraw
-  (input / data / resize — no fixed 60 fps tick), clean restore on exit and in
-  the panic hook.
+- [x] **1.1. Crate setup** — binary **plus library** (`src/lib.rs`): the Phase 2
+  parsers and the golden suite (2.7) need the parsing half without a terminal.
+  MVP deps as planned, plus `tracing`/`tracing-subscriber` (1.2) and `libc`
+  (1.5). Release profile: fat LTO, one codegen unit, and line tables *kept* —
+  "a malformed trace must never panic" is a promise we will occasionally break,
+  and a usable backtrace in the bug report is worth a few hundred KB. The
+  Phase 0 spike is `exclude`d from the workspace so it stays dependency-free.
+- [x] **1.2. File-based internal logging** — `tracing` → `garage.log`, installed
+  only when asked for (`--debug`, or `GARAGE_LOG=<filter>`), so an ordinary run
+  does not drop a log file into whatever directory the user was in.
+  `--log-file` overrides the path.
+- [x] **1.3. CLI parsing** — `garage [FILE...]`, `garage -- <cmd>...`,
+  `--config`, `--debug`, `--function <regex>`, `--log-file`. argv is split at
+  the first `--` *before* clap sees it; clap would otherwise merge the wrapped
+  command into the file list and `garage -- d8 x.js` would be
+  indistinguishable from `garage d8 x.js`. `--function` is compiled at parse
+  time, so a bad regex fails on the command line rather than after the
+  alternate screen is up. Wrapper mode parses and is rejected with a pointer
+  to 9.4.
+- [x] **1.4. Input abstraction** — `LogSource::{File, Stdin}`, one detached
+  reader thread each, all feeding one `mpsc` channel; no `tokio`. Files are
+  mmapped (no copy, no read loop); stdin streams in 64 KiB chunks. `LogBuffer`
+  keeps bytes **verbatim**, escapes and all — the raw view needs d8's own
+  colours and the parser needs offsets that still match the file — and carries
+  an incrementally built line index. Threads are detached on purpose: joining
+  one blocked on a pipe that never closes is exactly the hang to avoid on quit.
+- [x] **1.5. `/dev/tty` keyboard input** — works, but not the way the plan
+  assumed. See below.
+- [x] **1.6. Terminal lifecycle** — raw mode, alt screen, event-driven redraw
+  (blocking `recv`, batched drain, no tick), restore on clean exit, on error,
+  and from the panic hook. The hook restores *before* delegating to the default
+  one, otherwise the panic message is printed into the alt screen and vanishes
+  with it. Mouse capture is deliberately **off**: it would take over the
+  terminal's own selection and break copy-paste.
+
+### What 1.5 actually took
+
+crossterm does fall back to `/dev/tty` when stdin is a pipe — but on macOS that
+descriptor **cannot be registered with `kqueue`** (`EINVAL`), so its event
+source fails to initialise and every keystroke is silently dropped. Measured in
+tmux:
+
+| descriptor | `mio` register |
+| :-- | :-- |
+| fd 0, a pty slave | OK |
+| `open("/dev/tty")` | `EINVAL` ← crossterm's fallback |
+| `open("/dev/ttys003")`, the *same* terminal | OK |
+
+`/dev/tty` is a clone device, `ttyname()` on such a descriptor answers
+`/dev/tty` (so the real path cannot be recovered from it), and `dup2`-ing it
+onto fd 0 does not help either — the rejection follows the open file
+description, not the descriptor number. The fix in [`src/tty.rs`](src/tty.rs):
+`ttyname(1)`/`ttyname(2)` still name the real device even when stdin is a pipe,
+so open *that*, and `dup2` it onto fd 0 after moving the trace pipe out of the
+way. crossterm's own `isatty(0)` check then takes the path that works, with no
+patching of crossterm.
+
+Two consequences worth keeping:
+
+- **Startup verifies the keyboard** with a zero-length `poll`. crossterm builds
+  its event source once, caches it, and surfaces failure only as an error from
+  a later `poll` — so without the check an unusable terminal yields a UI that
+  paints once and then ignores every key.
+- **No `Terminal::clear()` on startup.** It snapshots the cursor position first,
+  which crossterm implements as an `ESC[6n` round-trip whose retry loop has
+  neither backoff nor an attempt limit. A dead event source *or* a redirected
+  stdout (the query goes into the file; nothing answers) turns it into a 100%
+  CPU hang. Entering the alternate screen already gives a blank screen.
+
+Verified in tmux: file and piped sources, scrolling, resize, redirected stdout
+(0 bytes reached the redirect), missing file (non-fatal, `failed` badge, other
+sources still usable), binary input (`/bin/ls`, no panic), empty stream, the
+terminal destroyed underneath the process, and `q` while an endless producer is
+still writing. Panic restore checked with a temporary panic: message lands on
+the real screen, shell still usable, exit 101, and the panic is in the log.
+
+**Not verified: over SSH, and on Linux.** The fix should be a no-op on Linux —
+`/dev/tty` plus `epoll` works there — but that is reasoning, not a measurement.
+Folded into 5.4.
+
+Measured on the way: indexing a **489 MiB** trace takes **212 ms** (6.85 M
+lines, ~2.4 GB/s), so the naive newline scan is far inside the PLAN §12 budget
+and `memchr` is not needed yet. The line index costs 8 bytes per line — 55 MB
+for that file, ~11% of its size — which is the first thing to attack in 5.1 if
+memory becomes the binding constraint.
 
 ---
 
@@ -181,7 +252,10 @@ spanning every feature in the plan.
 - [ ] **5.3. Export**: `:export <file>` writes current view/selection as
   Markdown/plain text (for bugs and Gerrit comments).
 - [ ] **5.4. Robustness**: fuzz parsers with garbage/truncated input; terminal
-  matrix test (80×24, tmux, 16-color, SSH).
+  matrix test (80×24, tmux, 16-color, SSH). Must include **Linux and SSH** for
+  the fd-0 terminal handling from 1.5, which so far is only measured on macOS
+  under tmux — including the case where neither stdout nor stderr is a terminal
+  and `/dev/tty` is the only remaining route.
 - [ ] **5.5. README**: install, sample `d8` invocations, keymap, recommended
   flags for clean traces (`--no-concurrent-recompilation --predictable`, plus
   `--no-trace-with-compilation-id` when diffing runs). Note that the Maglev

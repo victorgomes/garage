@@ -1,0 +1,48 @@
+[workspace]
+# The Phase 0 parse spike is deliberately dependency-free and throwaway
+# (see spike/Cargo.toml). Keeping it out of the workspace keeps it that way,
+# and keeps its churn off garage's lockfile.
+exclude = ["spike"]
+
+[package]
+name = "garage"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+description = "Terminal UI for viewing, navigating and diffing V8 trace output"
+publish = false
+
+[dependencies]
+# TUI. ratatui re-exports the crossterm it was built against; the direct
+# crossterm dependency below must stay on the same version or the event and
+# backend types stop being the same types.
+ratatui = "0.30"
+crossterm = "0.29"
+
+clap = { version = "4.6", features = ["derive"] }
+regex = "1.13"
+memmap2 = "0.9"
+anyhow = "1.0"
+thiserror = "2.0"
+
+# Diagnostics go to a file, never to the screen buffer (TODO 1.2).
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", default-features = false, features = [
+    "std",
+    "fmt",
+    "env-filter",
+] }
+
+# dup/dup2/ttyname, for pointing fd 0 at the controlling terminal when stdin is
+# the data pipe. crossterm's own /dev/tty fallback cannot be watched by kqueue
+# on macOS — see the comment at the top of src/tty.rs.
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+# Not stripped, and line tables kept on purpose: "a malformed trace must never
+# panic the TUI" (PLAN §6) is a promise we will occasionally break, and a
+# usable backtrace in the bug report is worth the few hundred KB.
+debug = "line-tables-only"

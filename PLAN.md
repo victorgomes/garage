@@ -75,7 +75,16 @@ Auto-detect and categorize output from `d8` flags, including:
 ### 4.1. Input sources & pitfalls
 
 - **Piped stdin** (`d8 ... | garage`): when stdin is the data pipe, keyboard input
-  must be read from `/dev/tty`. This is a day-one requirement, not polish.
+  must come from the controlling terminal. This is a day-one requirement, not
+  polish.
+
+  > **Corrected in Phase 1.** "Read `/dev/tty`" is the wrong instruction on
+  > macOS: a descriptor opened from `/dev/tty` cannot be registered with
+  > `kqueue`, so crossterm's own fallback silently yields a UI that receives no
+  > keys at all. The controlling terminal has to be reached by its real device
+  > path — which `ttyname(1)`/`ttyname(2)` still report even when stdin is a
+  > pipe — and `dup2`'d onto fd 0. Details and measurements in
+  > [TODO.md](TODO.md) §1.5 and `src/tty.rs`.
 - **Files** (`garage trace.log`, `garage a.log b.log` for dual-run mode).
 - **Wrapper mode** (`garage -- d8 flags... script.js`): spawn `d8`, capture stdout
   and stderr with an explicit merge policy (tagged per-stream, ordered by arrival),
