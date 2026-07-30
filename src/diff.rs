@@ -46,6 +46,13 @@ const MAX_IDENTITY_HOPS: usize = 64;
 /// within one compilation they are identity, and across compilations node
 /// rows never reach text comparison (they are keyed structurally).
 pub fn canonicalize(text: &str) -> String {
+    // Leading indentation and the control-flow gutter are layout, not
+    // content: the schedule-id column appearing from Dead-nodes-sweeping on
+    // re-indents every line, and without this trim each one became a false
+    // delete+insert pair (found in review).
+    let text = text.trim_start_matches([
+        ' ', '│', '╭', '╰', '╮', '╯', '─', '►', '◄', '↓', '▼', '▲', '═',
+    ]);
     let mut out = String::with_capacity(text.len());
     let bytes = text.as_bytes();
     let mut i = 0;
@@ -120,6 +127,12 @@ pub enum RowStatus {
     Changed {
         opcode: bool,
         inputs: bool,
+        /// The operand payload changed: attached parameters, heap-object
+        /// operands (maps, constants), branch targets, the truncation
+        /// verdict, or the dead marker — everything a node says beyond its
+        /// opcode and input list (found in review: `Int32Constant(0)` →
+        /// `Int32Constant(7)` and retargeted branches used to read `Same`).
+        operands: bool,
         /// The input lists differ only because values were redirected
         /// through `Identity` nodes — the data flow is unchanged.
         rerouted: bool,
@@ -130,8 +143,12 @@ pub enum RowStatus {
         by: NodeId,
     },
     /// This node id exists on both sides but moved (its aligned position
-    /// changed), so the aligner shows it as leave+arrive rather than a pair.
-    Moved,
+    /// changed), so the aligner shows it as leave+arrive rather than a
+    /// pair. `changed` says its body also changed while moving (found in
+    /// review: the change used to vanish under the move).
+    Moved {
+        changed: bool,
+    },
 }
 
 /// The diffable projection of one phase view.
@@ -141,7 +158,10 @@ pub struct DiffSide {
     pub rows: Vec<ViewRow>,
     pub parsed: Arc<ParsedCompilation>,
     keys: Vec<Key>,
-    /// id → (opcode, raw inputs) for every real node row.
+    /// The node defined on each row, parallel to `rows` — how a
+    /// structurally-matched pair (different ids) finds its two shapes.
+    row_nodes: Vec<Option<NodeId>>,
+    /// id → shape for every real node row.
     nodes: HashMap<NodeId, NodeShape>,
     /// id → replacement target, from `nA: Identity [nB]` rows.
     identity: HashMap<NodeId, NodeId>,
@@ -163,6 +183,167 @@ enum Key {
 struct NodeShape {
     opcode: String,
     inputs: Vec<NodeId>,
+    /// Branch/jump targets, as block ids.
+    targets: Vec<u32>,
+    operands: Operands,
+}
+
+/// The operand payload of a node line, split by component because phases
+/// *drop* components without the node changing (register allocation stops
+/// printing truncation clauses and ranges): each component compares only
+/// when both sides print it — otherwise decoration-invisibility (PLAN §7.4)
+/// would collapse back into a text diff.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+struct Operands {
+    /// The group attached directly to the opcode token
+    /// (`Int32Constant(0)`, TF's `NumberConstant[0]`), input ids masked.
+    attached: String,
+    /// Every `<…>` heap-object operand in the detached tail
+    /// (`CheckMaps [n1] 0x… <Map…>`).
+    heap: String,
+    /// Detached `[…]` groups that carry meaning rather than location:
+    /// register/location groups (containing `|`) and `live range: […]` are
+    /// excluded; value ranges and Turboshaft parameter blocks survive.
+    brackets: String,
+    /// The `can`/`cannot truncate` verdict, when printed.
+    truncate: Option<bool>,
+    /// The `🪦` dead marker — only meaningful when the phase prints use
+    /// counts at all.
+    dead: Option<bool>,
+}
+
+impl Operands {
+    fn differs(&self, other: &Operands) -> Option<(String, String)> {
+        let both = |a: &String, b: &String| !a.is_empty() && !b.is_empty() && a != b;
+        if both(&self.attached, &other.attached) {
+            return Some((self.attached.clone(), other.attached.clone()));
+        }
+        if both(&self.heap, &other.heap) {
+            return Some((self.heap.clone(), other.heap.clone()));
+        }
+        if both(&self.brackets, &other.brackets) {
+            return Some((self.brackets.clone(), other.brackets.clone()));
+        }
+        if let (Some(a), Some(b)) = (self.truncate, other.truncate)
+            && a != b
+        {
+            let word = |v: bool| if v { "can truncate" } else { "cannot truncate" }.to_string();
+            return Some((word(a), word(b)));
+        }
+        if let (Some(a), Some(b)) = (self.dead, other.dead)
+            && a != b
+        {
+            let word = |v: bool| if v { "dead 🪦" } else { "live" }.to_string();
+            return Some((word(a), word(b)));
+        }
+        None
+    }
+}
+
+impl NodeShape {
+    /// Everything except the input list: opcode, targets, operands.
+    fn body_change(&self, other: &NodeShape) -> Option<(String, String)> {
+        if self.targets != other.targets {
+            let fmt = |t: &[u32]| {
+                t.iter()
+                    .map(|b| format!("b{b}"))
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            };
+            return Some((fmt(&self.targets), fmt(&other.targets)));
+        }
+        self.operands.differs(&other.operands)
+    }
+}
+
+/// Extracts the [`Operands`] of one node line (see the field docs for what
+/// is kept and what is decoration). All hex is masked through
+/// [`canonicalize`], so heap addresses compare by shape, not by run.
+fn operand_shape(text: &str, node: &crate::model::IRNode) -> Operands {
+    let mut shape = Operands::default();
+    let bytes = text.as_bytes();
+    let tail_start = node.opcode_span.end as usize;
+    if tail_start >= bytes.len() {
+        return shape;
+    }
+
+    let in_input_span = |at: usize| {
+        node.inputs
+            .iter()
+            .any(|r| (r.span.start as usize..r.span.end as usize).contains(&at))
+    };
+    let masked = |group_start: usize, group_end: usize| {
+        let mut piece = String::new();
+        let mut at = group_start;
+        while at < group_end {
+            if in_input_span(at) {
+                if !piece.ends_with('·') {
+                    piece.push('·');
+                }
+                at += 1;
+                continue;
+            }
+            let ch = text[at..].chars().next().unwrap_or('\u{fffd}');
+            piece.push(ch);
+            at += ch.len_utf8();
+        }
+        canonicalize(&piece)
+    };
+    let balanced = |from: usize, open: u8, close: u8| {
+        let mut depth = 0usize;
+        let mut i = from;
+        while i < bytes.len() {
+            if bytes[i] == open {
+                depth += 1;
+            } else if bytes[i] == close {
+                depth -= 1;
+                if depth == 0 {
+                    return i + 1;
+                }
+            }
+            i += 1;
+        }
+        i
+    };
+
+    let mut i = tail_start;
+    if bytes[i] == b'(' || bytes[i] == b'[' {
+        let close = if bytes[i] == b'(' { b')' } else { b']' };
+        let end = balanced(i, bytes[i], close);
+        shape.attached = masked(i, end);
+        i = end;
+    }
+
+    while i < bytes.len() {
+        match bytes[i] {
+            b'<' => {
+                let end = balanced(i, b'<', b'>');
+                shape.heap.push_str(&masked(i, end));
+                shape.heap.push(' ');
+                i = end;
+            }
+            b'[' => {
+                let end = balanced(i, b'[', b']');
+                let group = &text[i..end];
+                let liveness = text[..i].ends_with("live range: ");
+                let overlaps_input = (i..end).any(&in_input_span);
+                if !group.contains('|') && !liveness && !overlaps_input {
+                    shape.brackets.push_str(&masked(i, end));
+                    shape.brackets.push(' ');
+                }
+                i = end;
+            }
+            _ => i += 1,
+        }
+    }
+
+    if text.contains("cannot truncate") {
+        shape.truncate = Some(false);
+    } else if text.contains("can truncate") {
+        shape.truncate = Some(true);
+    }
+    shape.dead = node.uses.is_some().then_some(node.dead);
+    shape
 }
 
 /// Everything needed to build one side of a diff.
@@ -195,21 +376,42 @@ impl DiffSide {
             rows,
             parsed: Arc::clone(input.parsed),
             keys: Vec::new(),
+            row_nodes: Vec::new(),
             nodes: HashMap::new(),
             identity: HashMap::new(),
         };
 
+        let node_at = |row: &ViewRow| {
+            let (p, i) = row.info?;
+            match input.parsed.phases.get(p)?.infos.get(i)? {
+                LineInfo::Node(node) if node.id != SCHEDULE_ONLY => Some(node.clone()),
+                _ => None,
+            }
+        };
+
         // Canonical renumbering (7.2): definition order within the phase.
+        // Assigned in a full first pass so that forward references — loop
+        // phis consuming their back edge — renumber too; assigning while
+        // emitting keys left them on raw ids that never match across
+        // compilations (found in review).
         let mut canon: HashMap<NodeId, u32> = HashMap::new();
+        for row in &side.rows {
+            if let Some(node) = node_at(row) {
+                let n = canon.len() as u32;
+                canon.entry(node.id).or_insert(n);
+            }
+        }
 
         for row in &side.rows {
             let info = row
                 .info
                 .and_then(|(p, i)| input.parsed.phases.get(p)?.infos.get(i));
-            let key = match info {
-                Some(LineInfo::Banner) => Key::Banner,
-                Some(LineInfo::BlockHeader { block }) => Key::Header(*block),
-                Some(LineInfo::Node(node)) if node.id != SCHEDULE_ONLY => {
+            let node = node_at(row);
+            side.row_nodes.push(node.as_ref().map(|n| n.id));
+            let key = match (info, node) {
+                (Some(LineInfo::Banner), _) => Key::Banner,
+                (Some(LineInfo::BlockHeader { block }), _) => Key::Header(*block),
+                (_, Some(node)) => {
                     let opcode = input
                         .parsed
                         .opcodes
@@ -222,22 +424,21 @@ impl DiffSide {
                     {
                         side.identity.insert(node.id, *target);
                     }
+                    let text = line_text(input.buffer, row.line);
                     side.nodes.insert(
                         node.id,
                         NodeShape {
                             opcode: opcode.clone(),
                             inputs: inputs.clone(),
+                            targets: node.targets.iter().map(|t| t.block).collect(),
+                            operands: operand_shape(&text, &node),
                         },
                     );
-                    let n = canon.len() as u32;
-                    canon.entry(node.id).or_insert(n);
                     if by_id {
                         Key::Node(node.id)
                     } else {
                         // Structural key: opcode + canonically renumbered
-                        // inputs. Inputs defined later (loop phis) keep
-                        // their raw id offset into a disjoint space so the
-                        // hash stays deterministic.
+                        // inputs.
                         use std::hash::{Hash, Hasher};
                         let mut h = std::collections::hash_map::DefaultHasher::new();
                         opcode.hash(&mut h);
@@ -361,48 +562,86 @@ impl DiffModel {
                 Some(id) => format!("n{id} deleted"),
                 None => "line deleted".to_string(),
             }),
-            RowStatus::Moved => {
+            RowStatus::Moved { changed } => {
                 let id = node_id(&self.left, row.left).or(node_id(&self.right, row.right))?;
-                Some(format!("n{id} moved"))
+                if *changed {
+                    let detail = self
+                        .change_detail(id, id)
+                        .map(|d| format!(" · {d}"))
+                        .unwrap_or_default();
+                    Some(format!("n{id} moved and changed{detail}"))
+                } else {
+                    Some(format!("n{id} moved"))
+                }
             }
             RowStatus::Replaced { by } => {
                 let id = node_id(&self.left, row.left)?;
                 Some(format!("n{id} replaced by n{by} (Identity)"))
             }
-            RowStatus::Changed {
-                opcode,
-                inputs,
-                rerouted,
-            } => {
-                let id = node_id(&self.left, row.left)?;
-                let l = self.left.nodes.get(&id)?;
-                let r = self.right.nodes.get(&id)?;
-                let mut parts = Vec::new();
-                if *opcode {
-                    parts.push(format!("opcode {} → {}", l.opcode, r.opcode));
-                }
-                if *inputs {
-                    let list = |shape: &NodeShape| {
-                        shape
-                            .inputs
-                            .iter()
-                            .map(|n| format!("n{n}"))
-                            .collect::<Vec<_>>()
-                            .join(", ")
-                    };
-                    if *rerouted {
-                        parts.push(format!(
-                            "inputs rerouted via Identity: [{}] → [{}]",
-                            list(l),
-                            list(r)
-                        ));
-                    } else {
-                        parts.push(format!("inputs [{}] → [{}]", list(l), list(r)));
-                    }
-                }
-                Some(format!("n{id} changed: {}", parts.join(" · ")))
+            RowStatus::Changed { .. } => {
+                // Struct-matched pairs carry different ids per side.
+                let l_id = node_id(&self.left, row.left)?;
+                let r_id = node_id(&self.right, row.right).unwrap_or(l_id);
+                let detail = self.change_detail(l_id, r_id)?;
+                Some(format!("n{l_id} changed: {detail}"))
             }
         }
+    }
+
+    /// The concrete story of a changed pair, recomputed from the shapes so
+    /// it works for id-matched and struct-matched pairs alike.
+    fn change_detail(&self, l_id: NodeId, r_id: NodeId) -> Option<String> {
+        let l = self.left.nodes.get(&l_id)?;
+        let r = self.right.nodes.get(&r_id)?;
+        let mut parts = Vec::new();
+        if l.opcode != r.opcode {
+            parts.push(format!("opcode {} → {}", l.opcode, r.opcode));
+        }
+        if l.inputs != r.inputs && l_id == r_id {
+            let list = |shape: &NodeShape| {
+                shape
+                    .inputs
+                    .iter()
+                    .map(|n| format!("n{n}"))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            };
+            let rerouted = {
+                let via = |side: &DiffSide| {
+                    let a: Vec<NodeId> =
+                        l.inputs.iter().map(|&n| side.resolve_identity(n)).collect();
+                    let b: Vec<NodeId> =
+                        r.inputs.iter().map(|&n| side.resolve_identity(n)).collect();
+                    a == b
+                };
+                via(&self.right) || via(&self.left)
+            };
+            if rerouted {
+                parts.push(format!(
+                    "inputs rerouted via Identity: [{}] → [{}]",
+                    list(l),
+                    list(r)
+                ));
+            } else {
+                parts.push(format!("inputs [{}] → [{}]", list(l), list(r)));
+            }
+        }
+        if let Some((from, to)) = l.body_change(r) {
+            let clip = |s: String| {
+                if s.chars().count() > 48 {
+                    let mut t: String = s.chars().take(47).collect();
+                    t.push('…');
+                    t
+                } else {
+                    s
+                }
+            };
+            parts.push(format!("{} → {}", clip(from), clip(to)));
+        }
+        if parts.is_empty() {
+            return None;
+        }
+        Some(parts.join(" · "))
     }
 }
 
@@ -431,6 +670,14 @@ pub fn diff_phases(left: &SideInput, right: &SideInput) -> DiffModel {
                     let r = new_index + k;
                     let status = match &left_side.keys[l] {
                         Key::Node(id) => judge_pair(*id, &left_side, &right_side, &mut summary),
+                        // Structurally matched (different ids): opcode and
+                        // canonical inputs are equal by construction, but
+                        // the operand payload is not in the hash — compare
+                        // it (found in review: SmiConstant(3) vs
+                        // SmiConstant(7) matched and read Same).
+                        Key::Struct(_) => {
+                            judge_struct_pair((&left_side, l), (&right_side, r), &mut summary)
+                        }
                         _ => RowStatus::Same,
                     };
                     rows.push(DiffRow {
@@ -444,7 +691,13 @@ pub fn diff_phases(left: &SideInput, right: &SideInput) -> DiffModel {
                 old_index, old_len, ..
             } => {
                 for l in *old_index..old_index + old_len {
-                    let status = leave_status(&left_side.keys[l], &right_side, &mut summary, false);
+                    let status = leave_status(
+                        &left_side.keys[l],
+                        &left_side,
+                        &right_side,
+                        &mut summary,
+                        false,
+                    );
                     rows.push(DiffRow {
                         left: Some(l),
                         right: None,
@@ -456,7 +709,13 @@ pub fn diff_phases(left: &SideInput, right: &SideInput) -> DiffModel {
                 new_index, new_len, ..
             } => {
                 for r in *new_index..new_index + new_len {
-                    let status = leave_status(&right_side.keys[r], &left_side, &mut summary, true);
+                    let status = leave_status(
+                        &right_side.keys[r],
+                        &right_side,
+                        &left_side,
+                        &mut summary,
+                        true,
+                    );
                     rows.push(DiffRow {
                         left: None,
                         right: Some(r),
@@ -473,7 +732,13 @@ pub fn diff_phases(left: &SideInput, right: &SideInput) -> DiffModel {
                 // similar's Replace is Delete + Insert; keep the two runs
                 // adjacent so the eye can pair them.
                 for l in *old_index..old_index + old_len {
-                    let status = leave_status(&left_side.keys[l], &right_side, &mut summary, false);
+                    let status = leave_status(
+                        &left_side.keys[l],
+                        &left_side,
+                        &right_side,
+                        &mut summary,
+                        false,
+                    );
                     rows.push(DiffRow {
                         left: Some(l),
                         right: None,
@@ -481,7 +746,13 @@ pub fn diff_phases(left: &SideInput, right: &SideInput) -> DiffModel {
                     });
                 }
                 for r in *new_index..new_index + new_len {
-                    let status = leave_status(&right_side.keys[r], &left_side, &mut summary, true);
+                    let status = leave_status(
+                        &right_side.keys[r],
+                        &right_side,
+                        &left_side,
+                        &mut summary,
+                        true,
+                    );
                     rows.push(DiffRow {
                         left: None,
                         right: Some(r),
@@ -517,13 +788,19 @@ fn judge_pair(id: NodeId, left: &DiffSide, right: &DiffSide, summary: &mut Summa
 
     let opcode_changed = l.opcode != r.opcode;
     let inputs_changed = l.inputs != r.inputs;
-    if !opcode_changed && !inputs_changed {
+    let operands_changed = l.body_change(r).is_some() && !opcode_changed;
+    if !opcode_changed && !inputs_changed && !operands_changed {
         return RowStatus::Same;
     }
 
     // Rerouted-only: the lists differ, but resolving both through either
     // side's Identity map makes them agree — the values flowing in are the
-    // same ones under new names.
+    // same ones under new names. Cross-side resolution is sound *because*
+    // judge_pair only ever runs when both sides are the same compilation
+    // (Key::Node keying): the two id spaces are one space, and an Identity
+    // on either side genuinely describes the other side's value. Do not
+    // reuse this test across compilations, where the same id can name
+    // unrelated nodes.
     let rerouted = inputs_changed && !opcode_changed && {
         let via = |side: &DiffSide| {
             let l: Vec<NodeId> = l.inputs.iter().map(|&n| side.resolve_identity(n)).collect();
@@ -537,21 +814,65 @@ fn judge_pair(id: NodeId, left: &DiffSide, right: &DiffSide, summary: &mut Summa
     RowStatus::Changed {
         opcode: opcode_changed,
         inputs: inputs_changed,
+        operands: operands_changed,
         rerouted,
+    }
+}
+
+/// A structurally-matched pair: the hash already equates opcode and
+/// canonical inputs, so only the operand payload can differ.
+fn judge_struct_pair(
+    left: (&DiffSide, usize),
+    right: (&DiffSide, usize),
+    summary: &mut Summary,
+) -> RowStatus {
+    let (Some(&Some(l_id)), Some(&Some(r_id))) =
+        (left.0.row_nodes.get(left.1), right.0.row_nodes.get(right.1))
+    else {
+        return RowStatus::Same;
+    };
+    let (Some(l), Some(r)) = (left.0.nodes.get(&l_id), right.0.nodes.get(&r_id)) else {
+        return RowStatus::Same;
+    };
+    if l.operands.differs(&r.operands).is_none() && l.targets == r.targets {
+        return RowStatus::Same;
+    }
+    summary.nodes_changed += 1;
+    RowStatus::Changed {
+        opcode: false,
+        inputs: false,
+        operands: true,
+        rerouted: false,
     }
 }
 
 /// Status of an unmatched row: `Added`/`Deleted`, unless it is a node whose
 /// id still exists on the other side — then the node merely *moved* and
-/// saying "deleted" would be a lie.
-fn leave_status(key: &Key, other: &DiffSide, summary: &mut Summary, added: bool) -> RowStatus {
+/// saying "deleted" would be a lie. A move can carry a body change too; it
+/// must not swallow it (found in review).
+fn leave_status(
+    key: &Key,
+    own: &DiffSide,
+    other: &DiffSide,
+    summary: &mut Summary,
+    added: bool,
+) -> RowStatus {
     match key {
         Key::Node(id) if other.nodes.contains_key(id) => {
+            let changed = match (own.nodes.get(id), other.nodes.get(id)) {
+                (Some(a), Some(b)) => {
+                    a.opcode != b.opcode || a.inputs != b.inputs || a.body_change(b).is_some()
+                }
+                _ => false,
+            };
             // Count each moved node once, on its left-side (leave) row.
             if !added {
                 summary.nodes_moved += 1;
+                if changed {
+                    summary.nodes_changed += 1;
+                }
             }
-            RowStatus::Moved
+            RowStatus::Moved { changed }
         }
         Key::Node(_) | Key::Struct(_) => {
             if added {
@@ -625,10 +946,17 @@ mod tests {
             canonicalize("took 0.000, 1.110, 0.025 ms"),
             "took ·, ·, · ms"
         );
+        // Leading indentation and gutter glyphs are layout, not content: the
+        // schedule column re-indents whole phases (review finding M5).
         assert_eq!(
             canonicalize("  11: Foo [n9], 2 uses"),
-            "  11: Foo [n9], 2 uses"
+            "11: Foo [n9], 2 uses"
         );
+        assert_eq!(
+            canonicalize("      ↳ lazy @-1 (4 live vars)"),
+            canonicalize("         ↳ lazy @-1 (4 live vars)")
+        );
+        assert_eq!(canonicalize("│   ↓"), canonicalize("      ↓"));
         assert_eq!(canonicalize("(addr:0x124011b0fb8)"), "(addr:0x·)");
     }
 
@@ -717,6 +1045,7 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
             RowStatus::Changed {
                 opcode: false,
                 inputs: true,
+                operands: false,
                 rerouted: true
             }
         );
@@ -751,7 +1080,7 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
         let moved: Vec<&RowStatus> = m
             .rows
             .iter()
-            .filter(|r| r.status == RowStatus::Moved)
+            .filter(|r| matches!(r.status, RowStatus::Moved { .. }))
             .map(|r| &r.status)
             .collect();
         assert_eq!(moved.len(), 2, "one leave row, one arrive row");
@@ -787,11 +1116,13 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
                 &RowStatus::Changed {
                     opcode: true,
                     inputs: false,
+                    operands: false,
                     rerouted: false
                 },
                 &RowStatus::Changed {
                     opcode: false,
                     inputs: true,
+                    operands: false,
                     rerouted: false
                 },
             ]
@@ -846,6 +1177,230 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
             .filter(|r| r.left.is_some() && r.right.is_some())
             .count();
         assert!(matched >= 3, "banner, header, and two structural matches");
+    }
+
+    /// Review C1: changes carried only in the operand payload — constant
+    /// values, heap operands, branch targets, truncation verdicts — must
+    /// not read `Same`.
+    #[test]
+    fn payload_only_changes_are_reported() {
+        let m = diff(
+            "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- A -----
+ Block b0
+  25: Int32Constant(0), 1 uses
+  30: RootConstant(undefined_value), 1 uses
+  31: CheckMaps [n25] 0xaaaa <Map[HeapNumber]>, 1 uses
+  40: BranchIfToBooleanTrue [n25] b1 b2
+  26: Int32BitwiseOr [n25, n25], 1 uses, cannot truncate to int32
+----- B -----
+ Block b0
+  25: Int32Constant(7), 1 uses
+  30: RootConstant(null_value), 1 uses
+  31: CheckMaps [n25] 0xbbbb <Map[String]>, 1 uses
+  40: BranchIfToBooleanTrue [n25] b3 b2
+  26: Int32BitwiseOr [n25, n25], 1 uses, can truncate to int32 [-1, 1]
+",
+            0,
+            1,
+        );
+        let changed: Vec<_> = m
+            .rows
+            .iter()
+            .filter(|r| matches!(r.status, RowStatus::Changed { operands: true, .. }))
+            .collect();
+        assert_eq!(
+            changed.len(),
+            5,
+            "constant, root, map, branch target, truncation verdict all reported"
+        );
+        assert_eq!(m.summary.nodes_changed, 5);
+        // The details say what actually changed.
+        let details: Vec<String> = (0..m.rows.len())
+            .filter_map(|i| m.describe_row(i))
+            .collect();
+        assert!(
+            details.iter().any(|d| d.contains("(0) → (7)")),
+            "{details:?}"
+        );
+        assert!(
+            details.iter().any(|d| d.contains("b1 b2 → b3 b2")),
+            "{details:?}"
+        );
+        assert!(
+            details
+                .iter()
+                .any(|d| d.contains("cannot truncate → can truncate")),
+            "{details:?}"
+        );
+        // Map addresses compare canonicalized: same shape, different text —
+        // both are `<Map[…]>` payloads with masked hex, so the *names*
+        // differ, which is the change.
+        assert!(
+            details.iter().any(|d| d.contains("Map[HeapNumber]")),
+            "{details:?}"
+        );
+    }
+
+    /// Review M5 + PLAN §7.4: per-phase decorations — schedule ids, register
+    /// locations, live ranges, use counts, dropped truncation clauses,
+    /// indentation — must stay invisible.
+    #[test]
+    fn decorations_stay_invisible_to_the_diff() {
+        let m = diff(
+            "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- A -----
+ Block b0
+   9: CheckedSmiUntag [n2], 1 uses, cannot truncate to int32
+      ↳ lazy @-1 (4 live vars)
+  12: HeapConstant(0xaaaa <FeedbackCell>), 1 uses
+   ↓
+----- B -----
+ Block b0
+    9/9: CheckedSmiUntag [v5/n2:[x0|R|t]] → [x0|R|w32], live range: [9-11]
+         ↳ lazy @-1 (4 live vars)
+    1/12: HeapConstant(0xbbbb <FeedbackCell>) → v-1, live range: [1-12]
+      ↓
+",
+            0,
+            1,
+        );
+        assert_eq!(
+            m.summary,
+            Summary::default(),
+            "schedule ids, registers, live ranges, indentation: no changes"
+        );
+        assert!(m.rows.iter().all(|r| r.status == RowStatus::Same));
+    }
+
+    /// Review M2: a node that moved *and* changed reports both facts.
+    #[test]
+    fn moved_and_changed_reports_both() {
+        let m = diff(
+            "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- A -----
+ Block b0
+   3: Alpha [n1]
+   4: Beta
+ Block b1
+   5: Gamma
+----- B -----
+ Block b0
+   4: Beta
+ Block b1
+   5: Gamma
+   3: Alpha [n2]
+",
+            0,
+            1,
+        );
+        let moved: Vec<_> = m
+            .rows
+            .iter()
+            .filter(|r| matches!(r.status, RowStatus::Moved { changed: true }))
+            .collect();
+        assert_eq!(moved.len(), 2, "leave and arrive rows both say changed");
+        assert_eq!(m.summary.nodes_moved, 1);
+        assert_eq!(m.summary.nodes_changed, 1, "the input change is counted");
+        let details: Vec<String> = (0..m.rows.len())
+            .filter_map(|i| m.describe_row(i))
+            .collect();
+        assert!(
+            details.iter().any(|d| d.contains("moved and changed")),
+            "{details:?}"
+        );
+    }
+
+    /// Review m6: canonical renumbering must cover forward references (loop
+    /// phis consuming their back edge), or the same loop never matches
+    /// across compilations.
+    #[test]
+    fn cross_compilation_loop_phis_match_structurally() {
+        let trace = "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+ Block b0
+   1: InitialValue(a0)
+ Block b1
+   2: φ r0 (n1, n3)
+   3: Int32Add [n2, n1]
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+ Block b0
+  11: InitialValue(a0)
+ Block b1
+  12: φ r0 (n11, n13)
+  13: Int32Add [n12, n11]
+";
+        let (buffer, idx) = setup(trace);
+        let a = &idx.compilations[0];
+        let b = &idx.compilations[1];
+        let pa = Arc::new(crate::parse::maglev::parse_compilation(&buffer, a));
+        let pb = Arc::new(crate::parse::maglev::parse_compilation(&buffer, b));
+        let m = diff_phases(
+            &SideInput {
+                buffer: &buffer,
+                parsed: &pa,
+                section: a,
+                phase: 0,
+                comp_id: (0, 0),
+            },
+            &SideInput {
+                buffer: &buffer,
+                parsed: &pb,
+                section: b,
+                phase: 0,
+                comp_id: (0, 1),
+            },
+        );
+        assert_eq!(m.summary.nodes_added, 0, "{:?}", m.summary);
+        assert_eq!(m.summary.nodes_deleted, 0, "the phi matches despite ids");
+    }
+
+    /// Review C1 (structural half): structurally matched nodes with
+    /// different payloads report the payload change.
+    #[test]
+    fn cross_compilation_payload_change_is_reported() {
+        let trace = "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+ Block b0
+   4: SmiConstant(3)
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+ Block b0
+   9: SmiConstant(7)
+";
+        let (buffer, idx) = setup(trace);
+        let a = &idx.compilations[0];
+        let b = &idx.compilations[1];
+        let pa = Arc::new(crate::parse::maglev::parse_compilation(&buffer, a));
+        let pb = Arc::new(crate::parse::maglev::parse_compilation(&buffer, b));
+        let m = diff_phases(
+            &SideInput {
+                buffer: &buffer,
+                parsed: &pa,
+                section: a,
+                phase: 0,
+                comp_id: (0, 0),
+            },
+            &SideInput {
+                buffer: &buffer,
+                parsed: &pb,
+                section: b,
+                phase: 0,
+                comp_id: (0, 1),
+            },
+        );
+        assert_eq!(m.summary.nodes_changed, 1, "{:?}", m.summary);
+        assert!(
+            m.rows
+                .iter()
+                .any(|r| matches!(r.status, RowStatus::Changed { operands: true, .. })),
+        );
     }
 
     #[test]

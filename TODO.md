@@ -498,6 +498,34 @@ pin the fixed behavior.
 
 ---
 
+### Phase 7 review pass  ✅ resolved
+
+An independent review (probe-tested against HEAD and the corpus) surfaced
+13 findings (1 critical / 4 major / 8 minor); all resolved. The critical:
+matched node pairs compared only opcode + input ids, so **every change
+carried in the operand payload read `Same`** — `Int32Constant(0)` →
+`(7)`, `CheckMaps` against a different map, a retargeted branch, a flipped
+truncation verdict. Node shapes now carry branch targets and a
+component-wise operand payload (attached parameter group with input ids
+masked, `<…>` heap operands, meaningful detached brackets, truncation
+verdict, dead marker), each component compared only when both sides print
+it — so register-allocation output dropping the clauses still diffs
+clean, which a corpus-shaped test pins. Structurally-matched pairs
+(cross-compilation) get the same payload judgement (`SmiConstant(3)` vs
+`(7)` now reports). The majors: moved-and-changed nodes no longer swallow
+the change (`Moved { changed }`); split panes' title row is accounted for
+in mouse routing and paging; jump history refuses inside the diff (it
+re-paired the panes and misread its row coordinates); the canonicalizer
+trims indentation/gutter so the schedule column's re-indent no longer
+fabricates delete+insert pairs. Minors: canonical renumbering now runs as
+a first pass so loop-phi back edges match cross-compilation; the rerouted
+test's cross-side identity resolution is documented as same-compilation-
+only (it is sound there and unreachable elsewhere); `F` in diff uses the
+aligned row count; timeline toggling re-syncs the parked pane and drops
+the diff; `Ctrl+W` keeps the shared horizontal scroll; the help modal went
+two-column instead of silently truncating; closing a split zeroes the
+stale mouse rect; `d` on a collapsed function group expands the group too.
+
 ## Phase 8 (post-MVP): More Text Parsers  ✅ done (8.4 deliberately skipped)
 
 Method note, per the exhaustiveness goal set for this phase: every format

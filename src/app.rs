@@ -654,7 +654,15 @@ impl App {
                     } else {
                         self.viewport2_rect
                     };
+                    // Split panes render a title row (Borders::TOP), so the
+                    // first content row is one below the rect's origin
+                    // (found in review: clicks landed one row off).
                     let offset = (mouse.row - rect.y) as usize;
+                    let offset = if self.split.is_some() {
+                        offset.saturating_sub(1)
+                    } else {
+                        offset
+                    };
                     let len = self.viewport_len();
                     if len == 0 {
                         return;
@@ -737,7 +745,7 @@ impl App {
             Action::ToggleFollow => {
                 self.follow = !self.follow;
                 if self.follow {
-                    let len = self.view_model().len();
+                    let len = self.viewport_len();
                     self.cursor = len.saturating_sub(1);
                 }
                 self.status = format!("follow {}", if self.follow { "on" } else { "off" });
@@ -1311,6 +1319,16 @@ impl App {
         self.timeline_deopts_only = false;
         self.sidebar_scroll = 0;
         self.focus = Pane::Sidebar;
+        if self.split.is_some() {
+            // Pane selections are row indices of the *current* sidebar mode;
+            // the parked one would silently point at an arbitrary row of the
+            // new mode (found in review). Re-sync it and drop the diff.
+            self.diff = false;
+            self.other_view = ViewState {
+                selected: self.selected,
+                ..Default::default()
+            };
+        }
         // Clamp *before* reset_view: sync_event_cursor bails on an
         // out-of-range selection, and the clamp coming later left the panel
         // cursor unsynced (found in review).
@@ -1579,15 +1597,17 @@ impl App {
         if self.split.is_none() || pane == self.active_pane {
             return;
         }
-        let (cursor, top) = (self.cursor, self.top);
+        let (cursor, top, scroll_x) = (self.cursor, self.top, self.scroll_x);
         let current = self.view_state();
         let parked = std::mem::replace(&mut self.other_view, current);
         self.set_view_state(parked);
         if self.diff {
-            // The diff cursor ranges over the *shared* aligned rows; pane
-            // switching changes which side yank/status read, not the row.
+            // The diff cursor and scroll range over the *shared* aligned
+            // rows; pane switching changes which side yank/status read, not
+            // the position.
             self.cursor = cursor;
             self.top = top;
+            self.scroll_x = scroll_x;
         }
         self.active_pane = pane;
         self.cycle = None;
@@ -1613,6 +1633,10 @@ impl App {
                 self.split = None;
                 self.diff = false;
                 self.active_pane = 0;
+                // Mouse events drained in the same batch as the close must
+                // not route through the stale second-pane rect (found in
+                // review).
+                self.viewport2_rect = PaneRect::default();
                 self.status = "split closed".to_string();
             }
             Some(_) => {
@@ -1709,6 +1733,12 @@ impl App {
                     return false;
                 }
                 self.expanded.insert((self.active, *comp));
+                // Grouped mode gates phase rows behind the *group* too
+                // (found in review: d on a collapsed group found no rows).
+                let sfi = self.sources[self.active].index.compilations[*comp].key.sfi;
+                if self.grouped {
+                    self.expanded_groups.insert((self.active, sfi.0));
+                }
                 (*comp, first, last)
             }
             _ => {
@@ -2021,6 +2051,13 @@ impl App {
     }
 
     fn history_step(&mut self, direction: isize) {
+        if self.diff {
+            // History stores view-model positions; reinterpreting them as
+            // aligned diff rows re-pairs the diff and mislands the cursor
+            // (found in review). Same rule as folds and node jumps.
+            self.status = "jump history is off in diff view (d to leave)".to_string();
+            return;
+        }
         if direction < 0 {
             if self.jump_at == 0 {
                 self.status = "at oldest jump".to_string();
@@ -2315,7 +2352,7 @@ pub fn diff_gutter(status: &crate::diff::RowStatus) -> &'static str {
         RowStatus::Deleted => "− ",
         RowStatus::Changed { .. } => "~ ",
         RowStatus::Replaced { .. } => "→ ",
-        RowStatus::Moved => "≈ ",
+        RowStatus::Moved { .. } => "≈ ",
     }
 }
 

@@ -76,7 +76,10 @@ pub fn render(frame: &mut Frame, app: &mut App) {
     } else {
         area0
     };
-    app.viewport_height = active_area.height as usize;
+    // Split panes spend one row on their title border; paging math must use
+    // the content height (found in review).
+    app.viewport_height =
+        (active_area.height as usize).saturating_sub(if app.split.is_some() { 1 } else { 0 });
 
     // The diff model revalidates its two sides; losing one (a pane moved off
     // a graph phase) drops out of diff mode rather than showing a stale diff.
@@ -737,7 +740,7 @@ fn diff_tint(status: &crate::diff::RowStatus, palette: &Palette) -> Option<Color
         RowStatus::Deleted => Some(Color::Indexed(52)),
         RowStatus::Changed { .. } => Some(Color::Indexed(58)),
         RowStatus::Replaced { .. } => Some(Color::Indexed(53)),
-        RowStatus::Moved => Some(Color::Indexed(23)),
+        RowStatus::Moved { .. } => Some(Color::Indexed(23)),
     }
 }
 
@@ -749,7 +752,7 @@ fn diff_gutter_style(status: &crate::diff::RowStatus) -> Style {
         RowStatus::Deleted => Style::new().fg(Color::Red).add_modifier(Modifier::BOLD),
         RowStatus::Changed { .. } => Style::new().fg(Color::Yellow).add_modifier(Modifier::BOLD),
         RowStatus::Replaced { .. } => Style::new().fg(Color::Magenta).add_modifier(Modifier::BOLD),
-        RowStatus::Moved => Style::new().fg(Color::Cyan),
+        RowStatus::Moved { .. } => Style::new().fg(Color::Cyan),
     }
 }
 
@@ -1155,9 +1158,13 @@ fn status_line(
 // ---------------------------------------------------------------------------
 
 fn render_help(frame: &mut Frame, app: &App, screen: Rect) {
+    // Two columns: the keymap outgrew a single 80×24-safe column, and a
+    // silently truncated help modal is worse than none (found in review —
+    // the split/diff keys were exactly the ones cut).
     let rows = app.keys.help_rows();
-    let height = (rows.len() as u16 + 6).min(screen.height.saturating_sub(2));
-    let width = 58u16.min(screen.width.saturating_sub(4));
+    let half = rows.len().div_ceil(2);
+    let height = (half as u16 + 6).min(screen.height.saturating_sub(2));
+    let width = 96u16.min(screen.width.saturating_sub(4));
     let area = Rect::new(
         screen.x + (screen.width.saturating_sub(width)) / 2,
         screen.y + (screen.height.saturating_sub(height)) / 2,
@@ -1170,16 +1177,24 @@ fn render_help(frame: &mut Frame, app: &App, screen: Rect) {
         .map(|(k, _)| k.chars().count())
         .max()
         .unwrap_or(8);
-    let mut lines = Vec::with_capacity(rows.len() + 1);
-    for (keys, action) in &rows {
+    let column = |keys: &String, action: &crate::config::Action| {
         let pad = key_width.saturating_sub(keys.chars().count());
-        lines.push(Line::from(vec![
+        let describe: String = action.describe().chars().take(32).collect();
+        vec![
             Span::styled(
                 format!(" {}{} ", " ".repeat(pad), keys),
                 Style::new().fg(ACCENT),
             ),
-            Span::raw(action.describe().to_string()),
-        ]));
+            Span::raw(format!("{describe:<33}")),
+        ]
+    };
+    let mut lines = Vec::with_capacity(half + 3);
+    for i in 0..half {
+        let mut spans = column(&rows[i].0, &rows[i].1);
+        if let Some((keys, action)) = rows.get(half + i) {
+            spans.extend(column(keys, action));
+        }
+        lines.push(Line::from(spans));
     }
     lines.push(Line::from(Span::styled(
         " mouse: wheel scrolls · click places the cursor",
