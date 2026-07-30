@@ -62,12 +62,20 @@ pub fn parse_compilation(buffer: &LogBuffer, section: &CompilationSection) -> Pa
             PhaseKind::Listing => {
                 super::listing::parse_listing_phase(buffer, phase.lines.clone(), &phase.name)
             }
-            PhaseKind::Graph { .. } if turbofan => super::turbofan::parse_phase(
-                buffer,
-                phase.lines.clone(),
-                &phase.name,
-                &mut interner,
-            ),
+            // The Turbolev pipeline prints Maglev IR in its early phases and
+            // *Turboshaft* IR after lowering, under banner names the marker
+            // table may not know (user report: `MERGE B…` headers and `#N`
+            // refs went through the Maglev grammar, so folding and def-use
+            // were dead there). A bounded body sniff routes each phase to
+            // the grammar its lines actually use.
+            PhaseKind::Graph { .. } if turbofan || turboshaft_body(buffer, phase.lines.clone()) => {
+                super::turbofan::parse_phase(
+                    buffer,
+                    phase.lines.clone(),
+                    &phase.name,
+                    &mut interner,
+                )
+            }
             PhaseKind::Graph { .. } => {
                 parse_graph_phase(buffer, phase.lines.clone(), &mut interner, &mut parsed)
             }
@@ -91,6 +99,29 @@ pub fn parse_compilation(buffer: &LogBuffer, section: &CompilationSection) -> Pa
 pub fn line_text(buffer: &LogBuffer, line: usize) -> String {
     let bytes = buffer.line(line).unwrap_or(b"");
     String::from_utf8_lossy(&ansi::strip(bytes)).into_owned()
+}
+
+/// Does this graph phase print Turboshaft IR? Decided from the body, not the
+/// banner: block headers are the giveaway (`BLOCK B4 <- B3` / `MERGE B9 <-
+/// B7, B8` / `LOOP …` vs Maglev's ` Block b4`), and one appears within the
+/// first few lines of every Turboshaft dump. Checking a bounded prefix keeps
+/// this O(1) per phase.
+fn turboshaft_body(buffer: &LogBuffer, lines: std::ops::Range<usize>) -> bool {
+    for line in lines.skip(1).take(30) {
+        let text = line_text(buffer, line);
+        let t = text.trim_start();
+        for header in ["BLOCK B", "MERGE B", "LOOP B"] {
+            if let Some(rest) = t.strip_prefix(header)
+                && rest.as_bytes().first().is_some_and(|b| b.is_ascii_digit())
+            {
+                return true;
+            }
+        }
+        if t.starts_with("Block b") {
+            return false;
+        }
+    }
+    false
 }
 
 #[derive(Default)]
@@ -955,6 +986,61 @@ mod tests {
             .map(|r| &text[r.span.start as usize..r.span.end as usize])
             .collect();
         assert_eq!(spans, vec!["n9", "n10"]);
+    }
+
+    /// Turboshaft IR appears inside Turbolev sections after lowering, under
+    /// banner names the marker table may not know; the body sniffer must
+    /// route those phases to the Turboshaft grammar so `MERGE B…` headers
+    /// fold and `#N` refs drive def-use and `i`/`u` (user report: both were
+    /// dead because the Maglev grammar saw those lines).
+    #[test]
+    fn turboshaft_phase_inside_turbolev_routes_to_turboshaft_grammar() {
+        let trace = "\
+----- Bytecode before MaglevGraphBuilding -----
+Function: 0x9 <JSFunction add (sfi = 0x77)>
+----- Maglev graph building -----
+   1: Foo
+----- Turboshaft lowering -----
+MERGE B2 <- B0, B1
+   47: OverflowCheckedBinop(#42, #42)[signed add, Word32]
+   51: Branch(#49)[B5, B4, False]
+";
+        let mut buffer = LogBuffer::new();
+        buffer.append(trace.as_bytes());
+        buffer.finish();
+        let mut idx = crate::index::TraceIndex::new(None);
+        idx.ingest(&buffer, true);
+        let section = &idx.compilations[0];
+        assert_eq!(section.phases.len(), 3);
+
+        let parsed = parse_compilation(&buffer, section);
+        // The Maglev phase still parses as Maglev.
+        assert!(matches!(
+            parsed.phases[1].infos[1],
+            LineInfo::Node(ref n) if n.id == 1
+        ));
+        // The Turboshaft phase gets block headers, hash-ref inputs, and
+        // block targets — folding and def-use material.
+        let ts = &parsed.phases[2];
+        assert!(matches!(ts.infos[1], LineInfo::BlockHeader { block: 2 }));
+        let LineInfo::Node(ref binop) = ts.infos[2] else {
+            panic!("expected node, got {:?}", ts.infos[2]);
+        };
+        assert_eq!(binop.id, 47);
+        assert_eq!(
+            binop.inputs.iter().map(|r| r.node).collect::<Vec<_>>(),
+            vec![42, 42]
+        );
+        let LineInfo::Node(ref branch) = ts.infos[3] else {
+            panic!()
+        };
+        assert_eq!(
+            branch.targets.iter().map(|t| t.block).collect::<Vec<_>>(),
+            vec![5, 4]
+        );
+        assert_eq!(ts.defs[&47], 2, "defs feed i/u jumps");
+        assert_eq!(ts.users[&42], vec![2, 2], "one entry per reference");
+        assert_eq!(ts.block_count, 1);
     }
 
     #[test]

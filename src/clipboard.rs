@@ -48,11 +48,14 @@ mod base64_engine {
 /// than silently truncated.
 pub const MAX_COPY: usize = 72 * 1024;
 
-/// Is this session one where only OSC 52 can reach the user's clipboard?
+/// Is this session one where only OSC 52 can possibly reach the user's
+/// clipboard? **SSH only.** tmux alone is not remote: a local tmux session
+/// still has direct access to the OS clipboard, and OSC 52 there depends on
+/// the *outer* terminal supporting it — Terminal.app, for one, does not, so
+/// routing local-tmux copies through OSC 52 silently lost them (user
+/// report).
 fn remote() -> bool {
-    std::env::var_os("SSH_TTY").is_some()
-        || std::env::var_os("SSH_CONNECTION").is_some()
-        || std::env::var_os("TMUX").is_some()
+    std::env::var_os("SSH_TTY").is_some() || std::env::var_os("SSH_CONNECTION").is_some()
 }
 
 /// Copies text to the clipboard. Returns a short description of the route
@@ -71,8 +74,8 @@ pub fn copy(text: &str) -> Result<&'static str> {
         return Ok("copied (OSC 52)");
     }
 
-    // Local: the OS clipboard is authoritative; OSC 52 is the fallback for
-    // terminals arboard cannot reach.
+    // Local (tmux included): the OS clipboard is authoritative; OSC 52 is
+    // the fallback for environments arboard cannot reach.
     match arboard::Clipboard::new().and_then(|mut c| c.set_text(text.to_string())) {
         Ok(()) => Ok("copied"),
         Err(e) => {

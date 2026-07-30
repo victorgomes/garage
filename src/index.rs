@@ -660,14 +660,36 @@ impl TraceIndex {
     /// key is patched in [`Self::on_function_identity`]; ordinals are
     /// assigned there too, once the SFI is known.
     fn on_turbolev_anchor(&mut self, i: usize, banner: &str) {
+        // Newer builds print `Begin compiling method X using TurboFan` ahead
+        // of a *Turbolev* pipeline dump too — the tier word on that line is
+        // misleading. Only this banner reveals which pipeline follows. If
+        // the Begin line just opened a TurboFan section that has no phases
+        // yet, it was Turbolev all along: convert it in place instead of
+        // splitting off a bogus three-line Turbofan section (user report).
+        if let State::InCompilation { comp } = self.state
+            && self.awaiting_identity == Some(comp)
+            && self.code_section != Some(comp)
+            && self.compilations[comp].key.tier == Tier::Turbofan
+            && self.compilations[comp].phases.is_empty()
+        {
+            let ordinal = self.provisional_ordinal(&Tier::Turbolev);
+            let section = &mut self.compilations[comp];
+            section.key.tier = Tier::Turbolev;
+            section.key.ordinal = ordinal;
+            self.pending = None;
+            self.open_phase(comp, i, banner.to_string(), PhaseKind::Bytecode);
+            return;
+        }
+
         let cut = self.pending.take().map(|p| p.start).unwrap_or(i);
         self.close_all(cut);
 
+        let ordinal = self.provisional_ordinal(&Tier::Turbolev);
         self.compilations.push(CompilationSection {
             key: CompilationKey {
                 sfi: Addr(0),
                 tier: Tier::Turbolev,
-                ordinal: 0,
+                ordinal,
             },
             name: String::new(),
             function_addr: None,
@@ -695,8 +717,9 @@ impl TraceIndex {
         };
         if let Some(comp) = awaiting {
             let sfi = Addr::parse(sfi).unwrap_or(Addr(0));
+            let tier = self.compilations[comp].key.tier.clone();
             let ordinal = {
-                let n = self.ordinals.entry((sfi, Tier::Turbolev)).or_insert(0);
+                let n = self.ordinals.entry((sfi, tier)).or_insert(0);
                 *n += 1;
                 *n
             };
@@ -724,8 +747,15 @@ impl TraceIndex {
             // A `Finished compiling` trailer only closes a section of its
             // own tier — `using Maglev` must not tear down an open TurboFan
             // section an interleaved stream put it inside (found in review).
+            // Turbolev is the exception: its pipeline prints TurboFan on the
+            // Begin/Finished trailers (the tier word is misleading there).
             State::InCompilation { comp }
-                if self.compilations[comp].key.tier == Tier::parse(tier) =>
+                if {
+                    let section_tier = &self.compilations[comp].key.tier;
+                    let line_tier = Tier::parse(tier);
+                    *section_tier == line_tier
+                        || (*section_tier == Tier::Turbolev && line_tier == Tier::Turbofan)
+                } =>
             {
                 // The pending rule (if any) belongs to this compilation, and so
                 // does the Finished line itself.
@@ -1313,6 +1343,42 @@ Function: 0x9 <JSFunction add (sfi = 0x77)>
         assert_eq!(idx.compilations[1].key.ordinal, 2);
         assert_partition(&idx, 12);
         assert_eq!(idx.detected_version.as_deref(), Some("15.2"));
+    }
+
+    /// Newer builds print `Begin compiling method X using TurboFan` ahead of
+    /// a *Turbolev* pipeline dump — the tier word is misleading, and only
+    /// the `Bytecode before MaglevGraphBuilding` banner reveals the
+    /// pipeline. This must yield ONE Turbolev section, not a three-line
+    /// Turbofan stub plus a separate Turbolev one (user report).
+    #[test]
+    fn begin_turbofan_then_turbolev_banner_is_one_section() {
+        let idx = index(
+            "\
+---------------------------------------------------
+Begin compiling method add using TurboFan
+----- Bytecode before MaglevGraphBuilding -----
+Function: 0x9 <JSFunction add (sfi = 0x77)>
+----- Maglev graph building -----
+   1: Foo
+---------------------------------------------------
+Finished compiling method add using TurboFan
+",
+        );
+        assert_eq!(idx.compilations.len(), 1, "one section, not a TF stub");
+        let c = &idx.compilations[0];
+        assert_eq!(c.key.tier, Tier::Turbolev);
+        assert_eq!(c.key.sfi, Addr(0x77));
+        assert_eq!(c.key.ordinal, 1);
+        assert_eq!(c.name, "add");
+        assert_eq!(
+            c.lines,
+            0..8,
+            "rule + Begin head the section; the TurboFan trailer closes it"
+        );
+        assert_eq!(c.phases.len(), 2);
+        assert_eq!(c.phases[0].kind, PhaseKind::Bytecode);
+        assert_eq!(c.phases[1].kind, PhaseKind::Graph { known: true });
+        assert_partition(&idx, 8);
     }
 
     /// A `Function:` line with no awaiting Turbolev compilation is ordinary

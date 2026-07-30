@@ -611,6 +611,31 @@ state; duplicate `Optimized code` headers cannot bump ordinals or
 rename (one-shot latches); and tests now pin every one of these shapes
 plus `LOOP` headers and paren-less schedule rows.
 
+### Dogfood fixes (first real-trace reports)  ✅ resolved
+
+Four author reports from real traces, all fixed and verified end-to-end
+in tmux:
+
+- **Copy never reached the system clipboard.** `remote()` treated a local
+  tmux session as OSC-52-only; Terminal.app does not interpret OSC 52 at
+  all, so copies vanished. tmux alone is no longer "remote" — locally the
+  OS pasteboard (arboard) is authoritative, OSC 52 stays the SSH route
+  and the local fallback. Verified: `y` inside local tmux lands in
+  `pbpaste`.
+- **`Begin compiling … using TurboFan` ahead of a Turbolev dump** split a
+  bogus three-line Turbofan stub off the real section. The tier word on
+  that line is misleading; only the following banner reveals the
+  pipeline. The indexer now converts the still-empty TurboFan section in
+  place when `Bytecode before MaglevGraphBuilding` arrives, and lets the
+  `using TurboFan` trailer close a Turbolev section.
+- **Turboshaft phases inside Turbolev sections** (the pipeline prints
+  Maglev IR early and Turboshaft IR after lowering) were parsed with the
+  Maglev grammar — `MERGE B… <- B…` headers and `#N` refs were invisible,
+  so folding, def-use, and `i`/`u` were dead there. Graph phases in
+  non-TurboFan sections now sniff a bounded body prefix for
+  `BLOCK/MERGE/LOOP B<n>` headers and route to the Turboshaft grammar,
+  regardless of what the banner is named.
+
 ## Phase 9 (post-MVP): Source Alignment, Dual-Run & Live Mode
 
 - [ ] **9.1. Source resolution**: load `.js` when the script path resolves;
