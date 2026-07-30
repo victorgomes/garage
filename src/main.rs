@@ -60,6 +60,9 @@ fn run() -> Result<()> {
     // Drop would do it too; this just makes the ordering visible.
     drop(guard);
     terminal::restore();
+    // Wrapper mode: the session owns the child; quitting garage must not
+    // leave a d8 running headless into a dead channel.
+    source::kill_child();
 
     result
 }
@@ -69,11 +72,13 @@ fn run() -> Result<()> {
 /// The three shapes from PLAN §4.1, in priority order: an explicit command,
 /// explicit files, or — the primary invocation — a pipe on stdin.
 fn choose_sources(invocation: &Invocation) -> Result<Vec<LogSource>> {
-    if invocation.command.is_some() {
-        bail!(
-            "wrapper mode (`garage -- d8 ...`) is not implemented yet; \
-             run d8 yourself and pipe it in: `d8 ... | garage`"
-        );
+    // Wrapper mode (TODO 9.4): spawn the command, stream its output live.
+    if let Some(command) = &invocation.command {
+        let argv: Vec<String> = command
+            .iter()
+            .map(|a| a.to_string_lossy().into_owned())
+            .collect();
+        return Ok(vec![LogSource::Command(argv)]);
     }
 
     if !invocation.cli.files.is_empty() {

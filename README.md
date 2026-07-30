@@ -270,10 +270,17 @@ through the trace rows aligned with the line under the cursor —
 
 ```
 garage [FILE...]              files (mmapped; several files = } to switch)
+garage a.log b.log            dual-run comparison (D diffs a function)
 d8 ... | garage               piped stdin; keyboard input still works
+garage -- d8 ... bench.js     wrapper mode: spawn d8, stream it live
 garage --function '^process'  index-time prefilter on function names
 garage --debug                write diagnostics to garage.log (--log-file)
 ```
+
+Wrapper mode owns the child: stdout and stderr merge in arrival order
+(the interleaving a terminal would show), a non-zero exit lands as a
+visible note at the end of the trace, quitting garage terminates the
+child, and SIGTERM/SIGINT/SIGHUP restore the terminal before dying.
 
 ## Development
 

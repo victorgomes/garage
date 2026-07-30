@@ -56,6 +56,9 @@ impl Drop for TerminalGuard {
 pub fn enter() -> Result<TerminalGuard> {
     crate::tty::verify_keyboard()?;
 
+    // Before raw mode: the signal handler restores the *original* termios.
+    install_signal_handlers();
+
     let mut screen = Screen::open()?;
     terminal::enable_raw_mode().context("cannot enable raw mode")?;
     RESTORED.store(false, Ordering::SeqCst);
@@ -91,6 +94,43 @@ pub fn enter() -> Result<TerminalGuard> {
     };
 
     Ok(TerminalGuard { tui })
+}
+
+/// The termios captured before raw mode — what the signal handler puts
+/// back. `tcsetattr` is async-signal-safe; crossterm's restore is not.
+static SAVED_TERMIOS: std::sync::OnceLock<libc::termios> = std::sync::OnceLock::new();
+
+/// SIGINT / SIGTERM / SIGHUP: take the wrapped child down (TODO 9.4), put
+/// the terminal back, and die with the conventional code. Only
+/// async-signal-safe calls: kill(2), tcsetattr(3), write(2), _exit(2).
+/// SIGINT can only arrive from outside (`kill -INT`): raw mode disables
+/// ISIG, so Ctrl+C is an ordinary key event.
+fn install_signal_handlers() {
+    let mut t = unsafe { std::mem::zeroed::<libc::termios>() };
+    if unsafe { libc::tcgetattr(0, &mut t) } == 0 {
+        let _ = SAVED_TERMIOS.set(t);
+    }
+    let handler = on_signal as extern "C" fn(libc::c_int) as *const () as libc::sighandler_t;
+    unsafe {
+        libc::signal(libc::SIGTERM, handler);
+        libc::signal(libc::SIGINT, handler);
+        libc::signal(libc::SIGHUP, handler);
+    }
+}
+
+extern "C" fn on_signal(sig: libc::c_int) {
+    crate::source::kill_child();
+    if let Some(t) = SAVED_TERMIOS.get() {
+        unsafe {
+            libc::tcsetattr(0, libc::TCSANOW, t);
+        }
+    }
+    // Release the mouse, leave the alternate screen, show the cursor.
+    const RESTORE: &[u8] = b"\x1b[?1006l\x1b[?1002l\x1b[?1000l\x1b[?1049l\x1b[?25h";
+    unsafe {
+        libc::write(1, RESTORE.as_ptr().cast(), RESTORE.len());
+        libc::_exit(128 + sig);
+    }
 }
 
 /// Puts the terminal back. Idempotent, best-effort, safe to call from a panic

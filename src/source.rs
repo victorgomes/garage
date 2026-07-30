@@ -31,6 +31,9 @@ const CHUNK: usize = 64 * 1024;
 pub enum LogSource {
     File(PathBuf),
     Stdin,
+    /// Wrapper mode (TODO 9.4): `garage -- d8 …` spawns the command and
+    /// streams its output live.
+    Command(Vec<String>),
 }
 
 impl LogSource {
@@ -38,6 +41,22 @@ impl LogSource {
         match self {
             LogSource::File(p) => p.display().to_string(),
             LogSource::Stdin => "<stdin>".to_string(),
+            LogSource::Command(argv) => argv.join(" "),
+        }
+    }
+}
+
+/// The wrapped child's pid, for cleanup on quit and from the signal
+/// handler. Zero = no child.
+pub static CHILD_PID: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
+
+/// Terminates the wrapped child, if one is running. Safe to call twice;
+/// also called from the signal handler (kill(2) is async-signal-safe).
+pub fn kill_child() {
+    let pid = CHILD_PID.swap(0, std::sync::atomic::Ordering::SeqCst);
+    if pid != 0 {
+        unsafe {
+            libc::kill(pid as libc::pid_t, libc::SIGTERM);
         }
     }
 }
@@ -129,6 +148,7 @@ fn read_source(
                 "stdin was not captured before the terminal took fd 0",
             ))),
         },
+        LogSource::Command(argv) => read_command(index, argv, &tx),
     };
 
     let event = match result {
@@ -187,9 +207,68 @@ fn read_file(
     Ok(())
 }
 
+/// Wrapper mode (TODO 9.4): spawn the command with stdout and stderr both
+/// piped, and merge the two streams into one source in arrival order — the
+/// same interleaving a terminal would show, and the only merge that never
+/// stalls one stream behind the other. d8 prints traces on stdout and
+/// crashes on stderr; both belong in the session.
+fn read_command(
+    index: usize,
+    argv: &[String],
+    tx: &Sender<crate::event::Event>,
+) -> Result<(), SourceError> {
+    use std::process::{Command, Stdio};
+    let (program, args) = argv
+        .split_first()
+        .ok_or_else(|| SourceError::Stdin(std::io::Error::other("empty command")))?;
+    let mut child = Command::new(program)
+        .args(args)
+        .stdin(Stdio::null())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|e| {
+            SourceError::Stdin(std::io::Error::new(
+                e.kind(),
+                format!("cannot spawn {program}: {e}"),
+            ))
+        })?;
+    CHILD_PID.store(child.id(), std::sync::atomic::Ordering::SeqCst);
+
+    let stdout = child.stdout.take();
+    let stderr = child.stderr.take();
+    let err_thread = stderr.map(|err| {
+        let tx = tx.clone();
+        thread::spawn(move || {
+            let _ = read_stream(index, err, &tx);
+        })
+    });
+    if let Some(out) = stdout {
+        read_stream(index, out, tx)?;
+    }
+    if let Some(t) = err_thread {
+        let _ = t.join();
+    }
+    let status = child.wait();
+    CHILD_PID.store(0, std::sync::atomic::Ordering::SeqCst);
+    match status {
+        Ok(st) if !st.success() => {
+            // Surface the exit code as trace content, where it is visible
+            // next to whatever the child printed last.
+            let note = format!("\n[garage] child exited with {st}\n");
+            let _ = tx.send(crate::event::Event::Source(SourceEvent::Chunk {
+                source: index,
+                bytes: note.into_bytes(),
+            }));
+        }
+        _ => {}
+    }
+    Ok(())
+}
+
 fn read_stream(
     index: usize,
-    mut stream: File,
+    mut stream: impl Read,
     tx: &Sender<crate::event::Event>,
 ) -> Result<(), SourceError> {
     let mut buf = vec![0u8; CHUNK];

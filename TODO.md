@@ -731,7 +731,7 @@ in tmux:
   `BLOCK/MERGE/LOOP B<n>` headers and route to the Turboshaft grammar,
   regardless of what the banner is named.
 
-## Phase 9 (post-MVP): Source Alignment, Dual-Run & Live Mode
+## Phase 9 (post-MVP): Source Alignment, Dual-Run & Live Mode  ✅ done
 
 - [x] **9.1. Source resolution**: the script path from the first SFI context
   line, tried as printed, relative to the trace file's directory, and one
@@ -768,10 +768,18 @@ in tmux:
   instance; phase by name, else last graph phase (which is what makes
   cross-version diffs work when banners were renamed). The active run is
   the right pane; deltas read relative to it.
-- [ ] **9.4. Wrapper/live mode** (`garage -- d8 ...`): spawn child, capture
-  stdout+stderr with explicit merge policy, incremental sidebar updates, signal
-  handling (`SIGINT`/`SIGTERM`) and child cleanup. Introduce `tokio` here only
-  if plain threads prove insufficient.
+- [x] **9.4. Wrapper/live mode** (`garage -- d8 ...`):
+  `LogSource::Command` spawns the child (stdin null, stdout+stderr piped)
+  and merges the two streams into one source in arrival order — the
+  interleaving a terminal would show, and the only merge that never stalls
+  one stream behind the other; incremental updates ride the existing
+  streaming path. A non-zero exit status is appended as visible trace
+  content. Cleanup: the child's pid lives in an atomic; quitting garage
+  SIGTERMs it, and SIGTERM/SIGINT/SIGHUP handlers (async-signal-safe only:
+  kill/tcsetattr/write/_exit) take the child down, restore the pre-raw
+  termios and leave the alternate screen before dying with 128+sig.
+  SIGINT only arrives externally — raw mode disables ISIG, so Ctrl+C stays
+  an ordinary key. Plain threads sufficed; no tokio.
 - [x] **9.5. Inlining panel** (`I`): every ⚡ INLINE / ❌ SKIP decision the
   trace recorded for the current compilation (`--trace-maglev-inlining`),
   with reasons, in a modal — j/k select, Enter jumps to the decision line
