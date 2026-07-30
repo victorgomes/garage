@@ -39,12 +39,13 @@ pub fn render(frame: &mut Frame, app: &mut App) {
     ])
     .areas(frame.area());
 
-    // Hidden sidebar keeps a one-column strip: the visual clue it exists
-    // (and the click target that brings it back).
+    // Hidden sidebar keeps a two-column strip — `▸` at mid-height in front
+    // of a dim rule: the visual clue it exists (and the click target that
+    // brings it back).
     let sidebar_width = if app.sidebar_visible {
         (frame.area().width / 3).clamp(24, 44)
     } else {
-        1
+        2
     };
     let [sidebar, viewport] =
         Layout::horizontal([Constraint::Length(sidebar_width), Constraint::Min(1)]).areas(body);
@@ -244,18 +245,22 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
 // Sidebar (TODO 3.3, 4.7)
 // ---------------------------------------------------------------------------
 
-/// The one-column strip left behind by a hidden sidebar: a `▸` at the top
-/// (the "there is more here" affordance, clickable) over a dim rule.
+/// The strip left behind by a hidden sidebar: a dim rule with an accent `▸`
+/// in front of it at mid-height — the "there is more here" affordance,
+/// clickable. Top-corner glyphs proved too subtle (user report).
 fn render_sidebar_strip(frame: &mut Frame, area: Rect) {
-    let mut lines = vec![Line::from(Span::styled(
-        "▸",
-        Style::new().fg(ACCENT).add_modifier(Modifier::BOLD),
-    ))];
-    for _ in 1..area.height {
-        lines.push(Line::from(Span::styled(
-            "▏",
-            Style::new().fg(Color::Indexed(238)),
-        )));
+    let middle = area.height / 2;
+    let rule = Span::styled("▏", Style::new().fg(Color::Indexed(238)));
+    let mut lines = Vec::with_capacity(area.height as usize);
+    for row in 0..area.height {
+        if row == middle {
+            lines.push(Line::from(vec![
+                Span::styled("▸", Style::new().fg(ACCENT).add_modifier(Modifier::BOLD)),
+                rule.clone(),
+            ]));
+        } else {
+            lines.push(Line::from(vec![Span::raw(" "), rule.clone()]));
+        }
     }
     frame.render_widget(Paragraph::new(lines), area);
 }

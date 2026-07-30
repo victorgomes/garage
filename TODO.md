@@ -611,8 +611,9 @@ regeneration, the three new formats parse with **zero** annotation
   targets include it — the "who jumps here" question at loop headers and
   merges. Sidebar/timeline Enter behaviour unchanged.
 - [x] **8.7. Sidebar toggle** (dogfood request). `b` hides/shows the
-  sidebar; hidden, its columns go to the viewport and a one-column `▸`
-  strip (accent, clickable) over a dim rule stays as the clue it exists.
+  sidebar; hidden, its columns go to the viewport and a two-column strip
+  stays as the clue it exists: an accent `▸` at mid-height in front of a
+  dim rule (a top-corner glyph proved too subtle), clickable.
   `h`, a click on the strip, or Tab (the timeline lives there) bring it
   back; focus leaves a hidden pane; strip scroll events are ignored so a
   hidden sidebar's selection cannot drift invisibly.
