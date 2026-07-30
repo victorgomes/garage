@@ -418,12 +418,17 @@ fn sidebar_row(app: &App, row: &Row, selected: bool, focused: bool) -> Line<'sta
 // Token classes and palette (TODO 4.1)
 // ---------------------------------------------------------------------------
 
+/// How many distinct control-flow track colours before they cycle.
+const TRACKS: u8 = 6;
+
 /// Byte-level style class. Painted in layers: base classes from the parse,
-/// then def-use, then search — later layers win.
+/// then the gutter tracks, then def-use, then search — later layers win.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[repr(u8)]
 enum Class {
     Base,
+    /// One control-flow gutter column (`│╭─►…`), coloured by column so an
+    /// edge keeps its colour across every row it crosses.
+    Track(u8),
     Dim,
     Annotation,
     Banner,
@@ -508,6 +513,28 @@ impl Palette {
                 .bg(Color::Yellow)
                 .add_modifier(Modifier::BOLD),
             Class::SearchHl => Style::new().add_modifier(Modifier::REVERSED),
+            Class::Track(i) => {
+                // Adjacent columns must contrast; the cycle restarts far
+                // enough right that reuse is rarely ambiguous.
+                let indexed: [Color; TRACKS as usize] = [
+                    Color::Indexed(39),  // blue
+                    Color::Indexed(208), // orange
+                    Color::Indexed(170), // magenta
+                    Color::Indexed(114), // green
+                    Color::Indexed(179), // tan
+                    Color::Indexed(80),  // cyan
+                ];
+                let named: [Color; TRACKS as usize] = [
+                    Color::Blue,
+                    Color::Yellow,
+                    Color::Magenta,
+                    Color::Green,
+                    Color::Cyan,
+                    Color::Red,
+                ];
+                let table = if self.indexed { indexed } else { named };
+                Style::new().fg(table[(i % TRACKS) as usize])
+            }
         }
     }
 }
@@ -1069,6 +1096,36 @@ fn paint_line(
         }
     }
 
+    // Control-flow gutter tracks: V8 draws block edges as a box-drawing
+    // prefix on every graph line, and the base classes above colour whole
+    // lines by their *content* — which made an edge change colour at every
+    // row it crossed (block header blue, bytecode dim green, frame dim red;
+    // user report). Each gutter column gets its own stable colour instead,
+    // and the horizontal chars of a turn inherit the colour of the corner
+    // that started it, so `╰──►` reads as one edge. The char set mirrors
+    // `parse::maglev::content_start`; `↳`/`↱` are deopt-frame content, not
+    // gutter, and stop the scan like any other content char.
+    {
+        let mut col = 0u8;
+        let mut run: Option<u8> = None;
+        for (i, c) in text.char_indices() {
+            let track = match c {
+                ' ' => None,
+                '│' | '╭' | '╰' | '╮' | '╯' | '↓' | '▼' | '▲' => {
+                    let t = col % TRACKS;
+                    run = Some(t);
+                    Some(t)
+                }
+                '─' | '═' | '►' | '◄' => Some(run.unwrap_or(col % TRACKS)),
+                _ => break,
+            };
+            if let Some(t) = track {
+                paint[i..i + c.len_utf8()].fill(Class::Track(t));
+            }
+            col = col.wrapping_add(1);
+        }
+    }
+
     // Def-use overlay (TODO 4.4): definition, inputs, and consumers of the
     // cursor node in distinct styles — from the parsed graph, not regex.
     if let (Some(du), Some(LineInfo::Node(node))) = (defuse, info) {
@@ -1444,6 +1501,41 @@ mod tests {
         let joined: String = spans.iter().map(|s| s.content.as_ref()).collect();
         assert_eq!(joined, text, "painting must not lose characters");
         assert!(spans.len() >= 5, "def/opcode/inputs painted separately");
+    }
+
+    #[test]
+    fn gutter_tracks_are_column_stable_and_turns_join() {
+        let palette = Palette { indexed: true };
+        let paint = |text: &str, info: Option<&LineInfo>| {
+            paint_line(text, info, None, CursorHl::default(), None, &palette, 0)
+        };
+
+        // A block header behind two gutter columns: the corner and its
+        // horizontal run share one colour, distinct from column 0.
+        let header = LineInfo::BlockHeader { block: 4 };
+        let a = paint(" │╭──►Block b4", Some(&header));
+        assert_eq!(a[1].content.as_ref(), "│");
+        assert_eq!(a[2].content.as_ref(), "╭──►", "turn joins into one colour");
+        assert_eq!(a[1].style, palette.style(Class::Track(1)));
+        assert_eq!(a[2].style, palette.style(Class::Track(2)));
+
+        // The same column keeps its colour on every row kind it crosses.
+        let b = paint(" │ ↓", Some(&LineInfo::Control));
+        assert_eq!(b[1].content.as_ref(), "│");
+        assert_eq!(a[1].style, b[1].style, "control row, same column");
+        let frame = LineInfo::Frame {
+            frame: 0,
+            after_node: None,
+            refs: vec![],
+        };
+        let c = paint(" │    ↳ lazy @-1", Some(&frame));
+        assert_eq!(c[1].content.as_ref(), "│");
+        assert_eq!(a[1].style, c[1].style, "frame row, same column");
+        // The frame arrow itself is content, not gutter.
+        assert!(
+            c.iter()
+                .any(|s| s.content.contains('↳') && s.style == palette.style(Class::FrameLine))
+        );
     }
 
     #[test]

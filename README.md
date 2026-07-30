@@ -198,6 +198,9 @@ navigate.)
   (grouped mode keys on the SFI address, so an empty function name is fine).
 - **Viewport** — the trace itself, styled from the parse: guards red, control
   flow blue, constants magenta, phis yellow, interleaved source bytecode dim.
+  The box-drawing gutter that draws block edges gets its own colour per
+  column — an edge keeps one colour for its whole length, and neighbouring
+  edges differ — independent of what the rows it crosses contain.
   The cursor node's definition, inputs, and consumers highlight in distinct
   colours; deopt frames show which registers hold which nodes.
 
