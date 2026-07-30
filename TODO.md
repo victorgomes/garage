@@ -763,7 +763,12 @@ in tmux:
   stdout+stderr with explicit merge policy, incremental sidebar updates, signal
   handling (`SIGINT`/`SIGTERM`) and child cleanup. Introduce `tokio` here only
   if plain threads prove insufficient.
-- [ ] **9.5. Inlining tree** (`I`) from trace output.
+- [x] **9.5. Inlining panel** (`I`): every ⚡ INLINE / ❌ SKIP decision the
+  trace recorded for the current compilation (`--trace-maglev-inlining`),
+  with reasons, in a modal — j/k select, Enter jumps to the decision line
+  through the history machinery, anything else closes. A flat list, not a
+  tree: the trace does not print nesting depth, and inventing one would
+  violate the no-guessing rule.
 
 ---
 

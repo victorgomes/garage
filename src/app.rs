@@ -332,6 +332,8 @@ pub struct App {
     /// behind as the visual clue that it exists.
     pub sidebar_visible: bool,
 
+    /// The inlining-decisions panel (`I`): selected entry when open.
+    pub inline_panel: Option<usize>,
     /// The JS source alignment pane (`S`), and its map cache.
     pub source_pane: Option<SourcePane>,
     src_cache: Option<((usize, usize), std::sync::Arc<SourceMap>)>,
@@ -404,6 +406,7 @@ impl App {
             viewport_rect: PaneRect::default(),
             viewport2_rect: PaneRect::default(),
             source_rect: PaneRect::default(),
+            inline_panel: None,
             source_pane: None,
             src_cache: None,
         }
@@ -833,6 +836,35 @@ impl App {
             return;
         }
 
+        // The inlining panel (TODO 9.5) owns navigation while open; any
+        // other key closes it.
+        if let Some(sel) = self.inline_panel {
+            let decisions = self.inline_decisions();
+            match self.keys.lookup(&key) {
+                Some(Action::Down) => {
+                    self.inline_panel = Some((sel + 1).min(decisions.len().saturating_sub(1)));
+                }
+                Some(Action::Up) => {
+                    self.inline_panel = Some(sel.saturating_sub(1));
+                }
+                Some(Action::Select) => {
+                    self.inline_panel = None;
+                    if let Some(d) = decisions.get(sel) {
+                        self.push_history();
+                        self.goto_line(d.line);
+                        self.status = format!(
+                            "{} {} — {}",
+                            if d.inlined { "INLINE" } else { "SKIP" },
+                            d.callee,
+                            d.reason
+                        );
+                    }
+                }
+                _ => self.inline_panel = None,
+            }
+            return;
+        }
+
         let Some(action) = self.keys.lookup(&key) else {
             return;
         };
@@ -998,7 +1030,40 @@ impl App {
             Action::NextBlock => self.step_block(1),
             Action::ToggleSidebar => self.toggle_sidebar(),
             Action::ToggleSourcePane => self.toggle_source_pane(),
+            Action::InliningPanel => self.toggle_inline_panel(),
         }
+    }
+
+    /// The current compilation's inlining decisions, parsed on demand.
+    pub fn inline_decisions(&mut self) -> Vec<crate::model::InlineDecision> {
+        let Some(comp) = self.current_comp() else {
+            return Vec::new();
+        };
+        let source = &mut self.sources[self.active];
+        let section = source.index.compilations[comp].clone();
+        let parsed = source.parses.get_or_parse(&source.buffer, &section, comp);
+        parsed.inline_decisions.clone()
+    }
+
+    /// `I`: the inlining-decisions panel for the current compilation
+    /// (TODO 9.5) — every ⚡ INLINE / ❌ SKIP the trace recorded, with its
+    /// reason; Enter jumps to the decision line.
+    fn toggle_inline_panel(&mut self) {
+        if self.inline_panel.take().is_some() {
+            return;
+        }
+        if self.current_comp().is_none() {
+            self.status = "inlining decisions need a compilation in view".to_string();
+            return;
+        }
+        let n = self.inline_decisions().len();
+        if n == 0 {
+            self.status =
+                "no inlining decisions here (run with --trace-maglev-inlining)".to_string();
+            return;
+        }
+        self.inline_panel = Some(0);
+        self.status = format!("{n} inlining decisions — Enter jumps, Esc closes");
     }
 
     /// `b`: show / hide the sidebar. Hidden, its columns go to the viewport
@@ -3720,6 +3785,32 @@ Instructions (size = 40)
         let vm = app.view_model();
         assert_eq!(vm.line_at(app.cursor), Some(6));
         assert_eq!(app.status, "+0x8");
+    }
+
+    #[test]
+    fn inlining_panel_lists_and_jumps() {
+        let trace = "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+\u{26a1} INLINE small                          Small function
+\u{274c} SKIP   big                            too big
+----- Maglev graph building -----
+ Block b0
+   1: Foo
+";
+        let mut app = app_with(trace);
+        app.follow = false;
+        app.selected = 0;
+        app.focus = Pane::Viewport;
+
+        key(&mut app, KeyCode::Char('I'));
+        assert_eq!(app.inline_panel, Some(0), "{}", app.status);
+        key(&mut app, KeyCode::Char('j'));
+        assert_eq!(app.inline_panel, Some(1));
+        key(&mut app, KeyCode::Enter);
+        assert!(app.inline_panel.is_none());
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(2), "on the SKIP line");
+        assert!(app.status.contains("SKIP big"), "{}", app.status);
     }
 
     const ALIGN_TRACE: &str = "\

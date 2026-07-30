@@ -196,6 +196,10 @@ pub fn render(frame: &mut Frame, app: &mut App) {
 
     frame.render_widget(status_line(app, &vm, diff_model.as_deref()), status);
 
+    if let Some(sel) = app.inline_panel {
+        render_inline_panel(frame, app, sel, frame.area());
+    }
+
     if app.help {
         render_help(frame, app, frame.area());
     }
@@ -1666,6 +1670,66 @@ fn status_line(
 // ---------------------------------------------------------------------------
 // Help modal (TODO 3.6)
 // ---------------------------------------------------------------------------
+
+/// The inlining-decisions panel (TODO 9.5): every ⚡ INLINE / ❌ SKIP the
+/// trace recorded for the current compilation, with reasons; Enter jumps to
+/// the decision line.
+fn render_inline_panel(frame: &mut Frame, app: &mut App, sel: usize, screen: Rect) {
+    let decisions = app.inline_decisions();
+    if decisions.is_empty() {
+        return;
+    }
+    let height = ((decisions.len() as u16) + 4).min(screen.height.saturating_sub(2));
+    let width = 90u16.min(screen.width.saturating_sub(4));
+    let area = Rect::new(
+        screen.x + (screen.width.saturating_sub(width)) / 2,
+        screen.y + (screen.height.saturating_sub(height)) / 2,
+        width,
+        height,
+    );
+    frame.render_widget(Clear, area);
+    let block = Block::bordered()
+        .title(" inlining decisions — Enter jumps · Esc closes ")
+        .border_style(Style::new().fg(ACCENT));
+    let inner = block.inner(area);
+    frame.render_widget(block, area);
+
+    let visible = inner.height as usize;
+    let top = sel.saturating_sub(visible.saturating_sub(1));
+    let name_width = decisions
+        .iter()
+        .map(|d| d.callee.chars().count())
+        .max()
+        .unwrap_or(8)
+        .min(30);
+    let mut lines = Vec::with_capacity(visible);
+    for (i, d) in decisions.iter().enumerate().skip(top).take(visible) {
+        let (badge, style) = if d.inlined {
+            ("⚡ INLINE", Style::new().fg(Color::Green))
+        } else {
+            ("❌ SKIP  ", Style::new().fg(Color::Red))
+        };
+        let mut spans = vec![
+            Span::styled(format!(" {badge} "), style),
+            Span::styled(
+                format!("{:name_width$} ", d.callee),
+                Style::new().fg(ACCENT),
+            ),
+            Span::styled(d.reason.clone(), Style::new().fg(DIM)),
+        ];
+        if i == sel {
+            spans.insert(0, Span::styled("▸", Style::new().fg(ACCENT)));
+        } else {
+            spans.insert(0, Span::raw(" "));
+        }
+        let mut line = Line::from(spans);
+        if i == sel {
+            line = line.style(Style::new().bg(CURSOR_BG));
+        }
+        lines.push(line);
+    }
+    frame.render_widget(Paragraph::new(lines), inner);
+}
 
 fn render_help(frame: &mut Frame, app: &App, screen: Rect) {
     // Two columns: the keymap outgrew a single 80×24-safe column, and a
