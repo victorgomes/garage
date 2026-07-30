@@ -37,16 +37,21 @@ pub fn parse_compilation(buffer: &LogBuffer, section: &CompilationSection) -> Pa
     let mut interner = Interner::default();
 
     // An opt-code section's preamble is the raw JS source — real content,
-    // not trace chatter, so it must not fold away as annotations.
+    // not trace chatter, so it must not fold away as annotations; it gets
+    // JS token styling instead.
     let code_listing = matches!(
         section.phases.first().map(|p| &p.kind),
         Some(PhaseKind::Listing)
     );
     for line in section.preamble.clone() {
+        let text = line_text(buffer, line);
         let info = if code_listing {
-            LineInfo::Control
+            if text.trim().is_empty() {
+                LineInfo::Control
+            } else {
+                LineInfo::Source
+            }
         } else {
-            let text = line_text(buffer, line);
             classify_preamble(&text, line, &mut parsed.inline_decisions)
         };
         parsed.preamble.push(info);

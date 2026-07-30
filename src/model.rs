@@ -466,6 +466,10 @@ pub enum LineInfo {
         /// The `;; …` reloc comment, when present.
         comment: Option<Span>,
     },
+    /// A line of JavaScript source — the `--- Raw source ---` block of a
+    /// code dump. Painted with a small JS tokenizer at render time; no
+    /// spans are recorded here because the text is the structure.
+    Source,
     /// Anything unmatched: attached in place, never exiled (TODO 2.8).
     Annotation { after_node: Option<NodeId> },
 }

@@ -30,11 +30,20 @@ pub fn parse_listing_phase(buffer: &LogBuffer, lines: Range<usize>, name: &str) 
     // rows resolve the `[N:…]` operands of the bytecode phase above
     // (TODO 8.5), so they get the same classification as in Maglev dumps.
     let pool_phase = name == "Constant pool";
+    // The `--- Raw source ---` block is JavaScript, not trace furniture —
+    // its lines get JS token styling at render time.
+    let source_phase = name == "Raw source";
     let mut phase = ParsedPhase::default();
     for (offset, line) in lines.enumerate() {
         let text = line_text(buffer, line);
         let info = if offset == 0 {
             LineInfo::Banner
+        } else if source_phase {
+            if text.trim().is_empty() {
+                LineInfo::Control
+            } else {
+                LineInfo::Source
+            }
         } else if let Some(info) = parse_disasm_row(&text) {
             info
         } else if pool_phase && let Some(info) = super::maglev::parse_pool_entry(&text) {

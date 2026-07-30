@@ -596,6 +596,108 @@ fn opcode_class(name: &str) -> Class {
     Class::Opcode
 }
 
+/// The words that get keyword styling in `--- Raw source ---` JS.
+const JS_KEYWORDS: &[&str] = &[
+    "async",
+    "await",
+    "break",
+    "case",
+    "catch",
+    "class",
+    "const",
+    "continue",
+    "debugger",
+    "default",
+    "delete",
+    "do",
+    "else",
+    "extends",
+    "false",
+    "finally",
+    "for",
+    "function",
+    "get",
+    "if",
+    "in",
+    "instanceof",
+    "let",
+    "new",
+    "null",
+    "of",
+    "return",
+    "set",
+    "static",
+    "super",
+    "switch",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "typeof",
+    "undefined",
+    "var",
+    "void",
+    "while",
+    "with",
+    "yield",
+];
+
+/// A deliberately small JS tokenizer for the `Raw source` block (TODO 8.10):
+/// keywords, strings, numbers and line comments — enough to read the code,
+/// not a grammar. Per line only: a `/* … */` spanning lines styles as code
+/// on the following lines, which V8's one-function dumps rarely contain.
+fn paint_js(text: &str, paint: &mut [Class]) {
+    let b = text.as_bytes();
+    let mut i = 0;
+    while i < b.len() {
+        let c = b[i];
+        if c == b'/' && b.get(i + 1) == Some(&b'/') {
+            paint[i..].fill(Class::Annotation);
+            break;
+        }
+        if c == b'/' && b.get(i + 1) == Some(&b'*') {
+            let end = text[i + 2..]
+                .find("*/")
+                .map(|p| i + 2 + p + 2)
+                .unwrap_or(b.len());
+            paint[i..end].fill(Class::Annotation);
+            i = end;
+            continue;
+        }
+        if c == b'"' || c == b'\'' || c == b'`' {
+            let mut j = i + 1;
+            while j < b.len() && b[j] != c {
+                j += if b[j] == b'\\' { 2 } else { 1 };
+            }
+            let end = (j + 1).min(b.len());
+            paint[i..end].fill(Class::ConstantOp);
+            i = end;
+            continue;
+        }
+        if c.is_ascii_digit() {
+            let mut j = i + 1;
+            while j < b.len() && (b[j].is_ascii_alphanumeric() || b[j] == b'.' || b[j] == b'_') {
+                j += 1;
+            }
+            paint[i..j].fill(Class::ConstantOp);
+            i = j;
+            continue;
+        }
+        if c.is_ascii_alphabetic() || c == b'_' || c == b'$' {
+            let mut j = i + 1;
+            while j < b.len() && (b[j].is_ascii_alphanumeric() || b[j] == b'_' || b[j] == b'$') {
+                j += 1;
+            }
+            if JS_KEYWORDS.contains(&&text[i..j]) {
+                paint[i..j].fill(Class::ControlOp);
+            }
+            i = j;
+            continue;
+        }
+        i += 1;
+    }
+}
+
 /// Shape-based styling for lines the graph parser never sees — raw sections,
 /// which is where lifecycle events and the `--trace-deopt-verbose` frame
 /// dumps live (TODO 6.5). Display-only: a stray program line that happens to
@@ -1142,6 +1244,7 @@ fn paint_line(
                 fill(comment, Class::Annotation, &mut paint);
             }
         }
+        Some(LineInfo::Source) => paint_js(text, &mut paint),
         Some(LineInfo::Annotation { .. }) => paint.fill(Class::Annotation),
         None => {
             if let Some(class) = raw_line_class(text) {
@@ -1573,6 +1676,25 @@ mod tests {
         let joined: String = spans.iter().map(|s| s.content.as_ref()).collect();
         assert_eq!(joined, text, "painting must not lose characters");
         assert!(spans.len() >= 5, "def/opcode/inputs painted separately");
+    }
+
+    #[test]
+    fn js_source_paints_keywords_strings_numbers_comments() {
+        let text = r#"var k = 16; s = "a\"b"; return; // tail"#;
+        let mut paint = vec![Class::Base; text.len()];
+        paint_js(text, &mut paint);
+        assert_eq!(paint[0], Class::ControlOp, "var");
+        assert_eq!(paint[3], Class::Base, "space");
+        assert_eq!(paint[4], Class::Base, "identifier k stays plain");
+        assert_eq!(paint[8], Class::ConstantOp, "16");
+        let quote = text.find('"').unwrap();
+        assert_eq!(paint[quote], Class::ConstantOp, "string open");
+        assert_eq!(paint[quote + 3], Class::ConstantOp, "escaped quote inside");
+        let ret = text.find("return").unwrap();
+        assert_eq!(paint[ret], Class::ControlOp, "return");
+        let comment = text.find("//").unwrap();
+        assert_eq!(paint[comment], Class::Annotation, "comment");
+        assert_eq!(paint[text.len() - 1], Class::Annotation, "comment tail");
     }
 
     #[test]

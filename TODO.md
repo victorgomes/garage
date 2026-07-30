@@ -665,7 +665,12 @@ regeneration, the three new formats parse with **zero** annotation
   separates trailer from dump with blank lines, which land in a
   label-less raw section — such an all-blank gap now counts as adjacency
   and is absorbed into the merged section (partition stays total; any
-  non-blank content still blocks the merge).
+  non-blank content still blocks the merge). Third follow-up: `Raw
+  source` lines classify as `LineInfo::Source` (phase and preamble
+  alike) and paint through a deliberately small JS tokenizer — keywords,
+  strings, numbers, line/block comments; per-line only, so a multi-line
+  `/* … */` styles as code past its first line. Goldens count preamble
+  JS source lines as evidence.
 
 ---
 

@@ -1,6 +1,7 @@
 lines: 236
 version: unknown
 compilation 0 L1..109 sfi=0x0 tier=Turbofan ord=1 name="add"
+  preamble L2..7: 3 JS source lines
   phase L7..15 "Optimized code" [listing]: 0 disasm (0 labels), 0 annotations
   phase L15..89 "Instructions" [listing]: 72 disasm (12 labels), 0 annotations
   phase L89..91 "Inlined functions" [listing]: 0 disasm (0 labels), 0 annotations
@@ -9,6 +10,7 @@ compilation 0 L1..109 sfi=0x0 tier=Turbofan ord=1 name="add"
   phase L102..109 "RelocInfo" [listing]: 0 disasm (0 labels), 0 annotations
   totals: 0 opcodes, 0 distinct frames
 compilation 1 L109..235 sfi=0x0 tier=Turbofan ord=2 name="add"
+  preamble L110..115: 3 JS source lines
   phase L115..123 "Optimized code" [listing]: 0 disasm (0 labels), 0 annotations
   phase L123..216 "Instructions" [listing]: 91 disasm (17 labels), 0 annotations
   phase L216..218 "Inlined functions" [listing]: 0 disasm (0 labels), 0 annotations

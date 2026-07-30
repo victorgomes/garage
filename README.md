@@ -207,6 +207,10 @@ sidebar entry tells the whole story from bytecode to machine code. The
 merge follows the no-guessing rule: sections must be line-adjacent and
 agree on tier and name; anything else stays separate.
 
+The `Raw source` block renders as JavaScript — keywords, strings,
+numbers and comments styled by a small JS tokenizer, identifiers left
+plain.
+
 Inside the listing, branch targets are resolved from what V8 printed —
 arm64's `(addr 0x…)` and x64's `<+0x…>` both — and their destination rows
 get their offset column labelled: those are the de-facto basic blocks.

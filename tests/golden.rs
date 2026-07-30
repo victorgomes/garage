@@ -133,6 +133,18 @@ fn summarize(buffer: &LogBuffer, idx: &TraceIndex) -> String {
                 c.preamble.start, c.preamble.end, preamble_annotations
             );
         }
+        let preamble_source = parsed
+            .preamble
+            .iter()
+            .filter(|l| matches!(l, LineInfo::Source))
+            .count();
+        if preamble_source > 0 {
+            let _ = writeln!(
+                w,
+                "  preamble L{}..{}: {} JS source lines",
+                c.preamble.start, c.preamble.end, preamble_source
+            );
+        }
         for d in &parsed.inline_decisions {
             let _ = writeln!(
                 w,
@@ -168,10 +180,19 @@ fn summarize(buffer: &LogBuffer, idx: &TraceIndex) -> String {
                         .iter()
                         .filter(|l| matches!(l, LineInfo::Disasm { labeled: true, .. }))
                         .count();
-                    format!(
+                    let source = st
+                        .infos
+                        .iter()
+                        .filter(|l| matches!(l, LineInfo::Source))
+                        .count();
+                    let mut detail = format!(
                         ": {} disasm ({} labels), {} annotations",
                         disasm, labels, st.annotation_count
-                    )
+                    );
+                    if source > 0 {
+                        let _ = write!(detail, ", {source} source");
+                    }
+                    detail
                 }
                 Some(st)
                     if matches!(phase.kind, PhaseKind::Bytecode | PhaseKind::Inlining { .. }) =>
