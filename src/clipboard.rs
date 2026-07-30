@@ -44,9 +44,21 @@ mod base64_engine {
 }
 
 /// Some terminals silently drop oversized OSC 52 payloads (tmux's default cap
-/// is 100 KB *encoded*); past this, copying is refused with a message rather
-/// than silently truncated.
+/// is 100 KB *encoded*; 72 KiB raw ≈ 96 KB in base64 plus the escape
+/// overhead); past this the OSC 52 route refuses with a message rather than
+/// silently truncating. **OSC 52 only** — the OS clipboard has no such cap.
 pub const MAX_COPY: usize = 72 * 1024;
+
+/// Local copies go through the OS clipboard, which takes megabytes without
+/// complaint; this bound only stops a yank from materialising an absurd
+/// section into memory first.
+pub const MAX_LOCAL_COPY: usize = 64 * 1024 * 1024;
+
+/// The size the current environment's clipboard route can accept — what
+/// callers should check *before* materialising the text.
+pub fn max_copy() -> usize {
+    if remote() { MAX_COPY } else { MAX_LOCAL_COPY }
+}
 
 /// Is this session one where only OSC 52 can possibly reach the user's
 /// clipboard? **SSH only.** tmux alone is not remote: a local tmux session
@@ -59,16 +71,10 @@ fn remote() -> bool {
 }
 
 /// Copies text to the clipboard. Returns a short description of the route
-/// taken, for the status line.
+/// taken, for the status line. Size limits are per route: only OSC 52 has
+/// one (checked inside [`osc52`]), so a local copy through the OS clipboard
+/// takes any size the caller was willing to materialise.
 pub fn copy(text: &str) -> Result<&'static str> {
-    if text.len() > MAX_COPY {
-        anyhow::bail!(
-            "selection is {} KB; the clipboard path tops out at {} KB — use export instead",
-            text.len() / 1024,
-            MAX_COPY / 1024
-        );
-    }
-
     if remote() {
         osc52(text)?;
         return Ok("copied (OSC 52)");
@@ -96,6 +102,13 @@ pub fn copy(text: &str) -> Result<&'static str> {
 /// *defaults to off* since tmux 3.3, where a wrapped sequence is silently
 /// discarded. So passthrough is used only when tmux confirms it is on.
 fn osc52(text: &str) -> Result<()> {
+    if text.len() > MAX_COPY {
+        anyhow::bail!(
+            "selection is {} KB; OSC 52 tops out at {} KB — use export instead",
+            text.len() / 1024,
+            MAX_COPY / 1024
+        );
+    }
     let payload = b64::encode(text.as_bytes());
     let mut screen = crate::tty::Screen::open().context("no terminal for OSC 52")?;
 

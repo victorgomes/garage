@@ -2734,11 +2734,12 @@ impl App {
         let vm = self.view_model();
         if let (false, ViewModel::Plain { range }) = (self.diff, &vm) {
             let bytes = self.sources[self.active].buffer.span_bytes(range.clone());
-            if bytes > crate::clipboard::MAX_COPY {
+            let cap = crate::clipboard::max_copy();
+            if bytes > cap {
                 self.status = format!(
-                    "section is {} KB; the clipboard path tops out at {} KB — use export instead",
+                    "section is {} KB; this clipboard route tops out at {} KB — use export instead",
                     bytes / 1024,
-                    crate::clipboard::MAX_COPY / 1024
+                    cap / 1024
                 );
                 return;
             }
