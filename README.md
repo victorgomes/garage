@@ -48,6 +48,7 @@ d8 --print-bytecode bench.js | garage
 # Graphs *and* the assembly they became — the code dump printed right after
 # a pipeline shows up as that compilation's last phases:
 d8 --print-maglev-graphs --print-opt-code bench.js | garage
+d8 --print-maglev-graphs --print-maglev-code bench.js | garage
 
 # Tiering + OSR story alongside the graphs:
 d8 --print-maglev-graphs --trace-opt --trace-deopt --trace-osr app.js | garage
@@ -197,8 +198,10 @@ navigate.)
 
 ## Assembly as part of the pipeline
 
-A code dump (`--print-opt-code` / `--print-code`) printed right after the
-pipeline that produced it merges into that compilation — `Raw source`,
+A code dump printed right after the pipeline that produced it merges into
+that compilation — both the `--print-opt-code` form (`--- Optimized code
+---`) and the bare `0x…: [Code]` object print of `--print-maglev-code` /
+`--print-code` — `Raw source`,
 `Optimized code`, `Instructions`, … appear as its last phases, so one
 sidebar entry tells the whole story from bytecode to machine code. The
 merge follows the no-guessing rule: sections must be line-adjacent and

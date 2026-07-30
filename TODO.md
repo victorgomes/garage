@@ -649,8 +649,16 @@ regeneration, the three new formats parse with **zero** annotation
   9–22 labels per Instructions phase, both arches). Fixtures: existing
   print-opt-code fixtures cover the disasm nav; the pipeline+code merge is
   unit-tested, and `tools/gen-fixtures.sh` gained a
-  `maglev-graphs+code.simple` invocation — regenerate with a local d8
-  (needs v8_enable_disassembler) for a real combined fixture.
+  `maglev-graphs+code.simple` and `maglev-graphs+maglev-code.simple`
+  invocations — regenerate with a local d8 (needs v8_enable_disassembler)
+  for real combined fixtures. Follow-up (user report): `--print-maglev-code`
+  emits the bare `0x…: [Code]` heap-object print — no `--- Optimized code
+  ---` furniture and no `name = ` line. It now anchors on the `[Code]`
+  header (fast-path byte set gained `0`): printed before the trailer it
+  opens phases inside the still-open compilation; printed after, it opens
+  a dump section that the `kind = ` latch merges into the adjacent
+  pipeline on tier + adjacency alone (the only evidence there is). The
+  Code-object field block is a `Code object` Listing phase.
 
 ---
 

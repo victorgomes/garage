@@ -44,6 +44,7 @@ struct Res {
     begin: Regex,
     finished: Regex,
     banner: Regex,
+    code_object: Regex,
     rule: Regex,
     inlining_banner: Regex,
     ev_marking: Regex,
@@ -76,6 +77,7 @@ fn res() -> &'static Res {
             begin: re(r"^Begin compiling method (.*?) using (\S+)\s*$"),
             finished: re(r"^Finished compiling method (.*?) using (\S+)\s*$"),
             banner: re(r"^----- (.+?) -----\s?$"),
+            code_object: re(r"^0x[0-9a-f]+: \[Code\]( in \w+)?\s*$"),
             rule: re(r"^-{20,}\s*$"),
             inlining_banner: re(r"^Inlining (0x[0-9a-f]+) <SharedFunctionInfo ?(.*?)> with bytecode$"),
             ev_marking: re(&format!(
@@ -269,13 +271,16 @@ impl TraceIndex {
 
     fn step(&mut self, i: usize, line: &[u8]) {
         // Fast path: only a handful of first bytes can start a boundary line
-        // (`-----`, `Begin`, `Compiling`, `Finished`, `[event]`, and the
+        // (`-----`, `Begin`, `Compiling`, `Finished`, `[event]`, the
         // Phase 8 listing headers `Instructions`/`Deoptimization`/
-        // `Safepoints`/`RelocInfo`/`Handler`/`Source`), possibly behind an
-        // ANSI escape. Everything else — the vast majority of graph body
-        // lines — extends the current section with no further work.
+        // `Safepoints`/`RelocInfo`/`Handler`/`Source`, and `0x…: [Code]`
+        // object prints), possibly behind an ANSI escape. Everything else —
+        // the vast majority of graph body lines — extends the current
+        // section with no further work.
         match line.first() {
-            Some(b'-' | b'B' | b'C' | b'F' | b'[' | b'I' | b'D' | b'S' | b'R' | b'H' | 0x1b) => {
+            Some(
+                b'-' | b'B' | b'C' | b'F' | b'[' | b'I' | b'D' | b'S' | b'R' | b'H' | b'0' | 0x1b,
+            ) => {
                 let stripped = ansi::strip(line);
                 match std::str::from_utf8(&stripped) {
                     Ok(text) => self.classify(i, text),
@@ -335,6 +340,15 @@ impl TraceIndex {
                 self.on_finished(i, text, &name, &tier);
                 return;
             }
+        } else if text.starts_with("0x") && text.contains(": [Code]") {
+            // `--print-maglev-code` / `--print-code`: the Code heap object,
+            // printed without the `--- Optimized code ---` furniture.
+            if r.code_object.is_match(text) {
+                self.on_code_object(i);
+                return;
+            }
+            self.content(i, text.as_bytes());
+            return;
         } else if text.starts_with("Function: ") {
             if let Some(c) = r.function_line.captures(text) {
                 let (addr, name, sfi) = (c[1].to_string(), c[2].to_string(), c[3].to_string());
@@ -471,6 +485,43 @@ impl TraceIndex {
         let cut = self.pending.take().map(|p| p.start).unwrap_or(i);
         self.close_all(cut);
         self.open_code_section(cut, i);
+    }
+
+    /// `0x…: [Code]` — the Code heap object, as `--print-maglev-code` /
+    /// `--print-code` emit it: no `--- Optimized code ---` furniture and no
+    /// `name = ` identity line, only `kind = `. Two homes (TODO 8.9):
+    /// printed while its compilation is still open, it opens phases right
+    /// there; printed after the trailer, it opens a dump section that the
+    /// kind latch then merges back into the adjacent pipeline.
+    fn on_code_object(&mut self, i: usize) {
+        match self.state {
+            State::InCompilation { comp } if self.code_section.is_none() => {
+                self.pending = None;
+                self.open_phase(comp, i, "Code object".to_string(), PhaseKind::Listing);
+                self.code_section = Some(comp);
+                // Identity is already this section's; nothing to scan for.
+                self.code_kind_seen = true;
+                self.code_name_seen = true;
+            }
+            State::InCompilation { .. } => {
+                // A second object print inside an open dump: content.
+                self.content(i, b"");
+            }
+            _ => {
+                let cut = self.pending.take().map(|p| p.start).unwrap_or(i);
+                self.close_all(cut);
+                self.open_code_section(cut, i);
+                let comp = self.compilations.len() - 1;
+                self.compilations[comp].preamble = i..i;
+                self.compilations[comp].phases.push(PhaseSection {
+                    name: "Code object".to_string(),
+                    kind: PhaseKind::Listing,
+                    lines: i..i + 1,
+                });
+                // No name line is coming — the kind alone decides the merge.
+                self.code_name_seen = true;
+            }
+        }
     }
 
     fn open_code_section(&mut self, cut: usize, i: usize) {
@@ -949,13 +1000,13 @@ impl TraceIndex {
         if self.code_kind_seen && self.code_name_seen {
             return;
         }
-        // Only the `--- Optimized code ---` header block carries the
-        // key/value identity lines; source text in the preamble could
-        // contain look-alikes.
+        // Only the `--- Optimized code ---` header block (or a bare
+        // `[Code]` object print) carries the key/value identity lines;
+        // source text in the preamble could contain look-alikes.
         if self.compilations[comp]
             .phases
             .last()
-            .map(|p| p.name == "Optimized code")
+            .map(|p| p.name == "Optimized code" || p.name == "Code object")
             != Some(true)
         {
             return;
@@ -1015,7 +1066,11 @@ impl TraceIndex {
             let code = &self.compilations[comp];
             let pipeline = &self.compilations[prev];
             let adjacent = pipeline.lines.end == code.lines.start;
-            let same = pipeline.key.tier == code.key.tier && pipeline.name == code.name;
+            // A bare `[Code]` object print has no `name = ` line at all —
+            // there the kind and adjacency are the whole available evidence.
+            let unnamed_dump = code.phases.first().is_some_and(|p| p.name == "Code object");
+            let same =
+                pipeline.key.tier == code.key.tier && (pipeline.name == code.name || unnamed_dump);
             // A code dump never merges into another code dump.
             let pipeline_is_code = pipeline
                 .phases
@@ -1483,6 +1538,78 @@ Instructions (size = 40)
         );
         assert!(idx.raw.is_empty());
         assert_partition(&idx, 14);
+    }
+
+    /// `--print-maglev-code` prints the bare Code heap object — no
+    /// `--- Optimized code ---` furniture, no `name = ` line. After the
+    /// trailer it must still merge into the adjacent pipeline on the kind
+    /// alone (user report: it rendered as a raw `[Code]` section).
+    #[test]
+    fn bare_code_object_after_the_trailer_merges_on_kind() {
+        let idx = index(
+            "\
+Compiling 0x1 <JSFunction nbi (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+   1: Foo
+Finished compiling method nbi using Maglev
+0x2c8c0004aa71: [Code]
+ - map: 0x9b800000959 <Map(CODE_TYPE)>
+ - kind: MAGLEV
+kind = MAGLEV
+compiler = maglev
+Instructions (size = 40)
+0x100    0  d2800000  movz x0, #0x0
+Safepoints (entries = 0)
+RelocInfo (size = 0)
+",
+        );
+        assert_eq!(idx.compilations.len(), 1, "{:?}", idx.compilations);
+        let c = &idx.compilations[0];
+        assert_eq!(c.key.sfi, Addr(0x10));
+        assert_eq!(c.key.tier, Tier::Maglev);
+        assert_eq!(c.name, "nbi");
+        let names: Vec<&str> = c.phases.iter().map(|p| p.name.as_str()).collect();
+        assert_eq!(
+            names,
+            [
+                "Maglev graph building",
+                "Code object",
+                "Instructions",
+                "Safepoints",
+                "RelocInfo"
+            ]
+        );
+        assert!(idx.raw.is_empty(), "{:?}", idx.raw);
+        assert_partition(&idx, 13);
+    }
+
+    /// The same object printed *before* the trailer (while the compilation
+    /// is still open) opens its phases right there.
+    #[test]
+    fn bare_code_object_inside_an_open_compilation_opens_phases() {
+        let idx = index(
+            "\
+Compiling 0x1 <JSFunction nbi (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+   1: Foo
+0x2c8c0004aa71: [Code]
+ - kind: MAGLEV
+kind = MAGLEV
+Instructions (size = 40)
+0x100    0  d2800000  movz x0, #0x0
+Finished compiling method nbi using Maglev
+",
+        );
+        assert_eq!(idx.compilations.len(), 1, "{:?}", idx.compilations);
+        let c = &idx.compilations[0];
+        assert_eq!(c.key.tier, Tier::Maglev, "kind scan must not re-key");
+        let names: Vec<&str> = c.phases.iter().map(|p| p.name.as_str()).collect();
+        assert_eq!(
+            names,
+            ["Maglev graph building", "Code object", "Instructions"]
+        );
+        assert_eq!(c.lines, 0..9, "its own trailer still closes it");
+        assert_partition(&idx, 9);
     }
 
     /// The same dump for a *different* function stays its own section — the

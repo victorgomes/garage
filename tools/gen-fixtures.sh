@@ -69,6 +69,7 @@ FIXTURES=(
   # The code dump prints right after the pipeline that produced it and merges
   # into that compilation as its last phases; needs v8_enable_disassembler.
   "maglev-graphs+code.simple|clean|simple.js|--print-maglev-graphs --print-opt-code"
+  "maglev-graphs+maglev-code.simple|clean|simple.js|--print-maglev-graphs --print-maglev-code"
 
   # --- Tiering & lifecycle --------------------------------------------------
   "trace-opt+deopt.deopt|clean|deopt-eager.js|--trace-opt --trace-deopt"
