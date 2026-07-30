@@ -12,7 +12,7 @@
 //! section — and, for compilations, triggers the lazy parse (TODO 2.3) whose
 //! results drive styling, def-use highlighting, and node jumps.
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::sync::mpsc::Receiver;
 
 use anyhow::Result;
@@ -57,6 +57,8 @@ pub struct Source {
 pub enum Pane {
     Sidebar,
     Viewport,
+    /// The JS source alignment pane (TODO 9.2), when open.
+    Source,
 }
 
 /// Screen-space rectangle of a pane, recorded at render time — the frame is
@@ -209,6 +211,56 @@ pub struct ViewState {
     pub scroll_x: usize,
 }
 
+/// Where the alignment pane's source text came from, per row: a character
+/// offset in the script (`NNN S>` bytecode markers) or a function definition
+/// anchor line (SFI context lines). Chars are precise; anchors are the
+/// fallback grain.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SrcRef {
+    Char(u32),
+    FnLine(u32),
+}
+
+/// buffer line → source ref, for one compilation (TODO 9.2).
+pub struct SourceMap {
+    pub of_row: HashMap<usize, SrcRef>,
+}
+
+/// The JS source alignment pane (TODO 9.1/9.2): the resolved `.js` file, or
+/// the compilation's embedded `Raw source` block as the fallback.
+pub struct SourcePane {
+    pub title: String,
+    pub lines: Vec<String>,
+    /// 0-based script line of `lines[0]` (0 for a resolved file).
+    pub base_line: u32,
+    /// Script-absolute char offset of each line start; `u32::MAX` base means
+    /// char refs cannot be mapped (embedded text without `source_position`).
+    line_starts: Vec<u32>,
+    chars_usable: bool,
+    pub top: usize,
+    pub cursor: usize,
+    /// (source, compilation) the pane was built for.
+    pub key: (usize, usize),
+}
+
+impl SourcePane {
+    /// The pane line a source ref lands on, if it is inside the pane's text.
+    pub fn display_line(&self, r: &SrcRef) -> Option<usize> {
+        let d = match r {
+            SrcRef::Char(c) => {
+                if !self.chars_usable || self.line_starts.first().is_none_or(|f| c < f) {
+                    return None;
+                }
+                self.line_starts
+                    .partition_point(|s| *s <= *c)
+                    .saturating_sub(1)
+            }
+            SrcRef::FnLine(l) => (*l).checked_sub(self.base_line)? as usize,
+        };
+        (d < self.lines.len()).then_some(d)
+    }
+}
+
 pub struct App {
     pub sources: Vec<Source>,
     pub active: usize,
@@ -280,11 +332,16 @@ pub struct App {
     /// behind as the visual clue that it exists.
     pub sidebar_visible: bool,
 
+    /// The JS source alignment pane (`S`), and its map cache.
+    pub source_pane: Option<SourcePane>,
+    src_cache: Option<((usize, usize), std::sync::Arc<SourceMap>)>,
+
     /// Pane geometry from the last frame, for mouse routing.
     pub sidebar_rect: PaneRect,
     pub viewport_rect: PaneRect,
     /// The second pane's rect; zero-sized (never matching) without a split.
     pub viewport2_rect: PaneRect,
+    pub source_rect: PaneRect,
 }
 
 /// `(source, comp, phase, section end line)` per side: any content change on
@@ -346,6 +403,9 @@ impl App {
             sidebar_rect: PaneRect::default(),
             viewport_rect: PaneRect::default(),
             viewport2_rect: PaneRect::default(),
+            source_rect: PaneRect::default(),
+            source_pane: None,
+            src_cache: None,
         }
     }
 
@@ -666,6 +726,8 @@ impl App {
             Some((Pane::Sidebar, 0))
         } else if self.viewport_rect.contains(mouse.column, mouse.row) {
             Some((Pane::Viewport, 0))
+        } else if self.source_pane.is_some() && self.source_rect.contains(mouse.column, mouse.row) {
+            Some((Pane::Source, 0))
         } else if self.viewport2_rect.contains(mouse.column, mouse.row) {
             Some((Pane::Viewport, 1))
         } else {
@@ -709,6 +771,17 @@ impl App {
                     if target != self.selected {
                         self.selected = target;
                         self.reset_view();
+                    }
+                }
+                Some((Pane::Source, _)) => {
+                    self.focus = Pane::Source;
+                    // The pane renders a title row; content starts one below.
+                    let offset = (mouse.row - self.source_rect.y) as usize;
+                    if let Some(pane) = &mut self.source_pane {
+                        let offset = offset.saturating_sub(1);
+                        if !pane.lines.is_empty() {
+                            pane.cursor = (pane.top + offset).min(pane.lines.len() - 1);
+                        }
                     }
                 }
                 Some((Pane::Viewport, viewport)) => {
@@ -767,7 +840,9 @@ impl App {
         match action {
             Action::Quit => self.quit = true,
             Action::Back => {
-                if self.focus == Pane::Viewport {
+                if self.focus == Pane::Source {
+                    self.focus = Pane::Viewport;
+                } else if self.focus == Pane::Viewport {
                     self.focus = Pane::Sidebar;
                 } else {
                     self.quit = true;
@@ -780,7 +855,15 @@ impl App {
                 self.sidebar_visible = true;
                 self.focus = Pane::Sidebar;
             }
-            Action::FocusViewport => self.focus = Pane::Viewport,
+            Action::FocusViewport => {
+                // `l` walks right: sidebar → viewport → source pane.
+                if self.focus == Pane::Viewport && self.source_pane.is_some() {
+                    self.focus = Pane::Source;
+                    self.sync_source_cursor();
+                } else {
+                    self.focus = Pane::Viewport;
+                }
+            }
             Action::NextSource => {
                 if self.sources.len() > 1 {
                     self.active = (self.active + 1) % self.sources.len();
@@ -791,12 +874,13 @@ impl App {
             }
             Action::Select => {
                 // Enter in the viewport follows control-flow refs (a
-                // branch's targets, cycling); in the sidebar it keeps its
-                // expand/collapse/jump role.
-                if self.focus == Pane::Viewport {
-                    self.follow_targets();
-                } else {
-                    self.toggle_expand();
+                // branch's targets, cycling); in the source pane it jumps
+                // to the rows aligned with the cursor line; in the sidebar
+                // it keeps its expand/collapse/jump role.
+                match self.focus {
+                    Pane::Viewport => self.follow_targets(),
+                    Pane::Source => self.source_enter(),
+                    Pane::Sidebar => self.toggle_expand(),
                 }
             }
             Action::ToggleGrouping => {
@@ -894,7 +978,14 @@ impl App {
             Action::SplitVertical => self.toggle_split(SplitDir::Vertical),
             Action::SplitHorizontal => self.toggle_split(SplitDir::Horizontal),
             Action::OtherPane => {
-                if self.split.is_some() {
+                if self.source_pane.is_some() {
+                    if self.focus == Pane::Source {
+                        self.focus = Pane::Viewport;
+                    } else {
+                        self.focus = Pane::Source;
+                        self.sync_source_cursor();
+                    }
+                } else if self.split.is_some() {
                     self.activate_pane(1 - self.active_pane);
                     self.focus = Pane::Viewport;
                 } else {
@@ -906,6 +997,7 @@ impl App {
             Action::PrevBlock => self.step_block(-1),
             Action::NextBlock => self.step_block(1),
             Action::ToggleSidebar => self.toggle_sidebar(),
+            Action::ToggleSourcePane => self.toggle_source_pane(),
         }
     }
 
@@ -1036,7 +1128,7 @@ impl App {
     fn page(&self) -> isize {
         match self.focus {
             Pane::Sidebar => self.sidebar_height.saturating_sub(1).max(1) as isize,
-            Pane::Viewport => self.viewport_height.saturating_sub(2).max(1) as isize,
+            Pane::Viewport | Pane::Source => self.viewport_height.saturating_sub(2).max(1) as isize,
         }
     }
 
@@ -1065,6 +1157,16 @@ impl App {
                 self.follow = self.follow && self.cursor + 1 == len;
                 self.cycle = None;
             }
+            Pane::Source => {
+                if let Some(pane) = &mut self.source_pane {
+                    let len = pane.lines.len();
+                    if len == 0 {
+                        return;
+                    }
+                    let target = pane.cursor as isize + delta;
+                    pane.cursor = target.clamp(0, len as isize - 1) as usize;
+                }
+            }
         }
     }
 
@@ -1079,6 +1181,11 @@ impl App {
                 self.follow = false;
                 self.cycle = None;
             }
+            Pane::Source => {
+                if let Some(pane) = &mut self.source_pane {
+                    pane.cursor = 0;
+                }
+            }
         }
     }
 
@@ -1091,6 +1198,11 @@ impl App {
             Pane::Viewport => {
                 self.cursor = self.viewport_len().saturating_sub(1);
                 self.cycle = None;
+            }
+            Pane::Source => {
+                if let Some(pane) = &mut self.source_pane {
+                    pane.cursor = pane.lines.len().saturating_sub(1);
+                }
             }
         }
     }
@@ -1797,6 +1909,10 @@ impl App {
     /// `v` / `s`: open a split, flip its orientation, or close it (same key
     /// again). Closing keeps the active pane's view.
     fn toggle_split(&mut self, dir: SplitDir) {
+        // Splits and the source pane use the same screen estate.
+        if self.source_pane.take().is_some() && self.focus == Pane::Source {
+            self.focus = Pane::Viewport;
+        }
         match self.split {
             None => {
                 self.split = Some(dir);
@@ -2479,6 +2595,281 @@ impl App {
         self.cycle_jump(anchor, targets, "target");
     }
 
+    // -----------------------------------------------------------------------
+    // Source alignment (TODO 9.1 / 9.2)
+    // -----------------------------------------------------------------------
+
+    /// The compilation the current view shows, if it is a modeled one.
+    fn current_comp(&mut self) -> Option<usize> {
+        match self.view_model() {
+            ViewModel::Modeled { comp, .. } => Some(comp),
+            _ => None,
+        }
+    }
+
+    /// buffer line → source ref for one compilation, cached. Fine anchors
+    /// come from `NNN S>` char-offset markers (interleaved graph rows
+    /// inherit them through their bytecode offset); SFI context lines
+    /// contribute function-definition anchors as the coarse fallback.
+    pub fn source_map(&mut self, comp: usize) -> std::sync::Arc<SourceMap> {
+        let cache_key = (self.active, comp);
+        if let Some((k, m)) = &self.src_cache
+            && *k == cache_key
+        {
+            return m.clone();
+        }
+        let source = &mut self.sources[self.active];
+        let section = source.index.compilations[comp].clone();
+        let parsed = source.parses.get_or_parse(&source.buffer, &section, comp);
+
+        let mut pos_of_offset: HashMap<u32, u32> = HashMap::new();
+        for phase in &parsed.phases {
+            for info in &phase.infos {
+                if let LineInfo::Bytecode(bc) = info
+                    && let Some(p) = bc.src_pos
+                {
+                    pos_of_offset.entry(bc.offset).or_insert(p);
+                }
+            }
+        }
+
+        let mut of_row = HashMap::new();
+        for (p, phase) in parsed.phases.iter().enumerate() {
+            let Some(section_phase) = section.phases.get(p) else {
+                break;
+            };
+            let start = section_phase.lines.start;
+            let mut current: Option<SrcRef> = None;
+            for (i, info) in phase.infos.iter().enumerate() {
+                match info {
+                    LineInfo::SfiContext {
+                        line, same_script, ..
+                    } => {
+                        current = (*same_script && *line > 0).then_some(SrcRef::FnLine(*line));
+                        if let Some(r) = current {
+                            of_row.insert(start + i, r);
+                        }
+                    }
+                    LineInfo::Bytecode(bc) => {
+                        if let Some(pos) = bc
+                            .src_pos
+                            .or_else(|| pos_of_offset.get(&bc.offset).copied())
+                        {
+                            current = Some(SrcRef::Char(pos));
+                        }
+                        if let Some(r) = current {
+                            of_row.insert(start + i, r);
+                        }
+                    }
+                    LineInfo::Node(_) | LineInfo::Frame { .. } | LineInfo::PhiMove { .. } => {
+                        if let Some(r) = current {
+                            of_row.insert(start + i, r);
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+        let map = std::sync::Arc::new(SourceMap { of_row });
+        self.src_cache = Some((cache_key, map.clone()));
+        map
+    }
+
+    /// 9.1: resolve the compilation's script — the printed path as-is, then
+    /// relative to the trace file's directory, then by basename there —
+    /// falling back to the dump's own `Raw source` block when no file
+    /// resolves, and failing with an honest message when neither exists.
+    fn build_source_pane(&mut self, comp: usize) -> Result<SourcePane, String> {
+        let key = (self.active, comp);
+        let label = self.sources[self.active].label.clone();
+        let source = &mut self.sources[self.active];
+        let section = source.index.compilations[comp].clone();
+        let parsed = source.parses.get_or_parse(&source.buffer, &section, comp);
+        let script = parsed.script.clone();
+        let script_line = parsed.script_line;
+        let source_position = parsed.source_position;
+
+        if let Some(script) = &script {
+            let mut candidates = vec![std::path::PathBuf::from(script)];
+            let trace_dir = std::path::Path::new(&label).parent();
+            if let Some(dir) = trace_dir {
+                candidates.push(dir.join(script));
+                // d8 often runs one directory up from where the trace was
+                // saved (the fixture corpus does exactly this).
+                if let Some(up) = dir.parent() {
+                    candidates.push(up.join(script));
+                }
+                if let Some(base) = std::path::Path::new(script).file_name() {
+                    candidates.push(dir.join(base));
+                }
+            }
+            for cand in candidates {
+                let Ok(text) = std::fs::read_to_string(&cand) else {
+                    continue;
+                };
+                if text.len() > 8 * 1024 * 1024 {
+                    continue;
+                }
+                let mut line_starts = vec![0u32];
+                for (i, b) in text.bytes().enumerate() {
+                    if b == b'\n' {
+                        line_starts.push(i as u32 + 1);
+                    }
+                }
+                line_starts.truncate(text.lines().count().max(1));
+                return Ok(SourcePane {
+                    title: cand.display().to_string(),
+                    lines: text.lines().map(str::to_string).collect(),
+                    base_line: 0,
+                    line_starts,
+                    chars_usable: true,
+                    top: 0,
+                    cursor: 0,
+                    key,
+                });
+            }
+        }
+
+        // Fallback: the compilation's own `Raw source` block — a merged
+        // dump's phase, or a standalone dump's preamble.
+        let range = section
+            .phases
+            .iter()
+            .find(|p| p.name == "Raw source")
+            .map(|p| (p.lines.start + 1)..p.lines.end)
+            .or_else(|| {
+                (matches!(
+                    section.phases.first().map(|p| &p.kind),
+                    Some(PhaseKind::Listing)
+                ) && !section.preamble.is_empty())
+                .then(|| section.preamble.clone())
+            })
+            .ok_or_else(|| match &script {
+                Some(s) => format!("cannot open {s}, and the dump has no Raw source block"),
+                None => "no script path and no Raw source block in this dump".to_string(),
+            })?;
+        let source = &self.sources[self.active];
+        let mut lines: Vec<String> = range
+            .clone()
+            .map(|l| crate::parse::maglev::line_text(&source.buffer, l))
+            .collect();
+        while lines.last().is_some_and(|l| l.trim().is_empty()) {
+            lines.pop();
+        }
+        // `source_position = N` (from an attached code dump) is the script
+        // char offset of the block's first byte — without it, char refs
+        // cannot be placed and only function anchors align.
+        let (chars_usable, base_char) = match source_position {
+            Some(p) => (true, p),
+            None => (false, 0),
+        };
+        let mut line_starts = Vec::with_capacity(lines.len());
+        let mut at = base_char;
+        for l in &lines {
+            line_starts.push(at);
+            at += l.len() as u32 + 1;
+        }
+        Ok(SourcePane {
+            title: match &script {
+                Some(s) => format!("{s} (embedded raw source; file not found)"),
+                None => "Raw source (embedded)".to_string(),
+            },
+            lines,
+            base_line: script_line.unwrap_or(0),
+            line_starts,
+            chars_usable,
+            top: 0,
+            cursor: 0,
+            key,
+        })
+    }
+
+    /// `S`: toggle the source alignment pane for the current compilation.
+    fn toggle_source_pane(&mut self) {
+        if self.source_pane.take().is_some() {
+            if self.focus == Pane::Source {
+                self.focus = Pane::Viewport;
+            }
+            self.status = "source pane closed".to_string();
+            return;
+        }
+        if self.diff {
+            self.status = "source pane is off in diff view (d to leave)".to_string();
+            return;
+        }
+        let Some(comp) = self.current_comp() else {
+            self.status = "source alignment needs a compilation in view".to_string();
+            return;
+        };
+        self.split = None;
+        match self.build_source_pane(comp) {
+            Ok(pane) => {
+                let aligned = self.source_map(comp).of_row.len();
+                self.status = format!("{} — {} aligned rows", pane.title, aligned);
+                self.source_pane = Some(pane);
+            }
+            Err(e) => self.status = e,
+        }
+    }
+
+    /// Focusing the pane parks its cursor on the line aligned with the
+    /// trace cursor, when there is one.
+    fn sync_source_cursor(&mut self) {
+        let Some(pane) = &self.source_pane else {
+            return;
+        };
+        let key = pane.key;
+        if key.0 != self.active || self.current_comp() != Some(key.1) {
+            return;
+        }
+        let vm = self.view_model();
+        let Some(row) = vm.row(self.cursor) else {
+            return;
+        };
+        let line = row.line;
+        let map = self.source_map(key.1);
+        let display = map
+            .of_row
+            .get(&line)
+            .and_then(|r| self.source_pane.as_ref().expect("checked").display_line(r));
+        if let Some(d) = display {
+            self.source_pane.as_mut().expect("checked").cursor = d;
+        }
+    }
+
+    /// Enter in the source pane: cycle through the trace rows aligned with
+    /// the cursor line.
+    fn source_enter(&mut self) {
+        let Some(pane) = &self.source_pane else {
+            return;
+        };
+        let key = pane.key;
+        let cursor = pane.cursor;
+        if self.current_comp() != Some(key.1) || key.0 != self.active {
+            self.status = "view moved to another compilation — S reopens the pane".to_string();
+            return;
+        }
+        let map = self.source_map(key.1);
+        let pane = self.source_pane.as_ref().expect("checked above");
+        let display = cursor;
+        let mut targets: Vec<usize> = map
+            .of_row
+            .iter()
+            .filter(|(_, r)| pane.display_line(r) == Some(display))
+            .map(|(row, _)| *row)
+            .collect();
+        targets.sort_unstable();
+        targets.dedup();
+        if targets.is_empty() {
+            self.status = format!(
+                "no aligned trace rows for source line {}",
+                pane.base_line as usize + display + 1
+            );
+            return;
+        }
+        self.cycle_jump(Anchor::Line(display), targets, "aligned row");
+    }
+
     /// Buffer line of a phase's first line within the current compilation.
     fn phase_start(&self, vm: &ViewModel, p: usize) -> usize {
         match vm {
@@ -2789,6 +3180,11 @@ impl App {
         let prev_pane = (index == self.active && self.split.is_some())
             .then(|| self.rows().get(self.other_view.selected).cloned())
             .flatten();
+        // Alignment data is derived from the parse; stream growth can extend
+        // the very compilation it was built from.
+        if index == self.active {
+            self.src_cache = None;
+        }
         let target = &mut self.sources[index];
 
         match event {
@@ -3324,6 +3720,81 @@ Instructions (size = 40)
         let vm = app.view_model();
         assert_eq!(vm.line_at(app.cursor), Some(6));
         assert_eq!(app.status, "+0x8");
+    }
+
+    const ALIGN_TRACE: &str = "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Bytecode array -----
+   45 S> 0x100 @    0 : 0b 03             Ldar a0
+   57 E> 0x102 @    2 : 46 03 00          MulSmi [3], [0]
+----- Maglev graph building -----
+ Block b0
+0x10 <SharedFunctionInfo f> (0x2 <String[6]: \"add.js\">:1:10)
+   0 : 0b 03             Ldar a0
+   1: Foo
+   2 : 46 03 00          MulSmi [3], [0]
+   2: Bar [n1]
+Finished compiling method f using Maglev
+--- Raw source ---
+(a) {
+  return a * 3;
+}
+--- Optimized code ---
+optimization_id = 0
+source_position = 40
+kind = MAGLEV
+name = f
+Instructions (size = 8)
+0x200    0  aa  ret
+--- End code ---
+";
+
+    #[test]
+    fn source_pane_falls_back_to_raw_source_and_aligns() {
+        let mut app = app_with(ALIGN_TRACE);
+        app.follow = false;
+        app.selected = 0;
+        app.focus = Pane::Viewport;
+
+        key(&mut app, KeyCode::Char('S'));
+        let pane = app.source_pane.as_ref().expect("pane open");
+        assert!(pane.title.contains("add.js"), "{}", pane.title);
+        assert!(pane.title.contains("not found"), "{}", pane.title);
+        assert_eq!(pane.lines.len(), 3, "{:?}", pane.lines);
+        assert_eq!(pane.base_line, 1, "function anchor from the SFI context");
+        // Char refs place through `source_position = 40`.
+        assert_eq!(pane.display_line(&SrcRef::Char(45)), Some(0));
+        assert_eq!(pane.display_line(&SrcRef::Char(57)), Some(1));
+        assert_eq!(pane.display_line(&SrcRef::FnLine(1)), Some(0));
+
+        let map = app.source_map(0);
+        assert_eq!(map.of_row.get(&2), Some(&SrcRef::Char(45)), "S> marker");
+        assert_eq!(
+            map.of_row.get(&9),
+            Some(&SrcRef::Char(57)),
+            "interleaved row inherits through its offset"
+        );
+        assert_eq!(
+            map.of_row.get(&10),
+            Some(&SrcRef::Char(57)),
+            "node under it too"
+        );
+        assert_eq!(map.of_row.get(&6), Some(&SrcRef::FnLine(1)));
+
+        // JS → trace: Enter cycles the rows aligned with the cursor line.
+        app.focus = Pane::Source;
+        app.source_pane.as_mut().unwrap().cursor = 1;
+        key(&mut app, KeyCode::Enter);
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(3), "first aligned row");
+        key(&mut app, KeyCode::Enter);
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(9), "cycle continues");
+
+        // S again closes and returns focus to the viewport.
+        key(&mut app, KeyCode::Char('S'));
+        assert!(app.source_pane.is_none());
+        assert_eq!(app.focus, Pane::Viewport);
     }
 
     #[test]

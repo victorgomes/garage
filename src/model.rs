@@ -337,6 +337,11 @@ pub struct BytecodeRow {
     /// full styling; false for the interleaved context rows inside graph
     /// phases, which stay uniformly dim.
     pub primary: bool,
+    /// The `NNN S>` / `NNN E>` source marker, when the dump prints one: a
+    /// character offset into the script — the fine-grained anchor the
+    /// alignment pane uses (TODO 9.2). Absent when the function's source
+    /// position table was never collected.
+    pub src_pos: Option<u32>,
 }
 
 /// InlineCacheState of a feedback slot, classified from the printed word for
@@ -400,9 +405,16 @@ pub enum LineInfo {
     Control,
     /// ` Block bN` header (possibly behind a control-flow gutter).
     BlockHeader { block: BlockId },
-    /// `0x… <SharedFunctionInfo …> (script:line:col)` — switches the current
-    /// inlined-function context inside a block.
-    SfiContext,
+    /// `0x… <SharedFunctionInfo …> (0x… <String…: "file">:line:col)` —
+    /// switches the current inlined-function context inside a block. The
+    /// position is the *function definition* anchor (0-based line, column
+    /// of its parameter list); `0:0` means none was printed. `same_script`
+    /// is false for callees inlined from another file.
+    SfiContext {
+        line: u32,
+        col: u32,
+        same_script: bool,
+    },
     /// A bytecode row: primary content of a `Bytecode array` dump, or
     /// interleaved source context in a graph phase (see [`BytecodeRow`]).
     Bytecode(BytecodeRow),
@@ -516,6 +528,13 @@ pub struct ParsedCompilation {
     pub inline_decisions: Vec<InlineDecision>,
     /// Script and position from the first SFI-context line, when present.
     pub script: Option<String>,
+    /// The main function's definition anchor (0-based script line), from the
+    /// first same-script SFI context with a real position.
+    pub script_line: Option<u32>,
+    /// `source_position = N` from an attached code dump: the function's
+    /// character offset in the script — the base that aligns the embedded
+    /// `Raw source` text when the `.js` file cannot be resolved (TODO 9.1).
+    pub source_position: Option<u32>,
 }
 
 #[cfg(test)]

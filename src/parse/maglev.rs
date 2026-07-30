@@ -94,6 +94,24 @@ pub fn parse_compilation(buffer: &LogBuffer, section: &CompilationSection) -> Pa
         parsed.phases.push(parsed_phase);
     }
 
+    // An attached code dump's `source_position = N` is the function's char
+    // offset in the script — the base that aligns the embedded Raw source
+    // fallback (TODO 9.1). It sits in the first few identity lines of the
+    // `Optimized code` phase.
+    for section_phase in &section.phases {
+        if section_phase.name != "Optimized code" {
+            continue;
+        }
+        for line in section_phase.lines.clone().take(12) {
+            let text = line_text(buffer, line);
+            if let Some(rest) = text.strip_prefix("source_position = ") {
+                parsed.source_position = rest.trim().parse().ok();
+                break;
+            }
+        }
+        break;
+    }
+
     parsed.opcodes = interner.opcodes;
     parsed.frames = interner.frames;
     parsed
@@ -240,16 +258,16 @@ fn parse_dump_phase(
 fn parse_bytecode_row(text: &str, primary: bool) -> Option<LineInfo> {
     let b = text.as_bytes();
     let mut at = space_len(text, 0);
-    // Optional source-position marker: digits, space(s), `S>` or `E>`. The
-    // address itself starts with the digit `0` (`0x…`), so an absent marker
-    // falls through rather than failing.
+    // Optional source-position marker: digits, space(s), `S>` or `E>` — a
+    // character offset into the script, the alignment pane's fine anchor
+    // (TODO 9.2). The address itself starts with the digit `0` (`0x…`), so
+    // an absent marker falls through rather than failing.
+    let mut src_pos = None;
     if b.get(at).is_some_and(u8::is_ascii_digit) {
-        let mut m = at;
-        while b.get(m).is_some_and(u8::is_ascii_digit) {
-            m += 1;
-        }
-        let m = m + space_len(text, m);
+        let d = digit_len(text, at);
+        let m = at + d + space_len(text, at + d);
         if text[m..].starts_with("S>") || text[m..].starts_with("E>") {
+            src_pos = text[at..at + d].parse().ok();
             at = m + 2 + space_len(text, m + 2);
         }
     }
@@ -280,7 +298,7 @@ fn parse_bytecode_row(text: &str, primary: bool) -> Option<LineInfo> {
         return None;
     }
     at += 1;
-    parse_row_tail(text, at, offset, offset_span, primary)
+    parse_row_tail(text, at, offset, offset_span, primary, src_pos)
 }
 
 /// The part of a bytecode row after the `:` — hex encoding bytes, mnemonic,
@@ -292,6 +310,7 @@ fn parse_row_tail(
     offset: u32,
     offset_span: crate::model::Span,
     primary: bool,
+    src_pos: Option<u32>,
 ) -> Option<LineInfo> {
     let b = text.as_bytes();
     at += space_len(text, at);
@@ -416,6 +435,7 @@ fn parse_row_tail(
         fbv,
         pool,
         primary,
+        src_pos,
     }))
 }
 
@@ -522,7 +542,7 @@ fn parse_graph_phase(
 
     for (offset, line) in lines.clone().enumerate() {
         let text = line_text(buffer, line);
-        let info = if offset == 0 {
+        let mut info = if offset == 0 {
             LineInfo::Banner
         } else {
             classify_graph_line(
@@ -565,8 +585,24 @@ fn parse_graph_phase(
                 }
             }
             LineInfo::BlockHeader { .. } => phase.block_count += 1,
-            LineInfo::SfiContext if parsed.script.is_none() => {
-                parsed.script = parse_script(&text);
+            LineInfo::SfiContext { .. } => {
+                let script = parse_script(&text);
+                if parsed.script.is_none() {
+                    parsed.script = script.clone();
+                }
+                if let LineInfo::SfiContext {
+                    line: l,
+                    same_script,
+                    ..
+                } = &mut info
+                {
+                    *same_script = script.is_some() && script == parsed.script;
+                    // The main function's own anchor: first same-script
+                    // context with a real position (TODO 9.1).
+                    if *same_script && *l > 0 && parsed.script_line.is_none() {
+                        parsed.script_line = Some(*l);
+                    }
+                }
             }
             LineInfo::Annotation { .. } => {
                 phase.annotation_count += 1;
@@ -627,7 +663,14 @@ fn classify_graph_line(
     }
 
     if content.starts_with("0x") && content.contains("<SharedFunctionInfo") {
-        return LineInfo::SfiContext;
+        let (line, col) = parse_sfi_position(content);
+        // `same_script` is provisional; the phase loop corrects it against
+        // the compilation's main script.
+        return LineInfo::SfiContext {
+            line,
+            col,
+            same_script: true,
+        };
     }
 
     if let Some(node) = parse_node_line(text, start, interner, saw_dual_id) {
@@ -675,7 +718,7 @@ fn parse_interleaved_bytecode(text: &str, start: usize) -> Option<LineInfo> {
     let offset_span = start as u32..(start + num.len()) as u32;
     // `num` ends right before ` : `; the tail parser resumes after the colon.
     let colon = start + num.len() + 1;
-    parse_row_tail(text, colon + 1, offset, offset_span, false)
+    parse_row_tail(text, colon + 1, offset, offset_span, false, None)
 }
 
 pub use crate::model::SCHEDULE_ONLY;
@@ -970,6 +1013,21 @@ fn parse_frame_line(
 }
 
 /// `0x… <SharedFunctionInfo name> (0x… <String[N]: "path">:line:col)`
+/// The `…">:5:14)` tail of an SFI context line: the function definition
+/// anchor as a 0-based (line, column). `(0, 0)` when V8 printed none.
+fn parse_sfi_position(content: &str) -> (u32, u32) {
+    let Some(end) = content.trim_end().strip_suffix(')') else {
+        return (0, 0);
+    };
+    let mut it = end.rsplitn(3, ':');
+    let col = it.next().and_then(|s| s.parse().ok());
+    let line = it.next().and_then(|s| s.parse().ok());
+    match (line, col) {
+        (Some(l), Some(c)) => (l, c),
+        _ => (0, 0),
+    }
+}
+
 fn parse_script(text: &str) -> Option<String> {
     let at = text.find("<String[")?;
     let rest = &text[at..];
@@ -1125,9 +1183,12 @@ mod tests {
         let phase = parse_dump_lines(&[
             "   45 S> 0x2f9d0829f26e @    0 : 0b 03             Ldar a0",
             "   57 E> 0x2f9d0829f270 @    2 : 46 03 00          MulSmi [3], [0]",
+            "         0x2f9d0829f273 @    5 : ab                Return",
         ]);
         assert_eq!(bc(&phase.infos[1]).offset, 0);
-        assert_eq!(bc(&phase.infos[2]).offset, 2);
+        assert_eq!(bc(&phase.infos[1]).src_pos, Some(45), "S> char offset");
+        assert_eq!(bc(&phase.infos[2]).src_pos, Some(57), "E> char offset");
+        assert_eq!(bc(&phase.infos[3]).src_pos, None, "markerless row");
     }
 
     #[test]
@@ -1418,7 +1479,16 @@ mod tests {
             "0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: \"workloads/simple.js\">:2:12)",
         ]);
         assert!(matches!(&phase.infos[1], LineInfo::Bytecode(bc) if bc.offset == 2 && !bc.primary));
-        assert!(matches!(phase.infos[2], LineInfo::SfiContext));
+        let LineInfo::SfiContext {
+            line,
+            col,
+            same_script,
+        } = &phase.infos[2]
+        else {
+            panic!("expected sfi context, got {:?}", phase.infos[2]);
+        };
+        assert_eq!((*line, *col), (2, 12), "0-based definition anchor");
+        assert!(*same_script);
         assert_eq!(parsed.script.as_deref(), Some("workloads/simple.js"));
     }
 

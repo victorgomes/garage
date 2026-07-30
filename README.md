@@ -77,6 +77,7 @@ Notes that save an afternoon:
 | `h`/`l`, `←`/`→` | focus sidebar ⇄ viewport |
 | `Enter` | sidebar: expand/collapse · timeline event: jump to it · viewport: follow branch/jump targets (cycles) |
 | `Ctrl+D`/`Ctrl+U`, `PgDn`/`PgUp`, `g`/`G` | paging, top/bottom |
+| `S` | JS source alignment pane (Ctrl+W focuses it; Enter jumps to aligned rows) |
 | `b` | show/hide the sidebar (a mid-height `▸` strip marks it when hidden; `h` or a click reopens) |
 | `c` | sidebar: chronological ⇄ grouped by function |
 | `f` | filter sidebar by regex |
@@ -218,6 +219,23 @@ get their offset column labelled: those are the de-facto basic blocks.
 destination cycles the branches that land on it, and the cursor lights up
 the link in both directions — the same def-use navigation graphs and
 bytecode listings have.
+
+## Source alignment
+
+`S` opens the **source pane**: the compilation's script, resolved from the
+path V8 printed — as-is, relative to the trace file's directory, or one
+directory up (where `d8` usually ran). When no file resolves, the
+compilation's own `Raw source` block stands in, aligned through the code
+dump's `source_position`; when neither exists the status line says so.
+
+Alignment runs on two grains, honestly labelled by what the trace
+contains: `NNN S>` bytecode markers give per-row character positions
+(interleaved graph rows inherit them through their bytecode offset), and
+SFI context lines give per-function anchors as the fallback. The trace
+cursor keeps its source line highlighted and centred; `Ctrl+W` (or `l`)
+focuses the pane, parks its cursor on that line, and `Enter` cycles
+through the trace rows aligned with the line under the cursor —
+`Ctrl+O` unwinds, as everywhere.
 
 ## What the UI shows
 

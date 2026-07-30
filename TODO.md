@@ -733,10 +733,30 @@ in tmux:
 
 ## Phase 9 (post-MVP): Source Alignment, Dual-Run & Live Mode
 
-- [ ] **9.1. Source resolution**: load `.js` when the script path resolves;
-  graceful degradation otherwise (PLAN §5.1).
-- [ ] **9.2. Alignment pane** (`S`): JS ⇄ bytecode ⇄ IR cross-highlighting via
-  bytecode offsets, both directions.
+- [x] **9.1. Source resolution**: the script path from the first SFI context
+  line, tried as printed, relative to the trace file's directory, and one
+  directory up (d8's usual cwd, the fixture corpus included); capped at
+  8 MB. Fallback (user request): the compilation's own `Raw source` block —
+  merged-dump phase or standalone-dump preamble — aligned into script
+  coordinates through the code dump's `source_position = N` (char offset of
+  the function) and the SFI context's 0-based definition line. No file and
+  no block → an honest status message.
+- [x] **9.2. Alignment pane** (`S`). Two alignment grains, used as the
+  trace provides them: `NNN S>` / `E>` bytecode markers are script char
+  offsets (`BytecodeRow.src_pos`; interleaved graph rows inherit through
+  their bytecode offset, nodes/frames inherit from the row above), and SFI
+  context lines carry the function-definition anchor
+  (`SfiContext { line, col, same_script }`, 0-based, cross-file inlining
+  excluded). `App::source_map` builds buffer-line → `SrcRef::{Char,FnLine}`
+  per compilation (cached, invalidated on stream growth); `SourcePane`
+  places refs via script-absolute line starts. UI: right-half pane
+  (mutually exclusive with v/s splits and diff), JS-tokenized with script
+  line numbers; trace cursor's line stays tinted and centred; `Ctrl+W`/`l`
+  focus it and park its cursor on the aligned line; focused, its cursor
+  tints the aligned trace rows and Enter cycles through them via the
+  anchored-cycle machinery; mouse click/scroll work. Positions are UTF-16
+  code units in V8 — identical to bytes for ASCII sources, documented
+  limitation otherwise.
 - [ ] **9.3. Dual-run mode** (`garage a.log b.log`): dual stores, telemetry
   comparison header, per-function drill-down using the Phase 7 diff engine.
 - [ ] **9.4. Wrapper/live mode** (`garage -- d8 ...`): spawn child, capture

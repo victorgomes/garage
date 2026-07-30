@@ -30,6 +30,8 @@ const BAR_BG: Color = Color::Indexed(236);
 const DIM: Color = Color::Indexed(244);
 const ACCENT: Color = Color::Cyan;
 const CURSOR_BG: Color = Color::Indexed(237);
+/// Tint for source-alignment cross-highlights (TODO 9.2).
+const ALIGN_BG: Color = Color::Indexed(23);
 
 pub fn render(frame: &mut Frame, app: &mut App) {
     let [telemetry, body, status] = Layout::vertical([
@@ -65,6 +67,17 @@ pub fn render(frame: &mut Frame, app: &mut App) {
         }
     };
 
+    // The source alignment pane (TODO 9.2) takes the right half; it and
+    // the v/s split are mutually exclusive (toggle enforces it).
+    let (area0, src_area) = match (&app.source_pane, app.split, app.diff) {
+        (Some(_), None, false) => {
+            let [a, s2] =
+                Layout::horizontal([Constraint::Percentage(50), Constraint::Min(1)]).areas(area0);
+            (a, Some(s2))
+        }
+        _ => (area0, None),
+    };
+
     // Heights recorded for paging, rects for mouse routing: they are
     // properties of the frame, and the frame is the only thing that knows
     // them.
@@ -78,6 +91,7 @@ pub fn render(frame: &mut Frame, app: &mut App) {
     app.sidebar_rect = rect_of(sidebar);
     app.viewport_rect = rect_of(area0);
     app.viewport2_rect = area1.map(rect_of).unwrap_or_default();
+    app.source_rect = src_area.map(rect_of).unwrap_or_default();
     let active_area = if app.active_pane == 1 {
         area1.unwrap_or(area0)
     } else {
@@ -102,6 +116,38 @@ pub fn render(frame: &mut Frame, app: &mut App) {
         app.cursor = vm.len().saturating_sub(1);
     }
 
+    // Alignment data (TODO 9.2): the trace cursor's source line, and — when
+    // the source pane is focused — the trace rows aligned with its cursor.
+    let mut src_hl_line: Option<usize> = None;
+    let mut aligned_rows: Option<HashSet<usize>> = None;
+    if src_area.is_some()
+        && let ViewModel::Modeled { comp, .. } = &vm
+        && app
+            .source_pane
+            .as_ref()
+            .is_some_and(|p| p.key == (app.active, *comp))
+    {
+        let comp = *comp;
+        let map = app.source_map(comp);
+        let pane = app.source_pane.as_ref().expect("checked above");
+        src_hl_line = vm
+            .row(app.cursor)
+            .and_then(|r| map.of_row.get(&r.line))
+            .and_then(|r| pane.display_line(r));
+        if app.focus == Pane::Source {
+            let cur = pane.cursor;
+            let set: HashSet<usize> = map
+                .of_row
+                .iter()
+                .filter(|(_, r)| pane.display_line(r) == Some(cur))
+                .map(|(l, _)| *l)
+                .collect();
+            if !set.is_empty() {
+                aligned_rows = Some(set);
+            }
+        }
+    }
+
     frame.render_widget(telemetry_bar(app), telemetry);
     if app.sidebar_visible {
         render_sidebar(frame, app, sidebar);
@@ -121,6 +167,7 @@ pub fn render(frame: &mut Frame, app: &mut App) {
                 &mut state,
                 true,
                 app.split.map(|_| app.active_pane),
+                aligned_rows.as_ref(),
             );
             app.set_view_state(state);
             if let Some(a1) = area1 {
@@ -136,10 +183,15 @@ pub fn render(frame: &mut Frame, app: &mut App) {
                     &mut other,
                     false,
                     Some(inactive_pane),
+                    None,
                 );
                 app.other_view = other;
             }
         }
+    }
+
+    if let Some(area) = src_area {
+        render_source_pane(frame, app, area, src_hl_line);
     }
 
     frame.render_widget(status_line(app, &vm, diff_model.as_deref()), status);
@@ -263,6 +315,72 @@ fn render_sidebar_strip(frame: &mut Frame, area: Rect) {
         }
     }
     frame.render_widget(Paragraph::new(lines), area);
+}
+
+/// The JS source alignment pane (TODO 9.1/9.2). Follows the trace cursor
+/// (the aligned line stays centred) unless focused, where it scrolls on its
+/// own and Enter jumps back into the trace.
+fn render_source_pane(frame: &mut Frame, app: &mut App, area: Rect, hl: Option<usize>) {
+    let active = app.focus == Pane::Source;
+    let palette = Palette::detect();
+    let Some(pane) = &mut app.source_pane else {
+        return;
+    };
+    let title = format!(" {}{} ", pane.title, if active { " ●" } else { "" });
+    let block = Block::new()
+        .borders(Borders::TOP)
+        .border_style(Style::new().fg(if active { ACCENT } else { DIM }))
+        .title(title);
+    let inner = block.inner(area);
+    frame.render_widget(block, area);
+    let height = inner.height as usize;
+    let len = pane.lines.len();
+    if height == 0 || len == 0 {
+        return;
+    }
+    pane.cursor = pane.cursor.min(len - 1);
+    if active {
+        if pane.cursor < pane.top {
+            pane.top = pane.cursor;
+        }
+        if pane.cursor >= pane.top + height {
+            pane.top = pane.cursor + 1 - height;
+        }
+    } else if let Some(h) = hl {
+        pane.top = h.saturating_sub(height / 2).min(len.saturating_sub(height));
+    }
+    pane.top = pane.top.min(len.saturating_sub(1));
+
+    let number_width = digits(pane.base_line as usize + len);
+    let mut out = Vec::with_capacity(height);
+    for idx in pane.top..len.min(pane.top + height) {
+        let text = pane.lines[idx].clone();
+        let mut spans = vec![Span::styled(
+            format!("{:>number_width$} ", pane.base_line as usize + idx + 1),
+            Style::new().fg(if active && idx == pane.cursor {
+                ACCENT
+            } else {
+                DIM
+            }),
+        )];
+        spans.extend(paint_line(
+            &text,
+            Some(&LineInfo::Source),
+            None,
+            CursorHl::default(),
+            None,
+            &palette,
+            0,
+        ));
+        let mut line = Line::from(spans);
+        if active && idx == pane.cursor {
+            line = line.style(Style::new().bg(CURSOR_BG));
+        } else if hl == Some(idx) {
+            line = line.style(Style::new().bg(ALIGN_BG));
+        }
+        out.push(line);
+    }
+    frame.render_widget(Paragraph::new(out), inner);
 }
 
 fn render_sidebar(frame: &mut Frame, app: &mut App, area: Rect) {
@@ -811,6 +929,7 @@ fn bc_highlight(vm: &ViewModel, cursor: usize) -> Option<BcHl> {
 /// Renders one viewport pane. `state` is the pane's own navigation state
 /// (clamping writes back into it); `active` says whether this pane owns the
 /// cursor; `pane_title` labels split panes with what they show.
+#[allow(clippy::too_many_arguments)]
 fn render_viewport(
     frame: &mut Frame,
     app: &App,
@@ -819,6 +938,7 @@ fn render_viewport(
     state: &mut crate::app::ViewState,
     active: bool,
     pane_title: Option<usize>,
+    aligned: Option<&HashSet<usize>>,
 ) {
     // Split panes get a title bar naming their content; single view doesn't
     // spend the row.
@@ -929,6 +1049,9 @@ fn render_viewport(
         let mut line = Line::from(spans);
         if cursor_here {
             line = line.style(Style::new().bg(CURSOR_BG));
+        } else if aligned.is_some_and(|set| set.contains(&row.line)) {
+            // JS → trace: rows aligned with the source pane's cursor line.
+            line = line.style(Style::new().bg(ALIGN_BG));
         }
         lines.push(line);
     }
@@ -1217,7 +1340,7 @@ fn paint_line(
         }
         Some(LineInfo::BlockHeader { .. }) => paint.fill(Class::BlockHeader),
         Some(LineInfo::Banner) => paint.fill(Class::Banner),
-        Some(LineInfo::SfiContext | LineInfo::Control | LineInfo::VirtualObjects) => {
+        Some(LineInfo::SfiContext { .. } | LineInfo::Control | LineInfo::VirtualObjects) => {
             paint.fill(Class::Dim)
         }
         Some(LineInfo::Disasm {
