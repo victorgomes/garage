@@ -658,7 +658,14 @@ regeneration, the three new formats parse with **zero** annotation
   opens phases inside the still-open compilation; printed after, it opens
   a dump section that the `kind = ` latch merges into the adjacent
   pipeline on tier + adjacency alone (the only evidence there is). The
-  Code-object field block is a `Code object` Listing phase.
+  Code-object field block is a `Code object` Listing phase. Second
+  follow-up (user report, TF/Turbolev dumps not merging): Turbolev's code
+  says `kind = TURBOFAN_JS` — same misleading tier word as its trailers —
+  so the merge takes Turbofan-kind code into a Turbolev pipeline; and d8
+  separates trailer from dump with blank lines, which land in a
+  label-less raw section — such an all-blank gap now counts as adjacency
+  and is absorbed into the merged section (partition stays total; any
+  non-blank content still blocks the merge).
 
 ---
 

@@ -1055,22 +1055,37 @@ impl TraceIndex {
     /// to that compilation, as its last phases — `--print-maglev-graphs
     /// --print-code` interleaves them per function (TODO 8.9, user request).
     /// Merge is decided only once the dump's identity is complete, and only
-    /// under the no-guessing rule: the sections must be line-adjacent and
-    /// agree on tier *and* name. Anything else stays a section of its own.
+    /// under the no-guessing rule: the sections must be adjacent (blank
+    /// lines between them count as nothing) and agree on tier *and* name.
+    /// Anything else stays a section of its own.
     fn try_merge_code_section(&mut self, comp: usize) {
         if comp == 0 || comp != self.compilations.len() - 1 {
             return;
         }
         let prev = comp - 1;
+        // d8 prints blank lines between the pipeline trailer and the code
+        // dump; they land in a label-less raw section. Only such an empty
+        // gap keeps the sections "adjacent" — any real content breaks it.
+        let blank_gap = {
+            let code = &self.compilations[comp];
+            let pipeline = &self.compilations[prev];
+            self.raw.last().is_some_and(|r| {
+                r.lines == (pipeline.lines.end..code.lines.start) && r.label.is_empty()
+            })
+        };
         {
             let code = &self.compilations[comp];
             let pipeline = &self.compilations[prev];
-            let adjacent = pipeline.lines.end == code.lines.start;
+            let adjacent = pipeline.lines.end == code.lines.start || blank_gap;
             // A bare `[Code]` object print has no `name = ` line at all —
             // there the kind and adjacency are the whole available evidence.
             let unnamed_dump = code.phases.first().is_some_and(|p| p.name == "Code object");
-            let same =
-                pipeline.key.tier == code.key.tier && (pipeline.name == code.name || unnamed_dump);
+            // Turbolev prints `kind = TURBOFAN_JS` / `compiler = turbofan`
+            // on its code — the tier word is misleading there, exactly as
+            // on its Begin/Finished trailers.
+            let tier_ok = pipeline.key.tier == code.key.tier
+                || (pipeline.key.tier == Tier::Turbolev && code.key.tier == Tier::Turbofan);
+            let same = tier_ok && (pipeline.name == code.name || unnamed_dump);
             // A code dump never merges into another code dump.
             let pipeline_is_code = pipeline
                 .phases
@@ -1079,6 +1094,17 @@ impl TraceIndex {
             if !adjacent || !same || pipeline_is_code {
                 return;
             }
+        }
+        if blank_gap {
+            // The gap's blank lines join the merged section (the partition
+            // must stay total); they extend the pipeline's last phase.
+            let gap = self.raw.pop().expect("checked: blank gap raw section");
+            let section = &mut self.compilations[prev];
+            match section.phases.last_mut() {
+                Some(p) => p.lines.end = gap.lines.end,
+                None => section.preamble.end = gap.lines.end,
+            }
+            section.lines.end = gap.lines.end;
         }
         let code = self.compilations.pop().expect("checked: comp is last");
         // The dump's provisional ordinal is unused now; give it back so the
@@ -1538,6 +1564,56 @@ Instructions (size = 40)
         );
         assert!(idx.raw.is_empty());
         assert_partition(&idx, 14);
+    }
+
+    /// A Turbolev pipeline's code dump says `kind = TURBOFAN_JS` (the tier
+    /// word misleads, as on its trailers), and d8 puts a blank line between
+    /// the trailer and `--- Raw source ---`. Both must still merge
+    /// (user report: the dump stayed a separate section).
+    #[test]
+    fn turbolev_code_dump_merges_across_the_blank_gap() {
+        let idx = index(
+            "\
+---------------------------------------------------
+Begin compiling method bnpFromString using TurboFan
+----- Bytecode before MaglevGraphBuilding -----
+Function: 0x9 <JSFunction bnpFromString (sfi = 0x77)>
+----- Maglev graph building -----
+   1: Foo
+Finished compiling method bnpFromString using TurboFan
+
+--- Raw source ---
+(s,b) {
+}
+--- Optimized code ---
+optimization_id = 34
+kind = TURBOFAN_JS
+name = bnpFromString
+compiler = turbofan
+
+Instructions (size = 4236)
+0x15002a900     0  a9bf7bfd       stp fp, lr, [sp, #-16]!
+--- End code ---
+",
+        );
+        assert_eq!(idx.compilations.len(), 1, "{:?}", idx.compilations);
+        let c = &idx.compilations[0];
+        assert_eq!(c.key.tier, Tier::Turbolev, "pipeline tier wins");
+        assert_eq!(c.key.sfi, Addr(0x77));
+        assert_eq!(c.name, "bnpFromString");
+        let names: Vec<&str> = c.phases.iter().map(|p| p.name.as_str()).collect();
+        assert_eq!(
+            names,
+            [
+                "Bytecode before MaglevGraphBuilding",
+                "Maglev graph building",
+                "Raw source",
+                "Optimized code",
+                "Instructions"
+            ]
+        );
+        assert!(idx.raw.is_empty(), "gap absorbed: {:?}", idx.raw);
+        assert_partition(&idx, 20);
     }
 
     /// `--print-maglev-code` prints the bare Code heap object — no
