@@ -266,6 +266,11 @@ pub struct App {
     /// Aligned model cache: recomputed only when a side changes.
     diff_cache: Option<(DiffKey, std::sync::Arc<crate::diff::DiffModel>)>,
 
+    /// Sidebar visibility (`b`): hiding it hands its columns to the
+    /// viewport — wide graphs are the whole point. A one-column strip stays
+    /// behind as the visual clue that it exists.
+    pub sidebar_visible: bool,
+
     /// Pane geometry from the last frame, for mouse routing.
     pub sidebar_rect: PaneRect,
     pub viewport_rect: PaneRect,
@@ -328,6 +333,7 @@ impl App {
             active_pane: 0,
             diff: false,
             diff_cache: None,
+            sidebar_visible: true,
             sidebar_rect: PaneRect::default(),
             viewport_rect: PaneRect::default(),
             viewport2_rect: PaneRect::default(),
@@ -662,6 +668,9 @@ impl App {
                 let Some((pane, viewport)) = at_pane else {
                     return;
                 };
+                if pane == Pane::Sidebar && !self.sidebar_visible {
+                    return;
+                }
                 self.focus = pane;
                 if pane == Pane::Viewport {
                     self.activate_pane(viewport);
@@ -675,6 +684,12 @@ impl App {
             }
             MouseEventKind::Down(MouseButton::Left) => match at_pane {
                 Some((Pane::Sidebar, _)) => {
+                    // A click on the collapsed strip reopens the sidebar.
+                    if !self.sidebar_visible {
+                        self.sidebar_visible = true;
+                        self.focus = Pane::Sidebar;
+                        return;
+                    }
                     self.focus = Pane::Sidebar;
                     let offset = (mouse.row - self.sidebar_rect.y) as usize;
                     let rows = self.rows().len();
@@ -750,7 +765,12 @@ impl App {
                 }
             }
             Action::Help => self.help = true,
-            Action::FocusSidebar => self.focus = Pane::Sidebar,
+            Action::FocusSidebar => {
+                // `h` at the left edge also brings a hidden sidebar back —
+                // the natural "where did it go" gesture.
+                self.sidebar_visible = true;
+                self.focus = Pane::Sidebar;
+            }
             Action::FocusViewport => self.focus = Pane::Viewport,
             Action::NextSource => {
                 if self.sources.len() > 1 {
@@ -876,6 +896,26 @@ impl App {
             Action::FoldAllBlocks => self.fold_all_blocks(),
             Action::PrevBlock => self.step_block(-1),
             Action::NextBlock => self.step_block(1),
+            Action::ToggleSidebar => self.toggle_sidebar(),
+        }
+    }
+
+    /// `b`: show / hide the sidebar. Hidden, its columns go to the viewport
+    /// and a one-column `▸` strip remains as the clue; `h` or a click on the
+    /// strip also bring it back.
+    fn toggle_sidebar(&mut self) {
+        self.sidebar_visible = !self.sidebar_visible;
+        if self.sidebar_visible {
+            self.status = "sidebar shown".to_string();
+        } else {
+            if self.focus == Pane::Sidebar {
+                self.focus = Pane::Viewport;
+            }
+            let hint = self
+                .keys
+                .chord_hint(crate::config::Action::ToggleSidebar)
+                .unwrap_or_else(|| "toggle-sidebar".to_string());
+            self.status = format!("sidebar hidden ({hint} or h shows it)");
         }
     }
 
@@ -1442,6 +1482,9 @@ impl App {
 
     /// `Tab`: compilation list ⇄ timeline. Each mode keeps its own selection.
     fn toggle_timeline(&mut self) {
+        // The timeline lives in the sidebar; toggling it while hidden would
+        // otherwise change nothing visible.
+        self.sidebar_visible = true;
         self.timeline = !self.timeline;
         std::mem::swap(&mut self.selected, &mut self.timeline_selected);
         self.timeline_deopts_only = false;
@@ -3146,6 +3189,29 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
             vm.row(app.cursor).unwrap().kind,
             RowKind::BlockFold { block: 0, .. }
         ));
+    }
+
+    #[test]
+    fn sidebar_toggles_and_reopens_from_the_left_edge() {
+        let mut app = app_with(TRACE);
+        assert!(app.sidebar_visible);
+        app.focus = Pane::Sidebar;
+
+        key(&mut app, KeyCode::Char('b'));
+        assert!(!app.sidebar_visible);
+        assert_eq!(app.focus, Pane::Viewport, "focus leaves a hidden pane");
+        assert!(app.status.contains("b or h shows it"), "{}", app.status);
+
+        // `h` brings it back and focuses it.
+        key(&mut app, KeyCode::Char('h'));
+        assert!(app.sidebar_visible);
+        assert_eq!(app.focus, Pane::Sidebar);
+
+        // The timeline lives in the sidebar: Tab reopens a hidden one.
+        key(&mut app, KeyCode::Char('b'));
+        assert!(!app.sidebar_visible);
+        key(&mut app, KeyCode::Tab);
+        assert!(app.sidebar_visible && app.timeline);
     }
 
     const BYTECODE_TRACE: &str = "\

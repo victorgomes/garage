@@ -72,6 +72,7 @@ Notes that save an afternoon:
 | `h`/`l`, `←`/`→` | focus sidebar ⇄ viewport |
 | `Enter` | sidebar: expand/collapse · timeline event: jump to it · viewport: follow branch/jump targets (cycles) |
 | `Ctrl+D`/`Ctrl+U`, `PgDn`/`PgUp`, `g`/`G` | paging, top/bottom |
+| `b` | show/hide the sidebar (a `▸` strip marks it when hidden; `h` or a click reopens) |
 | `c` | sidebar: chronological ⇄ grouped by function |
 | `f` | filter sidebar by regex |
 | `/`, `n`, `N` | regex search (incremental), next/previous match |

@@ -39,7 +39,13 @@ pub fn render(frame: &mut Frame, app: &mut App) {
     ])
     .areas(frame.area());
 
-    let sidebar_width = (frame.area().width / 3).clamp(24, 44);
+    // Hidden sidebar keeps a one-column strip: the visual clue it exists
+    // (and the click target that brings it back).
+    let sidebar_width = if app.sidebar_visible {
+        (frame.area().width / 3).clamp(24, 44)
+    } else {
+        1
+    };
     let [sidebar, viewport] =
         Layout::horizontal([Constraint::Length(sidebar_width), Constraint::Min(1)]).areas(body);
 
@@ -96,7 +102,11 @@ pub fn render(frame: &mut Frame, app: &mut App) {
     }
 
     frame.render_widget(telemetry_bar(app), telemetry);
-    render_sidebar(frame, app, sidebar);
+    if app.sidebar_visible {
+        render_sidebar(frame, app, sidebar);
+    } else {
+        render_sidebar_strip(frame, sidebar);
+    }
 
     match (&diff_model, area1) {
         (Some(model), Some(area1)) => render_diff(frame, app, model, area0, area1),
@@ -233,6 +243,22 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
 // ---------------------------------------------------------------------------
 // Sidebar (TODO 3.3, 4.7)
 // ---------------------------------------------------------------------------
+
+/// The one-column strip left behind by a hidden sidebar: a `▸` at the top
+/// (the "there is more here" affordance, clickable) over a dim rule.
+fn render_sidebar_strip(frame: &mut Frame, area: Rect) {
+    let mut lines = vec![Line::from(Span::styled(
+        "▸",
+        Style::new().fg(ACCENT).add_modifier(Modifier::BOLD),
+    ))];
+    for _ in 1..area.height {
+        lines.push(Line::from(Span::styled(
+            "▏",
+            Style::new().fg(Color::Indexed(238)),
+        )));
+    }
+    frame.render_widget(Paragraph::new(lines), area);
+}
 
 fn render_sidebar(frame: &mut Frame, app: &mut App, area: Rect) {
     let focused = app.focus == Pane::Sidebar;
