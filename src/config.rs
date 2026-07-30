@@ -59,6 +59,7 @@ pub enum Action {
     SplitHorizontal,
     OtherPane,
     Diff,
+    FoldAllBlocks,
 }
 
 impl Action {
@@ -104,6 +105,7 @@ impl Action {
             Action::SplitHorizontal => "split-horizontal",
             Action::OtherPane => "other-pane",
             Action::Diff => "diff",
+            Action::FoldAllBlocks => "fold-all-blocks",
         }
     }
 
@@ -149,6 +151,7 @@ impl Action {
             Action::SplitHorizontal => "horizontal split (again: close)",
             Action::OtherPane => "focus the other pane",
             Action::Diff => "phase diff mode",
+            Action::FoldAllBlocks => "fold / unfold all blocks",
         }
     }
 
@@ -194,6 +197,7 @@ impl Action {
             SplitHorizontal,
             OtherPane,
             Diff,
+            FoldAllBlocks,
         ]
     }
 }
@@ -341,6 +345,7 @@ impl Keymap {
             (Action::SplitHorizontal, vec!["s"]),
             (Action::OtherPane, vec!["Ctrl+w"]),
             (Action::Diff, vec!["d"]),
+            (Action::FoldAllBlocks, vec!["z"]),
         ]
     }
 

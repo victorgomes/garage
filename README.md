@@ -76,6 +76,7 @@ Notes that save an afternoon:
 | `f` | filter sidebar by regex |
 | `/`, `n`, `N` | regex search (incremental), next/previous match |
 | `Space` | fold/unfold the basic block under the cursor |
+| `z` | fold all blocks in view / unfold them all |
 | `i` | jump to input definitions (cycles) |
 | `u` | cycle consumers of the node the cycle started from |
 | `Ctrl+O` / `Ctrl+I` | jump history back / forward |

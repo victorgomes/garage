@@ -835,6 +835,7 @@ impl App {
                 }
             }
             Action::Diff => self.toggle_diff(),
+            Action::FoldAllBlocks => self.fold_all_blocks(),
         }
     }
 
@@ -1107,6 +1108,81 @@ impl App {
             self.cursor = row;
         }
         self.status = format!("b{block} {}", if folded { "folded" } else { "unfolded" });
+    }
+
+    /// `z`: fold every block in the current view, or — when they already
+    /// all are — unfold them all. Scoped to what is on screen: a phase
+    /// selection folds only that phase's blocks.
+    fn fold_all_blocks(&mut self) {
+        if self.diff {
+            self.status = "folding is off in diff view (d to leave)".to_string();
+            return;
+        }
+        let vm = self.view_model();
+        let ViewModel::Modeled { comp, .. } = &vm else {
+            self.status = "no blocks here (raw view)".to_string();
+            return;
+        };
+        let comp = *comp;
+
+        // Every block with a header row in the current view — fold markers
+        // included, so a partially folded view still collects everything.
+        let mut keys: HashSet<FoldKey> = HashSet::new();
+        for at in 0..vm.len() {
+            let Some(row) = vm.row(at) else { break };
+            let block = match row.kind {
+                RowKind::BlockFold { block, .. } => Some(block),
+                RowKind::Text => match row.info.and_then(|(p, i)| {
+                    vm.parsed()
+                        .and_then(|parsed| parsed.phases.get(p))
+                        .and_then(|phase| phase.infos.get(i))
+                        .map(|info| (p, info))
+                }) {
+                    Some((p, LineInfo::BlockHeader { block })) => {
+                        keys.insert((self.active, comp, p, *block));
+                        None
+                    }
+                    _ => None,
+                },
+                _ => None,
+            };
+            // BlockFold rows carry their phase in `info` too.
+            if let (Some(block), Some((p, _))) = (block, row.info) {
+                keys.insert((self.active, comp, p, block));
+            }
+        }
+        if keys.is_empty() {
+            self.status = "no blocks in this view".to_string();
+            return;
+        }
+
+        let cursor_line = vm.line_at(self.cursor);
+        let any_unfolded = keys.iter().any(|k| !self.folded_blocks.contains(k));
+        let n = keys.len();
+        if any_unfolded {
+            self.folded_blocks.extend(keys);
+            self.status = format!("{n} blocks folded (z unfolds)");
+        } else {
+            for k in &keys {
+                self.folded_blocks.remove(k);
+            }
+            self.status = format!("{n} blocks unfolded");
+        }
+
+        // Keep the cursor in context: same line if still visible, else the
+        // nearest row at or before it (its block's fold marker).
+        let vm = self.view_model();
+        if let Some(line) = cursor_line {
+            self.cursor = match row_showing(&vm, line) {
+                Some(row) => row,
+                None => (0..vm.len())
+                    .take_while(|&r| vm.line_at(r).is_some_and(|l| l <= line))
+                    .last()
+                    .unwrap_or(0),
+            };
+        }
+        self.cursor = self.cursor.min(vm.len().saturating_sub(1));
+        self.cycle = None;
     }
 
     // -----------------------------------------------------------------------
@@ -2678,6 +2754,61 @@ Compiling 0x2 <JSFunction g (sfi = 0x20)> with Maglev
             vm.line_at(app.cursor),
             Some(9),
             "cycle stays anchored to n1"
+        );
+    }
+
+    #[test]
+    fn z_folds_and_unfolds_all_blocks_preserving_context() {
+        let mut app = app_with(TRACE);
+        app.follow = false;
+        app.selected = 1;
+        app.focus = Pane::Viewport;
+        // Cursor on `4: Quux` (line 9), inside b1.
+        app.cursor = 8;
+
+        key(&mut app, KeyCode::Char('z'));
+        let vm = app.view_model();
+        // anchor + banner + two fold markers; all body lines hidden.
+        assert_eq!(vm.len(), 4);
+        assert!(matches!(
+            vm.row(2).unwrap().kind,
+            RowKind::BlockFold { block: 0, .. }
+        ));
+        assert!(matches!(
+            vm.row(3).unwrap().kind,
+            RowKind::BlockFold { block: 1, .. }
+        ));
+        assert_eq!(app.cursor, 3, "cursor lands on its block's fold marker");
+        assert!(app.status.contains("2 blocks folded"), "{}", app.status);
+
+        key(&mut app, KeyCode::Char('z'));
+        assert_eq!(app.view_model().len(), 9, "all unfolded again");
+        assert!(app.status.contains("2 blocks unfolded"), "{}", app.status);
+
+        // Partially folded (one block by hand) → z finishes the job.
+        app.cursor = 3;
+        key(&mut app, KeyCode::Char(' ')); // fold b0 only
+        key(&mut app, KeyCode::Char('z'));
+        assert_eq!(app.view_model().len(), 4, "z folded the rest");
+    }
+
+    #[test]
+    fn z_on_a_phase_selection_scopes_to_that_phase() {
+        let mut app = app_with(DIFF_TRACE);
+        app.follow = false;
+        key(&mut app, KeyCode::Enter); // expand: rows comp, phase0, phase1
+        app.selected = 2; // Phi untagging
+        app.focus = Pane::Viewport;
+        key(&mut app, KeyCode::Char('z'));
+        assert!(app.status.contains("1 blocks folded"), "{}", app.status);
+
+        // The other phase's identical block id is untouched.
+        app.selected = 1;
+        app.cursor = 0;
+        let vm = app.view_model();
+        assert!(
+            (0..vm.len()).all(|r| !matches!(vm.row(r).unwrap().kind, RowKind::BlockFold { .. })),
+            "phase 0's b0 stays open"
         );
     }
 
