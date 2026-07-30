@@ -5,7 +5,9 @@
 //! the section's current end line so that a still-streaming compilation is
 //! re-parsed when it grows and served from cache once it stops.
 
+pub mod listing;
 pub mod maglev;
+pub mod turbofan;
 
 use std::collections::HashMap;
 use std::sync::Arc;

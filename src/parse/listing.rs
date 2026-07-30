@@ -1,0 +1,203 @@
+//! Non-graph listing phases (TODO 8.2/8.3): `--print-opt-code` sections and
+//! `--print-bytecode` tables.
+//!
+//! The only structured rows here are disassembly lines,
+//! `0xADDR  OFF  ENCODING  mnemonic operands…`, whose three leading columns
+//! are hex on both architectures; arm64 adds `(addr 0x…)` branch targets and
+//! `;; …` reloc comments, x64 prints `jna 0x… <+0x71>` and parenthesised
+//! comments. Everything is recorded as spans over the emitted text — no
+//! decoding beyond what V8 printed is promised (PLAN §7.6).
+//!
+//! Constant pools, deopt-data tables, safepoint and reloc rows are kept as
+//! plain (dim) content: they are reference tables, not structure.
+
+use std::ops::Range;
+
+use super::maglev::line_text;
+use crate::model::{LineInfo, ParsedPhase, Span};
+use crate::source::LogBuffer;
+
+pub fn parse_listing_phase(buffer: &LogBuffer, lines: Range<usize>) -> ParsedPhase {
+    let mut phase = ParsedPhase::default();
+    for (offset, line) in lines.enumerate() {
+        let text = line_text(buffer, line);
+        let info = if offset == 0 {
+            LineInfo::Banner
+        } else if let Some(info) = parse_disasm_row(&text) {
+            info
+        } else {
+            LineInfo::Control
+        };
+        phase.infos.push(info);
+    }
+    phase
+}
+
+fn hex_run(s: &str) -> usize {
+    s.bytes().take_while(|b| b.is_ascii_hexdigit()).count()
+}
+
+fn space_run(s: &str) -> usize {
+    s.bytes().take_while(|b| *b == b' ').count()
+}
+
+/// `0x1700001bc    1c  540002c9       b.ls #+0x58 (addr 0x170000214)`.
+/// Three hex columns then the instruction text; anything shaped differently
+/// (constant-pool entries, safepoint rows, SFI context lines) is rejected.
+fn parse_disasm_row(text: &str) -> Option<LineInfo> {
+    let rest = text.strip_prefix("0x")?;
+    let addr_len = hex_run(rest);
+    if addr_len == 0 {
+        return None;
+    }
+    let mut at = 2 + addr_len;
+
+    let spaces = space_run(&text[at..]);
+    if spaces == 0 {
+        return None;
+    }
+    at += spaces;
+    let off_len = hex_run(&text[at..]);
+    if off_len == 0 {
+        return None;
+    }
+    let offset = u32::from_str_radix(&text[at..at + off_len], 16).ok()?;
+    // The offset column must be a complete token.
+    if !text[at + off_len..].starts_with(' ') {
+        return None;
+    }
+    at += off_len;
+
+    let spaces = space_run(&text[at..]);
+    if spaces == 0 {
+        return None;
+    }
+    at += spaces;
+    let enc_len = hex_run(&text[at..]);
+    if enc_len < 2 || !text[at + enc_len..].starts_with(' ') {
+        return None;
+    }
+    at += enc_len;
+
+    let spaces = space_run(&text[at..]);
+    if spaces == 0 {
+        return None;
+    }
+    at += spaces;
+    if at >= text.len() {
+        return None;
+    }
+
+    // The mnemonic token (x64's `REX.W` prefix included, as emitted).
+    let mnemonic_len = text[at..]
+        .bytes()
+        .take_while(|b| !b.is_ascii_whitespace())
+        .count();
+    let mnemonic: Span = at as u32..(at + mnemonic_len) as u32;
+
+    // Branch target: arm64 `(addr 0x…)`, x64 ` <+0x…>`.
+    let target =
+        find_token(text, at, "(addr 0x", ")").or_else(|| find_token(text, at, "<+0x", ">"));
+
+    // Reloc comment: `;; …` to end of line.
+    let comment = text[at..]
+        .find(";;")
+        .map(|c| (at + c) as u32..text.trim_end().len() as u32);
+
+    Some(LineInfo::Disasm {
+        offset,
+        mnemonic,
+        target,
+        comment,
+    })
+}
+
+/// The span of `open…close` starting at or after `from`, close included.
+fn find_token(text: &str, from: usize, open: &str, close: &str) -> Option<Span> {
+    let start = from + text[from..].find(open)?;
+    let end = start + text[start..].find(close)? + close.len();
+    Some(start as u32..end as u32)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn row(text: &str) -> Option<LineInfo> {
+        parse_disasm_row(text)
+    }
+
+    #[test]
+    fn arm64_row_with_target_and_comment() {
+        let text = "0x170000234    94  5800033b       ldr cp, pc+100 (addr 0x0000000170000298)    ;; object: 0x09b8010049f9 <NativeContext[310]>";
+        let Some(LineInfo::Disasm {
+            offset,
+            mnemonic,
+            target,
+            comment,
+        }) = row(text)
+        else {
+            panic!("disasm row expected");
+        };
+        assert_eq!(offset, 0x94);
+        assert_eq!(&text[mnemonic.start as usize..mnemonic.end as usize], "ldr");
+        let t = target.unwrap();
+        assert_eq!(
+            &text[t.start as usize..t.end as usize],
+            "(addr 0x0000000170000298)"
+        );
+        let c = comment.unwrap();
+        assert!(text[c.start as usize..c.end as usize].starts_with(";; object"));
+    }
+
+    #[test]
+    fn x64_row_with_relative_target() {
+        let text = "0x1639401d3    13  0f8658000000         jna 0x163940231  <+0x71>";
+        let Some(LineInfo::Disasm {
+            offset,
+            mnemonic,
+            target,
+            comment,
+        }) = row(text)
+        else {
+            panic!("disasm row expected");
+        };
+        assert_eq!(offset, 0x13);
+        assert_eq!(&text[mnemonic.start as usize..mnemonic.end as usize], "jna");
+        assert_eq!(
+            &text[target.clone().unwrap().start as usize..target.unwrap().end as usize],
+            "<+0x71>"
+        );
+        assert!(comment.is_none());
+    }
+
+    #[test]
+    fn lookalikes_are_rejected() {
+        // SFI context line: `<` after the address, not a hex column.
+        assert!(row("0x09b80101e2cd <SharedFunctionInfo add> (…)").is_none());
+        // Constant-pool entry: colon after the address.
+        assert!(row("0x31a01000085: [TrustedFixedArray]").is_none());
+        // Safepoint row: third column is not hex.
+        assert!(row("0x17000023c     9c  slots (sp->fp): 100000").is_none());
+        // RelocInfo row: second column is not hex.
+        assert!(row("0x170000234  full embedded object  (0x09b8…)").is_none());
+        // Deopt-data table row: no 0x prefix.
+        assert!(row("     0                2    NA ").is_none());
+    }
+
+    #[test]
+    fn x64_variable_length_encodings_parse() {
+        let text = "0x1639401c1     1  488bec               REX.W movq rbp,rsp";
+        let Some(LineInfo::Disasm {
+            offset, mnemonic, ..
+        }) = row(text)
+        else {
+            panic!()
+        };
+        assert_eq!(offset, 1);
+        assert_eq!(
+            &text[mnemonic.start as usize..mnemonic.end as usize],
+            "REX.W"
+        );
+    }
+}

@@ -36,14 +36,36 @@ pub fn parse_compilation(buffer: &LogBuffer, section: &CompilationSection) -> Pa
     let mut parsed = ParsedCompilation::default();
     let mut interner = Interner::default();
 
+    // An opt-code section's preamble is the raw JS source — real content,
+    // not trace chatter, so it must not fold away as annotations.
+    let code_listing = matches!(
+        section.phases.first().map(|p| &p.kind),
+        Some(PhaseKind::Listing)
+    );
     for line in section.preamble.clone() {
-        let text = line_text(buffer, line);
-        let info = classify_preamble(&text, line, &mut parsed.inline_decisions);
+        let info = if code_listing {
+            LineInfo::Control
+        } else {
+            let text = line_text(buffer, line);
+            classify_preamble(&text, line, &mut parsed.inline_decisions)
+        };
         parsed.preamble.push(info);
     }
 
+    // Phase 8: the body grammar is decided by tier and phase kind. TurboFan
+    // sections carry four grammars of their own (see parse::turbofan);
+    // everything else keeps the Maglev grammar — including Turbolev, whose
+    // phases print Maglev IR.
+    let turbofan = section.key.tier == crate::model::Tier::Turbofan;
     for phase in &section.phases {
-        let parsed_phase = match phase.kind {
+        let parsed_phase = match &phase.kind {
+            PhaseKind::Listing => super::listing::parse_listing_phase(buffer, phase.lines.clone()),
+            PhaseKind::Graph { .. } if turbofan => super::turbofan::parse_phase(
+                buffer,
+                phase.lines.clone(),
+                &phase.name,
+                &mut interner,
+            ),
             PhaseKind::Graph { .. } => {
                 parse_graph_phase(buffer, phase.lines.clone(), &mut interner, &mut parsed)
             }
@@ -70,10 +92,10 @@ pub fn line_text(buffer: &LogBuffer, line: usize) -> String {
 }
 
 #[derive(Default)]
-struct Interner {
-    opcodes: Vec<String>,
+pub(crate) struct Interner {
+    pub(crate) opcodes: Vec<String>,
     opcode_ids: HashMap<String, u32>,
-    frames: Vec<DeoptFrame>,
+    pub(crate) frames: Vec<DeoptFrame>,
     frame_ids: HashMap<FrameKey, u32>,
 }
 
@@ -88,7 +110,7 @@ enum FrameKey {
 }
 
 impl Interner {
-    fn opcode(&mut self, name: &str) -> u32 {
+    pub(crate) fn opcode(&mut self, name: &str) -> u32 {
         if let Some(&id) = self.opcode_ids.get(name) {
             return id;
         }

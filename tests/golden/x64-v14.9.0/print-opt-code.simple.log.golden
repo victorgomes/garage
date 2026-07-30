@@ -1,3 +1,20 @@
 lines: 267
 version: unknown
-raw L0..267 "V8 is running with developer-only features enabled. Stability and security will suffer."
+compilation 0 L1..102 sfi=0x0 tier=Turbofan ord=1 name="add"
+  phase L7..15 "Optimized code" [listing]
+  phase L15..83 "Instructions" [listing]
+  phase L83..85 "Inlined functions" [listing]
+  phase L85..92 "Deoptimization Input Data" [listing]
+  phase L92..96 "Safepoints" [listing]
+  phase L96..102 "RelocInfo" [listing]
+  totals: 0 opcodes, 0 distinct frames
+compilation 1 L102..266 sfi=0x0 tier=Turbofan ord=2 name="add"
+  phase L108..116 "Optimized code" [listing]
+  phase L116..241 "Instructions" [listing]
+  phase L241..243 "Inlined functions" [listing]
+  phase L243..256 "Deoptimization Input Data" [listing]
+  phase L256..260 "Safepoints" [listing]
+  phase L260..266 "RelocInfo" [listing]
+  totals: 0 opcodes, 0 distinct frames
+raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."
+raw L266..267 "704982704"

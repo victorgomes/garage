@@ -150,6 +150,7 @@ fn summarize(buffer: &LogBuffer, idx: &TraceIndex) -> String {
                 PhaseKind::Graph { known: false } => "graph?".to_string(),
                 PhaseKind::Bytecode => "bytecode".to_string(),
                 PhaseKind::Inlining { callee, .. } => format!("inlining {callee:?}"),
+                PhaseKind::Listing => "listing".to_string(),
             };
             let stats = parsed.phases.get(p);
             let detail = match stats {

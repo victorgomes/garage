@@ -150,13 +150,19 @@ pub struct OsrInfo {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PhaseKind {
     /// A real pipeline phase. `known` says the name is in the marker table for
-    /// some version; an unknown name still opens a phase (journey J5).
+    /// some version (or matches the stable TurboFan banner shapes); an unknown
+    /// name still opens a phase (journey J5).
     Graph { known: bool },
     /// `----- Bytecode array -----`: shares the grammar, is not a phase.
     Bytecode,
     /// `----- Inlining 0x… <SharedFunctionInfo …> with bytecode -----`: one per
     /// inlining site, before the first real phase (spike-findings.md §9).
     Inlining { sfi: Option<Addr>, callee: String },
+    /// A non-graph listing (Phase 8): `--print-opt-code` sub-sections
+    /// (Instructions, Deoptimization Input Data, Safepoints, RelocInfo) and
+    /// `--print-bytecode` tables (Constant pool, Handler Table, Source
+    /// Position Table). Not diffable, no block structure.
+    Listing,
 }
 
 #[derive(Debug, Clone)]
@@ -372,6 +378,19 @@ pub enum LineInfo {
     VirtualObjects,
     /// `- nA → B: φ… rN …` phi-input move printed at block edges.
     PhiMove { refs: Vec<NodeRef> },
+    /// One `--print-opt-code` disassembly row (Phase 8.2):
+    /// `0x1700001bc  1c  540002c9  b.ls #+0x58 (addr 0x170000214)  ;; comment`.
+    /// Spans style what V8 itself emitted — no decoding is promised beyond
+    /// that (PLAN §7.6 feasibility note).
+    Disasm {
+        /// The code offset (second column, hex).
+        offset: u32,
+        mnemonic: Span,
+        /// The `(addr 0x…)` / `<+0x…>` branch-target token, when present.
+        target: Option<Span>,
+        /// The `;; …` reloc comment, when present.
+        comment: Option<Span>,
+    },
     /// Anything unmatched: attached in place, never exiled (TODO 2.8).
     Annotation { after_node: Option<NodeId> },
 }

@@ -1,3 +1,54 @@
 lines: 3069
 version: unknown
-raw L0..3069 "Concurrent recompilation has been disabled for tracing."
+compilation 0 L1..1163 sfi=0x9b80101e1ad tier=Turbofan ord=1 name="add"
+  phase L3..22 "Graph after V8.TFBytecodeGraphBuilder" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L22..41 "Graph after V8.TFInlining" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L41..60 "Graph after V8.TFEarlyGraphTrimming" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L60..79 "Graph after V8.TFTyper" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L79..98 "Graph after V8.TFTypedLowering" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L98..117 "Graph after V8.TFLoopPeeling" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L117..136 "Graph after V8.TFLoadElimination" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L136..155 "Graph after V8.TFEscapeAnalysis" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L155..178 "Graph after V8.TFSimplifiedLowering" [graph]: 22 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L178..201 "Graph after V8.TFGenericLowering" [graph]: 22 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L201..224 "Graph after V8.TFEarlyOptimization" [graph]: 22 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L224..250 "schedule" [graph]: 22 nodes, 2 blocks, 0 frame-lines, 0 annotations
+  phase L250..269 "V8.TFTurboshaftBuildGraph" [graph]: 15 nodes, 1 blocks, 0 frame-lines, 0 annotations
+  phase L269..321 "V8.TFTurboshaftMachineLowering" [graph]: 42 nodes, 4 blocks, 0 frame-lines, 0 annotations
+  phase L321..373 "V8.TFTurboshaftLoopUnrolling" [graph]: 42 nodes, 4 blocks, 0 frame-lines, 0 annotations
+  phase L373..419 "V8.TFTurboshaftLoadElimination" [graph]: 38 nodes, 3 blocks, 0 frame-lines, 0 annotations
+  phase L419..496 "V8.TFTurboshaftMemoryOptimization" [graph]: 61 nodes, 7 blocks, 0 frame-lines, 0 annotations
+  phase L496..593 "V8.TFTurboshaftCodeEliminationAndSimplification" [graph]: 75 nodes, 10 blocks, 0 frame-lines, 0 annotations
+  phase L593..690 "V8.TFTurboshaftDecompressionOptimization" [graph]: 75 nodes, 10 blocks, 0 frame-lines, 0 annotations
+  phase L690..786 "V8.TFTurboshaftSpecialRPOScheduling" [graph]: 75 nodes, 10 blocks, 0 frame-lines, 0 annotations
+  phase L786..911 "Instruction sequence after instruction selection" [graph]: 83 nodes, 10 blocks, 0 frame-lines, 0 annotations
+  phase L911..1036 "Instruction sequence before register allocation" [graph]: 83 nodes, 10 blocks, 0 frame-lines, 0 annotations
+  phase L1036..1163 "Instruction sequence after register allocation" [graph]: 83 nodes, 10 blocks, 0 frame-lines, 0 annotations
+  totals: 61 opcodes, 0 distinct frames
+compilation 1 L1163..3068 sfi=0x9b80101e1ad tier=Turbofan ord=2 name="add"
+  phase L1165..1184 "Graph after V8.TFBytecodeGraphBuilder" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L1184..1203 "Graph after V8.TFInlining" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L1203..1222 "Graph after V8.TFEarlyGraphTrimming" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L1222..1241 "Graph after V8.TFTyper" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L1241..1260 "Graph after V8.TFTypedLowering" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L1260..1279 "Graph after V8.TFLoopPeeling" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L1279..1298 "Graph after V8.TFLoadElimination" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L1298..1317 "Graph after V8.TFEscapeAnalysis" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L1317..1340 "Graph after V8.TFSimplifiedLowering" [graph]: 22 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L1340..1363 "Graph after V8.TFGenericLowering" [graph]: 22 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L1363..1386 "Graph after V8.TFEarlyOptimization" [graph]: 22 nodes, 0 blocks, 0 frame-lines, 0 annotations
+  phase L1386..1412 "schedule" [graph]: 22 nodes, 2 blocks, 0 frame-lines, 0 annotations
+  phase L1412..1431 "V8.TFTurboshaftBuildGraph" [graph]: 15 nodes, 1 blocks, 0 frame-lines, 0 annotations
+  phase L1431..1548 "V8.TFTurboshaftMachineLowering" [graph]: 79 nodes, 18 blocks, 0 frame-lines, 0 annotations
+  phase L1548..1665 "V8.TFTurboshaftLoopUnrolling" [graph]: 79 nodes, 18 blocks, 0 frame-lines, 0 annotations
+  phase L1665..1773 "V8.TFTurboshaftLoadElimination" [graph]: 72 nodes, 17 blocks, 0 frame-lines, 0 annotations
+  phase L1773..1912 "V8.TFTurboshaftMemoryOptimization" [graph]: 95 nodes, 21 blocks, 0 frame-lines, 0 annotations
+  phase L1912..2079 "V8.TFTurboshaftCodeEliminationAndSimplification" [graph]: 117 nodes, 24 blocks, 0 frame-lines, 0 annotations
+  phase L2079..2246 "V8.TFTurboshaftDecompressionOptimization" [graph]: 117 nodes, 24 blocks, 0 frame-lines, 0 annotations
+  phase L2246..2412 "V8.TFTurboshaftSpecialRPOScheduling" [graph]: 117 nodes, 24 blocks, 0 frame-lines, 0 annotations
+  phase L2412..2630 "Instruction sequence after instruction selection" [graph]: 135 nodes, 24 blocks, 0 frame-lines, 0 annotations
+  phase L2630..2848 "Instruction sequence before register allocation" [graph]: 135 nodes, 24 blocks, 0 frame-lines, 0 annotations
+  phase L2848..3068 "Instruction sequence after register allocation" [graph]: 135 nodes, 24 blocks, 0 frame-lines, 0 annotations
+  totals: 71 opcodes, 0 distinct frames
+raw L0..1 "Concurrent recompilation has been disabled for tracing."
+raw L3068..3069 "704982704"

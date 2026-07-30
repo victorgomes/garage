@@ -1,9 +1,10 @@
 # garage
 
-A terminal UI for V8 engineers to view, navigate, and search `d8` trace
-output — Maglev graphs first — without dumping megabytes into scrollback or
-switching to browser tools. The tool `--print-maglev-graphs | less` should
-have been.
+A terminal UI for V8 engineers to view, navigate, search, and diff `d8`
+trace output — Maglev graphs first, plus TurboFan/Turboshaft graphs,
+Turbolev, optimized-code disassembly and bytecode listings — without
+dumping megabytes into scrollback or switching to browser tools. The tool
+`--print-maglev-graphs | less` should have been.
 
 ```
 d8 --print-maglev-graphs --trace-deopt bench.js | garage
@@ -36,6 +37,13 @@ d8 --print-maglev-graphs --print-maglev-deopt-verbose bench.js | garage
 
 # Turbolev-frontend graphs (Maglev IR in the TurboFan pipeline):
 d8 --turbolev --print-turbolev-frontend bench.js | garage
+
+# TurboFan / Turboshaft pipeline graphs, schedules and instruction sequences:
+d8 --trace-turbo-graph bench.js | garage
+
+# Optimized-code disassembly and interpreter bytecode:
+d8 --print-opt-code bench.js | garage      # needs v8_enable_disassembler
+d8 --print-bytecode bench.js | garage
 
 # Tiering + OSR story alongside the graphs:
 d8 --print-maglev-graphs --trace-opt --trace-deopt --trace-osr app.js | garage

@@ -152,6 +152,7 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
     let mut maglev = 0usize;
     let mut turbolev = 0usize;
     let mut turbofan = 0usize;
+    let mut ignition = 0usize;
     let mut other = 0usize;
     let mut osr = 0usize;
     for c in &idx.compilations {
@@ -159,6 +160,7 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
             Tier::Maglev => maglev += 1,
             Tier::Turbolev => turbolev += 1,
             Tier::Turbofan => turbofan += 1,
+            Tier::Ignition => ignition += 1,
             _ => other += 1,
         }
         if c.osr.is_some() {
@@ -189,6 +191,9 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
         }
         if turbofan > 0 {
             tiers.push(format!("{turbofan} Turbofan"));
+        }
+        if ignition > 0 {
+            tiers.push(format!("{ignition} Ignition"));
         }
         if other > 0 {
             tiers.push(format!("{other} other"));
@@ -353,6 +358,7 @@ fn sidebar_row(app: &App, row: &Row, selected: bool, focused: bool) -> Line<'sta
                 PhaseKind::Graph { known: false } => ("? ", Style::new().fg(Color::Red)),
                 PhaseKind::Bytecode => ("≡ ", Style::new().fg(DIM)),
                 PhaseKind::Inlining { .. } => ("↳ ", Style::new().fg(DIM)),
+                PhaseKind::Listing => ("≣ ", Style::new().fg(DIM)),
             };
             let label = match &p.kind {
                 PhaseKind::Inlining { callee, .. } => format!("inline {callee}"),
@@ -924,6 +930,24 @@ fn paint_line(
         Some(LineInfo::Banner) => paint.fill(Class::Banner),
         Some(LineInfo::SfiContext | LineInfo::Control | LineInfo::VirtualObjects) => {
             paint.fill(Class::Dim)
+        }
+        Some(LineInfo::Disasm {
+            mnemonic,
+            target,
+            comment,
+            ..
+        }) => {
+            // Address and encoding columns dim, mnemonic emphasised, branch
+            // target and reloc comment picked out — everything else (the
+            // operands) as-emitted (TODO 8.2).
+            fill(&(0..mnemonic.start), Class::Dim, &mut paint);
+            fill(mnemonic, Class::Opcode, &mut paint);
+            if let Some(target) = target {
+                fill(target, Class::BlockRef, &mut paint);
+            }
+            if let Some(comment) = comment {
+                fill(comment, Class::Annotation, &mut paint);
+            }
         }
         Some(LineInfo::Annotation { .. }) => paint.fill(Class::Annotation),
         None => {
