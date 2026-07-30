@@ -70,12 +70,13 @@ Notes that save an afternoon:
 | `?` | help (generated from the live keymap) |
 | `j`/`k`, `↑`/`↓` | move |
 | `h`/`l`, `←`/`→` | focus sidebar ⇄ viewport |
-| `Enter` | expand/collapse compilation · on a timeline event: jump to it |
+| `Enter` | sidebar: expand/collapse · timeline event: jump to it · viewport: follow branch/jump targets (cycles) |
 | `Ctrl+D`/`Ctrl+U`, `PgDn`/`PgUp`, `g`/`G` | paging, top/bottom |
 | `c` | sidebar: chronological ⇄ grouped by function |
 | `f` | filter sidebar by regex |
 | `/`, `n`, `N` | regex search (incremental), next/previous match |
 | `Space` | fold/unfold the basic block under the cursor |
+| `[` / `]` | previous / next block header |
 | `z` | fold all blocks in view / unfold them all |
 | `i` | jump to input definitions (cycles) · bytecode: jump target / `FBV[n]` slot / pool entry |
 | `u` | cycle consumers of the node (or slot / pool entry / jump target) the cycle started from |
@@ -90,7 +91,7 @@ Notes that save an afternoon:
 | `v` / `s` | vertical / horizontal split (same key closes) |
 | `Ctrl+W` | focus the other pane |
 | `d` | phase diff mode |
-| `]` | next source (multi-file runs) |
+| `}` | next source (multi-file runs) |
 | `q`, `Esc` | quit / back |
 
 ## Timeline & commands
@@ -207,7 +208,7 @@ navigate.)
 ## CLI
 
 ```
-garage [FILE...]              files (mmapped; several files = ] to switch)
+garage [FILE...]              files (mmapped; several files = } to switch)
 d8 ... | garage               piped stdin; keyboard input still works
 garage --function '^process'  index-time prefilter on function names
 garage --debug                write diagnostics to garage.log (--log-file)

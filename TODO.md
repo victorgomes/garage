@@ -600,6 +600,16 @@ regeneration, the three new formats parse with **zero** annotation
   evidence; fixtures already carried the formats (poly = mega/poly slots,
   truncation = jumps + BinaryOp lattice, print-bytecode = wide mnemonics,
   `CallRuntime [Name]`, `EmbeddedFeedback`).
+- [x] **8.6. Block navigation** (dogfood request). `[`/`]` walk the listing
+  block by block — unconditional, no history, `j`/`k` at block granularity;
+  folded blocks land on their fold marker (`}` took over source switching).
+  Enter in the viewport follows the cursor node's control-flow refs — a
+  `Jump`'s successor, a branch's left then right target, a switch's cases —
+  cycling block headers through the same anchored-cycle + history machinery
+  as `i`/`u` (`Anchor::Block`/`Anchor::Line` for headers and schedule-only
+  rows). `u` on a block header cycles its *predecessors*: every node whose
+  targets include it — the "who jumps here" question at loop headers and
+  merges. Sidebar/timeline Enter behaviour unchanged.
 
 ---
 

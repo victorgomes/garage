@@ -25,7 +25,7 @@ use regex::Regex;
 use crate::config::{Action, Keymap};
 use crate::event::Event;
 use crate::index::TraceIndex;
-use crate::model::{Addr, EventKind, IRNode, LineInfo, NodeId, PhaseKind, SCHEDULE_ONLY};
+use crate::model::{Addr, BlockId, EventKind, IRNode, LineInfo, NodeId, PhaseKind, SCHEDULE_ONLY};
 use crate::parse::ParseCache;
 use crate::parse::maglev::line_text;
 use crate::source::{LogBuffer, LogSource, SourceEvent};
@@ -140,6 +140,11 @@ enum Anchor {
     Offset(u32),
     Slot(u32),
     Pool(u32),
+    /// A basic block, anchored at its header — `u` cycles its predecessors.
+    Block(BlockId),
+    /// A schedule-only row with block targets (`Gap`/parenless schedule
+    /// rows): no node id to anchor on, so the buffer line is the identity.
+    Line(usize),
 }
 
 impl std::fmt::Display for Anchor {
@@ -149,6 +154,8 @@ impl std::fmt::Display for Anchor {
             Anchor::Offset(o) => write!(f, "@{o}"),
             Anchor::Slot(s) => write!(f, "FBV[{s}]"),
             Anchor::Pool(p) => write!(f, "pool[{p}]"),
+            Anchor::Block(b) => write!(f, "b{b}"),
+            Anchor::Line(l) => write!(f, "L{}", l + 1),
         }
     }
 }
@@ -753,7 +760,16 @@ impl App {
                     self.reset_view();
                 }
             }
-            Action::Select => self.toggle_expand(),
+            Action::Select => {
+                // Enter in the viewport follows control-flow refs (a
+                // branch's targets, cycling); in the sidebar it keeps its
+                // expand/collapse/jump role.
+                if self.focus == Pane::Viewport {
+                    self.follow_targets();
+                } else {
+                    self.toggle_expand();
+                }
+            }
             Action::ToggleGrouping => {
                 self.grouped = !self.grouped;
                 self.selected = 0;
@@ -858,6 +874,8 @@ impl App {
             }
             Action::Diff => self.toggle_diff(),
             Action::FoldAllBlocks => self.fold_all_blocks(),
+            Action::PrevBlock => self.step_block(-1),
+            Action::NextBlock => self.step_block(1),
         }
     }
 
@@ -1963,6 +1981,7 @@ impl App {
             LineInfo::Bytecode(bc) => Some(Anchor::Offset(bc.offset)),
             LineInfo::FeedbackSlot { index, .. } => Some(Anchor::Slot(*index)),
             LineInfo::PoolEntry { index, .. } => Some(Anchor::Pool(*index)),
+            LineInfo::BlockHeader { block } => Some(Anchor::Block(*block)),
             _ => None,
         }
     }
@@ -2034,7 +2053,11 @@ impl App {
                 }
                 (targets, "ref")
             }
-            Anchor::Slot(_) | Anchor::Pool(_) => {
+            Anchor::Block(_) => {
+                self.status = format!("{anchor} has no inputs — u cycles its predecessors");
+                return;
+            }
+            Anchor::Slot(_) | Anchor::Pool(_) | Anchor::Line(_) => {
                 self.status = format!("{anchor} has no inputs — u cycles its uses");
                 return;
             }
@@ -2090,12 +2113,32 @@ impl App {
             Anchor::Pool(c) => bytecode_rows_where(&parsed.phases[p], phase_start, |bc| {
                 bc.pool.iter().any(|(n, _)| *n == c)
             }),
+            // Predecessors: every node whose branch/jump targets include
+            // this block — the "who jumps here" question at loop headers
+            // and merges.
+            Anchor::Block(b) => parsed.phases[p]
+                .infos
+                .iter()
+                .enumerate()
+                .filter_map(|(idx, info)| match info {
+                    LineInfo::Node(node) if node.targets.iter().any(|t| t.block == b) => {
+                        Some(phase_start + idx)
+                    }
+                    _ => None,
+                })
+                .collect(),
+            Anchor::Line(_) => Vec::new(),
+        };
+        let what = if matches!(anchor, Anchor::Block(_)) {
+            "predecessor"
+        } else {
+            "consumer"
         };
         if targets.is_empty() {
-            self.status = format!("{anchor} has no consumers in this phase");
+            self.status = format!("{anchor} has no {what}s in this phase");
             return;
         }
-        self.cycle_jump(anchor, targets, "consumer");
+        self.cycle_jump(anchor, targets, what);
     }
 
     /// Buffer lines of the rows a bytecode row's operands point at: its
@@ -2185,6 +2228,120 @@ impl App {
             at,
         });
         self.status = format!("{anchor} {what} {}/{}", at + 1, targets.len());
+    }
+
+    /// `[`/`]`: walk the listing block by block — unconditional, no history,
+    /// `j`/`k` at block granularity. Folded blocks count: the cursor lands
+    /// on the fold marker.
+    fn step_block(&mut self, dir: isize) {
+        if self.diff {
+            self.status = "block navigation is off in diff view (d to leave)".to_string();
+            return;
+        }
+        let vm = self.view_model();
+        let len = vm.len();
+        let block_at = |idx: usize| -> Option<BlockId> {
+            let row = vm.row(idx)?;
+            if let RowKind::BlockFold { block, .. } = row.kind {
+                return Some(block);
+            }
+            let (p, i) = row.info?;
+            match vm.parsed()?.phases.get(p)?.infos.get(i)? {
+                LineInfo::BlockHeader { block } => Some(*block),
+                _ => None,
+            }
+        };
+        let mut idx = self.cursor as isize;
+        loop {
+            idx += dir;
+            if idx < 0 || idx >= len as isize {
+                self.status = format!("no {} block", if dir > 0 { "next" } else { "previous" });
+                return;
+            }
+            if let Some(block) = block_at(idx as usize) {
+                self.cursor = idx as usize;
+                self.focus = Pane::Viewport;
+                self.follow = false;
+                self.cycle = None;
+                self.status = format!("b{block}");
+                return;
+            }
+        }
+    }
+
+    /// Enter in the viewport: follow the control-flow refs of the cursor
+    /// node — a `Jump`'s successor, a branch's two targets, a switch's
+    /// cases — cycling through the corresponding block headers with the
+    /// same anchored-cycle machinery as `i`/`u`.
+    fn follow_targets(&mut self) {
+        if self.diff {
+            self.status = "node jumps are off in diff view (d to leave)".to_string();
+            return;
+        }
+        let vm = self.view_model();
+        let Some(row) = vm.row(self.cursor) else {
+            return;
+        };
+        let Some((p, i)) = row.info else {
+            self.status = "no block refs under cursor".to_string();
+            return;
+        };
+        let Some(parsed) = vm.parsed() else { return };
+        let Some(phase) = parsed.phases.get(p) else {
+            return;
+        };
+        let phase_start = self.phase_start(&vm, p);
+
+        // Repeat-Enter continues the cycle even though the cursor now sits
+        // on the target header; other anchor kinds re-derive from the row.
+        let anchor = match &self.cycle {
+            Some(c) if matches!(c.anchor, Anchor::Node(_) | Anchor::Line(_)) => c.anchor,
+            _ => match phase.infos.get(i) {
+                Some(LineInfo::Node(node)) if node.id != SCHEDULE_ONLY => Anchor::Node(node.id),
+                Some(LineInfo::Node(_)) => Anchor::Line(row.line),
+                _ => {
+                    self.status = "no block refs under cursor".to_string();
+                    return;
+                }
+            },
+        };
+
+        let node = match anchor {
+            Anchor::Node(id) => phase
+                .defs
+                .get(&id)
+                .and_then(|&idx| phase.infos.get(idx as usize)),
+            Anchor::Line(line) => line
+                .checked_sub(phase_start)
+                .and_then(|idx| phase.infos.get(idx)),
+            _ => None,
+        };
+        let Some(LineInfo::Node(node)) = node else {
+            self.status = "no block refs under cursor".to_string();
+            return;
+        };
+
+        let mut targets = Vec::new();
+        for t in &node.targets {
+            let header = phase.infos.iter().position(
+                |info| matches!(info, LineInfo::BlockHeader { block } if *block == t.block),
+            );
+            if let Some(idx) = header {
+                let line = phase_start + idx;
+                if !targets.contains(&line) {
+                    targets.push(line);
+                }
+            }
+        }
+        if targets.is_empty() {
+            self.status = if node.targets.is_empty() {
+                "no block refs under cursor".to_string()
+            } else {
+                format!("{anchor}: target block has no header in this phase")
+            };
+            return;
+        }
+        self.cycle_jump(anchor, targets, "target");
     }
 
     /// Buffer line of a phase's first line within the current compilation.
@@ -2916,6 +3073,79 @@ Compiling 0x2 <JSFunction g (sfi = 0x20)> with Maglev
             Some(9),
             "cycle stays anchored to n1"
         );
+    }
+
+    const BRANCH_TRACE: &str = "\
+warmup line
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+ Block b0
+   1: Foo
+   2: BranchIfRootConstant [n1] b1 b2
+ Block b1
+   3: Jump b2
+ Block b2
+   4: Return
+";
+
+    #[test]
+    fn brackets_walk_blocks_and_enter_follows_edges() {
+        let mut app = app_with(BRANCH_TRACE);
+        app.follow = false;
+        app.selected = 1;
+        app.focus = Pane::Viewport;
+        app.cursor = 0;
+
+        // `]` walks headers; `[` walks back; the ends report honestly.
+        for expected in [3usize, 6, 8] {
+            key(&mut app, KeyCode::Char(']'));
+            let vm = app.view_model();
+            assert_eq!(vm.line_at(app.cursor), Some(expected));
+        }
+        key(&mut app, KeyCode::Char(']'));
+        assert_eq!(app.status, "no next block");
+        key(&mut app, KeyCode::Char('['));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(6), "back to b1");
+
+        // Enter on the branch cycles its two targets, staying anchored.
+        app.cursor = 4; // `2: BranchIfRootConstant [n1] b1 b2` (line 5)
+        key(&mut app, KeyCode::Enter);
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(6), "left target b1");
+        key(&mut app, KeyCode::Enter);
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(8), "right target b2");
+        assert!(app.status.contains("n2 target"), "status: {}", app.status);
+        key(&mut app, KeyCode::Enter);
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(6), "cycle wraps");
+
+        // `u` on a block header cycles its predecessors.
+        key(&mut app, KeyCode::Char('j'));
+        key(&mut app, KeyCode::Char('k')); // movement clears the cycle
+        app.cursor = 7; // ` Block b2` (line 8)
+        key(&mut app, KeyCode::Char('u'));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(5), "the branch targets b2");
+        key(&mut app, KeyCode::Char('u'));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(7), "so does b1's Jump");
+        assert!(
+            app.status.contains("b2 predecessor 2/2"),
+            "status: {}",
+            app.status
+        );
+
+        // `]` still finds folded blocks: it lands on the fold marker.
+        key(&mut app, KeyCode::Char('g'));
+        key(&mut app, KeyCode::Char('z'));
+        key(&mut app, KeyCode::Char(']'));
+        let vm = app.view_model();
+        assert!(matches!(
+            vm.row(app.cursor).unwrap().kind,
+            RowKind::BlockFold { block: 0, .. }
+        ));
     }
 
     const BYTECODE_TRACE: &str = "\
