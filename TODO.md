@@ -576,6 +576,30 @@ regeneration, the three new formats parse with **zero** annotation
 - [ ] **8.4. (Optional) Turbolizer JSON import** (`--trace-turbo`) —
   deliberately skipped; it should be its own later phase. Nothing above
   depends on it.
+- [x] **8.5. Bytecode-array & feedback-vector parser** (dogfood request).
+  The `----- Bytecode array -----` dump (and Ignition `--print-bytecode`
+  listings, and `Inlining …` callee dumps — same grammar) now parses
+  exhaustively instead of offset-only: rows carry mnemonic span, jump-target
+  operands (the `(0x… @ N)` suffix and switch `{ 0: @44, … }` tables),
+  `FBV[N]` feedback-slot refs, and `[N:…]` constant-pool refs (bare `[N]` is
+  an immediate, not a pool index; `EmbeddedFeedback[N]` is not a vector
+  slot). Regions delimited by V8's own headers: `Constant pool (size` →
+  entry rows (`N: value`), `0x…: [FeedbackVector]` → ` - slot #N Kind STATE`
+  headers classified by IC state (mono / poly / mega / uninitialized /
+  other-lattice). Navigation mirrors the graph def-use chain: `i` on a row
+  cycles its refs (target offset, then slots, then pool entries — the
+  latter two found cross-phase for Ignition dumps), `u` on a slot / pool
+  entry / jump target cycles the rows referencing it, all through the same
+  anchored-cycle + history machinery (`Anchor::{Node,Offset,Slot,Pool}`).
+  Styling: dump rows get dim addr/hex columns, offset def-token, mnemonic
+  by opcode shape, refs in node/constant/block colours; slot states colour
+  by severity (mega red, poly yellow, mono green); a cursor-linked overlay
+  lights refs ⇄ definitions both directions. Interleaved graph-context rows
+  share the parser (jump/`i` works there too) but stay uniformly dim.
+  Goldens print per-dump row/ref/slot counts as falsifiable coverage
+  evidence; fixtures already carried the formats (poly = mega/poly slots,
+  truncation = jumps + BinaryOp lattice, print-bytecode = wide mnemonics,
+  `CallRuntime [Name]`, `EmbeddedFeedback`).
 
 ---
 

@@ -2,7 +2,7 @@ lines: 289
 version: 14.9
 compilation 0 L1..147 sfi=0x9b80101e175 tier=Turbolev ord=1 name="add"
   script "workloads/simple.js"
-  phase L1..29 "Bytecode before MaglevGraphBuilding" [bytecode]
+  phase L1..29 "Bytecode before MaglevGraphBuilding" [bytecode]: 3 rows (0 jump refs, 1 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 1 other
   phase L29..59 "V8.TFTurbolevMaglevGraphBuilder" [graph]: 13 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L59..89 "V8.TFTurbolevInliner" [graph]: 13 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L89..118 "V8.TFTurbolevPostHoc" [graph]: 12 nodes, 2 blocks, 4 frame-lines, 0 annotations
@@ -10,7 +10,7 @@ compilation 0 L1..147 sfi=0x9b80101e175 tier=Turbolev ord=1 name="add"
   totals: 9 opcodes, 2 distinct frames
 compilation 1 L147..289 sfi=0x9b80101e175 tier=Turbolev ord=2 name="add"
   script "workloads/simple.js"
-  phase L147..175 "Bytecode before MaglevGraphBuilding" [bytecode]
+  phase L147..175 "Bytecode before MaglevGraphBuilding" [bytecode]: 3 rows (0 jump refs, 1 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 1 other
   phase L175..204 "V8.TFTurbolevMaglevGraphBuilder" [graph]: 13 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L204..233 "V8.TFTurbolevInliner" [graph]: 13 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L233..261 "V8.TFTurbolevPostHoc" [graph]: 12 nodes, 2 blocks, 3 frame-lines, 0 annotations

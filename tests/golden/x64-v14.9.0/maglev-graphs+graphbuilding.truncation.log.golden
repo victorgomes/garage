@@ -2,7 +2,7 @@ lines: 3595
 version: 14.9
 compilation 0 L0..356 sfi=0x9b80101e031 tier=Maglev ord=1 name="trunc"
   script "workloads/truncation.js"
-  phase L1..96 "Bytecode array" [bytecode]
+  phase L1..96 "Bytecode array" [bytecode]: 13 rows (0 jump refs, 6 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 6 other
   phase L96..139 "After graph building" [graph]: 21 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L139..182 "After propagating truncation" [graph]: 21 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L182..225 "After truncation" [graph]: 21 nodes, 2 blocks, 4 frame-lines, 0 annotations
@@ -12,9 +12,9 @@ compilation 0 L0..356 sfi=0x9b80101e031 tier=Maglev ord=1 name="trunc"
   totals: 16 opcodes, 2 distinct frames
 compilation 1 L356..1804 sfi=0x9b80101dfc9 tier=Maglev ord=1 name=""
   script "workloads/truncation.js"
-  phase L357..520 "Bytecode array" [bytecode]
-  phase L520..675 "Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
-  phase L675..824 "Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
+  phase L357..520 "Bytecode array" [bytecode]: 36 rows (2 jump refs, 10 fbv refs, 5 pool refs), 5 pool entries, slots 2 mono / 0 poly / 0 mega / 8 other
+  phase L520..675 "Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]: 13 rows (0 jump refs, 6 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 6 other
+  phase L675..824 "Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]: 13 rows (0 jump refs, 6 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 6 other
   phase L824..991 "After graph building" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L991..1158 "After propagating truncation" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L1158..1325 "After truncation" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
@@ -24,7 +24,7 @@ compilation 1 L356..1804 sfi=0x9b80101dfc9 tier=Maglev ord=1 name=""
   totals: 28 opcodes, 9 distinct frames
 compilation 2 L1804..2167 sfi=0x9b80101e031 tier=Maglev ord=2 name="trunc"
   script "workloads/truncation.js"
-  phase L1805..1902 "Bytecode array" [bytecode]
+  phase L1805..1902 "Bytecode array" [bytecode]: 13 rows (0 jump refs, 6 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 6 other
   phase L1902..1946 "After graph building" [graph]: 23 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L1946..1990 "After propagating truncation" [graph]: 23 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L1990..2034 "After truncation" [graph]: 23 nodes, 2 blocks, 3 frame-lines, 0 annotations
@@ -34,9 +34,9 @@ compilation 2 L1804..2167 sfi=0x9b80101e031 tier=Maglev ord=2 name="trunc"
   totals: 16 opcodes, 2 distinct frames
 compilation 3 L2167..3595 sfi=0x9b80101dfc9 tier=Maglev ord=2 name=""
   script "workloads/truncation.js"
-  phase L2168..2331 "Bytecode array" [bytecode]
-  phase L2331..2487 "Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
-  phase L2487..2637 "Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]
+  phase L2168..2331 "Bytecode array" [bytecode]: 36 rows (2 jump refs, 10 fbv refs, 5 pool refs), 5 pool entries, slots 2 mono / 0 poly / 0 mega / 8 other
+  phase L2331..2487 "Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]: 13 rows (0 jump refs, 6 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 6 other
+  phase L2487..2637 "Inlining 0x09b80101e031 <SharedFunctionInfo trunc> with bytecode" [inlining "trunc"]: 13 rows (0 jump refs, 6 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 6 other
   phase L2637..2802 "After graph building" [graph]: 80 nodes, 10 blocks, 14 frame-lines, 2 annotations
   phase L2802..2967 "After propagating truncation" [graph]: 80 nodes, 10 blocks, 14 frame-lines, 2 annotations
   phase L2967..3132 "After truncation" [graph]: 80 nodes, 10 blocks, 14 frame-lines, 2 annotations

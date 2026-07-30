@@ -2,7 +2,7 @@ lines: 3108
 version: 14.9
 compilation 0 L0..280 sfi=0x9b80101e031 tier=Maglev ord=1 name="add"
   script "workloads/simple.js"
-  phase L1..27 "Bytecode array" [bytecode]
+  phase L1..27 "Bytecode array" [bytecode]: 3 rows (0 jump refs, 1 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 1 other
   phase L27..59 "After graph building" [graph]: 15 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L59..90 "After use marking" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L90..246 "After register allocation pre-processing" [graph]: 25 nodes, 4 blocks, 8 frame-lines, 99 annotations
@@ -10,9 +10,9 @@ compilation 0 L0..280 sfi=0x9b80101e031 tier=Maglev ord=1 name="add"
   totals: 12 opcodes, 2 distinct frames
 compilation 1 L280..1538 sfi=0x9b80101dfc9 tier=Maglev ord=1 name=""
   script "workloads/simple.js"
-  phase L281..363 "Bytecode array" [bytecode]
-  phase L363..389 "Inlining 0x09b80101e031 <SharedFunctionInfo add> with bytecode" [inlining "add"]
-  phase L389..415 "Inlining 0x09b80101e031 <SharedFunctionInfo add> with bytecode" [inlining "add"]
+  phase L281..363 "Bytecode array" [bytecode]: 29 rows (2 jump refs, 7 fbv refs, 3 pool refs), 3 pool entries, slots 2 mono / 0 poly / 0 mega / 5 other
+  phase L363..389 "Inlining 0x09b80101e031 <SharedFunctionInfo add> with bytecode" [inlining "add"]: 3 rows (0 jump refs, 1 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 1 other
+  phase L389..415 "Inlining 0x09b80101e031 <SharedFunctionInfo add> with bytecode" [inlining "add"]: 3 rows (0 jump refs, 1 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 1 other
   phase L415..542 "After graph building" [graph]: 52 nodes, 10 blocks, 20 frame-lines, 2 annotations
   phase L542..669 "After propagating truncation" [graph]: 52 nodes, 10 blocks, 20 frame-lines, 2 annotations
   phase L669..788 "After truncation" [graph]: 50 nodes, 10 blocks, 16 frame-lines, 2 annotations
@@ -22,7 +22,7 @@ compilation 1 L280..1538 sfi=0x9b80101dfc9 tier=Maglev ord=1 name=""
   totals: 24 opcodes, 8 distinct frames
 compilation 2 L1538..1802 sfi=0x9b80101e031 tier=Maglev ord=2 name="add"
   script "workloads/simple.js"
-  phase L1539..1565 "Bytecode array" [bytecode]
+  phase L1539..1565 "Bytecode array" [bytecode]: 3 rows (0 jump refs, 1 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 1 other
   phase L1565..1596 "After graph building" [graph]: 15 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L1596..1626 "After use marking" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L1626..1770 "After register allocation pre-processing" [graph]: 25 nodes, 4 blocks, 6 frame-lines, 89 annotations
@@ -30,9 +30,9 @@ compilation 2 L1538..1802 sfi=0x9b80101e031 tier=Maglev ord=2 name="add"
   totals: 12 opcodes, 2 distinct frames
 compilation 3 L1802..3108 sfi=0x9b80101dfc9 tier=Maglev ord=2 name=""
   script "workloads/simple.js"
-  phase L1803..1885 "Bytecode array" [bytecode]
-  phase L1885..1911 "Inlining 0x09b80101e031 <SharedFunctionInfo add> with bytecode" [inlining "add"]
-  phase L1911..1937 "Inlining 0x09b80101e031 <SharedFunctionInfo add> with bytecode" [inlining "add"]
+  phase L1803..1885 "Bytecode array" [bytecode]: 29 rows (2 jump refs, 7 fbv refs, 3 pool refs), 3 pool entries, slots 2 mono / 0 poly / 0 mega / 5 other
+  phase L1885..1911 "Inlining 0x09b80101e031 <SharedFunctionInfo add> with bytecode" [inlining "add"]: 3 rows (0 jump refs, 1 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 1 other
+  phase L1911..1937 "Inlining 0x09b80101e031 <SharedFunctionInfo add> with bytecode" [inlining "add"]: 3 rows (0 jump refs, 1 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 1 other
   phase L1937..2061 "After graph building" [graph]: 53 nodes, 10 blocks, 16 frame-lines, 2 annotations
   phase L2061..2185 "After propagating truncation" [graph]: 53 nodes, 10 blocks, 16 frame-lines, 2 annotations
   phase L2185..2309 "After truncation" [graph]: 53 nodes, 10 blocks, 16 frame-lines, 2 annotations

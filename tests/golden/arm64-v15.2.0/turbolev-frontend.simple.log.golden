@@ -2,7 +2,7 @@ lines: 586
 version: 15.2
 compilation 0 L3..293 sfi=0x9b80101e2cd tier=Turbolev ord=1 name="add"
   script "workloads/simple.js"
-  phase L3..19 "Bytecode before MaglevGraphBuilding" [bytecode]
+  phase L3..19 "Bytecode before MaglevGraphBuilding" [bytecode]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
   phase L19..50 "Maglev graph building" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L50..81 "Non-eager inlining" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L81..112 "Non-eager loop peeling" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
@@ -15,7 +15,7 @@ compilation 0 L3..293 sfi=0x9b80101e2cd tier=Turbolev ord=1 name="add"
   totals: 11 opcodes, 2 distinct frames
 compilation 1 L293..586 sfi=0x9b80101e2cd tier=Turbolev ord=2 name="add"
   script "workloads/simple.js"
-  phase L293..309 "Bytecode before MaglevGraphBuilding" [bytecode]
+  phase L293..309 "Bytecode before MaglevGraphBuilding" [bytecode]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
   phase L309..340 "Maglev graph building" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L340..371 "Non-eager inlining" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L371..402 "Non-eager loop peeling" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations

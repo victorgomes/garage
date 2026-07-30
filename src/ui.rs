@@ -22,7 +22,7 @@ use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Borders, Clear, Paragraph, Wrap};
 
 use crate::app::{App, COMMANDS, Pane, Prompt, Row, SourceState, SplitDir, event_summary};
-use crate::model::{EventKind, LineInfo, NodeId, ParsedCompilation, PhaseKind, Tier};
+use crate::model::{EventKind, IcState, LineInfo, NodeId, ParsedCompilation, PhaseKind, Tier};
 use crate::parse::maglev::line_text;
 use crate::view::{RowKind, ViewModel, is_control_opcode, is_guard_opcode, is_phi_opcode};
 
@@ -588,6 +588,45 @@ struct DefUse {
     inputs: HashSet<NodeId>,
 }
 
+/// Cursor-linked highlighting for bytecode listings (TODO 8.5), the def-use
+/// overlay's counterpart. When the cursor sits on a bytecode row, the rows
+/// its operands point at light up; when it sits on a feedback slot, pool
+/// entry, or jump-target row, the operands referencing it light up.
+#[derive(Default)]
+struct BcHl {
+    /// The cursor row's operand refs — jump targets, `FBV[N]`, `[N:…]`.
+    offsets: HashSet<u32>,
+    slots: HashSet<u32>,
+    pools: HashSet<u32>,
+    /// What the cursor row itself defines.
+    def_offset: Option<u32>,
+    def_slot: Option<u32>,
+    def_pool: Option<u32>,
+}
+
+/// Builds the bytecode-listing highlight state from the cursor row.
+fn bc_highlight(vm: &ViewModel, cursor: usize) -> Option<BcHl> {
+    let (p, i) = vm.row(cursor)?.info?;
+    match vm.parsed()?.phases.get(p)?.infos.get(i)? {
+        LineInfo::Bytecode(bc) => Some(BcHl {
+            offsets: bc.targets.iter().map(|(n, _)| *n).collect(),
+            slots: bc.fbv.iter().map(|(n, _)| *n).collect(),
+            pools: bc.pool.iter().map(|(n, _)| *n).collect(),
+            def_offset: Some(bc.offset),
+            ..BcHl::default()
+        }),
+        LineInfo::FeedbackSlot { index, .. } => Some(BcHl {
+            def_slot: Some(*index),
+            ..BcHl::default()
+        }),
+        LineInfo::PoolEntry { index, .. } => Some(BcHl {
+            def_pool: Some(*index),
+            ..BcHl::default()
+        }),
+        _ => None,
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Viewport (TODO 3.4, 4.x)
 // ---------------------------------------------------------------------------
@@ -647,6 +686,11 @@ fn render_viewport(
     } else {
         None
     };
+    let bchl = if active {
+        bc_highlight(vm, state.cursor)
+    } else {
+        None
+    };
 
     let source = app.active_source();
     let last_line = vm.line_at(len.saturating_sub(1)).unwrap_or(0);
@@ -694,7 +738,10 @@ fn render_viewport(
                     &text,
                     info,
                     vm.parsed().map(|p| p.as_ref()),
-                    defuse.as_ref(),
+                    CursorHl {
+                        defuse: defuse.as_ref(),
+                        bc: bchl.as_ref(),
+                    },
                     app.search.as_ref(),
                     &palette,
                     state.scroll_x,
@@ -847,7 +894,10 @@ fn render_diff(
                         &text,
                         info,
                         Some(side.parsed.as_ref()),
-                        defuse.as_ref(),
+                        CursorHl {
+                            defuse: defuse.as_ref(),
+                            bc: None,
+                        },
                         app.search.as_ref(),
                         &palette,
                         app.scroll_x,
@@ -880,17 +930,26 @@ fn render_diff(
     }
 }
 
+/// The cursor-linked overlays [`paint_line`] applies over the base classes:
+/// graph def-use highlighting, and its bytecode-listing counterpart.
+#[derive(Default, Clone, Copy)]
+struct CursorHl<'a> {
+    defuse: Option<&'a DefUse>,
+    bc: Option<&'a BcHl>,
+}
+
 /// Builds the styled spans for one line: a per-byte class array painted in
 /// layers, then run-length encoded at char granularity.
 fn paint_line(
     text: &str,
     info: Option<&LineInfo>,
     parsed: Option<&ParsedCompilation>,
-    defuse: Option<&DefUse>,
+    hl: CursorHl<'_>,
     search: Option<&regex::Regex>,
     palette: &Palette,
     skip_chars: usize,
 ) -> Vec<Span<'static>> {
+    let CursorHl { defuse, bc: bchl } = hl;
     let mut paint = vec![Class::Base; text.len()];
 
     let fill = |range: &std::ops::Range<u32>, class: Class, paint: &mut Vec<Class>| {
@@ -928,7 +987,57 @@ fn paint_line(
                 fill(&r.span, Class::NodeRef, &mut paint);
             }
         }
-        Some(LineInfo::Bytecode { .. }) => paint.fill(Class::BytecodeLine),
+        Some(LineInfo::Bytecode(bc)) => {
+            if bc.primary {
+                // A bytecode-array dump row is primary content: address and
+                // encoding columns dim, offset picked out, mnemonic styled by
+                // the same shape rules as graph opcodes, operand refs in the
+                // node-ref / block-ref colours (TODO 8.5).
+                paint.fill(Class::Dim);
+                fill(&bc.offset_span, Class::NodeDef, &mut paint);
+                let name = text.get(bc.mnemonic.start as usize..bc.mnemonic.end as usize);
+                fill(&bc.mnemonic, opcode_class(name.unwrap_or("")), &mut paint);
+                let op_start = bc.mnemonic.end..text.len() as u32;
+                fill(&op_start, Class::Base, &mut paint);
+                for (_, span) in &bc.fbv {
+                    fill(span, Class::NodeRef, &mut paint);
+                }
+                for (_, span) in &bc.pool {
+                    fill(span, Class::ConstantOp, &mut paint);
+                }
+                for (_, span) in &bc.targets {
+                    fill(span, Class::BlockRef, &mut paint);
+                }
+            } else {
+                // Interleaved source context inside a graph phase stays
+                // uniformly dim — it frames the nodes, it is not the content.
+                paint.fill(Class::BytecodeLine);
+            }
+        }
+        Some(LineInfo::FeedbackSlot {
+            def_span,
+            kind,
+            state,
+            ic,
+            ..
+        }) => {
+            paint.fill(Class::Dim);
+            fill(def_span, Class::NodeDef, &mut paint);
+            fill(kind, Class::Opcode, &mut paint);
+            let state_class = match ic {
+                IcState::Megamorphic => Class::Guard,
+                IcState::Polymorphic => Class::PhiOp,
+                IcState::Monomorphic => Class::NodeRef,
+                IcState::Uninitialized => Class::Dim,
+                IcState::Other => Class::CallOp,
+            };
+            fill(state, state_class, &mut paint);
+        }
+        Some(LineInfo::PoolEntry { def_span, .. }) => {
+            fill(def_span, Class::NodeDef, &mut paint);
+            let value = def_span.end..text.len() as u32;
+            fill(&value, Class::ConstantOp, &mut paint);
+        }
         Some(LineInfo::BlockHeader { .. }) => paint.fill(Class::BlockHeader),
         Some(LineInfo::Banner) => paint.fill(Class::Banner),
         Some(LineInfo::SfiContext | LineInfo::Control | LineInfo::VirtualObjects) => {
@@ -986,6 +1095,52 @@ fn paint_line(
         };
         for span in refs {
             fill(&span, Class::ConsumerHl, &mut paint);
+        }
+    }
+
+    // Bytecode-listing overlay (TODO 8.5): the cursor row's operand refs
+    // light up the rows they point at (InputHl on the definition token), and
+    // a slot / pool-entry / jump-target row under the cursor lights up the
+    // operands that reference it (ConsumerHl on the ref spans).
+    if let Some(hl) = bchl {
+        match info {
+            Some(LineInfo::Bytecode(bc)) => {
+                if hl.offsets.contains(&bc.offset) {
+                    fill(&bc.offset_span, Class::InputHl, &mut paint);
+                }
+                if let Some(o) = hl.def_offset
+                    && bc.offset != o
+                {
+                    for (t, span) in &bc.targets {
+                        if *t == o {
+                            fill(span, Class::ConsumerHl, &mut paint);
+                        }
+                    }
+                }
+                if let Some(s) = hl.def_slot {
+                    for (n, span) in &bc.fbv {
+                        if *n == s {
+                            fill(span, Class::ConsumerHl, &mut paint);
+                        }
+                    }
+                }
+                if let Some(c) = hl.def_pool {
+                    for (n, span) in &bc.pool {
+                        if *n == c {
+                            fill(span, Class::ConsumerHl, &mut paint);
+                        }
+                    }
+                }
+            }
+            Some(LineInfo::FeedbackSlot {
+                index, def_span, ..
+            }) if hl.slots.contains(index) => {
+                fill(def_span, Class::InputHl, &mut paint);
+            }
+            Some(LineInfo::PoolEntry { index, def_span }) if hl.pools.contains(index) => {
+                fill(def_span, Class::InputHl, &mut paint);
+            }
+            _ => {}
         }
     }
 
@@ -1277,7 +1432,15 @@ mod tests {
         };
         let info = LineInfo::Node(node);
         let palette = Palette { indexed: true };
-        let spans = paint_line(text, Some(&info), Some(&parsed), None, None, &palette, 0);
+        let spans = paint_line(
+            text,
+            Some(&info),
+            Some(&parsed),
+            CursorHl::default(),
+            None,
+            &palette,
+            0,
+        );
         let joined: String = spans.iter().map(|s| s.content.as_ref()).collect();
         assert_eq!(joined, text, "painting must not lose characters");
         assert!(spans.len() >= 5, "def/opcode/inputs painted separately");
@@ -1287,7 +1450,7 @@ mod tests {
     fn horizontal_scroll_skips_chars_not_bytes() {
         let text = "│╭─►Block b4";
         let palette = Palette { indexed: true };
-        let spans = paint_line(text, None, None, None, None, &palette, 2);
+        let spans = paint_line(text, None, None, CursorHl::default(), None, &palette, 2);
         let joined: String = spans.iter().map(|s| s.content.as_ref()).collect();
         assert_eq!(joined, "─►Block b4");
     }

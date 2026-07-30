@@ -77,8 +77,8 @@ Notes that save an afternoon:
 | `/`, `n`, `N` | regex search (incremental), next/previous match |
 | `Space` | fold/unfold the basic block under the cursor |
 | `z` | fold all blocks in view / unfold them all |
-| `i` | jump to input definitions (cycles) |
-| `u` | cycle consumers of the node the cycle started from |
+| `i` | jump to input definitions (cycles) · bytecode: jump target / `FBV[n]` slot / pool entry |
+| `u` | cycle consumers of the node (or slot / pool entry / jump target) the cycle started from |
 | `Ctrl+O` / `Ctrl+I` | jump history back / forward |
 | `t` | show/fold interleaved trace annotations |
 | `y` / `Y` | copy cursor line / whole section (OSC 52 over SSH/tmux) |
@@ -169,6 +169,25 @@ half-page-down = "Ctrl+f"
 
 A key bound to two actions is a startup error, and a config typo is a normal
 error message — the alternate screen only opens once the config is valid.
+
+## Bytecode arrays & feedback vectors
+
+Maglev prints the bytecode array and the feedback vector ahead of every
+graph, and `--print-bytecode` emits the same rows for Ignition; garage
+parses them rather than dimming them. Rows are styled like graph nodes
+(mnemonic by shape, jumps blue, constants magenta), feedback-slot headers
+colour by IC state — MEGAMORPHIC red, POLYMORPHIC yellow, MONOMORPHIC
+green — and the `:megamorphic` lens counts them.
+
+The def-use chain works here the way it does in a graph. On a bytecode
+row, `i` cycles through what its operands reference: the jump target
+(`(0x… @ N)` suffixes and switch `{ 0: @44, … }` tables), each `FBV[n]`
+slot in the feedback vector below, each `[n:…]` constant-pool entry.
+On a slot, pool entry, or jump-target row, `u` cycles the rows that
+reference it. The cursor highlights the same links in place, and
+`Ctrl+O` unwinds any jump. (Bare `[n]` operands are immediates and
+`EmbeddedFeedback[n]` is not a vector slot — neither pretends to
+navigate.)
 
 ## What the UI shows
 

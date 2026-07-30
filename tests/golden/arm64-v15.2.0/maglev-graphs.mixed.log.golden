@@ -2,7 +2,7 @@ lines: 4892
 version: 15.2
 compilation 0 L1..607 sfi=0x9b80101e355 tier=Maglev ord=1 name="sum"
   script "workloads/mixed.js"
-  phase L4..65 "Bytecode array" [bytecode]
+  phase L4..65 "Bytecode array" [bytecode]: 18 rows (2 jump refs, 4 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 2 poly / 0 mega / 2 other
   phase L65..176 "Maglev graph building" [graph]: 50 nodes, 8 blocks, 14 frame-lines, 4 annotations
   phase L176..288 "Phi untagging" [graph]: 51 nodes, 8 blocks, 14 frame-lines, 4 annotations
   phase L288..390 "AnyUseMarking" [graph]: 41 nodes, 8 blocks, 14 frame-lines, 4 annotations
@@ -11,7 +11,7 @@ compilation 0 L1..607 sfi=0x9b80101e355 tier=Maglev ord=1 name="sum"
   totals: 28 opcodes, 4 distinct frames
 compilation 1 L607..792 sfi=0x9b80101e3b5 tier=Maglev ord=1 name="flipflop"
   script "workloads/mixed.js"
-  phase L610..625 "Bytecode array" [bytecode]
+  phase L610..625 "Bytecode array" [bytecode]: 4 rows (0 jump refs, 0 fbv refs, 0 pool refs)
   phase L625..658 "Maglev graph building" [graph]: 15 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L658..691 "Phi untagging" [graph]: 15 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L691..723 "AnyUseMarking" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
@@ -20,7 +20,7 @@ compilation 1 L607..792 sfi=0x9b80101e3b5 tier=Maglev ord=1 name="flipflop"
   totals: 14 opcodes, 2 distinct frames
 compilation 2 L792..1568 sfi=0x9b80101e385 tier=Maglev ord=1 name="scale"
   script "workloads/mixed.js"
-  phase L795..876 "Bytecode array" [bytecode]
+  phase L795..876 "Bytecode array" [bytecode]: 24 rows (2 jump refs, 8 fbv refs, 3 pool refs), 2 pool entries, slots 5 mono / 0 poly / 0 mega / 2 other
   phase L876..1018 "Maglev graph building" [graph]: 71 nodes, 11 blocks, 21 frame-lines, 2 annotations
   phase L1018..1160 "Phi untagging" [graph]: 71 nodes, 11 blocks, 21 frame-lines, 2 annotations
   phase L1160..1292 "AnyUseMarking" [graph]: 62 nodes, 11 blocks, 21 frame-lines, 2 annotations
@@ -29,7 +29,7 @@ compilation 2 L792..1568 sfi=0x9b80101e385 tier=Maglev ord=1 name="scale"
   totals: 37 opcodes, 7 distinct frames
 compilation 3 L1568..1748 sfi=0x9b80101e3b5 tier=Maglev ord=2 name="flipflop"
   script "workloads/mixed.js"
-  phase L1571..1586 "Bytecode array" [bytecode]
+  phase L1571..1586 "Bytecode array" [bytecode]: 4 rows (0 jump refs, 0 fbv refs, 0 pool refs)
   phase L1586..1618 "Maglev graph building" [graph]: 16 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L1618..1650 "Phi untagging" [graph]: 16 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L1650..1681 "AnyUseMarking" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 0 annotations
@@ -38,12 +38,12 @@ compilation 3 L1568..1748 sfi=0x9b80101e3b5 tier=Maglev ord=2 name="flipflop"
   totals: 14 opcodes, 2 distinct frames
 compilation 4 L1748..4891 sfi=0x9b80101e2d5 tier=Maglev ord=1 name=""
   script "workloads/mixed.js"
-  phase L1751..1945 "Bytecode array" [bytecode]
-  phase L1945..2006 "Inlining 0x09b80101e355 <SharedFunctionInfo sum> with bytecode" [inlining "sum"]
-  phase L2006..2087 "Inlining 0x09b80101e385 <SharedFunctionInfo scale> with bytecode" [inlining "scale"]
-  phase L2087..2148 "Inlining 0x09b80101e355 <SharedFunctionInfo sum> with bytecode" [inlining "sum"]
-  phase L2148..2163 "Inlining 0x09b80101e3b5 <SharedFunctionInfo flipflop> with bytecode" [inlining "flipflop"]
-  phase L2163..2178 "Inlining 0x09b80101e3b5 <SharedFunctionInfo flipflop> with bytecode" [inlining "flipflop"]
+  phase L1751..1945 "Bytecode array" [bytecode]: 89 rows (8 jump refs, 19 fbv refs, 8 pool refs), 7 pool entries, slots 9 mono / 0 poly / 0 mega / 9 other
+  phase L1945..2006 "Inlining 0x09b80101e355 <SharedFunctionInfo sum> with bytecode" [inlining "sum"]: 18 rows (2 jump refs, 4 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 2 poly / 0 mega / 2 other
+  phase L2006..2087 "Inlining 0x09b80101e385 <SharedFunctionInfo scale> with bytecode" [inlining "scale"]: 24 rows (2 jump refs, 8 fbv refs, 3 pool refs), 2 pool entries, slots 5 mono / 0 poly / 0 mega / 2 other
+  phase L2087..2148 "Inlining 0x09b80101e355 <SharedFunctionInfo sum> with bytecode" [inlining "sum"]: 18 rows (2 jump refs, 4 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 2 poly / 0 mega / 2 other
+  phase L2148..2163 "Inlining 0x09b80101e3b5 <SharedFunctionInfo flipflop> with bytecode" [inlining "flipflop"]: 4 rows (0 jump refs, 0 fbv refs, 0 pool refs)
+  phase L2163..2178 "Inlining 0x09b80101e3b5 <SharedFunctionInfo flipflop> with bytecode" [inlining "flipflop"]: 4 rows (0 jump refs, 0 fbv refs, 0 pool refs)
   phase L2178..2726 "Maglev graph building" [graph]: 220 nodes, 39 blocks, 111 frame-lines, 18 annotations
   phase L2726..3277 "Phi untagging" [graph]: 221 nodes, 39 blocks, 113 frame-lines, 18 annotations
   phase L3277..3792 "AnyUseMarking" [graph]: 186 nodes, 39 blocks, 113 frame-lines, 18 annotations

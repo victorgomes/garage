@@ -2,7 +2,7 @@ lines: 4128
 version: 14.9
 compilation 0 L0..502 sfi=0x9b80101e0b9 tier=Maglev ord=1 name="sum"
   script "workloads/mixed.js"
-  phase L1..64 "Bytecode array" [bytecode]
+  phase L1..64 "Bytecode array" [bytecode]: 18 rows (2 jump refs, 5 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 2 poly / 0 mega / 3 other
   phase L64..175 "After graph building" [graph]: 50 nodes, 8 blocks, 14 frame-lines, 4 annotations
   phase L175..280 "After use marking" [graph]: 44 nodes, 8 blocks, 14 frame-lines, 4 annotations
   phase L280..385 "After register allocation pre-processing" [graph]: 44 nodes, 8 blocks, 14 frame-lines, 4 annotations
@@ -10,7 +10,7 @@ compilation 0 L0..502 sfi=0x9b80101e0b9 tier=Maglev ord=1 name="sum"
   totals: 26 opcodes, 4 distinct frames
 compilation 1 L502..665 sfi=0x9b80101e119 tier=Maglev ord=1 name="flipflop"
   script "workloads/mixed.js"
-  phase L503..533 "Bytecode array" [bytecode]
+  phase L503..533 "Bytecode array" [bytecode]: 4 rows (0 jump refs, 2 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 2 other
   phase L533..566 "After graph building" [graph]: 15 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L566..598 "After use marking" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L598..630 "After register allocation pre-processing" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
@@ -18,7 +18,7 @@ compilation 1 L502..665 sfi=0x9b80101e119 tier=Maglev ord=1 name="flipflop"
   totals: 14 opcodes, 2 distinct frames
 compilation 2 L665..1306 sfi=0x9b80101e0e9 tier=Maglev ord=1 name="scale"
   script "workloads/mixed.js"
-  phase L666..749 "Bytecode array" [bytecode]
+  phase L666..749 "Bytecode array" [bytecode]: 24 rows (2 jump refs, 9 fbv refs, 3 pool refs), 2 pool entries, slots 5 mono / 0 poly / 0 mega / 3 other
   phase L749..891 "After graph building" [graph]: 71 nodes, 11 blocks, 21 frame-lines, 2 annotations
   phase L891..1025 "After use marking" [graph]: 64 nodes, 11 blocks, 21 frame-lines, 2 annotations
   phase L1025..1159 "After register allocation pre-processing" [graph]: 64 nodes, 11 blocks, 21 frame-lines, 2 annotations
@@ -26,7 +26,7 @@ compilation 2 L665..1306 sfi=0x9b80101e0e9 tier=Maglev ord=1 name="scale"
   totals: 35 opcodes, 7 distinct frames
 compilation 3 L1306..1465 sfi=0x9b80101e119 tier=Maglev ord=2 name="flipflop"
   script "workloads/mixed.js"
-  phase L1307..1337 "Bytecode array" [bytecode]
+  phase L1307..1337 "Bytecode array" [bytecode]: 4 rows (0 jump refs, 2 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 2 other
   phase L1337..1369 "After graph building" [graph]: 16 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L1369..1400 "After use marking" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L1400..1431 "After register allocation pre-processing" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 0 annotations
@@ -34,12 +34,12 @@ compilation 3 L1306..1465 sfi=0x9b80101e119 tier=Maglev ord=2 name="flipflop"
   totals: 14 opcodes, 2 distinct frames
 compilation 4 L1465..4128 sfi=0x9b80101e039 tier=Maglev ord=1 name=""
   script "workloads/mixed.js"
-  phase L1466..1672 "Bytecode array" [bytecode]
-  phase L1672..1735 "Inlining 0x09b80101e0b9 <SharedFunctionInfo sum> with bytecode" [inlining "sum"]
-  phase L1735..1818 "Inlining 0x09b80101e0e9 <SharedFunctionInfo scale> with bytecode" [inlining "scale"]
-  phase L1818..1881 "Inlining 0x09b80101e0b9 <SharedFunctionInfo sum> with bytecode" [inlining "sum"]
-  phase L1881..1911 "Inlining 0x09b80101e119 <SharedFunctionInfo flipflop> with bytecode" [inlining "flipflop"]
-  phase L1911..1941 "Inlining 0x09b80101e119 <SharedFunctionInfo flipflop> with bytecode" [inlining "flipflop"]
+  phase L1466..1672 "Bytecode array" [bytecode]: 89 rows (8 jump refs, 24 fbv refs, 8 pool refs), 7 pool entries, slots 9 mono / 0 poly / 0 mega / 14 other
+  phase L1672..1735 "Inlining 0x09b80101e0b9 <SharedFunctionInfo sum> with bytecode" [inlining "sum"]: 18 rows (2 jump refs, 5 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 2 poly / 0 mega / 3 other
+  phase L1735..1818 "Inlining 0x09b80101e0e9 <SharedFunctionInfo scale> with bytecode" [inlining "scale"]: 24 rows (2 jump refs, 9 fbv refs, 3 pool refs), 2 pool entries, slots 5 mono / 0 poly / 0 mega / 3 other
+  phase L1818..1881 "Inlining 0x09b80101e0b9 <SharedFunctionInfo sum> with bytecode" [inlining "sum"]: 18 rows (2 jump refs, 5 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 2 poly / 0 mega / 3 other
+  phase L1881..1911 "Inlining 0x09b80101e119 <SharedFunctionInfo flipflop> with bytecode" [inlining "flipflop"]: 4 rows (0 jump refs, 2 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 2 other
+  phase L1911..1941 "Inlining 0x09b80101e119 <SharedFunctionInfo flipflop> with bytecode" [inlining "flipflop"]: 4 rows (0 jump refs, 2 fbv refs, 0 pool refs), slots 0 mono / 0 poly / 0 mega / 2 other
   phase L1941..2489 "After graph building" [graph]: 220 nodes, 39 blocks, 111 frame-lines, 18 annotations
   phase L2489..3012 "After use marking" [graph]: 196 nodes, 39 blocks, 111 frame-lines, 18 annotations
   phase L3012..3535 "After register allocation pre-processing" [graph]: 196 nodes, 39 blocks, 111 frame-lines, 18 annotations

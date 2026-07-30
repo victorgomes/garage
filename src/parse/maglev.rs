@@ -25,8 +25,8 @@ use std::collections::HashMap;
 
 use crate::ansi;
 use crate::model::{
-    BlockRef, CompilationSection, DeoptFrame, FrameArrow, IRNode, InlineDecision, LineInfo, NodeId,
-    NodeRef, ParsedCompilation, ParsedPhase, PhaseKind,
+    BlockRef, CompilationSection, DeoptFrame, FrameArrow, IRNode, IcState, InlineDecision,
+    LineInfo, NodeId, NodeRef, ParsedCompilation, ParsedPhase, PhaseKind,
 };
 use crate::source::LogBuffer;
 
@@ -165,18 +165,58 @@ impl Interner {
     }
 }
 
+/// Which part of a bytecode dump the cursor line sits in. The regions are
+/// delimited by V8's own headers, in the order the printer emits them:
+/// bytecode rows, then `Constant pool (size = N)`, then the handler / source
+/// position tables, then the feedback vector (`--maglev-print-feedback`,
+/// default on).
+#[derive(PartialEq)]
+enum DumpRegion {
+    Code,
+    Pool,
+    Tables,
+    Feedback,
+}
+
+/// Parses a `Bytecode array` / `Inlining …` dump phase (TODO 8.5): bytecode
+/// rows with their jump / feedback / constant-pool operands resolved,
+/// constant-pool entry rows, and feedback-vector slot headers. Everything
+/// else in the dump is expected reference content — Control, not annotation.
 fn parse_dump_phase(
     buffer: &LogBuffer,
     lines: std::ops::Range<usize>,
     parsed: &mut ParsedCompilation,
 ) -> ParsedPhase {
     let mut phase = ParsedPhase::default();
+    let mut region = DumpRegion::Code;
     for (offset, line) in lines.enumerate() {
         let text = line_text(buffer, line);
+        let t = text.trim_start();
         let info = if offset == 0 {
             LineInfo::Banner
-        } else if let Some(bc) = parse_bytecode_array_line(&text) {
-            LineInfo::Bytecode { offset: bc }
+        } else if t.starts_with("Constant pool (size") {
+            region = DumpRegion::Pool;
+            LineInfo::Control
+        } else if t.starts_with("Handler Table (size")
+            || t.starts_with("Source Position Table (size")
+        {
+            region = DumpRegion::Tables;
+            LineInfo::Control
+        } else if t.starts_with("0x") && t.contains(": [FeedbackVector]") {
+            region = DumpRegion::Feedback;
+            LineInfo::Control
+        } else if region == DumpRegion::Code
+            && let Some(info) = parse_bytecode_row(&text, true)
+        {
+            info
+        } else if region == DumpRegion::Pool
+            && let Some(info) = parse_pool_entry(&text)
+        {
+            info
+        } else if region == DumpRegion::Feedback
+            && let Some(info) = parse_slot_header(&text)
+        {
+            info
         } else {
             // Inlining-trace lines print between banners, inside the bytecode
             // and inlined-callee sections — not only in the preamble.
@@ -188,18 +228,275 @@ fn parse_dump_phase(
     phase
 }
 
-/// `         0x31a0100012c @    0 : 0b 04             Ldar a1`
-fn parse_bytecode_array_line(text: &str) -> Option<u32> {
-    let rest = text.trim_start();
-    let rest = rest.strip_prefix("0x")?;
-    let (addr, rest) = rest.split_once(" @ ")?;
-    if addr.is_empty() || !addr.bytes().all(|b| b.is_ascii_hexdigit()) {
+/// A full bytecode-array row:
+/// `         0x31a0100012c @    0 : 0b 04             Ldar a1`, with an
+/// optional `   43 S> ` / `   57 E> ` source-position marker in front
+/// (`--print-bytecode` output in some V8 versions).
+fn parse_bytecode_row(text: &str, primary: bool) -> Option<LineInfo> {
+    let b = text.as_bytes();
+    let mut at = space_len(text, 0);
+    // Optional source-position marker: digits, space(s), `S>` or `E>`. The
+    // address itself starts with the digit `0` (`0x…`), so an absent marker
+    // falls through rather than failing.
+    if b.get(at).is_some_and(u8::is_ascii_digit) {
+        let mut m = at;
+        while b.get(m).is_some_and(u8::is_ascii_digit) {
+            m += 1;
+        }
+        let m = m + space_len(text, m);
+        if text[m..].starts_with("S>") || text[m..].starts_with("E>") {
+            at = m + 2 + space_len(text, m + 2);
+        }
+    }
+    // `0x<addr>`
+    if !text[at..].starts_with("0x") {
         return None;
     }
-    let rest = rest.trim_start();
-    let (offset, rest) = rest.split_once(" : ")?;
-    let _ = rest;
-    offset.trim().parse().ok()
+    at += 2;
+    let addr_len = text[at..].bytes().take_while(u8::is_ascii_hexdigit).count();
+    if addr_len == 0 {
+        return None;
+    }
+    at += addr_len + space_len(text, at + addr_len);
+    // `@    <offset>`
+    if b.get(at) != Some(&b'@') {
+        return None;
+    }
+    at += 1 + space_len(text, at + 1);
+    let digits = text[at..].bytes().take_while(u8::is_ascii_digit).count();
+    if digits == 0 {
+        return None;
+    }
+    let offset: u32 = text[at..at + digits].parse().ok()?;
+    let offset_span = at as u32..(at + digits) as u32;
+    at += digits + space_len(text, at + digits);
+    // `: `
+    if b.get(at) != Some(&b':') {
+        return None;
+    }
+    at += 1;
+    parse_row_tail(text, at, offset, offset_span, primary)
+}
+
+/// The part of a bytecode row after the `:` — hex encoding bytes, mnemonic,
+/// operands. Shared between the dump rows (which lead with an address) and
+/// the interleaved graph-context rows (which lead with the offset alone).
+fn parse_row_tail(
+    text: &str,
+    mut at: usize,
+    offset: u32,
+    offset_span: crate::model::Span,
+    primary: bool,
+) -> Option<LineInfo> {
+    let b = text.as_bytes();
+    at += space_len(text, at);
+    // Encoding bytes: one or more 2-hex-digit tokens. Required — this is
+    // what distinguishes a bytecode row from prose containing a colon.
+    let mut pairs = 0;
+    while at + 2 <= text.len()
+        && b[at].is_ascii_hexdigit()
+        && b[at + 1].is_ascii_hexdigit()
+        && (at + 2 == text.len() || b[at + 2] == b' ')
+    {
+        pairs += 1;
+        at += 2 + space_len(text, at + 2);
+    }
+    if pairs == 0 {
+        return None;
+    }
+    // Mnemonic: `Ldar`, `LdaSmi.ExtraWide`, … — possibly absent when the
+    // encoding bytes end the line.
+    let m_start = at;
+    if b.get(at).is_some_and(u8::is_ascii_alphabetic) {
+        while b
+            .get(at)
+            .is_some_and(|c| c.is_ascii_alphanumeric() || *c == b'.' || *c == b'_')
+        {
+            at += 1;
+        }
+    }
+    let mnemonic = m_start as u32..at as u32;
+
+    // Operand scan. Three ref shapes matter (everything else is left as
+    // plain text): `FBV[N]` feedback slots, `[N:…]` constant-pool operands
+    // (bare `[N]` is an immediate, not a pool index), and jump targets —
+    // the `(0x… @ N)` suffix plus `@N` cases inside a switch's `{ … }`
+    // jump table.
+    // Byte-wise scan (fuzz: mutated input puts multibyte garbage between
+    // operands; `text[i..]` at an arbitrary byte offset panics, byte-slice
+    // matching cannot). Every range actually sliced out of `text` below
+    // starts at a matched ASCII pattern and covers ASCII digits only, so the
+    // boundaries are sound.
+    let mut targets = Vec::new();
+    let mut fbv = Vec::new();
+    let mut pool = Vec::new();
+    let mut brace_depth = 0u32;
+    let mut i = at;
+    while i < b.len() {
+        let rest = &b[i..];
+        if rest.starts_with(b"FBV[") {
+            let d = digit_len(text, i + 4);
+            if d > 0 && b.get(i + 4 + d) == Some(&b']') {
+                let end = i + 4 + d + 1;
+                if let Ok(n) = text[i + 4..i + 4 + d].parse() {
+                    fbv.push((n, i as u32..end as u32));
+                }
+                i = end;
+                continue;
+            }
+        } else if b[i] == b'[' {
+            let d = digit_len(text, i + 1);
+            if d > 0 && b.get(i + 1 + d) == Some(&b':') {
+                // Bracket-depth scan: pool values nest brackets
+                // (`[0:0x… <FixedArray[2]>]`).
+                let mut depth = 1;
+                let mut j = i + 1;
+                while j < b.len() && depth > 0 {
+                    match b[j] {
+                        b'[' => depth += 1,
+                        b']' => depth -= 1,
+                        _ => {}
+                    }
+                    j += 1;
+                }
+                // `j` may sit mid-char after scanning past multibyte bytes;
+                // only the span (display coordinates) uses it, no slicing.
+                if depth == 0
+                    && let Ok(n) = text[i + 1..i + 1 + d].parse()
+                {
+                    pool.push((n, i as u32..j as u32));
+                    i = j;
+                    continue;
+                }
+            }
+        } else if rest.starts_with(b"(0x") {
+            let h = b[i + 3..]
+                .iter()
+                .take_while(|c| c.is_ascii_hexdigit())
+                .count();
+            if h > 0 && b[i + 3 + h..].starts_with(b" @ ") {
+                let ds = i + 3 + h + 3;
+                let d = digit_len(text, ds);
+                if d > 0 && b.get(ds + d) == Some(&b')') {
+                    let end = ds + d + 1;
+                    if let Ok(n) = text[ds..ds + d].parse() {
+                        targets.push((n, i as u32..end as u32));
+                    }
+                    i = end;
+                    continue;
+                }
+            }
+        } else if b[i] == b'{' {
+            brace_depth += 1;
+        } else if b[i] == b'}' {
+            brace_depth = brace_depth.saturating_sub(1);
+        } else if b[i] == b'@' && brace_depth > 0 {
+            let d = digit_len(text, i + 1);
+            if d > 0 {
+                if let Ok(n) = text[i + 1..i + 1 + d].parse() {
+                    targets.push((n, i as u32..(i + 1 + d) as u32));
+                }
+                i += 1 + d;
+                continue;
+            }
+        }
+        i += 1;
+    }
+
+    Some(LineInfo::Bytecode(crate::model::BytecodeRow {
+        offset,
+        offset_span,
+        mnemonic,
+        targets,
+        fbv,
+        pool,
+        primary,
+    }))
+}
+
+/// `           0: 0x09b8000034d5 <String[1]: #v>` — a constant-pool entry
+/// row inside the `Constant pool (size = N)` region.
+pub(crate) fn parse_pool_entry(text: &str) -> Option<LineInfo> {
+    let start = space_len(text, 0);
+    if start == 0 {
+        // Entries are always indented; an unindented `0:` is something else.
+        return None;
+    }
+    let d = digit_len(text, start);
+    if d == 0 || text.as_bytes().get(start + d) != Some(&b':') {
+        return None;
+    }
+    let index = text[start..start + d].parse().ok()?;
+    Some(LineInfo::PoolEntry {
+        index,
+        def_span: start as u32..(start + d + 1) as u32,
+    })
+}
+
+/// ` - slot #0 LoadProperty MONOMORPHIC` / ` - slot #1 BinaryOp
+/// BinaryOp:SignedSmall {` / ` - slot #0 Literal  {` — a feedback-vector
+/// slot header. Kind and state are recorded as spans; the state word is
+/// classified for styling.
+fn parse_slot_header(text: &str) -> Option<LineInfo> {
+    let b = text.as_bytes();
+    let start = space_len(text, 0);
+    let rest = text[start..].strip_prefix("- slot #")?;
+    let d_start = start + "- slot #".len();
+    let d = digit_len(text, d_start);
+    if d == 0 {
+        return None;
+    }
+    let index = rest[..d].parse().ok()?;
+    // `slot #N` is the definition token, without the `- ` bullet.
+    let def_span = (start + 2) as u32..(d_start + d) as u32;
+
+    let k_start = d_start + d + space_len(text, d_start + d);
+    let mut k_end = k_start;
+    while b.get(k_end).is_some_and(|c| !c.is_ascii_whitespace()) {
+        k_end += 1;
+    }
+    let s_start = k_end + space_len(text, k_end);
+    // The state runs to the end of the line, minus a trailing ` {`.
+    let mut s_end = text.trim_end().len();
+    if text[..s_end].ends_with('{') {
+        s_end = text[..s_end - 1].trim_end().len();
+    }
+    let s_end = s_end.max(s_start);
+    let state = &text[s_start..s_end];
+
+    let ic = if state.contains("MEGAMORPHIC") {
+        IcState::Megamorphic
+    } else if state.contains("POLYMORPHIC") {
+        IcState::Polymorphic
+    } else if state.contains("MONOMORPHIC") {
+        IcState::Monomorphic
+    } else if state.contains("UNINITIALIZED") || state.contains("PREMONOMORPHIC") {
+        IcState::Uninitialized
+    } else {
+        IcState::Other
+    };
+
+    Some(LineInfo::FeedbackSlot {
+        index,
+        def_span,
+        kind: k_start as u32..k_end as u32,
+        state: s_start as u32..s_end as u32,
+        ic,
+    })
+}
+
+fn space_len(text: &str, at: usize) -> usize {
+    text.as_bytes()
+        .get(at..)
+        .map(|rest| rest.iter().take_while(|b| **b == b' ').count())
+        .unwrap_or(0)
+}
+
+fn digit_len(text: &str, at: usize) -> usize {
+    text.as_bytes()
+        .get(at..)
+        .map(|rest| rest.iter().take_while(|b| b.is_ascii_digit()).count())
+        .unwrap_or(0)
 }
 
 fn parse_graph_phase(
@@ -336,8 +633,8 @@ fn classify_graph_line(
         return LineInfo::Node(node);
     }
 
-    if let Some(offset) = parse_interleaved_bytecode(content) {
-        return LineInfo::Bytecode { offset };
+    if let Some(info) = parse_interleaved_bytecode(text, start) {
+        return info;
     }
 
     // The attachment rule (2.8): anything unmatched is an annotation on the
@@ -350,16 +647,18 @@ fn classify_graph_line(
 
 /// Bare `N : hh hh …` source-bytecode lines interleaved into graph blocks
 /// (offset, space, colon — node lines have no space before the colon).
-fn parse_interleaved_bytecode(content: &str) -> Option<u32> {
-    let (num, rest) = content.split_once(" : ")?;
+/// `start` is the content offset after the control-flow gutter; spans are
+/// absolute into `text`. The rows share the dump grammar's operand scan, so
+/// jump targets and `FBV[N]` refs navigate here too — but `primary` is
+/// false: interleaved context stays uniformly dim.
+fn parse_interleaved_bytecode(text: &str, start: usize) -> Option<LineInfo> {
+    let content = &text[start..];
+    let (num, _) = content.split_once(" : ")?;
     let offset = num.parse().ok()?;
-    let mut hex = rest.trim_start().splitn(2, ' ');
-    let first = hex.next()?;
-    if first.len() == 2 && first.bytes().all(|b| b.is_ascii_hexdigit()) {
-        Some(offset)
-    } else {
-        None
-    }
+    let offset_span = start as u32..(start + num.len()) as u32;
+    // `num` ends right before ` : `; the tail parser resumes after the colon.
+    let colon = start + num.len() + 1;
+    parse_row_tail(text, colon + 1, offset, offset_span, false)
 }
 
 pub use crate::model::SCHEDULE_ONLY;
@@ -722,6 +1021,170 @@ mod tests {
         (phase, parsed)
     }
 
+    fn parse_dump_lines(lines: &[&str]) -> ParsedPhase {
+        let mut text = String::from("----- Bytecode array -----\n");
+        for l in lines {
+            text.push_str(l);
+            text.push('\n');
+        }
+        let mut buffer = LogBuffer::new();
+        buffer.append(text.as_bytes());
+        buffer.finish();
+        let mut parsed = ParsedCompilation::default();
+        parse_dump_phase(&buffer, 0..buffer.line_count(), &mut parsed)
+    }
+
+    fn bc(info: &LineInfo) -> &crate::model::BytecodeRow {
+        match info {
+            LineInfo::Bytecode(bc) => bc,
+            other => panic!("expected bytecode row, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn bytecode_rows_parse_offset_mnemonic_and_refs() {
+        let phase = parse_dump_lines(&[
+            "Parameter count 2",
+            "         0x31a010001b0 @    0 : 33 03 00 00       GetNamedProperty a0, [0:\"v\"], FBV[0]",
+            "         0x31a010001fa @   14 : a8 11             JumpIfFalse [17] (0x31a0100020b @ 31)",
+            "         0x31a0100013f @   67 : 97 33 00 09       JumpLoop [51], [0], FBV[9] (0x31a0100010c @ 16)",
+            "         0x31a010001f4 @    8 : d3                Star1",
+        ]);
+        assert!(matches!(phase.infos[1], LineInfo::Control));
+
+        let get = bc(&phase.infos[2]);
+        assert_eq!(get.offset, 0);
+        assert!(get.primary);
+        assert_eq!(get.fbv.len(), 1, "FBV[0] operand: {:?}", get.fbv);
+        assert_eq!(get.fbv[0].0, 0);
+        assert_eq!(get.pool.len(), 1, "[0:\"v\"] operand: {:?}", get.pool);
+        assert_eq!(get.pool[0].0, 0);
+        assert!(get.targets.is_empty());
+
+        let jif = bc(&phase.infos[3]);
+        assert_eq!(jif.offset, 14);
+        assert_eq!(jif.targets.len(), 1);
+        assert_eq!(jif.targets[0].0, 31);
+        // The bare `[17]` relative operand is an immediate, not a pool ref.
+        assert!(jif.pool.is_empty());
+
+        let loop_ = bc(&phase.infos[4]);
+        assert_eq!(loop_.targets[0].0, 16);
+        assert_eq!(loop_.fbv[0].0, 9);
+
+        let star = bc(&phase.infos[5]);
+        assert_eq!(star.offset, 8);
+        assert!(star.targets.is_empty() && star.fbv.is_empty() && star.pool.is_empty());
+    }
+
+    #[test]
+    fn bytecode_wide_mnemonics_and_embedded_feedback() {
+        let phase = parse_dump_lines(&[
+            "         0x31a010001ee @    2 : 00 57 ff 03 00 00 BitwiseAndSmi.Wide [1023], FBV[0]",
+            "         0x31a010000d0 @   16 : 01 0d a0 86 01 00 LdaSmi.ExtraWide [100000]",
+            "         0x31a010001f6 @   10 : 78 f8 01 00       TestEqualStrict r1, EmbeddedFeedback[0]",
+        ]);
+        let and = bc(&phase.infos[1]);
+        assert_eq!(and.fbv.len(), 1);
+        let smi = bc(&phase.infos[2]);
+        assert!(smi.fbv.is_empty() && smi.pool.is_empty());
+        // `EmbeddedFeedback[0]` is not a feedback-vector slot.
+        let test = bc(&phase.infos[3]);
+        assert!(test.fbv.is_empty(), "{:?}", test.fbv);
+    }
+
+    #[test]
+    fn bytecode_switch_jump_table_targets() {
+        let phase = parse_dump_lines(&[
+            "         0x31a01000115 @   25 : ab 00 03 00       SwitchOnSmiNoFeedback [0], [3], [0] { 0: @44, 1: @48, 2: @52 }",
+        ]);
+        let sw = bc(&phase.infos[1]);
+        let ids: Vec<u32> = sw.targets.iter().map(|(t, _)| *t).collect();
+        assert_eq!(ids, vec![44, 48, 52]);
+    }
+
+    #[test]
+    fn bytecode_source_position_markers_are_tolerated() {
+        let phase = parse_dump_lines(&[
+            "   45 S> 0x2f9d0829f26e @    0 : 0b 03             Ldar a0",
+            "   57 E> 0x2f9d0829f270 @    2 : 46 03 00          MulSmi [3], [0]",
+        ]);
+        assert_eq!(bc(&phase.infos[1]).offset, 0);
+        assert_eq!(bc(&phase.infos[2]).offset, 2);
+    }
+
+    #[test]
+    fn constant_pool_entries_and_regions() {
+        let phase = parse_dump_lines(&[
+            "         0x31a010001b0 @    0 : 33 03 00 00       GetNamedProperty a0, [0:\"v\"], FBV[0]",
+            "Constant pool (size = 1)",
+            "0x31a0100017d: [TrustedFixedArray]",
+            " - map: 0x09b800000605 <Map(TRUSTED_FIXED_ARRAY_TYPE)>",
+            " - length: 1",
+            "           0: 0x09b8000034d5 <String[1]: #v>",
+            "Handler Table (size = 0)",
+            "Source Position Table (size = 0)",
+        ]);
+        assert!(matches!(phase.infos[2], LineInfo::Control), "pool header");
+        assert!(matches!(phase.infos[3], LineInfo::Control), "array object");
+        let LineInfo::PoolEntry { index, .. } = &phase.infos[6] else {
+            panic!("expected pool entry, got {:?}", phase.infos[6]);
+        };
+        assert_eq!(*index, 0);
+        assert!(matches!(phase.infos[7], LineInfo::Control), "handler table");
+    }
+
+    #[test]
+    fn feedback_vector_slots_classify_states() {
+        let phase = parse_dump_lines(&[
+            "0x9b80101e9c1: [FeedbackVector] in OldSpace",
+            " - map: 0x09b800000895 <Map(FEEDBACK_VECTOR_TYPE)>",
+            " - slot #0 LoadProperty MONOMORPHIC",
+            "   [weak] 0x09b80101e519 <Map[16](HOLEY_ELEMENTS)>: LoadHandler(Smi)(kind = kField) {",
+            "     [0]: [weak] 0x09b80101e519 <Map[16](HOLEY_ELEMENTS)>",
+            "  }",
+            " - slot #1 LoadProperty POLYMORPHIC",
+            " - slot #2 LoadProperty MEGAMORPHIC {",
+            " - slot #3 BinaryOp BinaryOp:SignedSmall {",
+            " - slot #4 Literal  {",
+            " - slot #5 LoadGlobalNotInsideTypeof UNINITIALIZED {",
+        ]);
+        let slot = |i: usize| match &phase.infos[i] {
+            LineInfo::FeedbackSlot { index, ic, .. } => (*index, *ic),
+            other => panic!("expected slot, got {other:?}"),
+        };
+        assert_eq!(slot(3), (0, IcState::Monomorphic));
+        assert!(matches!(phase.infos[4], LineInfo::Control), "payload");
+        assert_eq!(slot(7), (1, IcState::Polymorphic));
+        assert_eq!(slot(8), (2, IcState::Megamorphic));
+        assert_eq!(slot(9), (3, IcState::Other));
+        assert_eq!(slot(10), (4, IcState::Other));
+        assert_eq!(slot(11), (5, IcState::Uninitialized));
+    }
+
+    #[test]
+    fn slot_kind_and_state_spans_cover_the_tokens() {
+        let text = " - slot #3 BinaryOp BinaryOp:SignedSmall {";
+        let Some(LineInfo::FeedbackSlot {
+            def_span,
+            kind,
+            state,
+            ..
+        }) = parse_slot_header(text)
+        else {
+            panic!("no slot");
+        };
+        assert_eq!(
+            &text[def_span.start as usize..def_span.end as usize],
+            "slot #3"
+        );
+        assert_eq!(&text[kind.start as usize..kind.end as usize], "BinaryOp");
+        assert_eq!(
+            &text[state.start as usize..state.end as usize],
+            "BinaryOp:SignedSmall"
+        );
+    }
+
     fn node(info: &LineInfo) -> &IRNode {
         match info {
             LineInfo::Node(n) => n,
@@ -937,7 +1400,7 @@ mod tests {
             "   2 : 42 03 01          Add a0, EmbeddedFeedback[1]",
             "0x09b80101e2cd <SharedFunctionInfo add> (0x09b80104a3e5 <String[19]: \"workloads/simple.js\">:2:12)",
         ]);
-        assert!(matches!(phase.infos[1], LineInfo::Bytecode { offset: 2 }));
+        assert!(matches!(&phase.infos[1], LineInfo::Bytecode(bc) if bc.offset == 2 && !bc.primary));
         assert!(matches!(phase.infos[2], LineInfo::SfiContext));
         assert_eq!(parsed.script.as_deref(), Some("workloads/simple.js"));
     }

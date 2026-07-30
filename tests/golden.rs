@@ -23,7 +23,7 @@ use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
 
 use garage::index::TraceIndex;
-use garage::model::{EventKind, LineInfo, PhaseKind};
+use garage::model::{EventKind, IcState, LineInfo, PhaseKind};
 use garage::parse::maglev;
 use garage::source::LogBuffer;
 
@@ -163,6 +163,47 @@ fn summarize(buffer: &LogBuffer, idx: &TraceIndex) -> String {
                         .filter(|l| matches!(l, LineInfo::Disasm { .. }))
                         .count();
                     format!(": {} disasm, {} annotations", disasm, st.annotation_count)
+                }
+                Some(st)
+                    if matches!(phase.kind, PhaseKind::Bytecode | PhaseKind::Inlining { .. }) =>
+                {
+                    // Evidence for the TODO 8.5 coverage claim: bytecode rows
+                    // recognised with their operand refs, pool entries and
+                    // feedback slots classified (by IC state).
+                    let (mut rows, mut jumps, mut fbv, mut pools) = (0, 0, 0, 0);
+                    let mut entries = 0;
+                    let (mut mono, mut poly, mut mega, mut other) = (0, 0, 0, 0);
+                    for info in &st.infos {
+                        match info {
+                            LineInfo::Bytecode(bc) => {
+                                rows += 1;
+                                jumps += bc.targets.len();
+                                fbv += bc.fbv.len();
+                                pools += bc.pool.len();
+                            }
+                            LineInfo::PoolEntry { .. } => entries += 1,
+                            LineInfo::FeedbackSlot { ic, .. } => match ic {
+                                IcState::Monomorphic => mono += 1,
+                                IcState::Polymorphic => poly += 1,
+                                IcState::Megamorphic => mega += 1,
+                                _ => other += 1,
+                            },
+                            _ => {}
+                        }
+                    }
+                    let mut detail = format!(
+                        ": {rows} rows ({jumps} jump refs, {fbv} fbv refs, {pools} pool refs)"
+                    );
+                    if entries > 0 {
+                        let _ = write!(detail, ", {entries} pool entries");
+                    }
+                    if mono + poly + mega + other > 0 {
+                        let _ = write!(
+                            detail,
+                            ", slots {mono} mono / {poly} poly / {mega} mega / {other} other"
+                        );
+                    }
+                    detail
                 }
                 Some(st) if matches!(phase.kind, PhaseKind::Graph { .. }) => {
                     let frame_lines = st

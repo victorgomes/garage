@@ -2,7 +2,7 @@ lines: 3402
 version: 15.2
 compilation 0 L1..163 sfi=0x9b80101e315 tier=Maglev ord=1 name="tiny"
   script "workloads/inlining.js"
-  phase L4..18 "Bytecode array" [bytecode]
+  phase L4..18 "Bytecode array" [bytecode]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
   phase L18..47 "Maglev graph building" [graph]: 13 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L47..76 "Phi untagging" [graph]: 13 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L76..104 "AnyUseMarking" [graph]: 12 nodes, 2 blocks, 3 frame-lines, 0 annotations
@@ -11,10 +11,10 @@ compilation 0 L1..163 sfi=0x9b80101e315 tier=Maglev ord=1 name="tiny"
   totals: 12 opcodes, 2 distinct frames
 compilation 1 L163..686 sfi=0x9b80101e3a5 tier=Maglev ord=1 name="outer"
   script "workloads/inlining.js"
-  phase L166..218 "Bytecode array" [bytecode]
-  phase L218..264 "Inlining 0x09b80101e345 <SharedFunctionInfo small> with bytecode" [inlining "small"]
-  phase L264..278 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
-  phase L278..292 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L166..218 "Bytecode array" [bytecode]: 9 rows (0 jump refs, 4 fbv refs, 2 pool refs), 2 pool entries, slots 4 mono / 0 poly / 0 mega / 0 other
+  phase L218..264 "Inlining 0x09b80101e345 <SharedFunctionInfo small> with bytecode" [inlining "small"]: 9 rows (0 jump refs, 4 fbv refs, 2 pool refs), 1 pool entries, slots 3 mono / 0 poly / 0 mega / 0 other
+  phase L264..278 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
+  phase L278..292 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
   phase L292..369 "Maglev graph building" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
   phase L369..446 "Phi untagging" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
   phase L446..523 "AnyUseMarking" [graph]: 27 nodes, 5 blocks, 18 frame-lines, 0 annotations
@@ -23,7 +23,7 @@ compilation 1 L163..686 sfi=0x9b80101e3a5 tier=Maglev ord=1 name="outer"
   totals: 15 opcodes, 7 distinct frames
 compilation 2 L686..1564 sfi=0x9b80101e375 tier=Maglev ord=1 name="big"
   script "workloads/inlining.js"
-  phase L689..775 "Bytecode array" [bytecode]
+  phase L689..775 "Bytecode array" [bytecode]: 75 rows (0 jump refs, 0 fbv refs, 0 pool refs)
   phase L775..896 "Maglev graph building" [graph]: 53 nodes, 2 blocks, 20 frame-lines, 0 annotations
   phase L896..1017 "Truncation propagation" [graph]: 53 nodes, 2 blocks, 20 frame-lines, 0 annotations
   phase L1017..1126 "Truncation" [graph]: 53 nodes, 2 blocks, 8 frame-lines, 0 annotations
@@ -34,15 +34,15 @@ compilation 2 L686..1564 sfi=0x9b80101e375 tier=Maglev ord=1 name="big"
   totals: 20 opcodes, 2 distinct frames
 compilation 3 L1564..3401 sfi=0x9b80101e295 tier=Maglev ord=1 name=""
   script "workloads/inlining.js"
-  phase L1567..1655 "Bytecode array" [bytecode]
-  phase L1655..1707 "Inlining 0x09b80101e3a5 <SharedFunctionInfo outer> with bytecode" [inlining "outer"]
-  phase L1707..1753 "Inlining 0x09b80101e345 <SharedFunctionInfo small> with bytecode" [inlining "small"]
-  phase L1753..1767 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
-  phase L1767..1781 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
-  phase L1781..1833 "Inlining 0x09b80101e3a5 <SharedFunctionInfo outer> with bytecode" [inlining "outer"]
-  phase L1833..1879 "Inlining 0x09b80101e345 <SharedFunctionInfo small> with bytecode" [inlining "small"]
-  phase L1879..1893 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
-  phase L1893..1907 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]
+  phase L1567..1655 "Bytecode array" [bytecode]: 34 rows (2 jump refs, 6 fbv refs, 3 pool refs), 3 pool entries, slots 2 mono / 0 poly / 0 mega / 4 other
+  phase L1655..1707 "Inlining 0x09b80101e3a5 <SharedFunctionInfo outer> with bytecode" [inlining "outer"]: 9 rows (0 jump refs, 4 fbv refs, 2 pool refs), 2 pool entries, slots 4 mono / 0 poly / 0 mega / 0 other
+  phase L1707..1753 "Inlining 0x09b80101e345 <SharedFunctionInfo small> with bytecode" [inlining "small"]: 9 rows (0 jump refs, 4 fbv refs, 2 pool refs), 1 pool entries, slots 3 mono / 0 poly / 0 mega / 0 other
+  phase L1753..1767 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
+  phase L1767..1781 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
+  phase L1781..1833 "Inlining 0x09b80101e3a5 <SharedFunctionInfo outer> with bytecode" [inlining "outer"]: 9 rows (0 jump refs, 4 fbv refs, 2 pool refs), 2 pool entries, slots 4 mono / 0 poly / 0 mega / 0 other
+  phase L1833..1879 "Inlining 0x09b80101e345 <SharedFunctionInfo small> with bytecode" [inlining "small"]: 9 rows (0 jump refs, 4 fbv refs, 2 pool refs), 1 pool entries, slots 3 mono / 0 poly / 0 mega / 0 other
+  phase L1879..1893 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
+  phase L1893..1907 "Inlining 0x09b80101e315 <SharedFunctionInfo tiny> with bytecode" [inlining "tiny"]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
   phase L1907..2128 "Maglev graph building" [graph]: 78 nodes, 16 blocks, 46 frame-lines, 2 annotations
   phase L2128..2349 "Truncation propagation" [graph]: 78 nodes, 16 blocks, 46 frame-lines, 2 annotations
   phase L2349..2562 "Truncation" [graph]: 76 nodes, 16 blocks, 42 frame-lines, 2 annotations

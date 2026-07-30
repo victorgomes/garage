@@ -2,7 +2,7 @@ lines: 2465
 version: 15.2
 compilation 0 L1..191 sfi=0x9b80101e2cd tier=Maglev ord=1 name="read"
   script "workloads/deopt-eager.js"
-  phase L4..36 "Bytecode array" [bytecode]
+  phase L4..36 "Bytecode array" [bytecode]: 3 rows (0 jump refs, 1 fbv refs, 1 pool refs), 1 pool entries, slots 1 mono / 0 poly / 0 mega / 0 other
   phase L36..67 "Maglev graph building" [graph]: 15 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L67..98 "Phi untagging" [graph]: 15 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L98..128 "AnyUseMarking" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
@@ -11,9 +11,9 @@ compilation 0 L1..191 sfi=0x9b80101e2cd tier=Maglev ord=1 name="read"
   totals: 14 opcodes, 2 distinct frames
 compilation 1 L191..1181 sfi=0x9b80101e265 tier=Maglev ord=1 name=""
   script "workloads/deopt-eager.js"
-  phase L194..345 "Bytecode array" [bytecode]
-  phase L345..377 "Inlining 0x09b80101e2cd <SharedFunctionInfo read> with bytecode" [inlining "read"]
-  phase L377..409 "Inlining 0x09b80101e2cd <SharedFunctionInfo read> with bytecode" [inlining "read"]
+  phase L194..345 "Bytecode array" [bytecode]: 62 rows (4 jump refs, 17 fbv refs, 10 pool refs), 7 pool entries, slots 3 mono / 0 poly / 0 mega / 12 other
+  phase L345..377 "Inlining 0x09b80101e2cd <SharedFunctionInfo read> with bytecode" [inlining "read"]: 3 rows (0 jump refs, 1 fbv refs, 1 pool refs), 1 pool entries, slots 1 mono / 0 poly / 0 mega / 0 other
+  phase L377..409 "Inlining 0x09b80101e2cd <SharedFunctionInfo read> with bytecode" [inlining "read"]: 3 rows (0 jump refs, 1 fbv refs, 1 pool refs), 1 pool entries, slots 1 mono / 0 poly / 0 mega / 0 other
   phase L409..567 "Maglev graph building" [graph]: 77 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L567..726 "Phi untagging" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L726..871 "AnyUseMarking" [graph]: 64 nodes, 10 blocks, 18 frame-lines, 2 annotations
@@ -22,7 +22,7 @@ compilation 1 L191..1181 sfi=0x9b80101e265 tier=Maglev ord=1 name=""
   totals: 33 opcodes, 17 distinct frames
 compilation 2 L1181..1474 sfi=0x9b80101e2cd tier=Maglev ord=2 name="read"
   script "workloads/deopt-eager.js"
-  phase L1184..1217 "Bytecode array" [bytecode]
+  phase L1184..1217 "Bytecode array" [bytecode]: 3 rows (0 jump refs, 1 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 1 poly / 0 mega / 0 other
   phase L1217..1267 "Maglev graph building" [graph]: 23 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1267..1318 "Phi untagging" [graph]: 24 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1318..1368 "AnyUseMarking" [graph]: 23 nodes, 5 blocks, 4 frame-lines, 2 annotations
@@ -31,9 +31,9 @@ compilation 2 L1181..1474 sfi=0x9b80101e2cd tier=Maglev ord=2 name="read"
   totals: 18 opcodes, 4 distinct frames
 compilation 3 L1474..2464 sfi=0x9b80101e265 tier=Maglev ord=2 name=""
   script "workloads/deopt-eager.js"
-  phase L1477..1630 "Bytecode array" [bytecode]
-  phase L1630..1663 "Inlining 0x09b80101e2cd <SharedFunctionInfo read> with bytecode" [inlining "read"]
-  phase L1663..1696 "Inlining 0x09b80101e2cd <SharedFunctionInfo read> with bytecode" [inlining "read"]
+  phase L1477..1630 "Bytecode array" [bytecode]: 62 rows (4 jump refs, 17 fbv refs, 10 pool refs), 7 pool entries, slots 6 mono / 0 poly / 0 mega / 9 other
+  phase L1630..1663 "Inlining 0x09b80101e2cd <SharedFunctionInfo read> with bytecode" [inlining "read"]: 3 rows (0 jump refs, 1 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 1 poly / 0 mega / 0 other
+  phase L1663..1696 "Inlining 0x09b80101e2cd <SharedFunctionInfo read> with bytecode" [inlining "read"]: 3 rows (0 jump refs, 1 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 1 poly / 0 mega / 0 other
   phase L1696..1853 "Maglev graph building" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L1853..2011 "Phi untagging" [graph]: 79 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L2011..2155 "AnyUseMarking" [graph]: 65 nodes, 10 blocks, 18 frame-lines, 2 annotations

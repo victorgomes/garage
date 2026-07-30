@@ -2,7 +2,7 @@ lines: 2101
 version: 14.9
 compilation 0 L0..158 sfi=0x9b80101e175 tier=Maglev ord=1 name="read"
   script "workloads/deopt-eager.js"
-  phase L1..36 "Bytecode array" [bytecode]
+  phase L1..36 "Bytecode array" [bytecode]: 3 rows (0 jump refs, 2 fbv refs, 1 pool refs), 1 pool entries, slots 1 mono / 0 poly / 0 mega / 1 other
   phase L36..67 "After graph building" [graph]: 15 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L67..97 "After use marking" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L97..127 "After register allocation pre-processing" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
@@ -10,9 +10,9 @@ compilation 0 L0..158 sfi=0x9b80101e175 tier=Maglev ord=1 name="read"
   totals: 14 opcodes, 2 distinct frames
 compilation 1 L158..1009 sfi=0x9b80101e10d tier=Maglev ord=1 name=""
   script "workloads/deopt-eager.js"
-  phase L159..317 "Bytecode array" [bytecode]
-  phase L317..352 "Inlining 0x09b80101e175 <SharedFunctionInfo read> with bytecode" [inlining "read"]
-  phase L352..387 "Inlining 0x09b80101e175 <SharedFunctionInfo read> with bytecode" [inlining "read"]
+  phase L159..317 "Bytecode array" [bytecode]: 62 rows (4 jump refs, 20 fbv refs, 10 pool refs), 7 pool entries, slots 3 mono / 0 poly / 0 mega / 15 other
+  phase L317..352 "Inlining 0x09b80101e175 <SharedFunctionInfo read> with bytecode" [inlining "read"]: 3 rows (0 jump refs, 2 fbv refs, 1 pool refs), 1 pool entries, slots 1 mono / 0 poly / 0 mega / 1 other
+  phase L352..387 "Inlining 0x09b80101e175 <SharedFunctionInfo read> with bytecode" [inlining "read"]: 3 rows (0 jump refs, 2 fbv refs, 1 pool refs), 1 pool entries, slots 1 mono / 0 poly / 0 mega / 1 other
   phase L387..547 "After graph building" [graph]: 78 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L547..695 "After use marking" [graph]: 66 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L695..843 "After register allocation pre-processing" [graph]: 66 nodes, 10 blocks, 19 frame-lines, 2 annotations
@@ -20,7 +20,7 @@ compilation 1 L158..1009 sfi=0x9b80101e10d tier=Maglev ord=1 name=""
   totals: 32 opcodes, 18 distinct frames
 compilation 2 L1009..1248 sfi=0x9b80101e175 tier=Maglev ord=2 name="read"
   script "workloads/deopt-eager.js"
-  phase L1010..1046 "Bytecode array" [bytecode]
+  phase L1010..1046 "Bytecode array" [bytecode]: 3 rows (0 jump refs, 2 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 1 poly / 0 mega / 1 other
   phase L1046..1096 "After graph building" [graph]: 23 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1096..1145 "After use marking" [graph]: 22 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1145..1194 "After register allocation pre-processing" [graph]: 22 nodes, 5 blocks, 4 frame-lines, 2 annotations
@@ -28,9 +28,9 @@ compilation 2 L1009..1248 sfi=0x9b80101e175 tier=Maglev ord=2 name="read"
   totals: 17 opcodes, 4 distinct frames
 compilation 3 L1248..2101 sfi=0x9b80101e10d tier=Maglev ord=2 name=""
   script "workloads/deopt-eager.js"
-  phase L1249..1409 "Bytecode array" [bytecode]
-  phase L1409..1445 "Inlining 0x09b80101e175 <SharedFunctionInfo read> with bytecode" [inlining "read"]
-  phase L1445..1481 "Inlining 0x09b80101e175 <SharedFunctionInfo read> with bytecode" [inlining "read"]
+  phase L1249..1409 "Bytecode array" [bytecode]: 62 rows (4 jump refs, 20 fbv refs, 10 pool refs), 7 pool entries, slots 6 mono / 0 poly / 0 mega / 12 other
+  phase L1409..1445 "Inlining 0x09b80101e175 <SharedFunctionInfo read> with bytecode" [inlining "read"]: 3 rows (0 jump refs, 2 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 1 poly / 0 mega / 1 other
+  phase L1445..1481 "Inlining 0x09b80101e175 <SharedFunctionInfo read> with bytecode" [inlining "read"]: 3 rows (0 jump refs, 2 fbv refs, 1 pool refs), 1 pool entries, slots 0 mono / 1 poly / 0 mega / 1 other
   phase L1481..1640 "After graph building" [graph]: 79 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L1640..1787 "After use marking" [graph]: 67 nodes, 10 blocks, 19 frame-lines, 2 annotations
   phase L1787..1934 "After register allocation pre-processing" [graph]: 67 nodes, 10 blocks, 19 frame-lines, 2 annotations

@@ -131,11 +131,33 @@ pub struct InputLine {
     pub buffer: String,
 }
 
-/// `u`/`i` cycling state: anchored to the node the cycle started from, so
+/// What a `u`/`i` cycle is anchored to: a graph node, or one of the
+/// bytecode-listing identities (TODO 8.5) — a bytecode offset, a
+/// feedback-vector slot, a constant-pool entry.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Anchor {
+    Node(NodeId),
+    Offset(u32),
+    Slot(u32),
+    Pool(u32),
+}
+
+impl std::fmt::Display for Anchor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Anchor::Node(n) => write!(f, "n{n}"),
+            Anchor::Offset(o) => write!(f, "@{o}"),
+            Anchor::Slot(s) => write!(f, "FBV[{s}]"),
+            Anchor::Pool(p) => write!(f, "pool[{p}]"),
+        }
+    }
+}
+
+/// `u`/`i` cycling state: anchored to the identity the cycle started from, so
 /// jumping to a consumer does not re-anchor the cycle on the consumer.
 #[derive(Debug, Clone)]
 struct Cycle {
-    node: NodeId,
+    anchor: Anchor,
     targets: Vec<usize>, // buffer lines
     at: usize,
 }
@@ -1594,9 +1616,10 @@ impl App {
         let mut target: Option<(usize, &'static str)> = None;
         let find_bytecode = |p: usize| {
             parsed.phases.get(p).and_then(|phase| {
-                phase.infos.iter().position(
-                    |info| matches!(info, LineInfo::Bytecode { offset: o } if *o == offset),
-                )
+                phase
+                    .infos
+                    .iter()
+                    .position(|info| matches!(info, LineInfo::Bytecode(bc) if bc.offset == offset))
             })
         };
         for (p, phase_section) in section.phases.iter().enumerate() {
@@ -1928,11 +1951,30 @@ impl App {
     // Node jumps (TODO 4.5)
     // -----------------------------------------------------------------------
 
+    /// The `u`/`i` anchor under the cursor: a node, or — in bytecode
+    /// listings — a bytecode row, a feedback-vector slot, or a constant-pool
+    /// entry (TODO 8.5).
+    fn cursor_anchor(&self, vm: &ViewModel) -> Option<Anchor> {
+        if let Some(node) = self.cursor_node(vm) {
+            return Some(Anchor::Node(node.id));
+        }
+        let (p, i) = vm.row(self.cursor)?.info?;
+        match vm.parsed()?.phases.get(p)?.infos.get(i)? {
+            LineInfo::Bytecode(bc) => Some(Anchor::Offset(bc.offset)),
+            LineInfo::FeedbackSlot { index, .. } => Some(Anchor::Slot(*index)),
+            LineInfo::PoolEntry { index, .. } => Some(Anchor::Pool(*index)),
+            _ => None,
+        }
+    }
+
     /// `i`: jump to the definition of the cursor node's inputs, cycling
     /// through them on repeat. Like `u`, the cycle stays anchored to the node
     /// it started from — the first jump moves the cursor onto an input, and
     /// without the anchor a second `i` would ask for *that* node's inputs
     /// instead of the next input of the original.
+    ///
+    /// On a bytecode row the "inputs" are its operand refs: jump-target
+    /// offsets, `FBV[N]` feedback slots, `[N:…]` constant-pool entries.
     fn jump_to_input(&mut self) {
         if self.diff {
             self.status = "node jumps are off in diff view (d to leave)".to_string();
@@ -1945,47 +1987,65 @@ impl App {
         let Some((p, _)) = row.info else { return };
         let Some(parsed) = vm.parsed() else { return };
 
-        let anchor = match (&self.cycle, self.cursor_node(&vm)) {
-            (Some(cycle), _) => cycle.node,
-            (None, Some(node)) => node.id,
+        let anchor = match (&self.cycle, self.cursor_anchor(&vm)) {
+            (Some(cycle), _) => cycle.anchor,
+            (None, Some(anchor)) => anchor,
             (None, None) => {
                 self.status = "no node under cursor".to_string();
                 return;
             }
         };
 
-        let phase = &parsed.phases[p];
-        // The anchor's inputs come from its definition line, which may not be
-        // the cursor line any more.
-        let Some(anchor_node) = phase
-            .defs
-            .get(&anchor)
-            .and_then(|&idx| phase.infos.get(idx as usize))
-            .and_then(|info| match info {
-                LineInfo::Node(node) => Some(node),
-                _ => None,
-            })
-        else {
-            self.status = format!("n{anchor} is not defined in this phase");
-            return;
+        let (targets, what) = match anchor {
+            Anchor::Node(id) => {
+                let phase = &parsed.phases[p];
+                // The anchor's inputs come from its definition line, which
+                // may not be the cursor line any more.
+                let Some(anchor_node) = phase
+                    .defs
+                    .get(&id)
+                    .and_then(|&idx| phase.infos.get(idx as usize))
+                    .and_then(|info| match info {
+                        LineInfo::Node(node) => Some(node),
+                        _ => None,
+                    })
+                else {
+                    self.status = format!("n{id} is not defined in this phase");
+                    return;
+                };
+                let phase_start = self.phase_start(&vm, p);
+                let targets: Vec<usize> = anchor_node
+                    .inputs
+                    .iter()
+                    .filter_map(|r| phase.defs.get(&r.node))
+                    .map(|&info_idx| phase_start + info_idx as usize)
+                    .collect();
+                if targets.is_empty() {
+                    self.status = format!("n{id} has no inputs defined in this phase");
+                    return;
+                }
+                (targets, "input")
+            }
+            Anchor::Offset(offset) => {
+                let targets = self.bytecode_ref_targets(&vm, p, offset);
+                if targets.is_empty() {
+                    self.status = format!("@{offset} has no resolvable refs here");
+                    return;
+                }
+                (targets, "ref")
+            }
+            Anchor::Slot(_) | Anchor::Pool(_) => {
+                self.status = format!("{anchor} has no inputs — u cycles its uses");
+                return;
+            }
         };
-
-        let phase_start = self.phase_start(&vm, p);
-        let targets: Vec<usize> = anchor_node
-            .inputs
-            .iter()
-            .filter_map(|r| phase.defs.get(&r.node))
-            .map(|&info_idx| phase_start + info_idx as usize)
-            .collect();
-        if targets.is_empty() {
-            self.status = format!("n{anchor} has no inputs defined in this phase");
-            return;
-        }
-        self.cycle_jump(anchor, targets, "input");
+        self.cycle_jump(anchor, targets, what);
     }
 
-    /// `u`: cycle through the consumers of the cursor node (TODO 4.5). The
-    /// cycle stays anchored to the node it started from.
+    /// `u`: cycle through the consumers of the cursor anchor (TODO 4.5). For
+    /// a node these are its users; for a bytecode offset, the jumps that
+    /// target it; for a feedback slot or pool entry, the bytecode rows whose
+    /// operands reference it. The cycle stays anchored to where it started.
     fn cycle_consumers(&mut self) {
         if self.diff {
             self.status = "node jumps are off in diff view (d to leave)".to_string();
@@ -1999,50 +2059,132 @@ impl App {
         let Some(parsed) = vm.parsed() else { return };
 
         // Continue an existing cycle even though the cursor moved off the
-        // anchor node; otherwise `u u` would cycle the first consumer's users.
-        let anchor = match (&self.cycle, self.cursor_node(&vm)) {
-            (Some(cycle), _) => cycle.node,
-            (None, Some(node)) => node.id,
+        // anchor; otherwise `u u` would cycle the first consumer's users.
+        let anchor = match (&self.cycle, self.cursor_anchor(&vm)) {
+            (Some(cycle), _) => cycle.anchor,
+            (None, Some(anchor)) => anchor,
             (None, None) => {
                 self.status = "no node under cursor".to_string();
                 return;
             }
         };
 
-        let phase = &parsed.phases[p];
         let phase_start = self.phase_start(&vm, p);
-        let targets: Vec<usize> = phase
-            .users
-            .get(&anchor)
-            .map(|users| {
-                users
-                    .iter()
-                    .map(|&info_idx| phase_start + info_idx as usize)
-                    .collect()
-            })
-            .unwrap_or_default();
+        let targets: Vec<usize> = match anchor {
+            Anchor::Node(id) => parsed.phases[p]
+                .users
+                .get(&id)
+                .map(|users| {
+                    users
+                        .iter()
+                        .map(|&info_idx| phase_start + info_idx as usize)
+                        .collect()
+                })
+                .unwrap_or_default(),
+            Anchor::Offset(o) => bytecode_rows_where(&parsed.phases[p], phase_start, |bc| {
+                bc.targets.iter().any(|(t, _)| *t == o)
+            }),
+            Anchor::Slot(s) => bytecode_rows_where(&parsed.phases[p], phase_start, |bc| {
+                bc.fbv.iter().any(|(n, _)| *n == s)
+            }),
+            Anchor::Pool(c) => bytecode_rows_where(&parsed.phases[p], phase_start, |bc| {
+                bc.pool.iter().any(|(n, _)| *n == c)
+            }),
+        };
         if targets.is_empty() {
-            self.status = format!("n{anchor} has no consumers in this phase");
+            self.status = format!("{anchor} has no consumers in this phase");
             return;
         }
         self.cycle_jump(anchor, targets, "consumer");
     }
 
+    /// Buffer lines of the rows a bytecode row's operands point at: its
+    /// jump-target offsets (same phase — every graph phase re-interleaves
+    /// the same offsets), then its feedback slots and pool entries, looked
+    /// up in the cursor phase first and then the rest of the compilation —
+    /// an Ignition dump keeps its constant pool in a separate phase, and a
+    /// graph phase's rows resolve their slots in the bytecode dump above.
+    fn bytecode_ref_targets(&self, vm: &ViewModel, p: usize, offset: u32) -> Vec<usize> {
+        let Some(parsed) = vm.parsed() else {
+            return Vec::new();
+        };
+        let phase = &parsed.phases[p];
+        let Some(bc) = phase.infos.iter().find_map(|info| match info {
+            LineInfo::Bytecode(bc) if bc.offset == offset => Some(bc),
+            _ => None,
+        }) else {
+            return Vec::new();
+        };
+        let phase_start = self.phase_start(vm, p);
+        let mut out = Vec::new();
+        let push = |line: usize, out: &mut Vec<usize>| {
+            if !out.contains(&line) {
+                out.push(line);
+            }
+        };
+        for (t, _) in &bc.targets {
+            let found = phase
+                .infos
+                .iter()
+                .position(|info| matches!(info, LineInfo::Bytecode(row) if row.offset == *t));
+            if let Some(idx) = found {
+                push(phase_start + idx, &mut out);
+            }
+        }
+        for (s, _) in &bc.fbv {
+            if let Some(line) = self.find_in_phases(
+                vm,
+                p,
+                |info| matches!(info, LineInfo::FeedbackSlot { index, .. } if index == s),
+            ) {
+                push(line, &mut out);
+            }
+        }
+        for (c, _) in &bc.pool {
+            if let Some(line) = self.find_in_phases(
+                vm,
+                p,
+                |info| matches!(info, LineInfo::PoolEntry { index, .. } if index == c),
+            ) {
+                push(line, &mut out);
+            }
+        }
+        out
+    }
+
+    /// First line matching `pred`, searching the cursor phase first and then
+    /// every other phase of the compilation in order.
+    fn find_in_phases(
+        &self,
+        vm: &ViewModel,
+        p: usize,
+        pred: impl Fn(&LineInfo) -> bool,
+    ) -> Option<usize> {
+        let parsed = vm.parsed()?;
+        let order = std::iter::once(p).chain((0..parsed.phases.len()).filter(|q| *q != p));
+        for q in order {
+            if let Some(idx) = parsed.phases[q].infos.iter().position(&pred) {
+                return Some(self.phase_start(vm, q) + idx);
+            }
+        }
+        None
+    }
+
     /// Shared cycle mechanics: same anchor advances, new anchor restarts.
-    fn cycle_jump(&mut self, node: NodeId, targets: Vec<usize>, what: &str) {
+    fn cycle_jump(&mut self, anchor: Anchor, targets: Vec<usize>, what: &str) {
         let at = match &self.cycle {
-            Some(c) if c.node == node && c.targets == targets => (c.at + 1) % targets.len(),
+            Some(c) if c.anchor == anchor && c.targets == targets => (c.at + 1) % targets.len(),
             _ => 0,
         };
         let line = targets[at];
         self.push_history();
         self.goto_line(line);
         self.cycle = Some(Cycle {
-            node,
+            anchor,
             targets: targets.clone(),
             at,
         });
-        self.status = format!("n{node} {what} {}/{}", at + 1, targets.len());
+        self.status = format!("{anchor} {what} {}/{}", at + 1, targets.len());
     }
 
     /// Buffer line of a phase's first line within the current compilation.
@@ -2420,6 +2562,25 @@ impl App {
     }
 }
 
+/// Buffer lines of the bytecode rows in one phase matching `pred` — the
+/// consumer side of bytecode-listing navigation (jump sources of an offset,
+/// referents of a feedback slot or pool entry).
+fn bytecode_rows_where(
+    phase: &crate::model::ParsedPhase,
+    phase_start: usize,
+    pred: impl Fn(&crate::model::BytecodeRow) -> bool,
+) -> Vec<usize> {
+    phase
+        .infos
+        .iter()
+        .enumerate()
+        .filter_map(|(idx, info)| match info {
+            LineInfo::Bytecode(bc) if pred(bc) => Some(phase_start + idx),
+            _ => None,
+        })
+        .collect()
+}
+
 /// The node defined on a display row (see [`App::cursor_node`]).
 pub fn node_at(vm: &ViewModel, at: usize) -> Option<IRNode> {
     let row = vm.row(at)?;
@@ -2755,6 +2916,91 @@ Compiling 0x2 <JSFunction g (sfi = 0x20)> with Maglev
             Some(9),
             "cycle stays anchored to n1"
         );
+    }
+
+    const BYTECODE_TRACE: &str = "\
+warmup line
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Bytecode array -----
+Parameter count 1
+         0x100 @    0 : 23 00 01          LdaGlobal [0:\"x\"], FBV[1]
+         0x103 @    3 : 97 33 00 01       JumpLoop [51], [0], FBV[1] (0x100 @ 0)
+         0x105 @   20 : b9                Return
+Constant pool (size = 1)
+           0: 0x2 <String[1]: #x>
+Handler Table (size = 0)
+0x3: [FeedbackVector] in OldSpace
+ - slot #1 LoadGlobalNotInsideTypeof MONOMORPHIC
+----- Maglev graph building -----
+ Block b0
+   1: Foo
+";
+
+    #[test]
+    fn bytecode_refs_navigate_like_node_inputs() {
+        let mut app = app_with(BYTECODE_TRACE);
+        app.follow = false;
+        app.selected = 1;
+        app.focus = Pane::Viewport;
+        // Cursor on the JumpLoop row (buffer line 5).
+        app.cursor = 4;
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(5), "on JumpLoop");
+
+        // `i` walks the row's refs: jump target first…
+        key(&mut app, KeyCode::Char('i'));
+        let vm = app.view_model();
+        assert_eq!(
+            vm.line_at(app.cursor),
+            Some(4),
+            "jump target @0 (LdaGlobal)"
+        );
+        // …then FBV[1], anchored to the original row, not the one landed on.
+        key(&mut app, KeyCode::Char('i'));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(11), "slot #1");
+        assert!(app.status.contains("@3"), "anchor label: {}", app.status);
+
+        // `u` on the slot cycles the rows that reference it.
+        key(&mut app, KeyCode::Char('g'));
+        for _ in 0..10 {
+            key(&mut app, KeyCode::Char('j'));
+        }
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(11), "on slot #1");
+        key(&mut app, KeyCode::Char('u'));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(4), "first FBV[1] use");
+        key(&mut app, KeyCode::Char('u'));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(5), "second FBV[1] use");
+        assert!(app.status.contains("FBV[1]"), "status: {}", app.status);
+
+        // `i` on LdaGlobal reaches its pool entry too (slot, then pool).
+        key(&mut app, KeyCode::Char('g'));
+        for _ in 0..3 {
+            key(&mut app, KeyCode::Char('j'));
+        }
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(4), "on LdaGlobal");
+        key(&mut app, KeyCode::Char('i'));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(11), "FBV ref first");
+        key(&mut app, KeyCode::Char('i'));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(8), "pool entry second");
+
+        // `u` on the pool entry finds its referencing row.
+        key(&mut app, KeyCode::Char('g'));
+        for _ in 0..7 {
+            key(&mut app, KeyCode::Char('j'));
+        }
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(8), "on pool entry");
+        key(&mut app, KeyCode::Char('u'));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(4), "pool consumer");
+        assert!(app.status.contains("pool[0]"), "status: {}", app.status);
     }
 
     #[test]

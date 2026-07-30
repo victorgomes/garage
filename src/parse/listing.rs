@@ -26,12 +26,18 @@ pub fn parse_listing_phase(buffer: &LogBuffer, lines: Range<usize>, name: &str) 
     // data) are heterogeneous reference dumps, where Control is the honest
     // classification.
     let disasm_phase = name == "Instructions";
+    // An Ignition dump's constant pool is its own Listing phase; its entry
+    // rows resolve the `[N:…]` operands of the bytecode phase above
+    // (TODO 8.5), so they get the same classification as in Maglev dumps.
+    let pool_phase = name == "Constant pool";
     let mut phase = ParsedPhase::default();
     for (offset, line) in lines.enumerate() {
         let text = line_text(buffer, line);
         let info = if offset == 0 {
             LineInfo::Banner
         } else if let Some(info) = parse_disasm_row(&text) {
+            info
+        } else if pool_phase && let Some(info) = super::maglev::parse_pool_entry(&text) {
             info
         } else if disasm_phase && !text.trim().is_empty() {
             phase.annotation_count += 1;

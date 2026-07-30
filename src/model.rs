@@ -310,6 +310,47 @@ pub struct IRNode {
     pub targets: Vec<BlockRef>,
 }
 
+/// One interpreter-bytecode row, from a `----- Bytecode array -----` dump or
+/// interleaved as source context inside a graph phase:
+/// `   0x31a010001b0 @    0 : 33 03 00 00   GetNamedProperty a0, [0:"v"], FBV[0]`.
+///
+/// The refs give bytecode listings the same def-use navigation graphs have:
+/// jump operands point at other offsets, `FBV[N]` operands point at the
+/// feedback-vector slots printed right below the array, `[N:…]` operands
+/// point at constant-pool entries.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct BytecodeRow {
+    pub offset: u32,
+    /// Span of the offset token — what a jump into this row highlights.
+    pub offset_span: Span,
+    pub mnemonic: Span,
+    /// Jump-target offsets: the `(0x… @ N)` suffix on jumps, plus every
+    /// `@N` case of a switch's `{ 0: @44, 1: @48 }` table.
+    pub targets: Vec<(u32, Span)>,
+    /// `FBV[N]` feedback-vector slot operands.
+    pub fbv: Vec<(u32, Span)>,
+    /// `[N:…]` constant-pool operands (the bare `[N]` form is *not* a pool
+    /// ref — for `AddSmi [1]` it is an immediate — so only the annotated
+    /// form counts).
+    pub pool: Vec<(u32, Span)>,
+    /// True in bytecode-array dumps, where the rows are the content and get
+    /// full styling; false for the interleaved context rows inside graph
+    /// phases, which stay uniformly dim.
+    pub primary: bool,
+}
+
+/// InlineCacheState of a feedback slot, classified from the printed word for
+/// styling. `Other` covers the non-IC feedback kinds (`BinaryOp:SignedSmall`,
+/// `JumpLoop`, …) whose "state" is a type lattice, not an IC state.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum IcState {
+    Uninitialized,
+    Monomorphic,
+    Polymorphic,
+    Megamorphic,
+    Other,
+}
+
 /// Eager / lazy / throw — the three deopt-frame arrows (§6, §12).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FrameArrow {
@@ -362,8 +403,27 @@ pub enum LineInfo {
     /// `0x… <SharedFunctionInfo …> (script:line:col)` — switches the current
     /// inlined-function context inside a block.
     SfiContext,
-    /// Interleaved source bytecode: `   N : hh hh    Mnemonic …`.
-    Bytecode { offset: u32 },
+    /// A bytecode row: primary content of a `Bytecode array` dump, or
+    /// interleaved source context in a graph phase (see [`BytecodeRow`]).
+    Bytecode(BytecodeRow),
+    /// ` - slot #N Kind STATE {` — a feedback-vector slot header. The slot
+    /// is what a bytecode row's `FBV[N]` operand refers to.
+    FeedbackSlot {
+        index: u32,
+        /// Span of `slot #N` — the definition site.
+        def_span: Span,
+        kind: Span,
+        /// The state word(s); empty for kinds that print none (`Literal`).
+        state: Span,
+        ic: IcState,
+    },
+    /// `           N: 0x… <String[1]: #v>` — a constant-pool entry, inside
+    /// the `Constant pool (size = N)` region of a bytecode dump.
+    PoolEntry {
+        index: u32,
+        /// Span of the `N:` index token.
+        def_span: Span,
+    },
     /// A node definition line.
     Node(IRNode),
     /// A deopt-frame line (arrow or continuation), pointing at its interned
