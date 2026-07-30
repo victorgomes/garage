@@ -7,7 +7,7 @@ compilation 0 L1..191 sfi=0x9b80101e2cd tier=Maglev ord=1 name="read"
   phase L67..98 "Phi untagging" [graph]: 15 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L98..128 "AnyUseMarking" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L128..158 "Dead nodes sweeping" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
-  phase L158..191 "Register allocation" [graph]: 16 nodes, 2 blocks, 3 frame-lines, 2 annotations
+  phase L158..191 "Register allocation" [graph]: 16 nodes, 2 blocks, 3 frame-lines, 0 annotations
   totals: 14 opcodes, 2 distinct frames
 compilation 1 L191..1181 sfi=0x9b80101e265 tier=Maglev ord=1 name=""
   script "workloads/deopt-eager.js"
@@ -18,7 +18,7 @@ compilation 1 L191..1181 sfi=0x9b80101e265 tier=Maglev ord=1 name=""
   phase L567..726 "Phi untagging" [graph]: 78 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L726..871 "AnyUseMarking" [graph]: 64 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L871..1016 "Dead nodes sweeping" [graph]: 64 nodes, 10 blocks, 18 frame-lines, 2 annotations
-  phase L1016..1181 "Register allocation" [graph]: 81 nodes, 10 blocks, 18 frame-lines, 6 annotations
+  phase L1016..1181 "Register allocation" [graph]: 81 nodes, 10 blocks, 18 frame-lines, 4 annotations
   totals: 33 opcodes, 17 distinct frames
 compilation 2 L1181..1474 sfi=0x9b80101e2cd tier=Maglev ord=2 name="read"
   script "workloads/deopt-eager.js"
@@ -27,7 +27,7 @@ compilation 2 L1181..1474 sfi=0x9b80101e2cd tier=Maglev ord=2 name="read"
   phase L1267..1318 "Phi untagging" [graph]: 24 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1318..1368 "AnyUseMarking" [graph]: 23 nodes, 5 blocks, 4 frame-lines, 2 annotations
   phase L1368..1418 "Dead nodes sweeping" [graph]: 23 nodes, 5 blocks, 4 frame-lines, 2 annotations
-  phase L1418..1474 "Register allocation" [graph]: 26 nodes, 5 blocks, 4 frame-lines, 6 annotations
+  phase L1418..1474 "Register allocation" [graph]: 26 nodes, 5 blocks, 4 frame-lines, 4 annotations
   totals: 18 opcodes, 4 distinct frames
 compilation 3 L1474..2464 sfi=0x9b80101e265 tier=Maglev ord=2 name=""
   script "workloads/deopt-eager.js"
@@ -38,7 +38,7 @@ compilation 3 L1474..2464 sfi=0x9b80101e265 tier=Maglev ord=2 name=""
   phase L1853..2011 "Phi untagging" [graph]: 79 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L2011..2155 "AnyUseMarking" [graph]: 65 nodes, 10 blocks, 18 frame-lines, 2 annotations
   phase L2155..2299 "Dead nodes sweeping" [graph]: 65 nodes, 10 blocks, 18 frame-lines, 2 annotations
-  phase L2299..2464 "Register allocation" [graph]: 83 nodes, 10 blocks, 18 frame-lines, 6 annotations
+  phase L2299..2464 "Register allocation" [graph]: 83 nodes, 10 blocks, 18 frame-lines, 4 annotations
   totals: 33 opcodes, 17 distinct frames
 raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."
 raw L2464..2465 "10000100003"

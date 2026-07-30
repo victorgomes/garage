@@ -7,7 +7,7 @@ compilation 0 L1..633 sfi=0x9b80101e3e5 tier=Maglev ord=1 name="sum"
   phase L182..299 "Phi untagging" [graph]: 51 nodes, 8 blocks, 14 frame-lines, 4 annotations
   phase L299..406 "AnyUseMarking" [graph]: 41 nodes, 8 blocks, 14 frame-lines, 4 annotations
   phase L406..513 "Dead nodes sweeping" [graph]: 41 nodes, 8 blocks, 14 frame-lines, 4 annotations
-  phase L513..633 "Register allocation" [graph]: 47 nodes, 8 blocks, 14 frame-lines, 12 annotations
+  phase L513..633 "Register allocation" [graph]: 47 nodes, 8 blocks, 14 frame-lines, 10 annotations
   totals: 28 opcodes, 4 distinct frames
 compilation 1 L633..829 sfi=0x9b80101e445 tier=Maglev ord=1 name="flipflop"
   script "workloads/mixed.js"
@@ -16,7 +16,7 @@ compilation 1 L633..829 sfi=0x9b80101e445 tier=Maglev ord=1 name="flipflop"
   phase L687..722 "Phi untagging" [graph]: 15 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L722..756 "AnyUseMarking" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L756..790 "Dead nodes sweeping" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
-  phase L790..829 "Register allocation" [graph]: 18 nodes, 2 blocks, 4 frame-lines, 2 annotations
+  phase L790..829 "Register allocation" [graph]: 18 nodes, 2 blocks, 4 frame-lines, 0 annotations
   totals: 14 opcodes, 2 distinct frames
 compilation 2 L829..1646 sfi=0x9b80101e415 tier=Maglev ord=1 name="scale"
   script "workloads/mixed.js"
@@ -25,7 +25,7 @@ compilation 2 L829..1646 sfi=0x9b80101e415 tier=Maglev ord=1 name="scale"
   phase L1064..1214 "Phi untagging" [graph]: 71 nodes, 11 blocks, 21 frame-lines, 2 annotations
   phase L1214..1354 "AnyUseMarking" [graph]: 62 nodes, 11 blocks, 21 frame-lines, 2 annotations
   phase L1354..1494 "Dead nodes sweeping" [graph]: 62 nodes, 11 blocks, 21 frame-lines, 2 annotations
-  phase L1494..1646 "Register allocation" [graph]: 71 nodes, 11 blocks, 21 frame-lines, 6 annotations
+  phase L1494..1646 "Register allocation" [graph]: 71 nodes, 11 blocks, 21 frame-lines, 4 annotations
   totals: 37 opcodes, 7 distinct frames
 compilation 3 L1647..1838 sfi=0x9b80101e445 tier=Maglev ord=2 name="flipflop"
   script "workloads/mixed.js"
@@ -34,7 +34,7 @@ compilation 3 L1647..1838 sfi=0x9b80101e445 tier=Maglev ord=2 name="flipflop"
   phase L1700..1734 "Phi untagging" [graph]: 16 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L1734..1767 "AnyUseMarking" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 0 annotations
   phase L1767..1800 "Dead nodes sweeping" [graph]: 15 nodes, 2 blocks, 2 frame-lines, 0 annotations
-  phase L1800..1838 "Register allocation" [graph]: 19 nodes, 2 blocks, 2 frame-lines, 2 annotations
+  phase L1800..1838 "Register allocation" [graph]: 19 nodes, 2 blocks, 2 frame-lines, 0 annotations
   totals: 14 opcodes, 2 distinct frames
 compilation 4 L1838..5127 sfi=0x9b80101e365 tier=Maglev ord=1 name=""
   script "workloads/mixed.js"
@@ -48,7 +48,7 @@ compilation 4 L1838..5127 sfi=0x9b80101e365 tier=Maglev ord=1 name=""
   phase L2850..3429 "Phi untagging" [graph]: 221 nodes, 39 blocks, 113 frame-lines, 18 annotations
   phase L3429..3972 "AnyUseMarking" [graph]: 186 nodes, 39 blocks, 113 frame-lines, 18 annotations
   phase L3972..4515 "Dead nodes sweeping" [graph]: 186 nodes, 39 blocks, 113 frame-lines, 18 annotations
-  phase L4515..5127 "Register allocation" [graph]: 218 nodes, 39 blocks, 113 frame-lines, 56 annotations
+  phase L4515..5127 "Register allocation" [graph]: 218 nodes, 39 blocks, 113 frame-lines, 54 annotations
   totals: 53 opcodes, 28 distinct frames
 raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."
 raw L1646..1647 "[bailout (kind: deopt-eager, reason: not a Smi): begin. deoptimizing 0x* <JSFunction …"

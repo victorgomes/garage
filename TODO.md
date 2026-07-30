@@ -617,6 +617,18 @@ regeneration, the three new formats parse with **zero** annotation
   `h`, a click on the strip, or Tab (the timeline lives there) bring it
   back; focus leaves a hidden pane; strip scroll events are ignored so a
   hidden sidebar's selection cannot drift invisibly.
+- [x] **8.8. End markers close only their own section** (dogfood report).
+  `Finished compiling method X using <Tier>` now closes the open section
+  only when the *name* matches too (tier already checked; Turbolev's
+  misleading `using TurboFan` trailers stay the exception). With
+  concurrent recompilation A's trailer lands inside B's body — closing B
+  there glued A's end marker onto B and orphaned B's own trailer as a raw
+  section. A mismatched trailer stays what it physically is: interleaved
+  content of whoever is open. Also: the closing rule and Begin/Finished
+  trailers inside a phase's range classify as Control now, not
+  annotations — every Maglev section ended in dim-italic noise that `t`'s
+  annotation folds swept up (goldens: last-phase annotation counts drop
+  by exactly the rule+trailer pair, boundaries unchanged).
 
 ---
 

@@ -637,6 +637,18 @@ fn classify_graph_line(
         return info;
     }
 
+    // Section furniture that lands inside the last phase's range — the
+    // closing `----------` rule and the Begin/Finished trailers (Turbolev
+    // prints them around every dump). Expected structure, not annotations:
+    // classifying them as annotations made every section end in dim-italic
+    // noise and swept the trailer into `t`'s annotation folds.
+    if content.starts_with("Finished compiling method ")
+        || content.starts_with("Begin compiling method ")
+        || (content.trim_end().len() >= 20 && content.trim_end().bytes().all(|b| b == b'-'))
+    {
+        return LineInfo::Control;
+    }
+
     // The attachment rule (2.8): anything unmatched is an annotation on the
     // node it follows — regalloc traces, graph-building traces, whatever a
     // future flag prints. Attached in place, dimmed later, never dropped.
@@ -1403,6 +1415,18 @@ mod tests {
         assert!(matches!(&phase.infos[1], LineInfo::Bytecode(bc) if bc.offset == 2 && !bc.primary));
         assert!(matches!(phase.infos[2], LineInfo::SfiContext));
         assert_eq!(parsed.script.as_deref(), Some("workloads/simple.js"));
+    }
+
+    #[test]
+    fn section_trailers_inside_a_phase_are_structure_not_annotations() {
+        let (phase, _) = parse_lines(&[
+            "  10: Foo [n2]",
+            "---------------------------------------------------",
+            "Finished compiling method bnpFromString using TurboFan",
+        ]);
+        assert!(matches!(phase.infos[2], LineInfo::Control), "closing rule");
+        assert!(matches!(phase.infos[3], LineInfo::Control), "trailer");
+        assert_eq!(phase.annotation_count, 0);
     }
 
     #[test]

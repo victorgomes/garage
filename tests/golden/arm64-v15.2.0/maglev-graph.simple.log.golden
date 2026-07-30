@@ -3,26 +3,26 @@ version: 15.2
 compilation 0 L1..53 sfi=0x9b80101e2cd tier=Maglev ord=1 name="add"
   script "workloads/simple.js"
   phase L4..18 "Bytecode array" [bytecode]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
-  phase L18..53 "Register allocation" [graph]: 17 nodes, 2 blocks, 4 frame-lines, 2 annotations
+  phase L18..53 "Register allocation" [graph]: 17 nodes, 2 blocks, 4 frame-lines, 0 annotations
   totals: 11 opcodes, 2 distinct frames
 compilation 1 L53..281 sfi=0x9b80101e265 tier=Maglev ord=1 name=""
   script "workloads/simple.js"
   phase L56..136 "Bytecode array" [bytecode]: 29 rows (2 jump refs, 6 fbv refs, 3 pool refs), 3 pool entries, slots 2 mono / 0 poly / 0 mega / 4 other
   phase L136..150 "Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode" [inlining "add"]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
   phase L150..164 "Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode" [inlining "add"]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
-  phase L164..281 "Register allocation" [graph]: 45 nodes, 10 blocks, 16 frame-lines, 6 annotations
+  phase L164..281 "Register allocation" [graph]: 45 nodes, 10 blocks, 16 frame-lines, 4 annotations
   totals: 21 opcodes, 8 distinct frames
 compilation 2 L281..332 sfi=0x9b80101e2cd tier=Maglev ord=2 name="add"
   script "workloads/simple.js"
   phase L284..298 "Bytecode array" [bytecode]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
-  phase L298..332 "Register allocation" [graph]: 17 nodes, 2 blocks, 3 frame-lines, 2 annotations
+  phase L298..332 "Register allocation" [graph]: 17 nodes, 2 blocks, 3 frame-lines, 0 annotations
   totals: 11 opcodes, 2 distinct frames
 compilation 3 L332..568 sfi=0x9b80101e265 tier=Maglev ord=2 name=""
   script "workloads/simple.js"
   phase L335..415 "Bytecode array" [bytecode]: 29 rows (2 jump refs, 6 fbv refs, 3 pool refs), 3 pool entries, slots 2 mono / 0 poly / 0 mega / 4 other
   phase L415..429 "Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode" [inlining "add"]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
   phase L429..443 "Inlining 0x09b80101e2cd <SharedFunctionInfo add> with bytecode" [inlining "add"]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
-  phase L443..568 "Register allocation" [graph]: 51 nodes, 10 blocks, 16 frame-lines, 6 annotations
+  phase L443..568 "Register allocation" [graph]: 51 nodes, 10 blocks, 16 frame-lines, 4 annotations
   totals: 24 opcodes, 8 distinct frames
 raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."
 raw L568..569 "704982704"

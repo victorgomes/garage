@@ -331,8 +331,8 @@ impl TraceIndex {
             }
         } else if text.starts_with("Finished compiling method ") {
             if let Some(c) = r.finished.captures(text) {
-                let tier = c[2].to_string();
-                self.on_finished(i, text, &tier);
+                let (name, tier) = (c[1].to_string(), c[2].to_string());
+                self.on_finished(i, text, &name, &tier);
                 return;
             }
         } else if text.starts_with("Function: ") {
@@ -742,19 +742,24 @@ impl TraceIndex {
         self.content(i, name.as_bytes());
     }
 
-    fn on_finished(&mut self, i: usize, text: &str, tier: &str) {
+    fn on_finished(&mut self, i: usize, text: &str, name: &str, tier: &str) {
         match self.state {
-            // A `Finished compiling` trailer only closes a section of its
-            // own tier — `using Maglev` must not tear down an open TurboFan
-            // section an interleaved stream put it inside (found in review).
-            // Turbolev is the exception: its pipeline prints TurboFan on the
+            // A `Finished compiling` trailer only closes the section it
+            // *names*, and only at its own tier — `using Maglev` must not
+            // tear down an open TurboFan section an interleaved stream put
+            // it inside (found in review), and with concurrent
+            // recompilation A's trailer lands inside B's body, where
+            // closing B would glue A's end marker onto the wrong section
+            // and orphan B's own trailer as raw (user report). Turbolev is
+            // the tier exception: its pipeline prints TurboFan on the
             // Begin/Finished trailers (the tier word is misleading there).
             State::InCompilation { comp }
                 if {
-                    let section_tier = &self.compilations[comp].key.tier;
+                    let section = &self.compilations[comp];
                     let line_tier = Tier::parse(tier);
-                    *section_tier == line_tier
-                        || (*section_tier == Tier::Turbolev && line_tier == Tier::Turbofan)
+                    let tier_ok = section.key.tier == line_tier
+                        || (section.key.tier == Tier::Turbolev && line_tier == Tier::Turbofan);
+                    tier_ok && section.name == name
                 } =>
             {
                 // The pending rule (if any) belongs to this compilation, and so
@@ -1378,6 +1383,37 @@ Finished compiling method add using TurboFan
         assert_eq!(c.phases.len(), 2);
         assert_eq!(c.phases[0].kind, PhaseKind::Bytecode);
         assert_eq!(c.phases[1].kind, PhaseKind::Graph { known: true });
+        assert_partition(&idx, 8);
+    }
+
+    /// With concurrent recompilation, A's trailer can land inside B's body.
+    /// It must not close B: the end marker names its own method, and a
+    /// mismatched name means "interleaved content of whoever is open" —
+    /// closing there glued A's trailer onto B and orphaned B's own trailer
+    /// as a raw section (user report).
+    #[test]
+    fn mismatched_finished_trailer_does_not_close_the_open_section() {
+        let idx = index(
+            "\
+Begin compiling method A using TurboFan
+----- Bytecode before MaglevGraphBuilding -----
+   1: Foo
+Begin compiling method B using TurboFan
+----- Bytecode before MaglevGraphBuilding -----
+   1: Foo
+Finished compiling method A using TurboFan
+Finished compiling method B using TurboFan
+",
+        );
+        assert_eq!(idx.compilations.len(), 2);
+        assert_eq!(idx.compilations[0].name, "A");
+        assert_eq!(idx.compilations[0].lines, 0..3);
+        assert_eq!(
+            idx.compilations[1].lines,
+            3..8,
+            "A's stray trailer stays interleaved content; B closes at B's trailer"
+        );
+        assert!(idx.raw.is_empty(), "no orphaned trailer: {:?}", idx.raw);
         assert_partition(&idx, 8);
     }
 

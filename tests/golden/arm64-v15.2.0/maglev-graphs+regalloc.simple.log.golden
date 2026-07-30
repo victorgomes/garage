@@ -7,7 +7,7 @@ compilation 0 L1..302 sfi=0x9b80101e2cd tier=Maglev ord=1 name="add"
   phase L50..82 "Phi untagging" [graph]: 15 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L82..113 "AnyUseMarking" [graph]: 14 nodes, 2 blocks, 4 frame-lines, 0 annotations
   phase L113..267 "Dead nodes sweeping" [graph]: 25 nodes, 4 blocks, 8 frame-lines, 97 annotations
-  phase L267..302 "Register allocation" [graph]: 17 nodes, 2 blocks, 4 frame-lines, 2 annotations
+  phase L267..302 "Register allocation" [graph]: 17 nodes, 2 blocks, 4 frame-lines, 0 annotations
   totals: 12 opcodes, 2 distinct frames
 compilation 1 L302..1634 sfi=0x9b80101e265 tier=Maglev ord=1 name=""
   script "workloads/simple.js"
@@ -20,7 +20,7 @@ compilation 1 L302..1634 sfi=0x9b80101e265 tier=Maglev ord=1 name=""
   phase L786..905 "Phi untagging" [graph]: 50 nodes, 10 blocks, 16 frame-lines, 2 annotations
   phase L905..1012 "AnyUseMarking" [graph]: 38 nodes, 10 blocks, 16 frame-lines, 2 annotations
   phase L1012..1517 "Dead nodes sweeping" [graph]: 70 nodes, 20 blocks, 32 frame-lines, 303 annotations
-  phase L1517..1634 "Register allocation" [graph]: 45 nodes, 10 blocks, 16 frame-lines, 6 annotations
+  phase L1517..1634 "Register allocation" [graph]: 45 nodes, 10 blocks, 16 frame-lines, 4 annotations
   totals: 26 opcodes, 8 distinct frames
 compilation 2 L1634..1920 sfi=0x9b80101e2cd tier=Maglev ord=2 name="add"
   script "workloads/simple.js"
@@ -29,7 +29,7 @@ compilation 2 L1634..1920 sfi=0x9b80101e2cd tier=Maglev ord=2 name="add"
   phase L1682..1713 "Phi untagging" [graph]: 15 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L1713..1743 "AnyUseMarking" [graph]: 14 nodes, 2 blocks, 3 frame-lines, 0 annotations
   phase L1743..1886 "Dead nodes sweeping" [graph]: 25 nodes, 4 blocks, 6 frame-lines, 88 annotations
-  phase L1886..1920 "Register allocation" [graph]: 17 nodes, 2 blocks, 3 frame-lines, 2 annotations
+  phase L1886..1920 "Register allocation" [graph]: 17 nodes, 2 blocks, 3 frame-lines, 0 annotations
   totals: 12 opcodes, 2 distinct frames
 compilation 3 L1920..3310 sfi=0x9b80101e265 tier=Maglev ord=2 name=""
   script "workloads/simple.js"
@@ -42,7 +42,7 @@ compilation 3 L1920..3310 sfi=0x9b80101e265 tier=Maglev ord=2 name=""
   phase L2403..2527 "Phi untagging" [graph]: 53 nodes, 10 blocks, 16 frame-lines, 2 annotations
   phase L2527..2640 "AnyUseMarking" [graph]: 42 nodes, 10 blocks, 16 frame-lines, 2 annotations
   phase L2640..3185 "Dead nodes sweeping" [graph]: 78 nodes, 20 blocks, 32 frame-lines, 331 annotations
-  phase L3185..3310 "Register allocation" [graph]: 51 nodes, 10 blocks, 16 frame-lines, 6 annotations
+  phase L3185..3310 "Register allocation" [graph]: 51 nodes, 10 blocks, 16 frame-lines, 4 annotations
   totals: 27 opcodes, 8 distinct frames
 raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."
 raw L3310..3311 "704982704"
