@@ -278,6 +278,26 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
     if deopts > 0 {
         stats.push_str(&format!(" · {deopts} deopts"));
     }
+    // Dual-run comparison (TODO 9.3): the other run's headline numbers,
+    // right next to this one's.
+    if app.sources.len() > 1 {
+        let other = (app.active + 1) % app.sources.len();
+        let o = &app.sources[other];
+        let odeopts = o
+            .index
+            .events
+            .iter()
+            .filter(|e| matches!(e.kind, crate::model::EventKind::DeoptBegin { .. }))
+            .count();
+        let base = std::path::Path::new(&o.label)
+            .file_name()
+            .map(|b| b.to_string_lossy().into_owned())
+            .unwrap_or_else(|| o.label.clone());
+        stats.push_str(&format!(
+            " ⇄ {base}: {} compilations, {odeopts} deopts (D diffs a function)",
+            o.index.compilations.len()
+        ));
+    }
     if let Some(v) = &idx.detected_version {
         stats.push_str(&format!(" · V8 {v}"));
     }
@@ -1149,11 +1169,19 @@ fn render_diff(
         let active = pane == app.active_pane;
         let title_selected = app.pane_state(pane).selected;
 
-        let title = format!(
-            " {}{} ",
-            app.view_title_for(title_selected),
-            if active { " ●" } else { "" }
-        );
+        // A dual-run diff names its own sides (the left pane belongs to
+        // another source; the pane selections cannot describe it).
+        let title_text = match &model.titles {
+            Some((l, r)) => {
+                if pane == 0 {
+                    l.clone()
+                } else {
+                    r.clone()
+                }
+            }
+            None => app.view_title_for(title_selected),
+        };
+        let title = format!(" {title_text}{} ", if active { " ●" } else { "" });
         let block = Block::new()
             .borders(Borders::TOP)
             .border_style(Style::new().fg(if active { ACCENT } else { DIM }))
@@ -1166,7 +1194,9 @@ fn render_diff(
             inputs: node.inputs.iter().map(|r| r.node).collect(),
         });
 
-        let source = app.active_source();
+        // Each side reads from its own source — the dual-run diff's left
+        // pane belongs to the other run's buffer.
+        let source = &app.sources[side.source];
         let number_width = digits(source.buffer.line_count().max(1));
         let mut lines = Vec::with_capacity(inner.height as usize);
 

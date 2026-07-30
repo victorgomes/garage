@@ -99,6 +99,7 @@ Notes that save an afternoon:
 | `v` / `s` | vertical / horizontal split (same key closes) |
 | `Ctrl+W` | focus the other pane |
 | `d` | phase diff mode |
+| `D` | dual-run diff: this function vs the other loaded trace |
 | `}` | next source (multi-file runs) |
 | `q`, `Esc` | quit / back |
 
@@ -220,6 +221,18 @@ get their offset column labelled: those are the de-facto basic blocks.
 destination cycles the branches that land on it, and the cursor lights up
 the link in both directions — the same def-use navigation graphs and
 bytecode listings have.
+
+## Dual-run comparison
+
+Load two traces (`garage a.log b.log`) and the telemetry bar shows both
+runs' headline numbers side by side. `D` on a compilation diffs it
+against the same function in the other run — matched by name and tier
+(SFI addresses are not comparable across runs; nodes match by structural
+hash, as in any cross-compilation diff). On a phase row the same-named
+phase is preferred on the other side; otherwise both sides use their
+last graph phase — which is also what makes cross-*version* comparisons
+work when V8 renamed the banners. The active run is always the right
+pane; `d` (or `D`) drops back out.
 
 ## Source alignment
 

@@ -326,6 +326,9 @@ pub struct App {
     pub diff: bool,
     /// Aligned model cache: recomputed only when a side changes.
     diff_cache: Option<(DiffKey, std::sync::Arc<crate::diff::DiffModel>)>,
+    /// Dual-run diff (TODO 9.3): `((src, comp, phase), (src, comp, phase))`
+    /// pinned by `D`, overriding the pane-derived pair while set.
+    dual: Option<(DualSide, DualSide)>,
 
     /// Sidebar visibility (`b`): hiding it hands its columns to the
     /// viewport — wide graphs are the whole point. A one-column strip stays
@@ -349,6 +352,8 @@ pub struct App {
 /// `(source, comp, phase, section end line)` per side: any content change on
 /// either side changes the key.
 type DiffKey = ((usize, usize, usize, usize), (usize, usize, usize, usize));
+/// One dual-run diff side: `(source, compilation, phase)`.
+type DualSide = (usize, usize, usize);
 
 impl App {
     pub fn new(sources: &[LogSource], function_filter: Option<Regex>, keys: Keymap) -> Self {
@@ -401,6 +406,7 @@ impl App {
             active_pane: 0,
             diff: false,
             diff_cache: None,
+            dual: None,
             sidebar_visible: true,
             sidebar_rect: PaneRect::default(),
             viewport_rect: PaneRect::default(),
@@ -1031,6 +1037,7 @@ impl App {
             Action::ToggleSidebar => self.toggle_sidebar(),
             Action::ToggleSourcePane => self.toggle_source_pane(),
             Action::InliningPanel => self.toggle_inline_panel(),
+            Action::DualDiff => self.dual_diff_run(),
         }
     }
 
@@ -2028,6 +2035,7 @@ impl App {
     fn toggle_diff(&mut self) {
         if self.diff {
             self.diff = false;
+            self.dual = None;
             self.status = "diff off".to_string();
             return;
         }
@@ -2131,17 +2139,33 @@ impl App {
         true
     }
 
-    /// The aligned diff of the two panes, cached until either side changes.
+    /// The aligned diff of the two panes — or of the dual-run pair `D`
+    /// pinned — cached until either side changes.
     pub fn diff_model(&mut self) -> Option<std::sync::Arc<crate::diff::DiffModel>> {
         if !self.diff {
             return None;
         }
-        let (lc, lp) = self.pane_phase(self.pane_state(0).selected)?;
-        let (rc, rp) = self.pane_phase(self.pane_state(1).selected)?;
-        let source = &self.sources[self.active];
+        let ((lsrc, lc, lp), (rsrc, rc, rp)) = match self.dual {
+            Some(pair) => pair,
+            None => {
+                let (lc, lp) = self.pane_phase(self.pane_state(0).selected)?;
+                let (rc, rp) = self.pane_phase(self.pane_state(1).selected)?;
+                ((self.active, lc, lp), (self.active, rc, rp))
+            }
+        };
         let key: DiffKey = (
-            (self.active, lc, lp, source.index.compilations[lc].lines.end),
-            (self.active, rc, rp, source.index.compilations[rc].lines.end),
+            (
+                lsrc,
+                lc,
+                lp,
+                self.sources[lsrc].index.compilations[lc].lines.end,
+            ),
+            (
+                rsrc,
+                rc,
+                rp,
+                self.sources[rsrc].index.compilations[rc].lines.end,
+            ),
         );
         if let Some((cached_key, model)) = &self.diff_cache
             && *cached_key == key
@@ -2151,40 +2175,152 @@ impl App {
 
         // Oversized compilations are never modeled (5.1 guard); the diff
         // path inherits that.
-        let too_big = |c: usize| source.index.compilations[c].lines.len() > MODEL_LIMIT;
-        if too_big(lc) || too_big(rc) {
+        let too_big = |src: usize, c: usize| {
+            self.sources[src].index.compilations[c].lines.len() > MODEL_LIMIT
+        };
+        if too_big(lsrc, lc) || too_big(rsrc, rc) {
             self.status = "section too large to diff".to_string();
             return None;
         }
 
-        let source = &mut self.sources[self.active];
-        let left_section = source.index.compilations[lc].clone();
-        let right_section = source.index.compilations[rc].clone();
-        let left_parsed = source
-            .parses
-            .get_or_parse(&source.buffer, &left_section, lc);
-        let right_parsed = source
-            .parses
-            .get_or_parse(&source.buffer, &right_section, rc);
-        let model = crate::diff::diff_phases(
+        let left_section = self.sources[lsrc].index.compilations[lc].clone();
+        let right_section = self.sources[rsrc].index.compilations[rc].clone();
+        let left_parsed = {
+            let source = &mut self.sources[lsrc];
+            source
+                .parses
+                .get_or_parse(&source.buffer, &left_section, lc)
+        };
+        let right_parsed = {
+            let source = &mut self.sources[rsrc];
+            source
+                .parses
+                .get_or_parse(&source.buffer, &right_section, rc)
+        };
+        let mut model = crate::diff::diff_phases(
             &crate::diff::SideInput {
-                buffer: &source.buffer,
+                buffer: &self.sources[lsrc].buffer,
                 parsed: &left_parsed,
                 section: &left_section,
                 phase: lp,
-                comp_id: (self.active, lc),
+                comp_id: (lsrc, lc),
             },
             &crate::diff::SideInput {
-                buffer: &source.buffer,
+                buffer: &self.sources[rsrc].buffer,
                 parsed: &right_parsed,
                 section: &right_section,
                 phase: rp,
-                comp_id: (self.active, rc),
+                comp_id: (rsrc, rc),
             },
         );
+        if self.dual.is_some() {
+            let title = |src: usize, section: &crate::model::CompilationSection, p: usize| {
+                format!(
+                    "{} · {} · {}",
+                    self.sources[src].label,
+                    section.display_name(),
+                    section.phases[p].name
+                )
+            };
+            model.titles = Some((
+                title(lsrc, &left_section, lp),
+                title(rsrc, &right_section, rp),
+            ));
+        }
         let model = std::sync::Arc::new(model);
         self.diff_cache = Some((key, std::sync::Arc::clone(&model)));
         Some(model)
+    }
+
+    /// `D`: diff this function against its compilation in the *other* run
+    /// (TODO 9.3). Matching is by name and tier (SFI addresses are not
+    /// comparable across runs; the node-identity diff already matches
+    /// cross-compilation by structural hash). On a phase row the same-named
+    /// phase is preferred on the other side; otherwise both sides use their
+    /// last graph phase.
+    fn dual_diff_run(&mut self) {
+        if self.diff {
+            self.diff = false;
+            self.dual = None;
+            self.status = "diff off".to_string();
+            return;
+        }
+        if self.sources.len() < 2 {
+            self.status = "dual-run diff needs two sources (garage a.log b.log)".to_string();
+            return;
+        }
+        let Some(comp) = self.current_comp() else {
+            self.status = "dual-run diff needs a compilation in view".to_string();
+            return;
+        };
+        let other = (self.active + 1) % self.sources.len();
+        let last_graph = |section: &crate::model::CompilationSection| {
+            section
+                .phases
+                .iter()
+                .rposition(|p| matches!(p.kind, PhaseKind::Graph { .. }))
+        };
+        let section = self.sources[self.active].index.compilations[comp].clone();
+        // Phase-row selection wins; a compilation row means "the end state".
+        let phase = self
+            .pane_phase(self.selected)
+            .filter(|(c, _)| *c == comp)
+            .map(|(_, p)| p)
+            .or_else(|| last_graph(&section));
+        let Some(phase) = phase else {
+            self.status = "no graph phase to diff in this compilation".to_string();
+            return;
+        };
+
+        let index = &self.sources[other].index;
+        let matched = index
+            .compilations
+            .iter()
+            .enumerate()
+            .filter(|(_, c)| {
+                c.name == section.name && c.key.tier == section.key.tier && !c.filtered_out
+            })
+            .map(|(i, _)| i)
+            .max_by_key(|&i| {
+                // Prefer the same ordinal; otherwise the last instance.
+                let c = &index.compilations[i];
+                (c.key.ordinal == section.key.ordinal, c.key.ordinal)
+            });
+        let Some(other_comp) = matched else {
+            self.status = format!(
+                "{} has no {} {} compilation",
+                self.sources[other].label,
+                section.display_name(),
+                section.key.tier.label()
+            );
+            return;
+        };
+        let other_section = index.compilations[other_comp].clone();
+        let phase_name = &section.phases[phase].name;
+        let other_phase = other_section
+            .phases
+            .iter()
+            .position(|p| matches!(p.kind, PhaseKind::Graph { .. }) && p.name == *phase_name)
+            .or_else(|| last_graph(&other_section));
+        let Some(other_phase) = other_phase else {
+            self.status = format!(
+                "{}'s {} has no graph phase to diff",
+                self.sources[other].label,
+                other_section.display_name()
+            );
+            return;
+        };
+
+        self.source_pane = None;
+        self.split = Some(SplitDir::Vertical);
+        self.diff = true;
+        self.dual = Some(((other, other_comp, other_phase), (self.active, comp, phase)));
+        self.cursor = 0;
+        self.top = 0;
+        self.status = format!(
+            "dual-run diff: {} ⇄ {} — d closes",
+            self.sources[other].label, self.sources[self.active].label
+        );
     }
 
     /// Rows the viewport cursor ranges over — the aligned diff when it is
@@ -3119,12 +3255,12 @@ impl App {
         if self.diff
             && let Some(model) = self.diff_model()
         {
-            let buffer = &self.sources[self.active].buffer;
             return model
                 .rows
                 .iter()
                 .map(|row| {
                     let side_text = |side: &crate::diff::DiffSide, idx: Option<usize>| {
+                        let buffer = &self.sources[side.source].buffer;
                         idx.and_then(|i| side.rows.get(i))
                             .map(|r| line_text(buffer, r.line))
                     };
@@ -3785,6 +3921,52 @@ Instructions (size = 40)
         let vm = app.view_model();
         assert_eq!(vm.line_at(app.cursor), Some(6));
         assert_eq!(app.status, "+0x8");
+    }
+
+    #[test]
+    fn dual_diff_pairs_the_same_function_across_runs() {
+        let run_a = "\
+Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+ Block b0
+   1: Foo
+";
+        let run_b = "\
+Compiling 0x9 <JSFunction f (sfi = 0x90)> with Maglev
+----- Maglev graph building -----
+ Block b0
+   1: Foo
+   2: Bar [n1]
+";
+        let sources = vec![LogSource::Stdin, LogSource::Stdin];
+        let keys = Keymap::build(&std::collections::HashMap::new()).unwrap();
+        let mut app = App::new(&sources, None, keys);
+        for (i, trace) in [run_a, run_b].iter().enumerate() {
+            app.handle(Event::Source(SourceEvent::Chunk {
+                source: i,
+                bytes: trace.as_bytes().to_vec(),
+            }));
+            app.handle(Event::Source(SourceEvent::Eof { source: i }));
+        }
+        app.follow = false;
+        app.active = 0;
+        app.selected = 0;
+        app.focus = Pane::Viewport;
+
+        key(&mut app, KeyCode::Char('D'));
+        assert!(app.diff, "{}", app.status);
+        let model = app.diff_model().expect("dual model");
+        let (lt, rt) = model.titles.clone().expect("dual titles");
+        assert!(lt.contains('f') && rt.contains('f'), "{lt} / {rt}");
+        assert_eq!(model.left.source, 1, "left = the other run");
+        assert_eq!(model.right.source, 0);
+        // Active run on the right: run B's extra node sits on the left
+        // side, so it reads as deleted relative to the view.
+        assert_eq!(model.summary.nodes_deleted, 1, "{:?}", model.summary);
+
+        // `d` (or `D` again) drops back out.
+        key(&mut app, KeyCode::Char('d'));
+        assert!(!app.diff);
     }
 
     #[test]

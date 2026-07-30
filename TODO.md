@@ -757,8 +757,17 @@ in tmux:
   anchored-cycle machinery; mouse click/scroll work. Positions are UTF-16
   code units in V8 — identical to bytes for ASCII sources, documented
   limitation otherwise.
-- [ ] **9.3. Dual-run mode** (`garage a.log b.log`): dual stores, telemetry
-  comparison header, per-function drill-down using the Phase 7 diff engine.
+- [x] **9.3. Dual-run mode** (`garage a.log b.log`): the telemetry bar
+  shows the other run's compilations/deopts next to the active run's, and
+  `D` diffs the current function against the other run through the Phase 7
+  engine — `dual: Option<(DualSide, DualSide)>` overrides the pane-derived
+  pair in `diff_model`, `DiffSide` carries its source so each pane reads
+  its own buffer (render, yank and export), and `DiffModel.titles` names
+  the sides since pane selections cannot describe another source's
+  compilation. Matching: name + tier, same ordinal preferred, else last
+  instance; phase by name, else last graph phase (which is what makes
+  cross-version diffs work when banners were renamed). The active run is
+  the right pane; deltas read relative to it.
 - [ ] **9.4. Wrapper/live mode** (`garage -- d8 ...`): spawn child, capture
   stdout+stderr with explicit merge policy, incremental sidebar updates, signal
   handling (`SIGINT`/`SIGTERM`) and child cleanup. Introduce `tokio` here only

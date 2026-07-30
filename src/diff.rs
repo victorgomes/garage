@@ -157,6 +157,9 @@ pub struct DiffSide {
     /// diff must not depend on the viewer's fold state).
     pub rows: Vec<ViewRow>,
     pub parsed: Arc<ParsedCompilation>,
+    /// Which source this side's rows index into — the two sides of a
+    /// dual-run diff (TODO 9.3) read from different buffers.
+    pub source: usize,
     keys: Vec<Key>,
     /// The node defined on each row, parallel to `rows` — how a
     /// structurally-matched pair (different ids) finds its two shapes.
@@ -375,6 +378,7 @@ impl DiffSide {
         let mut side = DiffSide {
             rows,
             parsed: Arc::clone(input.parsed),
+            source: input.comp_id.0,
             keys: Vec::new(),
             row_nodes: Vec::new(),
             nodes: HashMap::new(),
@@ -552,6 +556,9 @@ pub struct DiffModel {
     pub right: DiffSide,
     pub rows: Vec<DiffRow>,
     pub summary: Summary,
+    /// Pane titles when the panes cannot describe themselves — the
+    /// dual-run diff (TODO 9.3), whose left side is another source.
+    pub titles: Option<(String, String)>,
 }
 
 impl DiffModel {
@@ -782,6 +789,7 @@ pub fn diff_phases(left: &SideInput, right: &SideInput) -> DiffModel {
         right: right_side,
         rows,
         summary,
+        titles: None,
     }
 }
 
