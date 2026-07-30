@@ -629,6 +629,28 @@ regeneration, the three new formats parse with **zero** annotation
   annotations — every Maglev section ended in dim-italic noise that `t`'s
   annotation folds swept up (goldens: last-phase annotation counts drop
   by exactly the rule+trailer pair, boundaries unchanged).
+- [x] **8.9. Assembly as pipeline phases** (dogfood request). A code dump
+  printed right after the pipeline that produced it merges into that
+  compilation as its last phases (`Raw source` / `Optimized code` /
+  `Instructions` / …) — decided only when the dump's identity is complete,
+  under the no-guessing rule: line-adjacent + same tier + same name, and
+  never dump-into-dump; the dump's provisional ordinal is handed back.
+  Disasm rows now carry their own address, resolved branch destinations
+  (x64 `<+0x…>` offsets and arm64 `(addr 0x…)` absolutes), and a `labeled`
+  bit set by a per-listing label pass — branch destinations are the
+  listing's de-facto block leaders. Nav: `Anchor::Insn`; `i` follows a
+  branch to its destination row, `u` cycles the branches that land on the
+  cursor row, `[`/`]` stop on labelled rows; labelled offsets paint as
+  definitions and the cursor links source⇄destination like graph def-use.
+  Cycle continuation is now scoped per action (`Cycle.what`): a repeat of
+  the same action continues the anchored cycle, a different action
+  re-derives from the landed row (`u` after `i` used to dead-end on the
+  old anchor). Goldens print per-listing label counts (real fixtures:
+  9–22 labels per Instructions phase, both arches). Fixtures: existing
+  print-opt-code fixtures cover the disasm nav; the pipeline+code merge is
+  unit-tested, and `tools/gen-fixtures.sh` gained a
+  `maglev-graphs+code.simple` invocation — regenerate with a local d8
+  (needs v8_enable_disassembler) for a real combined fixture.
 
 ---
 

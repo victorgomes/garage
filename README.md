@@ -45,6 +45,10 @@ d8 --trace-turbo-graph bench.js | garage
 d8 --print-opt-code bench.js | garage      # needs v8_enable_disassembler
 d8 --print-bytecode bench.js | garage
 
+# Graphs *and* the assembly they became — the code dump printed right after
+# a pipeline shows up as that compilation's last phases:
+d8 --print-maglev-graphs --print-opt-code bench.js | garage
+
 # Tiering + OSR story alongside the graphs:
 d8 --print-maglev-graphs --trace-opt --trace-deopt --trace-osr app.js | garage
 ```
@@ -190,6 +194,23 @@ reference it. The cursor highlights the same links in place, and
 `Ctrl+O` unwinds any jump. (Bare `[n]` operands are immediates and
 `EmbeddedFeedback[n]` is not a vector slot — neither pretends to
 navigate.)
+
+## Assembly as part of the pipeline
+
+A code dump (`--print-opt-code` / `--print-code`) printed right after the
+pipeline that produced it merges into that compilation — `Raw source`,
+`Optimized code`, `Instructions`, … appear as its last phases, so one
+sidebar entry tells the whole story from bytecode to machine code. The
+merge follows the no-guessing rule: sections must be line-adjacent and
+agree on tier and name; anything else stays separate.
+
+Inside the listing, branch targets are resolved from what V8 printed —
+arm64's `(addr 0x…)` and x64's `<+0x…>` both — and their destination rows
+get their offset column labelled: those are the de-facto basic blocks.
+`[`/`]` walk them, `i` on a branch jumps to its destination, `u` on a
+destination cycles the branches that land on it, and the cursor lights up
+the link in both directions — the same def-use navigation graphs and
+bytecode listings have.
 
 ## What the UI shows
 

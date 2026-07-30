@@ -660,6 +660,11 @@ struct BcHl {
     def_offset: Option<u32>,
     def_slot: Option<u32>,
     def_pool: Option<u32>,
+    /// Disassembly (TODO 8.9): where the cursor row branches to…
+    insn_offsets: HashSet<u32>,
+    insn_addrs: HashSet<u64>,
+    /// …and what it is, for lighting up the branches that land on it.
+    def_insn: Option<(u32, u64)>,
 }
 
 /// Builds the bytecode-listing highlight state from the cursor row.
@@ -679,6 +684,18 @@ fn bc_highlight(vm: &ViewModel, cursor: usize) -> Option<BcHl> {
         }),
         LineInfo::PoolEntry { index, .. } => Some(BcHl {
             def_pool: Some(*index),
+            ..BcHl::default()
+        }),
+        LineInfo::Disasm {
+            offset,
+            addr,
+            target_offset,
+            target_addr,
+            ..
+        } => Some(BcHl {
+            insn_offsets: target_offset.iter().copied().collect(),
+            insn_addrs: target_addr.iter().copied().collect(),
+            def_insn: Some((*offset, *addr)),
             ..BcHl::default()
         }),
         _ => None,
@@ -1102,15 +1119,21 @@ fn paint_line(
             paint.fill(Class::Dim)
         }
         Some(LineInfo::Disasm {
+            offset_span,
             mnemonic,
             target,
             comment,
+            labeled,
             ..
         }) => {
             // Address and encoding columns dim, mnemonic emphasised, branch
             // target and reloc comment picked out — everything else (the
-            // operands) as-emitted (TODO 8.2).
+            // operands) as-emitted (TODO 8.2). A branch destination keeps
+            // its offset visible: it is the label jumps land on (TODO 8.9).
             fill(&(0..mnemonic.start), Class::Dim, &mut paint);
+            if *labeled {
+                fill(offset_span, Class::NodeDef, &mut paint);
+            }
             fill(mnemonic, Class::Opcode, &mut paint);
             if let Some(target) = target {
                 fill(target, Class::BlockRef, &mut paint);
@@ -1227,6 +1250,24 @@ fn paint_line(
             }
             Some(LineInfo::PoolEntry { index, def_span }) if hl.pools.contains(index) => {
                 fill(def_span, Class::InputHl, &mut paint);
+            }
+            Some(LineInfo::Disasm {
+                offset,
+                offset_span,
+                addr,
+                target,
+                target_offset,
+                target_addr,
+                ..
+            }) => {
+                if hl.insn_offsets.contains(offset) || hl.insn_addrs.contains(addr) {
+                    fill(offset_span, Class::InputHl, &mut paint);
+                }
+                if let (Some((o, a)), Some(span)) = (hl.def_insn, target)
+                    && (*target_offset == Some(o) || *target_addr == Some(a))
+                {
+                    fill(span, Class::ConsumerHl, &mut paint);
+                }
             }
             _ => {}
         }

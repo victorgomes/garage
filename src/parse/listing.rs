@@ -47,6 +47,37 @@ pub fn parse_listing_phase(buffer: &LogBuffer, lines: Range<usize>, name: &str) 
         };
         phase.infos.push(info);
     }
+
+    // Label pass (TODO 8.9): every branch destination in the listing gets
+    // `labeled` — the de-facto basic-block leaders the view marks and
+    // `[`/`]` walk. Both target forms count; each resolves within this
+    // phase only.
+    let mut offsets = std::collections::HashSet::new();
+    let mut addrs = std::collections::HashSet::new();
+    for info in &phase.infos {
+        if let LineInfo::Disasm {
+            target_offset,
+            target_addr,
+            ..
+        } = info
+        {
+            offsets.extend(*target_offset);
+            addrs.extend(*target_addr);
+        }
+    }
+    if !offsets.is_empty() || !addrs.is_empty() {
+        for info in &mut phase.infos {
+            if let LineInfo::Disasm {
+                offset,
+                addr,
+                labeled,
+                ..
+            } = info
+            {
+                *labeled = offsets.contains(offset) || addrs.contains(addr);
+            }
+        }
+    }
     phase
 }
 
@@ -67,6 +98,7 @@ fn parse_disasm_row(text: &str) -> Option<LineInfo> {
     if addr_len == 0 {
         return None;
     }
+    let addr = u64::from_str_radix(&text[2..2 + addr_len], 16).ok()?;
     let mut at = 2 + addr_len;
 
     let spaces = space_run(&text[at..]);
@@ -79,6 +111,7 @@ fn parse_disasm_row(text: &str) -> Option<LineInfo> {
         return None;
     }
     let offset = u32::from_str_radix(&text[at..at + off_len], 16).ok()?;
+    let offset_span: Span = at as u32..(at + off_len) as u32;
     // The offset column must be a complete token.
     if !text[at + off_len..].starts_with(' ') {
         return None;
@@ -128,10 +161,31 @@ fn parse_disasm_row(text: &str) -> Option<LineInfo> {
     let target =
         find_token(operands, at, "(addr 0x", ")").or_else(|| find_token(operands, at, "<+0x", ">"));
 
+    // Resolve the target token to a code offset (`<+0x71>`) or an absolute
+    // address (`(addr 0x170000214)`) — the two forms V8's disassemblers
+    // print; either finds the destination row (TODO 8.9).
+    let (mut target_offset, mut target_addr) = (None, None);
+    if let Some(span) = &target {
+        let token = &text[span.start as usize..span.end as usize];
+        if let Some(hex) = token.strip_prefix("<+0x").and_then(|t| t.strip_suffix('>')) {
+            target_offset = u32::from_str_radix(hex, 16).ok();
+        } else if let Some(hex) = token
+            .strip_prefix("(addr 0x")
+            .and_then(|t| t.strip_suffix(')'))
+        {
+            target_addr = u64::from_str_radix(hex, 16).ok();
+        }
+    }
+
     Some(LineInfo::Disasm {
         offset,
+        offset_span,
+        addr,
         mnemonic,
         target,
+        target_offset,
+        target_addr,
+        labeled: false,
         comment,
     })
 }
@@ -159,6 +213,7 @@ mod tests {
             mnemonic,
             target,
             comment,
+            ..
         }) = row(text)
         else {
             panic!("disasm row expected");
@@ -182,6 +237,7 @@ mod tests {
             mnemonic,
             target,
             comment,
+            ..
         }) = row(text)
         else {
             panic!("disasm row expected");
@@ -193,6 +249,53 @@ mod tests {
             "<+0x71>"
         );
         assert!(comment.is_none());
+    }
+
+    #[test]
+    fn targets_resolve_and_label_their_destinations() {
+        // x64 relative form → code offset; arm64 absolute form → address.
+        let Some(LineInfo::Disasm {
+            target_offset,
+            target_addr,
+            ..
+        }) = row("0x1639401d3    13  0f8658000000         jna 0x163940231  <+0x71>")
+        else {
+            panic!("row");
+        };
+        assert_eq!(target_offset, Some(0x71));
+        assert_eq!(target_addr, None);
+
+        let Some(LineInfo::Disasm {
+            target_offset,
+            target_addr,
+            ..
+        }) = row("0x1700001bc    1c  540002c9       b.ls #+0x58 (addr 0x170000214)")
+        else {
+            panic!("row");
+        };
+        assert_eq!(target_offset, None);
+        assert_eq!(target_addr, Some(0x170000214));
+
+        // The label pass marks destinations, by offset and by address.
+        let mut buffer = LogBuffer::new();
+        buffer.append(
+            b"Instructions (size = 40)\n\
+0x100    0  aa  jmp 0x108  <+0x8>\n\
+0x104    4  bb  b.ls #+0x8 (addr 0x10c)\n\
+0x108    8  cc  nop\n\
+0x10c    c  dd  ret\n",
+        );
+        buffer.finish();
+        let phase = parse_listing_phase(&buffer, 0..buffer.line_count(), "Instructions");
+        let labeled: Vec<bool> = phase
+            .infos
+            .iter()
+            .filter_map(|i| match i {
+                LineInfo::Disasm { labeled, .. } => Some(*labeled),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(labeled, [false, false, true, true], "+0x8 and 0x10c");
     }
 
     #[test]

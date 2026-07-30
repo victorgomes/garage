@@ -65,6 +65,11 @@ FIXTURES=(
   # exercised against the "[ML:38564] " line prefix engineers actually see.
   "maglev-graphs+inlining-ids.inlining|raw-predictable|inlining.js|--print-maglev-graphs --trace-maglev-inlining"
 
+  # --- Pipeline + code dump interleaved (TODO 8.9) --------------------------
+  # The code dump prints right after the pipeline that produced it and merges
+  # into that compilation as its last phases; needs v8_enable_disassembler.
+  "maglev-graphs+code.simple|clean|simple.js|--print-maglev-graphs --print-opt-code"
+
   # --- Tiering & lifecycle --------------------------------------------------
   "trace-opt+deopt.deopt|clean|deopt-eager.js|--trace-opt --trace-deopt"
   "trace-opt+deopt.mixed|clean|mixed.js|--trace-opt --trace-deopt"

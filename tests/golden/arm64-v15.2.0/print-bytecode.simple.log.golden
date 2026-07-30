@@ -2,14 +2,14 @@ lines: 56
 version: unknown
 compilation 0 L1..44 sfi=0x9b80101e265 tier=Ignition ord=1 name=""
   phase L1..35 "Bytecode array" [bytecode]: 29 rows (2 jump refs, 6 fbv refs, 3 pool refs)
-  phase L35..42 "Constant pool" [listing]: 0 disasm, 0 annotations
-  phase L42..43 "Handler Table" [listing]: 0 disasm, 0 annotations
-  phase L43..44 "Source Position Table" [listing]: 0 disasm, 0 annotations
+  phase L35..42 "Constant pool" [listing]: 0 disasm (0 labels), 0 annotations
+  phase L42..43 "Handler Table" [listing]: 0 disasm (0 labels), 0 annotations
+  phase L43..44 "Source Position Table" [listing]: 0 disasm (0 labels), 0 annotations
   totals: 0 opcodes, 0 distinct frames
 compilation 1 L44..56 sfi=0x9b80101e2cd tier=Ignition ord=1 name="add"
   phase L44..52 "Bytecode array" [bytecode]: 3 rows (0 jump refs, 0 fbv refs, 0 pool refs)
-  phase L52..53 "Constant pool" [listing]: 0 disasm, 0 annotations
-  phase L53..54 "Handler Table" [listing]: 0 disasm, 0 annotations
-  phase L54..56 "Source Position Table" [listing]: 0 disasm, 0 annotations
+  phase L52..53 "Constant pool" [listing]: 0 disasm (0 labels), 0 annotations
+  phase L53..54 "Handler Table" [listing]: 0 disasm (0 labels), 0 annotations
+  phase L54..56 "Source Position Table" [listing]: 0 disasm (0 labels), 0 annotations
   totals: 0 opcodes, 0 distinct frames
 raw L0..1 "V8 is running with developer-only features enabled. Stability and security will suffer."

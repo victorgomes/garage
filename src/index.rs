@@ -995,6 +995,62 @@ impl TraceIndex {
                 self.code_kind_seen = true;
             }
         }
+        if self.code_kind_seen && self.code_name_seen {
+            self.try_merge_code_section(comp);
+        }
+    }
+
+    /// A code dump printed right after the pipeline that produced it belongs
+    /// to that compilation, as its last phases — `--print-maglev-graphs
+    /// --print-code` interleaves them per function (TODO 8.9, user request).
+    /// Merge is decided only once the dump's identity is complete, and only
+    /// under the no-guessing rule: the sections must be line-adjacent and
+    /// agree on tier *and* name. Anything else stays a section of its own.
+    fn try_merge_code_section(&mut self, comp: usize) {
+        if comp == 0 || comp != self.compilations.len() - 1 {
+            return;
+        }
+        let prev = comp - 1;
+        {
+            let code = &self.compilations[comp];
+            let pipeline = &self.compilations[prev];
+            let adjacent = pipeline.lines.end == code.lines.start;
+            let same = pipeline.key.tier == code.key.tier && pipeline.name == code.name;
+            // A code dump never merges into another code dump.
+            let pipeline_is_code = pipeline
+                .phases
+                .first()
+                .is_some_and(|p| p.kind == PhaseKind::Listing);
+            if !adjacent || !same || pipeline_is_code {
+                return;
+            }
+        }
+        let code = self.compilations.pop().expect("checked: comp is last");
+        // The dump's provisional ordinal is unused now; give it back so the
+        // next unidentified section is numbered as if this one never split.
+        if let Some(n) = self.ordinals.get_mut(&(Addr(0), code.key.tier.clone())) {
+            *n = n.saturating_sub(1);
+        }
+        let section = &mut self.compilations[prev];
+        // Everything before the dump's first phase (`--- Raw source ---` and
+        // the source text) becomes a Listing phase of the pipeline; the
+        // dump's own phases follow.
+        let first_phase = code
+            .phases
+            .first()
+            .map(|p| p.lines.start)
+            .unwrap_or(code.lines.end);
+        if first_phase > code.lines.start {
+            section.phases.push(PhaseSection {
+                name: "Raw source".to_string(),
+                kind: PhaseKind::Listing,
+                lines: code.lines.start..first_phase,
+            });
+        }
+        section.phases.extend(code.phases);
+        section.lines.end = code.lines.end;
+        self.state = State::InCompilation { comp: prev };
+        self.code_section = Some(prev);
     }
 
     /// A pending rule/begin that turned out to precede ordinary content
@@ -1384,6 +1440,73 @@ Finished compiling method add using TurboFan
         assert_eq!(c.phases[0].kind, PhaseKind::Bytecode);
         assert_eq!(c.phases[1].kind, PhaseKind::Graph { known: true });
         assert_partition(&idx, 8);
+    }
+
+    /// `--print-maglev-graphs --print-code`: the code dump printed right
+    /// after a pipeline merges into it as its last phases (TODO 8.9) — but
+    /// only when adjacent and agreeing on tier and name.
+    #[test]
+    fn adjacent_code_dump_merges_into_its_pipeline() {
+        let idx = index(
+            "\
+Compiling 0x1 <JSFunction nbi (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+ Block b0
+   1: Foo
+Finished compiling method nbi using Maglev
+--- Raw source ---
+function nbi() {}
+--- Optimized code ---
+optimization_id = 0
+kind = MAGLEV
+name = nbi
+Instructions (size = 40)
+0x100    0  d2800000  movz x0, #0x0
+--- End code ---
+",
+        );
+        assert_eq!(idx.compilations.len(), 1, "{:?}", idx.compilations);
+        let c = &idx.compilations[0];
+        assert_eq!(c.key.sfi, Addr(0x10), "pipeline identity wins");
+        assert_eq!(c.key.tier, Tier::Maglev);
+        assert_eq!(c.name, "nbi");
+        assert_eq!(c.lines, 0..14);
+        let names: Vec<&str> = c.phases.iter().map(|p| p.name.as_str()).collect();
+        assert_eq!(
+            names,
+            [
+                "Maglev graph building",
+                "Raw source",
+                "Optimized code",
+                "Instructions"
+            ]
+        );
+        assert!(idx.raw.is_empty());
+        assert_partition(&idx, 14);
+    }
+
+    /// The same dump for a *different* function stays its own section — the
+    /// no-guessing rule.
+    #[test]
+    fn code_dump_for_another_function_stays_separate() {
+        let idx = index(
+            "\
+Compiling 0x1 <JSFunction nbi (sfi = 0x10)> with Maglev
+----- Maglev graph building -----
+   1: Foo
+Finished compiling method nbi using Maglev
+--- Optimized code ---
+kind = MAGLEV
+name = other
+Instructions (size = 40)
+0x100    0  d2800000  movz x0, #0x0
+--- End code ---
+",
+        );
+        assert_eq!(idx.compilations.len(), 2, "{:?}", idx.compilations);
+        assert_eq!(idx.compilations[0].name, "nbi");
+        assert_eq!(idx.compilations[1].name, "other");
+        assert_partition(&idx, 10);
     }
 
     /// With concurrent recompilation, A's trailer can land inside B's body.

@@ -145,6 +145,8 @@ enum Anchor {
     /// A schedule-only row with block targets (`Gap`/parenless schedule
     /// rows): no node id to anchor on, so the buffer line is the identity.
     Line(usize),
+    /// A disassembly row, anchored on its code offset (TODO 8.9).
+    Insn(u32),
 }
 
 impl std::fmt::Display for Anchor {
@@ -156,6 +158,7 @@ impl std::fmt::Display for Anchor {
             Anchor::Pool(p) => write!(f, "pool[{p}]"),
             Anchor::Block(b) => write!(f, "b{b}"),
             Anchor::Line(l) => write!(f, "L{}", l + 1),
+            Anchor::Insn(o) => write!(f, "+0x{o:x}"),
         }
     }
 }
@@ -165,6 +168,12 @@ impl std::fmt::Display for Anchor {
 #[derive(Debug, Clone)]
 struct Cycle {
     anchor: Anchor,
+    /// Which action built the cycle (`input`/`ref`/`target`/`consumer`/…):
+    /// a repeat of the *same* action continues it; a different action
+    /// re-derives from the row the cursor landed on. Without this, `u`
+    /// after `i` asked about the jump's anchor instead of the row under
+    /// the cursor (found dogfooding the disassembly nav).
+    what: &'static str,
     targets: Vec<usize>, // buffer lines
     at: usize,
 }
@@ -2025,6 +2034,7 @@ impl App {
             LineInfo::FeedbackSlot { index, .. } => Some(Anchor::Slot(*index)),
             LineInfo::PoolEntry { index, .. } => Some(Anchor::Pool(*index)),
             LineInfo::BlockHeader { block } => Some(Anchor::Block(*block)),
+            LineInfo::Disasm { offset, .. } => Some(Anchor::Insn(*offset)),
             _ => None,
         }
     }
@@ -2049,8 +2059,13 @@ impl App {
         let Some((p, _)) = row.info else { return };
         let Some(parsed) = vm.parsed() else { return };
 
-        let anchor = match (&self.cycle, self.cursor_anchor(&vm)) {
-            (Some(cycle), _) => cycle.anchor,
+        let continued = self
+            .cycle
+            .as_ref()
+            .filter(|c| matches!(c.what, "input" | "ref") && !matches!(c.anchor, Anchor::Insn(_)))
+            .map(|c| c.anchor);
+        let anchor = match (continued, self.cursor_anchor(&vm)) {
+            (Some(anchor), _) => anchor,
             (None, Some(anchor)) => anchor,
             (None, None) => {
                 self.status = "no node under cursor".to_string();
@@ -2100,6 +2115,37 @@ impl App {
                 self.status = format!("{anchor} has no inputs — u cycles its predecessors");
                 return;
             }
+            Anchor::Insn(o) => {
+                // The branch destination of this disassembly row, resolved
+                // through either target form (TODO 8.9).
+                let phase = &parsed.phases[p];
+                let Some((to_off, to_addr)) = phase.infos.iter().find_map(|info| match info {
+                    LineInfo::Disasm {
+                        offset,
+                        target_offset,
+                        target_addr,
+                        ..
+                    } if *offset == o => Some((*target_offset, *target_addr)),
+                    _ => None,
+                }) else {
+                    self.status = format!("{anchor}: no such row in this phase");
+                    return;
+                };
+                if to_off.is_none() && to_addr.is_none() {
+                    self.status = format!("{anchor} has no branch target — u cycles its sources");
+                    return;
+                }
+                let phase_start = self.phase_start(&vm, p);
+                let found = phase.infos.iter().position(|info| {
+                    matches!(info, LineInfo::Disasm { offset, addr, .. }
+                        if to_off == Some(*offset) || to_addr == Some(*addr))
+                });
+                let Some(idx) = found else {
+                    self.status = format!("{anchor}: target is outside this listing");
+                    return;
+                };
+                (vec![phase_start + idx], "target")
+            }
             Anchor::Slot(_) | Anchor::Pool(_) | Anchor::Line(_) => {
                 self.status = format!("{anchor} has no inputs — u cycles its uses");
                 return;
@@ -2124,10 +2170,17 @@ impl App {
         let Some((p, _)) = row.info else { return };
         let Some(parsed) = vm.parsed() else { return };
 
-        // Continue an existing cycle even though the cursor moved off the
-        // anchor; otherwise `u u` would cycle the first consumer's users.
-        let anchor = match (&self.cycle, self.cursor_anchor(&vm)) {
-            (Some(cycle), _) => cycle.anchor,
+        // Continue an existing `u` cycle even though the cursor moved off
+        // the anchor; otherwise `u u` would cycle the first consumer's
+        // users. A cycle built by `i`/Enter does not continue here — `u`
+        // then asks about the row the jump landed on.
+        let continued = self
+            .cycle
+            .as_ref()
+            .filter(|c| matches!(c.what, "consumer" | "predecessor"))
+            .map(|c| c.anchor);
+        let anchor = match (continued, self.cursor_anchor(&vm)) {
+            (Some(anchor), _) => anchor,
             (None, Some(anchor)) => anchor,
             (None, None) => {
                 self.status = "no node under cursor".to_string();
@@ -2171,6 +2224,32 @@ impl App {
                 })
                 .collect(),
             Anchor::Line(_) => Vec::new(),
+            // Branch sources: every row in the listing that jumps here,
+            // through either target form.
+            Anchor::Insn(o) => {
+                let phase = &parsed.phases[p];
+                let own_addr = phase.infos.iter().find_map(|info| match info {
+                    LineInfo::Disasm { offset, addr, .. } if *offset == o => Some(*addr),
+                    _ => None,
+                });
+                phase
+                    .infos
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(idx, info)| match info {
+                        LineInfo::Disasm {
+                            target_offset,
+                            target_addr,
+                            ..
+                        } if *target_offset == Some(o)
+                            || (own_addr.is_some() && *target_addr == own_addr) =>
+                        {
+                            Some(phase_start + idx)
+                        }
+                        _ => None,
+                    })
+                    .collect()
+            }
         };
         let what = if matches!(anchor, Anchor::Block(_)) {
             "predecessor"
@@ -2257,7 +2336,7 @@ impl App {
     }
 
     /// Shared cycle mechanics: same anchor advances, new anchor restarts.
-    fn cycle_jump(&mut self, anchor: Anchor, targets: Vec<usize>, what: &str) {
+    fn cycle_jump(&mut self, anchor: Anchor, targets: Vec<usize>, what: &'static str) {
         let at = match &self.cycle {
             Some(c) if c.anchor == anchor && c.targets == targets => (c.at + 1) % targets.len(),
             _ => 0,
@@ -2267,6 +2346,7 @@ impl App {
         self.goto_line(line);
         self.cycle = Some(Cycle {
             anchor,
+            what,
             targets: targets.clone(),
             at,
         });
@@ -2283,14 +2363,22 @@ impl App {
         }
         let vm = self.view_model();
         let len = vm.len();
-        let block_at = |idx: usize| -> Option<BlockId> {
+        // In a disassembly listing the branch destinations are the block
+        // leaders — `[`/`]` stop on them the way they stop on `Block bN`
+        // headers in a graph (TODO 8.9).
+        let block_at = |idx: usize| -> Option<String> {
             let row = vm.row(idx)?;
             if let RowKind::BlockFold { block, .. } = row.kind {
-                return Some(block);
+                return Some(format!("b{block}"));
             }
             let (p, i) = row.info?;
             match vm.parsed()?.phases.get(p)?.infos.get(i)? {
-                LineInfo::BlockHeader { block } => Some(*block),
+                LineInfo::BlockHeader { block } => Some(format!("b{block}")),
+                LineInfo::Disasm {
+                    offset,
+                    labeled: true,
+                    ..
+                } => Some(format!("+0x{offset:x}")),
                 _ => None,
             }
         };
@@ -2301,12 +2389,12 @@ impl App {
                 self.status = format!("no {} block", if dir > 0 { "next" } else { "previous" });
                 return;
             }
-            if let Some(block) = block_at(idx as usize) {
+            if let Some(label) = block_at(idx as usize) {
                 self.cursor = idx as usize;
                 self.focus = Pane::Viewport;
                 self.follow = false;
                 self.cycle = None;
-                self.status = format!("b{block}");
+                self.status = label;
                 return;
             }
         }
@@ -2336,9 +2424,13 @@ impl App {
         let phase_start = self.phase_start(&vm, p);
 
         // Repeat-Enter continues the cycle even though the cursor now sits
-        // on the target header; other anchor kinds re-derive from the row.
+        // on the target header; other actions' cycles re-derive from the row.
         let anchor = match &self.cycle {
-            Some(c) if matches!(c.anchor, Anchor::Node(_) | Anchor::Line(_)) => c.anchor,
+            Some(c)
+                if c.what == "target" && matches!(c.anchor, Anchor::Node(_) | Anchor::Line(_)) =>
+            {
+                c.anchor
+            }
             _ => match phase.infos.get(i) {
                 Some(LineInfo::Node(node)) if node.id != SCHEDULE_ONLY => Anchor::Node(node.id),
                 Some(LineInfo::Node(_)) => Anchor::Line(row.line),
@@ -3189,6 +3281,48 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
             vm.row(app.cursor).unwrap().kind,
             RowKind::BlockFold { block: 0, .. }
         ));
+    }
+
+    const DISASM_TRACE: &str = "\
+--- Optimized code ---
+kind = TURBOFAN_JS
+name = f
+Instructions (size = 40)
+0x100    0  aa  jmp 0x108  <+0x8>
+0x104    4  bb  nop
+0x108    8  cc  ret
+--- End code ---
+";
+
+    #[test]
+    fn disasm_branches_navigate_and_label() {
+        let mut app = app_with(DISASM_TRACE);
+        app.follow = false;
+        app.selected = 0;
+        app.focus = Pane::Viewport;
+
+        // `i` on the jump lands on its destination row.
+        app.cursor = 4; // the jmp (line 5)
+        key(&mut app, KeyCode::Char('i'));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(6), "ret row (+0x8)");
+        assert!(app.status.contains("+0x0 target"), "{}", app.status);
+
+        // `u` on the destination cycles the branches that land on it.
+        key(&mut app, KeyCode::Char('j'));
+        key(&mut app, KeyCode::Char('k'));
+        key(&mut app, KeyCode::Char('u'));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(4), "the jmp is the source");
+        assert!(app.status.contains("+0x8 consumer"), "{}", app.status);
+
+        // `]` walks the labelled rows — branch destinations are the block
+        // leaders of a listing.
+        key(&mut app, KeyCode::Char('g'));
+        key(&mut app, KeyCode::Char(']'));
+        let vm = app.view_model();
+        assert_eq!(vm.line_at(app.cursor), Some(6));
+        assert_eq!(app.status, "+0x8");
     }
 
     #[test]

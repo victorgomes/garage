@@ -441,13 +441,28 @@ pub enum LineInfo {
     /// One `--print-opt-code` disassembly row (Phase 8.2):
     /// `0x1700001bc  1c  540002c9  b.ls #+0x58 (addr 0x170000214)  ;; comment`.
     /// Spans style what V8 itself emitted — no decoding is promised beyond
-    /// that (PLAN §7.6 feasibility note).
+    /// that (PLAN §7.6 feasibility note). The resolved target fields give
+    /// assembly the same def-use navigation as graphs (TODO 8.9): arm64
+    /// prints absolute `(addr 0x…)` targets, x64 prints `<+0x…>` code
+    /// offsets, so both forms are kept and either resolves a row.
     Disasm {
         /// The code offset (second column, hex).
         offset: u32,
+        /// Span of the offset column — the label a branch jump lands on.
+        offset_span: Span,
+        /// The instruction's own address (first column) — how absolute
+        /// branch targets resolve to rows.
+        addr: u64,
         mnemonic: Span,
         /// The `(addr 0x…)` / `<+0x…>` branch-target token, when present.
         target: Option<Span>,
+        /// Branch destination as a code offset (`<+0x…>`), when printed.
+        target_offset: Option<u32>,
+        /// Branch destination as an absolute address (`(addr 0x…)`).
+        target_addr: Option<u64>,
+        /// Some branch in this listing lands here — a de-facto block
+        /// leader, labelled in the view and a stop for `[`/`]`.
+        labeled: bool,
         /// The `;; …` reloc comment, when present.
         comment: Option<Span>,
     },

@@ -156,13 +156,22 @@ fn summarize(buffer: &LogBuffer, idx: &TraceIndex) -> String {
             let detail = match stats {
                 Some(st) if matches!(phase.kind, PhaseKind::Listing) => {
                     // Evidence for the Phase 8 coverage claim: disassembly
-                    // rows recognised, and unrecognised rows counted.
+                    // rows recognised (with resolved branch destinations —
+                    // TODO 8.9), and unrecognised rows counted.
                     let disasm = st
                         .infos
                         .iter()
                         .filter(|l| matches!(l, LineInfo::Disasm { .. }))
                         .count();
-                    format!(": {} disasm, {} annotations", disasm, st.annotation_count)
+                    let labels = st
+                        .infos
+                        .iter()
+                        .filter(|l| matches!(l, LineInfo::Disasm { labeled: true, .. }))
+                        .count();
+                    format!(
+                        ": {} disasm ({} labels), {} annotations",
+                        disasm, labels, st.annotation_count
+                    )
                 }
                 Some(st)
                     if matches!(phase.kind, PhaseKind::Bytecode | PhaseKind::Inlining { .. }) =>
