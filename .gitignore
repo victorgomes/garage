@@ -5,3 +5,6 @@ spike/target/
 fixtures/large/
 
 garage.log
+
+# Stray d8 dogfood traces at the repo root (fixtures/ stays tracked)
+/*.log
