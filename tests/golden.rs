@@ -154,6 +154,16 @@ fn summarize(buffer: &LogBuffer, idx: &TraceIndex) -> String {
             };
             let stats = parsed.phases.get(p);
             let detail = match stats {
+                Some(st) if matches!(phase.kind, PhaseKind::Listing) => {
+                    // Evidence for the Phase 8 coverage claim: disassembly
+                    // rows recognised, and unrecognised rows counted.
+                    let disasm = st
+                        .infos
+                        .iter()
+                        .filter(|l| matches!(l, LineInfo::Disasm { .. }))
+                        .count();
+                    format!(": {} disasm, {} annotations", disasm, st.annotation_count)
+                }
                 Some(st) if matches!(phase.kind, PhaseKind::Graph { .. }) => {
                     let frame_lines = st
                         .infos

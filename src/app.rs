@@ -357,12 +357,21 @@ impl App {
         if self.grouped {
             // First-seen order of SFIs; compilations nested under each,
             // collapsed by default — this is what scales to thousands of
-            // compilations (PLAN §5.1).
+            // compilations (PLAN §5.1). Sections whose identity never
+            // arrived (sfi = 0: opt-code dumps, unidentified TF sections)
+            // are NOT grouped — keying them all on the placeholder merged
+            // unrelated functions into one bogus group (found in review) —
+            // they list individually after the groups.
             let mut seen: Vec<Addr> = Vec::new();
             let mut members_of: std::collections::HashMap<Addr, Vec<usize>> =
                 std::collections::HashMap::new();
+            let mut ungrouped: Vec<usize> = Vec::new();
             for (i, c) in idx.compilations.iter().enumerate() {
                 if comp_visible(i) {
+                    if c.key.sfi == Addr(0) {
+                        ungrouped.push(i);
+                        continue;
+                    }
                     let members = members_of.entry(c.key.sfi).or_default();
                     if members.is_empty() {
                         seen.push(c.key.sfi);
@@ -382,6 +391,9 @@ impl App {
                         self.push_compilation_rows(&mut rows, i);
                     }
                 }
+            }
+            for i in ungrouped {
+                self.push_compilation_rows(&mut rows, i);
             }
             for (i, r) in idx.raw.iter().enumerate() {
                 if self.filter_matches(&r.label) {

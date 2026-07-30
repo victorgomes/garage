@@ -59,7 +59,9 @@ pub fn parse_compilation(buffer: &LogBuffer, section: &CompilationSection) -> Pa
     let turbofan = section.key.tier == crate::model::Tier::Turbofan;
     for phase in &section.phases {
         let parsed_phase = match &phase.kind {
-            PhaseKind::Listing => super::listing::parse_listing_phase(buffer, phase.lines.clone()),
+            PhaseKind::Listing => {
+                super::listing::parse_listing_phase(buffer, phase.lines.clone(), &phase.name)
+            }
             PhaseKind::Graph { .. } if turbofan => super::turbofan::parse_phase(
                 buffer,
                 phase.lines.clone(),

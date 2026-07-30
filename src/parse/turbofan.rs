@@ -496,46 +496,92 @@ fn classify_instructions(
         });
     }
 
-    // `v28(=x0) = ArchCallCodeObject …` — a def row; everything else with
-    // vregs (`Arm64Poke v29(R) #0`, `ArchJmp [rpo_immediate:3]`) is an
-    // instruction without a destination.
     let refs = vreg_refs(t, start);
-    if trimmed.starts_with('v') && !refs.is_empty() {
-        if let Some(eq) = t.find(" = ") {
-            let def = refs[0].clone();
-            if (def.span.start as usize) < eq {
-                let opcode_start = eq + 3;
-                let name_len = opcode_len(&t[opcode_start..]);
-                if name_len > 0 {
-                    let name = &t[opcode_start..opcode_start + name_len];
-                    let node = IRNode {
-                        id: def.node,
-                        schedule_pos: None,
-                        def_span: def.span,
-                        opcode: interner.opcode(name),
-                        opcode_span: opcode_start as u32..(opcode_start + name_len) as u32,
-                        inputs: refs[1..].to_vec(),
-                        uses: None,
-                        dead: false,
-                        targets: Vec::new(),
-                    };
-                    *last_node = Some(node.id);
-                    return LineInfo::Node(node);
-                }
+
+    // `phi: v6 = v8 v9` / `phi: [r9|R|w64] = v28 v29` — parallel phi rows;
+    // the destination is a def when it is a vreg.
+    if let Some(rest) = trimmed.strip_prefix("phi:") {
+        let (id, def_span, inputs) = match refs.split_first() {
+            Some((def, uses)) if rest.trim_start().starts_with('v') => {
+                (def.node, def.span.clone(), uses.to_vec())
             }
+            _ => (SCHEDULE_ONLY, start as u32..start as u32, refs),
+        };
+        if id != SCHEDULE_ONLY {
+            *last_node = Some(id);
+        }
+        return LineInfo::Node(IRNode {
+            id,
+            schedule_pos: None,
+            def_span,
+            opcode: interner.opcode("phi"),
+            opcode_span: start as u32..(start + 3) as u32,
+            inputs,
+            uses: None,
+            dead: false,
+            targets: Vec::new(),
+        });
+    }
+
+    // Def rows: `<dst> = Opcode …`. The destination is a vreg (`v28(=x0)`),
+    // a physical location (`[x3|R|w32]`), or a constant slot
+    // (`[constant:v32]`); the opcode is always right of the ` = ` (found in
+    // review: bracket destinations lost their opcode on ~14 % of post-RA
+    // rows and interned a bogus "insn").
+    if (trimmed.starts_with('v') || trimmed.starts_with('['))
+        && let Some(eq) = t.find(" = ")
+    {
+        let opcode_start = eq + 3;
+        let name_len = opcode_len(&t[opcode_start..]);
+        if name_len > 0 {
+            let name = &t[opcode_start..opcode_start + name_len];
+            // The destination defs only when it is itself a vreg.
+            let (id, def_span) = match refs.first() {
+                Some(r) if trimmed.starts_with('v') && (r.span.start as usize) == start => {
+                    (r.node, r.span.clone())
+                }
+                _ => (SCHEDULE_ONLY, start as u32..start as u32),
+            };
+            let inputs: Vec<NodeRef> = refs
+                .iter()
+                .filter(|r| id == SCHEDULE_ONLY || r.span != def_span)
+                .cloned()
+                .collect();
+            if id != SCHEDULE_ONLY {
+                *last_node = Some(id);
+            }
+            return LineInfo::Node(IRNode {
+                id,
+                schedule_pos: None,
+                def_span,
+                opcode: interner.opcode(name),
+                opcode_span: opcode_start as u32..(opcode_start + name_len) as u32,
+                inputs,
+                uses: None,
+                dead: false,
+                targets: Vec::new(),
+            });
         }
     }
-    // Instructions without a destination: `Arm64Poke #0 #1`, `Arm64Claim #2`,
-    // `ArchJmp [rpo_immediate:3]`, `Arm64Tst32 && deoptimize if not equal …`,
-    // `[constant:v30] = ArchNop`. Recognised by an opcode-shaped first token
-    // (or a bracketed destination), regardless of whether any vreg appears.
+
+    // Destination-less instructions: `Arm64Poke #0 #1`, `Arm64Claim #2`,
+    // `ArchJmp [rpo_immediate:3]`, `Arm64Tst32 && deoptimize if not equal …`.
+    // Corroborating structure is required — an architecture-prefixed opcode,
+    // a `&& branch/deoptimize` combo, or vreg operands behind an
+    // opcode-shaped token — because "any uppercase word" swallowed stray
+    // program output as fake IR (found in review).
     let name_len = opcode_len(trimmed);
     let opcode_like = name_len >= 2
         && trimmed
             .chars()
             .next()
             .is_some_and(|c| c.is_ascii_uppercase());
-    if !refs.is_empty() || opcode_like || trimmed.starts_with('[') {
+    let arch_like = [
+        "Arch", "Arm64", "X64", "IA32", "Riscv", "Mips", "Loong", "Ppc", "S390",
+    ]
+    .iter()
+    .any(|p| trimmed.starts_with(p));
+    if arch_like || t.contains(" && ") || (!refs.is_empty() && opcode_like) {
         return LineInfo::Node(IRNode {
             id: SCHEDULE_ONLY,
             schedule_pos: None,
@@ -719,6 +765,78 @@ mod tests {
         let jmp = node(&phase.infos[7]);
         assert_eq!(jmp.id, SCHEDULE_ONLY);
         assert_eq!(parsed.opcodes[jmp.opcode as usize], "ArchJmp");
+    }
+
+    /// Review C1/M3: bracket destinations carry the opcode right of ` = `;
+    /// phi rows parse; arbitrary prose does *not* become IR.
+    #[test]
+    fn instruction_edge_shapes() {
+        let (phase, parsed) = parse(
+            "Instruction sequence after register allocation",
+            &[
+                "          [x3|R|w32] = Arm64Asr32 [x2|R|t] #1",
+                "          [constant:v32] = ArchNop",
+                "          phi: v6 = v8 v9",
+                "          phi: [r9|R|w64] = v28 v29",
+                "Process memory usage:",
+                "Uncaught TypeError: x is not a function",
+            ],
+        );
+        let asr = node(&phase.infos[1]);
+        assert_eq!(asr.id, SCHEDULE_ONLY);
+        assert_eq!(
+            parsed.opcodes[asr.opcode as usize], "Arm64Asr32",
+            "bracket destinations must not lose the opcode"
+        );
+        let nop = node(&phase.infos[2]);
+        assert_eq!(parsed.opcodes[nop.opcode as usize], "ArchNop");
+        assert_eq!(
+            nop.inputs.iter().map(|r| r.node).collect::<Vec<_>>(),
+            vec![32]
+        );
+        let phi = node(&phase.infos[3]);
+        assert_eq!(phi.id, 6, "vreg destination is a def");
+        assert_eq!(parsed.opcodes[phi.opcode as usize], "phi");
+        assert_eq!(
+            phi.inputs.iter().map(|r| r.node).collect::<Vec<_>>(),
+            vec![8, 9]
+        );
+        assert_eq!(phase.defs[&6], 3);
+        let loc_phi = node(&phase.infos[4]);
+        assert_eq!(
+            loc_phi.id, SCHEDULE_ONLY,
+            "location destination defs nothing"
+        );
+        assert_eq!(
+            loc_phi.inputs.iter().map(|r| r.node).collect::<Vec<_>>(),
+            vec![28, 29]
+        );
+        assert!(
+            matches!(phase.infos[5], LineInfo::Annotation { .. }),
+            "prose is not IR: {:?}",
+            phase.infos[5]
+        );
+        assert!(matches!(phase.infos[6], LineInfo::Annotation { .. }));
+    }
+
+    #[test]
+    fn turboshaft_loop_header_and_schedule_parenless_rows() {
+        let (phase, _) = parse(
+            "V8.TFTurboshaftLoopUnrolling",
+            &["LOOP B2 <- B1, B4", "   12: JSStackCheck(#9, #7)[loop]"],
+        );
+        assert!(matches!(phase.infos[1], LineInfo::BlockHeader { block: 2 }));
+
+        let (phase, parsed) = parse(
+            "schedule",
+            &["  0: Start : Internal", "  33: Int32Constant[0]"],
+        );
+        let start = node(&phase.infos[1]);
+        assert_eq!(parsed.opcodes[start.opcode as usize], "Start");
+        assert!(start.inputs.is_empty());
+        let c = node(&phase.infos[2]);
+        assert_eq!(c.id, 33);
+        assert!(c.inputs.is_empty());
     }
 
     #[test]

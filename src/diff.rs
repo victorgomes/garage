@@ -451,7 +451,21 @@ impl DiffSide {
                         Key::Struct(h.finish())
                     }
                 }
-                _ => Key::Text(canonicalize(&line_text(input.buffer, row.line))),
+                _ => {
+                    let mut t = canonicalize(&line_text(input.buffer, row.line));
+                    // Schedule-only rows (gap moves, destination-less
+                    // instructions) carry a leading instruction index that
+                    // renumbers when anything is inserted; keying on it
+                    // turned before/after-RA diffs into walls of
+                    // delete+insert (found in review). Strip it.
+                    if matches!(info, Some(LineInfo::Node(_))) {
+                        let digits = t.bytes().take_while(|b| b.is_ascii_digit()).count();
+                        if digits > 0 && t[digits..].starts_with(": ") {
+                            t = t[digits + 2..].to_string();
+                        }
+                    }
+                    Key::Text(t)
+                }
             };
             side.keys.push(key);
         }

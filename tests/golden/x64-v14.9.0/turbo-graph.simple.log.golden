@@ -24,7 +24,7 @@ compilation 0 L1..1124 sfi=0x9b80101e069 tier=Turbofan ord=1 name="add"
   phase L771..888 "Instruction sequence after instruction selection" [graph]: 75 nodes, 10 blocks, 0 frame-lines, 0 annotations
   phase L888..1005 "Instruction sequence before register allocation" [graph]: 75 nodes, 10 blocks, 0 frame-lines, 0 annotations
   phase L1005..1124 "Instruction sequence after register allocation" [graph]: 75 nodes, 10 blocks, 0 frame-lines, 0 annotations
-  totals: 58 opcodes, 0 distinct frames
+  totals: 57 opcodes, 0 distinct frames
 compilation 1 L1124..3342 sfi=0x9b80101e069 tier=Turbofan ord=2 name="add"
   phase L1126..1145 "Graph after V8.TFBytecodeGraphBuilder" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
   phase L1145..1164 "Graph after V8.TFInlining" [graph]: 18 nodes, 0 blocks, 0 frame-lines, 0 annotations
@@ -49,6 +49,6 @@ compilation 1 L1124..3342 sfi=0x9b80101e069 tier=Turbofan ord=2 name="add"
   phase L2560..2820 "Instruction sequence after instruction selection" [graph]: 165 nodes, 25 blocks, 0 frame-lines, 0 annotations
   phase L2820..3080 "Instruction sequence before register allocation" [graph]: 165 nodes, 25 blocks, 0 frame-lines, 0 annotations
   phase L3080..3342 "Instruction sequence after register allocation" [graph]: 165 nodes, 25 blocks, 0 frame-lines, 0 annotations
-  totals: 67 opcodes, 0 distinct frames
+  totals: 66 opcodes, 0 distinct frames
 raw L0..1 "Concurrent recompilation has been disabled for tracing."
 raw L3342..3343 "704982704"

@@ -17,7 +17,15 @@ use super::maglev::line_text;
 use crate::model::{LineInfo, ParsedPhase, Span};
 use crate::source::LogBuffer;
 
-pub fn parse_listing_phase(buffer: &LogBuffer, lines: Range<usize>) -> ParsedPhase {
+pub fn parse_listing_phase(buffer: &LogBuffer, lines: Range<usize>, name: &str) -> ParsedPhase {
+    // Inside an `Instructions` phase every non-blank row is expected to be a
+    // disassembly row; anything else is *unrecognised* and must say so
+    // (found in review: degrading to Control made a parser regression
+    // invisible — rows just went dim, and the goldens could not falsify the
+    // coverage claim). The table phases (pools, safepoints, reloc, deopt
+    // data) are heterogeneous reference dumps, where Control is the honest
+    // classification.
+    let disasm_phase = name == "Instructions";
     let mut phase = ParsedPhase::default();
     for (offset, line) in lines.enumerate() {
         let text = line_text(buffer, line);
@@ -25,6 +33,9 @@ pub fn parse_listing_phase(buffer: &LogBuffer, lines: Range<usize>) -> ParsedPha
             LineInfo::Banner
         } else if let Some(info) = parse_disasm_row(&text) {
             info
+        } else if disasm_phase && !text.trim().is_empty() {
+            phase.annotation_count += 1;
+            LineInfo::Annotation { after_node: None }
         } else {
             LineInfo::Control
         };
@@ -95,14 +106,21 @@ fn parse_disasm_row(text: &str) -> Option<LineInfo> {
         .count();
     let mnemonic: Span = at as u32..(at + mnemonic_len) as u32;
 
-    // Branch target: arm64 `(addr 0x…)`, x64 ` <+0x…>`.
-    let target =
-        find_token(text, at, "(addr 0x", ")").or_else(|| find_token(text, at, "<+0x", ">"));
-
     // Reloc comment: `;; …` to end of line.
     let comment = text[at..]
         .find(";;")
         .map(|c| (at + c) as u32..text.trim_end().len() as u32);
+
+    // Branch target: arm64 `(addr 0x…)`, x64 ` <+0x…>` — searched only up to
+    // the comment, which can itself contain an `(addr 0x…)` that is not this
+    // row's target (found in review).
+    let operand_end = comment
+        .as_ref()
+        .map(|c| c.start as usize)
+        .unwrap_or(text.len());
+    let operands = &text[..operand_end];
+    let target =
+        find_token(operands, at, "(addr 0x", ")").or_else(|| find_token(operands, at, "<+0x", ">"));
 
     Some(LineInfo::Disasm {
         offset,

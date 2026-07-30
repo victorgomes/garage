@@ -579,6 +579,38 @@ regeneration, the three new formats parse with **zero** annotation
 
 ---
 
+### Phase 8 review pass  ✅ resolved
+
+An independent review (probe-tested against HEAD and all three builds)
+surfaced 15 findings (2 critical / 5 major / 8 minor); all resolved. The
+criticals: `[x3|R|w32] = Arm64Asr32 …` bracket-destination rows — ~14 %
+of post-RA instruction rows — lost their opcode to a bogus `insn`
+placeholder (the opcode now always comes from the right of ` = `, and
+`phi:` rows parse as phis); and TurboFan identity bound through the
+*name* of the first matching SFI object anywhere in the body, letting a
+same-named closure constant steal the identity — the scan now accepts
+only SFI objects on `FrameState` lines, is budget-bounded (an
+unidentifiable section costs O(5000 lines), not O(section)), and a
+section with no such line stays honestly unidentified. The majors:
+grouped mode no longer merges every sfi-less section into one bogus
+"function" (they list individually); the goldens now print
+`N disasm, M annotations` for listing phases and unmatched Instructions
+rows classify as annotations, making the coverage claim falsifiable;
+`--- Optimized code ---` anchors by itself (the Raw-source block is
+optional in V8's output); unidentified sections carry 1-based
+provisional ordinals instead of duplicate `#0` keys; and the
+uppercase-word instruction fallback no longer swallows stray program
+output as fake IR (corroborating structure required). Minors: the
+`FUNC` regex no longer crosses `>` boundaries; disasm branch-target
+search stops at the `;;` comment; `:phi`/`:spill` lenses know
+Turboshaft's `Phi`/`Goto` and TF's `gap (… [stack:…])` spelling; diff
+keys for schedule-only instruction rows drop the leading instruction
+index (before/after-RA diffs no longer cascade); `Finished compiling`
+only closes a section of its own tier and clears the code-section
+state; duplicate `Optimized code` headers cannot bump ordinals or
+rename (one-shot latches); and tests now pin every one of these shapes
+plus `LOOP` headers and paren-less schedule rows.
+
 ## Phase 9 (post-MVP): Source Alignment, Dual-Run & Live Mode
 
 - [ ] **9.1. Source resolution**: load `.js` when the script path resolves;

@@ -47,10 +47,14 @@ pub fn is_control_opcode(name: &str) -> bool {
         || name.starts_with("CheckpointedJump")
         || name.starts_with("Abort")
         || name.starts_with("Throw")
+        // Turboshaft's dominant control op (found in review: the :phi
+        // backbone lens showed no control flow on TurboFan dumps).
+        || name == "Goto"
 }
 
 pub fn is_phi_opcode(name: &str) -> bool {
-    name.starts_with('φ')
+    // Maglev prints φ/φᵀ; TurboFan and Turboshaft print Phi/phi.
+    name.starts_with('φ') || name == "Phi" || name == "phi"
 }
 
 /// A semantic viewport lens (TODO 6.2): the modeled view keeps only the
@@ -114,7 +118,11 @@ impl Lens {
             },
             Lens::Spill => {
                 let text = crate::parse::maglev::line_text(buffer, line);
-                text.contains("spill: ") || (text.contains("GapMove") && text.contains("[stack:"))
+                text.contains("spill: ")
+                    || (text.contains("GapMove") && text.contains("[stack:"))
+                    // TurboFan instruction sequences spell spills as gap
+                    // moves into stack slots (found in review).
+                    || (text.contains("gap (") && text.contains("[stack:"))
             }
             Lens::Megamorphic => {
                 let text = crate::parse::maglev::line_text(buffer, line);
