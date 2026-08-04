@@ -570,9 +570,8 @@ regeneration, the three new formats parse with **zero** annotation
   for function: name (0x… <SharedFunctionInfo …>)]` anchors with full
   identity (tier Ignition, real SFI, ordinals); the bytecode rows reuse the
   existing bytecode-array line parser; `Constant pool` / `Handler Table` /
-  `Source Position Table` open Listing phases — gated on the Ignition tier,
-  because the same header lines appear inside Turbolev bytecode dumps as
-  plain content (regression-tested).
+  `Source Position Table` are kept inside the single bytecode display
+  (regression-tested).
 - [ ] **8.4. (Optional) Turbolizer JSON import** (`--trace-turbo`) —
   deliberately skipped; it should be its own later phase. Nothing above
   depends on it.

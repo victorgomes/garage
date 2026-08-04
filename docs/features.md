@@ -288,7 +288,7 @@ Each feature entry explains:
 ## 5. Bytecode, Feedback Vectors & Disassembly Integration
 
 ### 5.1. Ignition Bytecode Array Viewer & Operand Cycling
-- **Purpose & What You Can See**: Parses generated Ignition bytecode arrays (`----- Bytecode array -----` or `--print-bytecode`), styling mnemonics, jump targets (`(0x... @ N)`), switch tables, and constant pool references (`[N: ...]`).
+- **Purpose & What You Can See**: Parses generated Ignition bytecode arrays (`----- Bytecode array -----` or `--print-bytecode`) as a **single contiguous display** (including constant pool, handler table, and source position table), styling mnemonics, jump targets (`(0x... @ N)`), switch tables, and constant pool references (`[N: ...]`).
 - **How to Enable**:
   - Automatically parsed when printed ahead of Maglev/TurboFan graphs.
   - Standalone Ignition invocation:

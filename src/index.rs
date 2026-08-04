@@ -135,21 +135,6 @@ fn code_subheader(text: &str) -> Option<&'static str> {
     }
 }
 
-/// `--print-bytecode` table headers, valid only inside an Ignition section —
-/// the same lines also appear inside Turbolev bytecode dumps, where they are
-/// plain phase content.
-fn pool_subheader(text: &str) -> Option<&'static str> {
-    if text.starts_with("Constant pool (size") {
-        Some("Constant pool")
-    } else if text.starts_with("Handler Table (size") {
-        Some("Handler Table")
-    } else if text.starts_with("Source Position Table (size") {
-        Some("Source Position Table")
-    } else {
-        None
-    }
-}
-
 /// Rule/`Begin compiling` lines seen but not yet attributed: whether they open
 /// the next compilation or close the current one depends on the line after
 /// them.
@@ -372,10 +357,6 @@ impl TraceIndex {
             if self.on_code_phase(i, name) {
                 return;
             }
-        } else if let Some(name) = pool_subheader(text) {
-            if self.on_pool_phase(i, name) {
-                return;
-            }
         }
 
         self.content(i, text.as_bytes());
@@ -595,20 +576,6 @@ impl TraceIndex {
         self.state = State::Idle { raw_since: None };
         self.code_section = None;
         self.awaiting_identity = None;
-        true
-    }
-
-    /// `--print-bytecode` table headers open Listing phases only inside an
-    /// Ignition section; inside a Turbolev bytecode dump they are content.
-    fn on_pool_phase(&mut self, i: usize, name: &str) -> bool {
-        let State::InCompilation { comp } = self.state else {
-            return false;
-        };
-        if self.compilations[comp].key.tier != Tier::Ignition {
-            return false;
-        }
-        self.pending = None;
-        self.open_phase(comp, i, name.to_string(), PhaseKind::Listing);
         true
     }
 
@@ -1980,15 +1947,7 @@ Parameter count 1
         assert_eq!(c.key.sfi, Addr(0x9b80101e2cd));
         assert_eq!(c.name, "add");
         let names: Vec<&str> = c.phases.iter().map(|p| p.name.as_str()).collect();
-        assert_eq!(
-            names,
-            [
-                "Bytecode array",
-                "Constant pool",
-                "Handler Table",
-                "Source Position Table"
-            ]
-        );
+        assert_eq!(names, ["Bytecode array"]);
         assert_eq!(idx.compilations[1].display_name(), "<toplevel>");
         assert_partition(&idx, 8);
 
