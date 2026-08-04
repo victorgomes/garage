@@ -68,6 +68,7 @@ Each feature entry explains:
   - [10.4. Full Mouse Interaction](#104-full-mouse-interaction)
   - [10.5. Fully Customizable TOML Keymap (`--config`, `config.toml`)](#105-fully-customizable-toml-keymap---config-configtoml)
   - [10.6. Dynamic Keymap Help Modal (`?`)](#106-dynamic-keymap-help-modal-)
+  - [10.7. Command-Palette Quitting (`:q`, `:quit`)](#107-command-palette-quitting-q-quit)
 
 ---
 
@@ -548,3 +549,9 @@ Lenses filter the modeled IR or bytecode viewport down to a structural skeleton 
   - Press `?` (`Action::Help`) to open the help modal.
   - Press `j` / `k` or `↑` / `↓` to scroll the help text.
   - Press `Esc`, `?`, or `q` to close the modal.
+
+### 10.7. Command-Palette Quitting (`:q`, `:quit`)
+- **Purpose & What You Can See**: Allows exiting `garage` from the command palette (`:q` or `:quit`), providing familiar vim-style quitting alongside the standard `q` and `Ctrl+c` keybindings.
+- **How to Enable**: Available at all times.
+- **Actions in Garage**:
+  - Press `:`, type `q` or `quit`, and press `Enter` to quit `garage`.

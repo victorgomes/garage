@@ -127,6 +127,7 @@ candidates):
 | `:megamorphic` | lens: megamorphic feedback and slow-path ICs |
 | `:function <re>` | filter the sidebar (same as `f`) |
 | `:copy`, `:export <file>` | clipboard / Markdown export |
+| `:q`, `:quit` | quit |
 | `:clear` | drop the lens and the timeline narrowing |
 
 A lens filters the modeled view down to the banner/block skeleton plus

@@ -123,6 +123,8 @@ pub const COMMANDS: &[(&str, &str)] = &[
     ("function", "filter the sidebar to <regex>"),
     ("megamorphic", "lens: megamorphic feedback and ICs"),
     ("phi", "lens: control/phi backbone"),
+    ("q", "quit"),
+    ("quit", "quit"),
     ("spill", "lens: regalloc spills and reloads"),
     ("timeline", "toggle the timeline view"),
 ];
@@ -1551,6 +1553,7 @@ impl App {
         };
         match name {
             "" => self.status = "empty command".to_string(),
+            "q" | "quit" => self.quit = true,
             "checks" => self.toggle_lens(Lens::Checks),
             "phi" => self.toggle_lens(Lens::Phi),
             "spill" => self.toggle_lens(Lens::Spill),
@@ -4487,6 +4490,25 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
             app.status
         );
         assert!(app.input.is_none());
+    }
+
+    #[test]
+    fn command_palette_q_and_quit() {
+        let mut app = app_with(EVENTS_TRACE);
+        app.follow = false;
+        key(&mut app, KeyCode::Char(':'));
+        key(&mut app, KeyCode::Char('q'));
+        key(&mut app, KeyCode::Enter);
+        assert!(app.quit);
+
+        let mut app = app_with(EVENTS_TRACE);
+        app.follow = false;
+        key(&mut app, KeyCode::Char(':'));
+        for c in "quit".chars() {
+            key(&mut app, KeyCode::Char(c));
+        }
+        key(&mut app, KeyCode::Enter);
+        assert!(app.quit);
     }
 
     #[test]
