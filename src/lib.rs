@@ -1,7 +1,7 @@
 //! `garage` — a terminal UI for V8 trace output.
 //!
 //! Split into a library and a thin binary so the parsers can be tested without
-//! a terminal. The golden-file suite over `fixtures/` (TODO 2.7) is the reason
+//! a terminal. The golden-file suite over `fixtures/` is the reason
 //! this matters: those tests need the parsing half and none of the UI half.
 
 pub mod ansi;

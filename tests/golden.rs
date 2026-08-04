@@ -1,4 +1,4 @@
-//! Golden-file tests over the Phase 0 fixture corpus (TODO 2.7, folding in
+//! Golden-file tests over the Phase 0 fixture corpus
 //! 0.7).
 //!
 //! For every fixture whose `manifest.json` entry is `"reproducible": true` —
@@ -17,7 +17,7 @@
 //!
 //! - sections partition the file: no line is dropped or double-counted
 //!   (PLAN principle 1),
-//! - indexing + parsing never panics (TODO 2.6; the real fuzz pass is 5.4).
+//! - indexing + parsing never panics.
 
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
@@ -168,8 +168,8 @@ fn summarize(buffer: &LogBuffer, idx: &TraceIndex) -> String {
             let detail = match stats {
                 Some(st) if matches!(phase.kind, PhaseKind::Listing) => {
                     // Evidence for the Phase 8 coverage claim: disassembly
-                    // rows recognised (with resolved branch destinations —
-                    // TODO 8.9), and unrecognised rows counted.
+                    // rows recognised (with resolved branch destinations),
+                    // and unrecognised rows counted.
                     let disasm = st
                         .infos
                         .iter()
@@ -197,7 +197,7 @@ fn summarize(buffer: &LogBuffer, idx: &TraceIndex) -> String {
                 Some(st)
                     if matches!(phase.kind, PhaseKind::Bytecode | PhaseKind::Inlining { .. }) =>
                 {
-                    // Evidence for the TODO 8.5 coverage claim: bytecode rows
+                    // Evidence for the coverage claim: bytecode rows
                     // recognised with their operand refs, pool entries and
                     // feedback slots classified (by IC state).
                     let (mut rows, mut jumps, mut fbv, mut pools) = (0, 0, 0, 0);
@@ -503,7 +503,7 @@ fn every_fixture_partitions_and_never_panics() {
     }
 }
 
-/// TODO 2.8's golden requirement in test form: the volatile `[ML:<id>]` prefix
+/// golden requirement in test form: the volatile `[ML:<id>]` prefix
 /// must not be load-bearing — the same workload with and without ids yields
 /// identical inlining decisions.
 #[test]
@@ -541,7 +541,7 @@ fn inline_decisions_do_not_depend_on_the_id_prefix() {
     );
 }
 
-/// A bounded random fuzz pass (TODO 5.4): many seeds, mutations of real
+/// A bounded random fuzz pass: many seeds, mutations of real
 /// fixture data — byte flips, splices, truncations — plus pure noise. Every
 /// input must index into a valid partition and parse without panicking.
 /// (A coverage-guided fuzzer would be better; this is the always-on floor.)
@@ -607,7 +607,7 @@ fn fuzz_mutated_fixtures_never_panic() {
     }
 }
 
-/// Truncation and garbage must never panic the indexer or parser (TODO 2.6).
+/// Truncation and garbage must never panic the indexer or parser.
 #[test]
 fn truncated_and_garbage_input_is_survivable() {
     let path = fixtures_root().join("arm64-v15.2.0/maglev-graphs.simple.log");

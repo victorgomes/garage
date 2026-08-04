@@ -1,4 +1,4 @@
-//! Keymap and config-file handling (TODO 3.5).
+//! Keymap and config-file handling.
 //!
 //! One coherent, remappable keymap (PLAN §3.5): the defaults are PLAN §8
 //! verbatim, and `~/.config/garage/config.toml` (or `--config <path>`) can
@@ -125,7 +125,7 @@ impl Action {
     pub fn describe(self) -> &'static str {
         match self {
             Action::Quit => "quit",
-            Action::Back => "back / unfocus / quit",
+            Action::Back => "back / unfocus",
             Action::Help => "this help",
             Action::Up => "move up",
             Action::Down => "move down",

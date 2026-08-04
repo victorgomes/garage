@@ -1,4 +1,4 @@
-//! Non-graph listing phases (TODO 8.2/8.3): `--print-opt-code` sections and
+//! Non-graph listing phases: `--print-opt-code` sections and
 //! `--print-bytecode` tables.
 //!
 //! The only structured rows here are disassembly lines,
@@ -28,7 +28,7 @@ pub fn parse_listing_phase(buffer: &LogBuffer, lines: Range<usize>, name: &str) 
     let disasm_phase = name == "Instructions";
     // An Ignition dump's constant pool is its own Listing phase; its entry
     // rows resolve the `[N:…]` operands of the bytecode phase above
-    // (TODO 8.5), so they get the same classification as in Maglev dumps.
+    //, so they get the same classification as in Maglev dumps.
     let pool_phase = name == "Constant pool";
     // The `--- Raw source ---` block is JavaScript, not trace furniture —
     // its lines get JS token styling at render time.
@@ -57,7 +57,7 @@ pub fn parse_listing_phase(buffer: &LogBuffer, lines: Range<usize>, name: &str) 
         phase.infos.push(info);
     }
 
-    // Label pass (TODO 8.9): every branch destination in the listing gets
+    // Label pass: every branch destination in the listing gets
     // `labeled` — the de-facto basic-block leaders the view marks and
     // `[`/`]` walk. Both target forms count; each resolves within this
     // phase only.
@@ -172,7 +172,7 @@ fn parse_disasm_row(text: &str) -> Option<LineInfo> {
 
     // Resolve the target token to a code offset (`<+0x71>`) or an absolute
     // address (`(addr 0x170000214)`) — the two forms V8's disassemblers
-    // print; either finds the destination row (TODO 8.9).
+    // print; either finds the destination row.
     let (mut target_offset, mut target_addr) = (None, None);
     if let Some(span) = &target {
         let token = &text[span.start as usize..span.end as usize];

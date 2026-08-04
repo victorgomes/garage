@@ -2,14 +2,14 @@
 //!
 //! Two panes — sidebar and viewport — with a focus model instead of modes:
 //! `h`/`l` move focus, movement keys act on the focused pane, and every
-//! binding resolves through the remappable [`Keymap`] (TODO 3.5). The one real
+//! binding resolves through the remappable [`Keymap`]. The one real
 //! mode is the input line (`/` search, `f` filter), which captures keys until
 //! Enter or Esc.
 //!
 //! The viewport cursor is a **display row**, not a buffer line: folding (4.2)
 //! and annotation collapsing (4.8) mean the visible rows are not a contiguous
 //! line range. [`App::view_model`] builds the row list for the selected
-//! section — and, for compilations, triggers the lazy parse (TODO 2.3) whose
+//! section — and, for compilations, triggers the lazy parse whose
 //! results drive styling, def-use highlighting, and node jumps.
 
 use std::collections::{HashMap, HashSet};
@@ -57,7 +57,7 @@ pub struct Source {
 pub enum Pane {
     Sidebar,
     Viewport,
-    /// The JS source alignment pane (TODO 9.2), when open.
+    /// The JS source alignment pane, when open.
     Source,
 }
 
@@ -96,7 +96,7 @@ pub enum Row {
         phase: usize,
     },
     Raw(usize),
-    /// Timeline mode: one row per [`TimelineEvent`] (TODO 6.3).
+    /// Timeline mode: one row per [`TimelineEvent`].
     Event(usize),
 }
 
@@ -105,9 +105,9 @@ pub enum Row {
 pub enum Prompt {
     Search,
     Filter,
-    /// `E`: filename to export the current view to (TODO 5.3).
+    /// `E`: filename to export the current view to.
     Export,
-    /// `:` — the command palette (TODO 6.1).
+    /// `:` — the command palette.
     Command,
 }
 
@@ -134,7 +134,7 @@ pub struct InputLine {
 }
 
 /// What a `u`/`i` cycle is anchored to: a graph node, or one of the
-/// bytecode-listing identities (TODO 8.5) — a bytecode offset, a
+/// bytecode-listing identities — a bytecode offset, a
 /// feedback-vector slot, a constant-pool entry.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Anchor {
@@ -147,7 +147,7 @@ enum Anchor {
     /// A schedule-only row with block targets (`Gap`/parenless schedule
     /// rows): no node id to anchor on, so the buffer line is the identity.
     Line(usize),
-    /// A disassembly row, anchored on its code offset (TODO 8.9).
+    /// A disassembly row, anchored on its code offset.
     Insn(u32),
 }
 
@@ -190,7 +190,7 @@ struct Jump {
     line: usize,
 }
 
-/// Split orientation (TODO 7.1). `Vertical` = side by side (the diff shape),
+/// Split orientation. `Vertical` = side by side (the diff shape),
 /// `Horizontal` = stacked.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SplitDir {
@@ -221,12 +221,12 @@ pub enum SrcRef {
     FnLine(u32),
 }
 
-/// buffer line → source ref, for one compilation (TODO 9.2).
+/// buffer line → source ref, for one compilation.
 pub struct SourceMap {
     pub of_row: HashMap<usize, SrcRef>,
 }
 
-/// The JS source alignment pane (TODO 9.1/9.2): the resolved `.js` file, or
+/// The JS source alignment pane: the resolved `.js` file, or
 /// the compilation's embedded `Raw source` block as the fallback.
 pub struct SourcePane {
     pub title: String,
@@ -265,7 +265,7 @@ pub struct App {
     pub sources: Vec<Source>,
     pub active: usize,
     pub focus: Pane,
-    /// Sidebar mode: chronological ⇄ grouped-by-function (TODO 3.3).
+    /// Sidebar mode: chronological ⇄ grouped-by-function.
     pub grouped: bool,
     pub selected: usize,
     pub sidebar_scroll: usize,
@@ -289,13 +289,13 @@ pub struct App {
     pub function_filter: Option<Regex>,
 
     // Phase 4 state.
-    /// Folded basic blocks; persisted across navigation (TODO 4.2).
+    /// Folded basic blocks; persisted across navigation.
     folded_blocks: HashSet<FoldKey>,
-    /// `t`: show trace annotations inline instead of folded (TODO 4.8).
+    /// `t`: show trace annotations inline instead of folded.
     pub show_annotations: bool,
-    /// The committed search pattern (TODO 4.6).
+    /// The committed search pattern.
     pub search: Option<Regex>,
-    /// Sidebar quick filter (TODO 4.7).
+    /// Sidebar quick filter.
     pub sidebar_filter: Option<Regex>,
     /// Active input line, if any.
     pub input: Option<InputLine>,
@@ -305,28 +305,28 @@ pub struct App {
     cycle: Option<Cycle>,
 
     // Phase 6 state.
-    /// Timeline mode: the sidebar lists events instead of sections (TODO 6.3).
+    /// Timeline mode: the sidebar lists events instead of sections.
     pub timeline: bool,
     /// The other mode's selection, restored when toggling back.
     timeline_selected: usize,
     /// `:deopts`: timeline narrowed to deopt events.
     pub timeline_deopts_only: bool,
-    /// Active semantic lens (TODO 6.2).
+    /// Active semantic lens.
     pub lens: Option<Lens>,
 
     // Phase 7 state.
-    /// Open split, if any (TODO 7.1).
+    /// Open split, if any.
     pub split: Option<SplitDir>,
     /// The inactive pane's parked view state (meaningful only when split).
     pub other_view: ViewState,
     /// Which physical pane (0 = left/top, 1 = right/bottom) the flat fields
     /// currently drive.
     pub active_pane: usize,
-    /// Phase diff mode (TODO 7.4); requires a split.
+    /// Phase diff mode; requires a split.
     pub diff: bool,
     /// Aligned model cache: recomputed only when a side changes.
     diff_cache: Option<(DiffKey, std::sync::Arc<crate::diff::DiffModel>)>,
-    /// Dual-run diff (TODO 9.3): `((src, comp, phase), (src, comp, phase))`
+    /// Dual-run diff: `((src, comp, phase), (src, comp, phase))`
     /// pinned by `D`, overriding the pane-derived pair while set.
     dual: Option<(DualSide, DualSide)>,
 
@@ -450,7 +450,7 @@ impl App {
         let mut rows = Vec::new();
 
         if timeline {
-            // Timeline mode (TODO 6.3): one row per event, ordinal order —
+            // Timeline mode: one row per event, ordinal order —
             // which is stream order, because the indexer records them in one
             // pass.
             for (i, e) in idx.events.iter().enumerate() {
@@ -622,7 +622,7 @@ impl App {
 
     /// What the viewport shows for a selected timeline event: for a deopt,
     /// the whole bailout block (through the matching `[bailout end]` — under
-    /// `--trace-deopt-verbose` that is the frame-unwinding dump, TODO 6.5);
+    /// `--trace-deopt-verbose` that is the frame-unwinding dump);
     /// for anything else, the enclosing section as context. Ranges are capped
     /// to the enclosing section so an interleaved stream cannot leak another
     /// section into the panel.
@@ -674,7 +674,7 @@ impl App {
         None
     }
 
-    /// The node defined on the cursor row, for tracking and jumps (TODO 4.3).
+    /// The node defined on the cursor row, for tracking and jumps.
     /// Schedule-only lines (GapMove & co) share the [`SCHEDULE_ONLY`]
     /// sentinel and define nothing — treating them as "a node" once
     /// highlighted every gap move on screen at the same time.
@@ -842,7 +842,7 @@ impl App {
             return;
         }
 
-        // The inlining panel (TODO 9.5) owns navigation while open; any
+        // The inlining panel owns navigation while open; any
         // other key closes it.
         if let Some(sel) = self.inline_panel {
             let decisions = self.inline_decisions();
@@ -882,8 +882,6 @@ impl App {
                     self.focus = Pane::Viewport;
                 } else if self.focus == Pane::Viewport {
                     self.focus = Pane::Sidebar;
-                } else {
-                    self.quit = true;
                 }
             }
             Action::Help => self.help = true,
@@ -1053,7 +1051,7 @@ impl App {
     }
 
     /// `I`: the inlining-decisions panel for the current compilation
-    /// (TODO 9.5) — every ⚡ INLINE / ❌ SKIP the trace recorded, with its
+    /// — every ⚡ INLINE / ❌ SKIP the trace recorded, with its
     /// reason; Enter jumps to the decision line.
     fn toggle_inline_panel(&mut self) {
         if self.inline_panel.take().is_some() {
@@ -1138,7 +1136,7 @@ impl App {
                 }
             }
             KeyCode::Tab if input.prompt == Prompt::Command => {
-                // Completion (TODO 6.1): extend to the longest common prefix
+                // Completion: extend to the longest common prefix
                 // of the matching commands; unique match completes fully. The
                 // candidate list itself is rendered live in the status line.
                 let typed = input.buffer.clone();
@@ -1330,7 +1328,7 @@ impl App {
     }
 
     // -----------------------------------------------------------------------
-    // Folding (TODO 4.2)
+    // Folding
     // -----------------------------------------------------------------------
 
     /// `Space`: fold/unfold the block containing the cursor.
@@ -1459,7 +1457,7 @@ impl App {
     }
 
     // -----------------------------------------------------------------------
-    // Search (TODO 4.6)
+    // Search
     // -----------------------------------------------------------------------
 
     /// `n`/`N`: move the cursor to the next/previous display row whose text
@@ -1540,7 +1538,7 @@ impl App {
     }
 
     // -----------------------------------------------------------------------
-    // Command palette (TODO 6.1, 6.2)
+    // Command palette
     // -----------------------------------------------------------------------
 
     /// Executes one committed `:` command. The status line is the message
@@ -1670,7 +1668,7 @@ impl App {
     }
 
     // -----------------------------------------------------------------------
-    // Timeline & the deopt→graph jump (TODO 6.3, 6.4)
+    // Timeline & the deopt→graph jump
     // -----------------------------------------------------------------------
 
     /// `Tab`: compilation list ⇄ timeline. Each mode keeps its own selection.
@@ -1928,7 +1926,7 @@ impl App {
     }
 
     // -----------------------------------------------------------------------
-    // Splits & phase diff (TODO 7.1, 7.4)
+    // Splits & phase diff
     // -----------------------------------------------------------------------
 
     /// Snapshot of the live (active-pane) view fields.
@@ -2028,7 +2026,7 @@ impl App {
         }
     }
 
-    /// `d`: toggle phase diff mode (TODO 7.4). Without a split it picks the
+    /// `d`: toggle phase diff mode. Without a split it picks the
     /// obvious pair itself: on a phase row, the previous graph phase vs this
     /// one; on a compilation row, first vs last graph phase — J1's "what did
     /// the pipeline do" in one keystroke.
@@ -2233,7 +2231,7 @@ impl App {
     }
 
     /// `D`: diff this function against its compilation in the *other* run
-    /// (TODO 9.3). Matching is by name and tier (SFI addresses are not
+    /// Matching is by name and tier (SFI addresses are not
     /// comparable across runs; the node-identity diff already matches
     /// cross-compilation by structural hash). On a phase row the same-named
     /// phase is preferred on the other side; otherwise both sides use their
@@ -2335,12 +2333,12 @@ impl App {
     }
 
     // -----------------------------------------------------------------------
-    // Node jumps (TODO 4.5)
+    // Node jumps
     // -----------------------------------------------------------------------
 
     /// The `u`/`i` anchor under the cursor: a node, or — in bytecode
     /// listings — a bytecode row, a feedback-vector slot, or a constant-pool
-    /// entry (TODO 8.5).
+    /// entry.
     fn cursor_anchor(&self, vm: &ViewModel) -> Option<Anchor> {
         if let Some(node) = self.cursor_node(vm) {
             return Some(Anchor::Node(node.id));
@@ -2434,7 +2432,7 @@ impl App {
             }
             Anchor::Insn(o) => {
                 // The branch destination of this disassembly row, resolved
-                // through either target form (TODO 8.9).
+                // through either target form.
                 let phase = &parsed.phases[p];
                 let Some((to_off, to_addr)) = phase.infos.iter().find_map(|info| match info {
                     LineInfo::Disasm {
@@ -2471,7 +2469,7 @@ impl App {
         self.cycle_jump(anchor, targets, what);
     }
 
-    /// `u`: cycle through the consumers of the cursor anchor (TODO 4.5). For
+    /// `u`: cycle through the consumers of the cursor anchor. For
     /// a node these are its users; for a bytecode offset, the jumps that
     /// target it; for a feedback slot or pool entry, the bytecode rows whose
     /// operands reference it. The cycle stays anchored to where it started.
@@ -2682,7 +2680,7 @@ impl App {
         let len = vm.len();
         // In a disassembly listing the branch destinations are the block
         // leaders — `[`/`]` stop on them the way they stop on `Block bN`
-        // headers in a graph (TODO 8.9).
+        // headers in a graph.
         let block_at = |idx: usize| -> Option<String> {
             let row = vm.row(idx)?;
             if let RowKind::BlockFold { block, .. } = row.kind {
@@ -2797,7 +2795,7 @@ impl App {
     }
 
     // -----------------------------------------------------------------------
-    // Source alignment (TODO 9.1 / 9.2)
+    // Source alignment
     // -----------------------------------------------------------------------
 
     /// The compilation the current view shows, if it is a modeled one.
@@ -3141,7 +3139,7 @@ impl App {
     }
 
     // -----------------------------------------------------------------------
-    // Jump history (TODO 4.5)
+    // Jump history
     // -----------------------------------------------------------------------
 
     /// History entries store **buffer lines**, not display rows: a jump can
@@ -3206,7 +3204,7 @@ impl App {
     }
 
     // -----------------------------------------------------------------------
-    // Clipboard and export (TODO 5.2, 5.3)
+    // Clipboard and export
     // -----------------------------------------------------------------------
 
     /// A short description of what the viewport is showing, for export
@@ -4301,14 +4299,15 @@ Handler Table (size = 0)
     }
 
     #[test]
-    fn esc_backs_out_of_viewport_then_quits() {
+    fn esc_backs_out_of_viewport_but_does_not_quit() {
         let mut app = app_with(TRACE);
         app.focus = Pane::Viewport;
         key(&mut app, KeyCode::Esc);
         assert_eq!(app.focus, Pane::Sidebar);
         assert!(!app.quit);
         key(&mut app, KeyCode::Esc);
-        assert!(app.quit);
+        assert_eq!(app.focus, Pane::Sidebar);
+        assert!(!app.quit);
     }
 
     fn mouse(app: &mut App, kind: MouseEventKind, column: u16, row: u16) {

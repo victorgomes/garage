@@ -1,11 +1,11 @@
-//! Command-line parsing (TODO 1.3).
+//! Command-line parsing.
 //!
 //! Three invocation shapes:
 //!
 //! ```text
 //! garage trace.log [more.log ...]     # files
 //! d8 ... | garage                     # stdin is the data pipe
-//! garage -- d8 --print-maglev-graphs x.js   # wrapper mode (TODO 9.4)
+//! garage -- d8 --print-maglev-graphs x.js   # wrapper mode
 //! ```
 //!
 //! The third one is why argv is split by hand before clap sees it. clap treats

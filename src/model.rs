@@ -1,4 +1,4 @@
-//! Core data model (TODO 2.1).
+//! Core data model.
 //!
 //! Two layers, deliberately separate:
 //!
@@ -7,8 +7,7 @@
 //!   parsing bodies: byte/line ranges and the boundary-line fields. This is
 //!   what makes a 1 GB file open instantly (PLAN §3.3).
 //! - **Parse-time types** ([`ParsedCompilation`], [`ParsedPhase`], [`IRNode`],
-//!   [`DeoptFrame`]) exist only for compilations someone actually viewed
-//!   (TODO 2.3).
+//!   [`DeoptFrame`]) exist only for compilations someone actually viewed.
 //!
 //! `IRNode` separates *identity* (`nN`, stable across phases — what makes the
 //! phase diff feasible without Turbolizer JSON) from *per-phase rendering*
@@ -185,8 +184,7 @@ pub struct RawSection {
 }
 
 /// A single-line lifecycle event (`--trace-opt`, `--trace-deopt`,
-/// `--trace-osr`). Timeline *UI* is Phase 6; the data is cheap to keep now
-/// (TODO 2.5).
+/// `--trace-osr`). Timeline *UI* is Phase 6; the data is cheap to keep now.
 #[derive(Debug, Clone)]
 pub struct TimelineEvent {
     pub line: usize,
@@ -269,8 +267,7 @@ pub const SCHEDULE_ONLY: NodeId = u32::MAX;
 pub type BlockId = u32;
 
 /// A reference to a node inside a line, with the span of the `nN` token in the
-/// *stripped* text of that line — the coordinates the styled view works in
-/// (TODO 4.4 highlights these spans).
+/// *stripped* text of that line — the coordinates the styled view works in.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NodeRef {
     pub node: NodeId,
@@ -339,7 +336,7 @@ pub struct BytecodeRow {
     pub primary: bool,
     /// The `NNN S>` / `NNN E>` source marker, when the dump prints one: a
     /// character offset into the script — the fine-grained anchor the
-    /// alignment pane uses (TODO 9.2). Absent when the function's source
+    /// alignment pane uses. Absent when the function's source
     /// position table was never collected.
     pub src_pos: Option<u32>,
 }
@@ -396,7 +393,7 @@ pub struct DeoptFrame {
 
 /// One classified line of a parsed phase. Every line of the phase's range gets
 /// exactly one of these — nothing is dropped, unmatched lines become
-/// [`LineInfo::Annotation`] (TODO 2.8).
+/// [`LineInfo::Annotation`].
 #[derive(Debug, Clone)]
 pub enum LineInfo {
     /// The `----- … -----` banner itself.
@@ -454,7 +451,7 @@ pub enum LineInfo {
     /// `0x1700001bc  1c  540002c9  b.ls #+0x58 (addr 0x170000214)  ;; comment`.
     /// Spans style what V8 itself emitted — no decoding is promised beyond
     /// that (PLAN §7.6 feasibility note). The resolved target fields give
-    /// assembly the same def-use navigation as graphs (TODO 8.9): arm64
+    /// assembly the same def-use navigation as graphs: arm64
     /// prints absolute `(addr 0x…)` targets, x64 prints `<+0x…>` code
     /// offsets, so both forms are kept and either resolves a row.
     Disasm {
@@ -482,7 +479,7 @@ pub enum LineInfo {
     /// code dump. Painted with a small JS tokenizer at render time; no
     /// spans are recorded here because the text is the structure.
     Source,
-    /// Anything unmatched: attached in place, never exiled (TODO 2.8).
+    /// Anything unmatched: attached in place, never exiled.
     Annotation { after_node: Option<NodeId> },
 }
 
@@ -514,7 +511,7 @@ pub struct InlineDecision {
     pub reason: String,
 }
 
-/// Everything lazy parsing produced for one compilation (TODO 2.3/2.4).
+/// Everything lazy parsing produced for one compilation.
 #[derive(Debug, Default)]
 pub struct ParsedCompilation {
     /// Interned opcode strings; `IRNode::opcode` indexes this.
@@ -533,7 +530,7 @@ pub struct ParsedCompilation {
     pub script_line: Option<u32>,
     /// `source_position = N` from an attached code dump: the function's
     /// character offset in the script — the base that aligns the embedded
-    /// `Raw source` text when the `.js` file cannot be resolved (TODO 9.1).
+    /// `Raw source` text when the `.js` file cannot be resolved.
     pub source_position: Option<u32>,
 }
 

@@ -1,4 +1,4 @@
-# Version-keyed Maglev phase-banner names (TODO 0.6, folded into 2.2).
+# Version-keyed Maglev phase-banner names.
 #
 # The banner *grammar* (`----- <name> -----`) is stable across versions and
 # shared with TurboFan; the *names* are not: every one of them changed between

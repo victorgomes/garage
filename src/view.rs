@@ -1,4 +1,4 @@
-//! The viewport's display list (TODO 4.2, 4.8).
+//! The viewport's display list.
 //!
 //! Folding means the viewport can no longer be "a contiguous range of buffer
 //! lines": a folded block collapses to one marker row, and annotation runs
@@ -57,7 +57,7 @@ pub fn is_phi_opcode(name: &str) -> bool {
     name.starts_with('φ') || name == "Phi" || name == "phi"
 }
 
-/// A semantic viewport lens (TODO 6.2): the modeled view keeps only the
+/// A semantic viewport lens: the modeled view keeps only the
 /// banner/block-header skeleton plus rows the lens matches. Deliberately a
 /// *filter* rather than pure highlighting — guards are already styled red by
 /// default, so the value of `:checks` is the count and the narrowed view, and
@@ -221,7 +221,7 @@ impl ViewModel {
     }
 }
 
-/// Fold state, keyed so it survives navigating away and back (TODO 4.2:
+/// Fold state, keyed so it survives navigating away and back (
 /// per-block persisted state).
 pub type FoldKey = (usize, usize, usize, BlockId); // (source, comp, phase, block)
 

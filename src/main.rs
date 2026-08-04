@@ -72,7 +72,7 @@ fn run() -> Result<()> {
 /// The three shapes from PLAN §4.1, in priority order: an explicit command,
 /// explicit files, or — the primary invocation — a pipe on stdin.
 fn choose_sources(invocation: &Invocation) -> Result<Vec<LogSource>> {
-    // Wrapper mode (TODO 9.4): spawn the command, stream its output live.
+    // Wrapper mode: spawn the command, stream its output live.
     if let Some(command) = &invocation.command {
         let argv: Vec<String> = command
             .iter()

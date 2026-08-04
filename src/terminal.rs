@@ -1,4 +1,4 @@
-//! Terminal lifecycle (TODO 1.6).
+//! Terminal lifecycle.
 //!
 //! Raw mode and the alternate screen are process-global side effects on the
 //! user's terminal. Leaving them set is the classic way a TUI ruins a shell
@@ -100,7 +100,7 @@ pub fn enter() -> Result<TerminalGuard> {
 /// back. `tcsetattr` is async-signal-safe; crossterm's restore is not.
 static SAVED_TERMIOS: std::sync::OnceLock<libc::termios> = std::sync::OnceLock::new();
 
-/// SIGINT / SIGTERM / SIGHUP: take the wrapped child down (TODO 9.4), put
+/// SIGINT / SIGTERM / SIGHUP: take the wrapped child down, put
 /// the terminal back, and die with the conventional code. Only
 /// async-signal-safe calls: kill(2), tcsetattr(3), write(2), _exit(2).
 /// SIGINT can only arrive from outside (`kill -INT`): raw mode disables

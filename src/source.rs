@@ -1,4 +1,4 @@
-//! Input abstraction and reader threads (TODO 1.4).
+//! Input abstraction and reader threads.
 //!
 //! Two ways bytes arrive, and they are genuinely different:
 //!
@@ -7,7 +7,7 @@
 //!   (PLAN §3.3) achievable at all.
 //! - **Stdin**: streamed in chunks, arriving over the life of the session.
 //!
-//! `Process` (wrapper mode) is TODO 9.4 and deliberately absent; the enum has
+//! `Process` (wrapper mode) is deliberately absent; the enum has
 //! room for it and nothing here assumes there are only two variants.
 //!
 //! Both feed the UI through one channel. Plain threads, no async runtime —
@@ -31,7 +31,7 @@ const CHUNK: usize = 64 * 1024;
 pub enum LogSource {
     File(PathBuf),
     Stdin,
-    /// Wrapper mode (TODO 9.4): `garage -- d8 …` spawns the command and
+    /// Wrapper mode: `garage -- d8 …` spawns the command and
     /// streams its output live.
     Command(Vec<String>),
 }
@@ -207,7 +207,7 @@ fn read_file(
     Ok(())
 }
 
-/// Wrapper mode (TODO 9.4): spawn the command with stdout and stderr both
+/// Wrapper mode: spawn the command with stdout and stderr both
 /// piped, and merge the two streams into one source in arrival order — the
 /// same interleaving a terminal would show, and the only merge that never
 /// stalls one stream behind the other. d8 prints traces on stdout and

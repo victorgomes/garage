@@ -101,7 +101,8 @@ Notes that save an afternoon:
 | `d` | phase diff mode |
 | `D` | dual-run diff: this function vs the other loaded trace |
 | `}` | next source (multi-file runs) |
-| `q`, `Esc` | quit / back |
+| `q`, `Ctrl+c` | quit |
+| `Esc` | back / unfocus |
 
 ## Timeline & commands
 

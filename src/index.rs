@@ -1,4 +1,4 @@
-//! The streaming section indexer (TODO 2.2) and timeline-event parser (2.5).
+//! The streaming section indexer and timeline-event parser.
 //!
 //! One pass over the line stream, finding section boundaries **without parsing
 //! bodies** — this is what makes a 1 GB file open instantly (PLAN §3.3). The
@@ -489,7 +489,7 @@ impl TraceIndex {
 
     /// `0x…: [Code]` — the Code heap object, as `--print-maglev-code` /
     /// `--print-code` emit it: no `--- Optimized code ---` furniture and no
-    /// `name = ` identity line, only `kind = `. Two homes (TODO 8.9):
+    /// `name = ` identity line, only `kind = `. Two homes:
     /// printed while its compilation is still open, it opens phases right
     /// there; printed after the trailer, it opens a dump section that the
     /// kind latch then merges back into the adjacent pipeline.
@@ -1053,7 +1053,7 @@ impl TraceIndex {
 
     /// A code dump printed right after the pipeline that produced it belongs
     /// to that compilation, as its last phases — `--print-maglev-graphs
-    /// --print-code` interleaves them per function (TODO 8.9, user request).
+    /// --print-code` interleaves them per function (user request).
     /// Merge is decided only once the dump's identity is complete, and only
     /// under the no-guessing rule: the sections must be adjacent (blank
     /// lines between them count as nothing) and agree on tier *and* name.
@@ -1524,7 +1524,7 @@ Finished compiling method add using TurboFan
     }
 
     /// `--print-maglev-graphs --print-code`: the code dump printed right
-    /// after a pipeline merges into it as its last phases (TODO 8.9) — but
+    /// after a pipeline merges into it as its last phases — but
     /// only when adjacent and agreeing on tier and name.
     #[test]
     fn adjacent_code_dump_merges_into_its_pipeline() {

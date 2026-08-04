@@ -1,4 +1,4 @@
-//! Clipboard (TODO 5.2) and export (TODO 5.3).
+//! Clipboard and export.
 //!
 //! Copy strategy per PLAN §7.9: over SSH or inside tmux, the only thing that
 //! can reach the *local* clipboard is OSC 52 — an escape sequence the
@@ -134,7 +134,7 @@ fn tmux_allows_passthrough() -> bool {
         .unwrap_or(false)
 }
 
-/// Writes the current view as Markdown (TODO 5.3): a fenced block with a
+/// Writes the current view as Markdown: a fenced block with a
 /// one-line provenance header, ready to paste into a bug or Gerrit comment.
 pub fn export(path: &std::path::Path, title: &str, lines: &[String]) -> Result<()> {
     let mut out = String::with_capacity(lines.iter().map(|l| l.len() + 1).sum::<usize>() + 128);

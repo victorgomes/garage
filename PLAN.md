@@ -405,7 +405,8 @@ Conflicts in v1 resolved: help is `?` only (`h` was double-bound); `s` added.
 | `f` | Filter sidebar entries |
 | `g` | (on deopt event) jump to guard/IR location |
 | `:` | Command palette |
-| `q` / `Esc` | Close / back / quit |
+| `q` / `Ctrl+c` | Quit |
+| `Esc` | Back / unfocus |
 
 All bindings remappable via config file (`~/.config/garage/config.toml`).
 

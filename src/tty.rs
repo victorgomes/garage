@@ -1,4 +1,4 @@
-//! Getting a working keyboard when stdin is the data pipe (TODO 1.5).
+//! Getting a working keyboard when stdin is the data pipe.
 //!
 //! `d8 --print-maglev-graphs x.js | garage` is the primary invocation in
 //! PLAN §9. In it stdin carries the trace, not keystrokes, so the keyboard has

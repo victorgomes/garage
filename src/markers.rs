@@ -1,4 +1,4 @@
-//! The version-keyed marker table (TODO 0.6 / 2.2).
+//! The version-keyed marker table.
 //!
 //! Phase-banner *names* are version-specific — every one changed between V8
 //! 14.9 and 15.2 — while the banner *grammar* is stable. The names live in

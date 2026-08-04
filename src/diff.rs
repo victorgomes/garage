@@ -1,4 +1,4 @@
-//! The diff engine (TODO 7.2, 7.3): canonicalizer + node-identity diff.
+//! The diff engine: canonicalizer + node-identity diff.
 //!
 //! PLAN §7.4's core correction stands: a raw Myers line diff of IR marks
 //! nearly everything as changed, because registers, schedule ids and value
@@ -8,10 +8,10 @@
 //!    keyed by their *identity* — the `nN` id when both sides belong to the
 //!    same compilation (Maglev preserves it across phases, the entire point
 //!    of `IRNode::id`), else a structural hash over the opcode and
-//!    canonically renumbered inputs (7.2's canonical renumbering).
+//!    canonically renumbered inputs.
 //! 2. **Align** the key sequences with `similar` (Myers). Equal keys pair
 //!    rows up; everything else becomes an insert or a delete. Non-node rows
-//!    are keyed by canonicalized text, which *is* the 7.3 line-diff fallback
+//!    are keyed by canonicalized text, which *is* the line-diff fallback
 //!    for unmatched regions — one aligner, two granularities.
 //! 3. **Judge** each matched node pair: opcode change, input change (raw or
 //!    merely *rerouted* through an `Identity` node), replacement by an
@@ -37,7 +37,7 @@ use crate::view::{ViewRow, model_rows};
 const MAX_IDENTITY_HOPS: usize = 64;
 
 // ---------------------------------------------------------------------------
-// Canonicalizer (TODO 7.2)
+// Canonicalizer
 // ---------------------------------------------------------------------------
 
 /// Strips run-volatile content from a line so two dumps of the same thing
@@ -114,7 +114,7 @@ pub fn canonicalize(text: &str) -> String {
 // Sides and keys
 // ---------------------------------------------------------------------------
 
-/// What one matched or unmatched diff row means (TODO 7.4). Ordered roughly
+/// What one matched or unmatched diff row means. Ordered roughly
 /// by how loudly the UI should announce it.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum RowStatus {
@@ -158,7 +158,7 @@ pub struct DiffSide {
     pub rows: Vec<ViewRow>,
     pub parsed: Arc<ParsedCompilation>,
     /// Which source this side's rows index into — the two sides of a
-    /// dual-run diff (TODO 9.3) read from different buffers.
+    /// dual-run diff read from different buffers.
     pub source: usize,
     keys: Vec<Key>,
     /// The node defined on each row, parallel to `rows` — how a
@@ -489,7 +489,7 @@ impl DiffSide {
 }
 
 // ---------------------------------------------------------------------------
-// The aligned model (TODO 7.3, 7.4)
+// The aligned model
 // ---------------------------------------------------------------------------
 
 /// One aligned row of the side-by-side view.
@@ -557,7 +557,7 @@ pub struct DiffModel {
     pub rows: Vec<DiffRow>,
     pub summary: Summary,
     /// Pane titles when the panes cannot describe themselves — the
-    /// dual-run diff (TODO 9.3), whose left side is another source.
+    /// dual-run diff, whose left side is another source.
     pub titles: Option<(String, String)>,
 }
 

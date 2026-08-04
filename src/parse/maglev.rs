@@ -1,8 +1,8 @@
-//! The Maglev graph parser (TODO 2.4, 2.6, 2.8).
+//! The Maglev graph parser.
 //!
 //! Line-oriented and total: every line of a compilation gets classified into
 //! exactly one [`LineInfo`], unmatched lines become positioned annotations
-//! (never dropped, never exiled — TODO 2.8), and no input can panic it. The
+//! (never dropped, never exiled), and no input can panic it. The
 //! parser works on ANSI-stripped text (spike-findings.md §1) and records
 //! *spans* into that text rather than re-rendered strings, because Phase 4
 //! styles the original line, not a reconstruction of it.
@@ -96,7 +96,7 @@ pub fn parse_compilation(buffer: &LogBuffer, section: &CompilationSection) -> Pa
 
     // An attached code dump's `source_position = N` is the function's char
     // offset in the script — the base that aligns the embedded Raw source
-    // fallback (TODO 9.1). It sits in the first few identity lines of the
+    // fallback. It sits in the first few identity lines of the
     // `Optimized code` phase.
     for section_phase in &section.phases {
         if section_phase.name != "Optimized code" {
@@ -201,7 +201,7 @@ enum DumpRegion {
     Feedback,
 }
 
-/// Parses a `Bytecode array` / `Inlining …` dump phase (TODO 8.5): bytecode
+/// Parses a `Bytecode array` / `Inlining …` dump phase: bytecode
 /// rows with their jump / feedback / constant-pool operands resolved,
 /// constant-pool entry rows, and feedback-vector slot headers. Everything
 /// else in the dump is expected reference content — Control, not annotation.
@@ -260,7 +260,7 @@ fn parse_bytecode_row(text: &str, primary: bool) -> Option<LineInfo> {
     let mut at = space_len(text, 0);
     // Optional source-position marker: digits, space(s), `S>` or `E>` — a
     // character offset into the script, the alignment pane's fine anchor
-    // (TODO 9.2). The address itself starts with the digit `0` (`0x…`), so
+    // The address itself starts with the digit `0` (`0x…`), so
     // an absent marker falls through rather than failing.
     let mut src_pos = None;
     if b.get(at).is_some_and(u8::is_ascii_digit) {
@@ -598,7 +598,7 @@ fn parse_graph_phase(
                 {
                     *same_script = script.is_some() && script == parsed.script;
                     // The main function's own anchor: first same-script
-                    // context with a real position (TODO 9.1).
+                    // context with a real position.
                     if *same_script && *l > 0 && parsed.script_line.is_none() {
                         parsed.script_line = Some(*l);
                     }

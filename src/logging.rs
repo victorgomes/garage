@@ -1,4 +1,4 @@
-//! File-based diagnostics (TODO 1.2).
+//! File-based diagnostics.
 //!
 //! Nothing may write to stdout or stderr while the alternate screen is up, so
 //! `tracing` goes to a file and only to a file. The subscriber is installed

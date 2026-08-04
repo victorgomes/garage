@@ -1,4 +1,4 @@
-//! TurboFan / Turboshaft phase parsers (`--trace-turbo-graph`, TODO 8.1).
+//! TurboFan / Turboshaft phase parsers (`--trace-turbo-graph`).
 //!
 //! One `Begin compiling method … using TurboFan` section carries **four**
 //! distinct body grammars, all measured in the corpus (both versions print

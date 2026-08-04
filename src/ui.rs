@@ -8,7 +8,7 @@
 //!
 //! The viewport paints per *span*, not per regex-on-view: token classes come
 //! from the parse (opcode/input/target spans recorded by Phase 2), def-use
-//! highlighting comes from the parsed graph's def/use maps (TODO 4.4), and
+//! highlighting comes from the parsed graph's def/use maps, and
 //! search matches overlay both. Styling is a per-byte class array per visible
 //! line, run-length encoded into ratatui spans — O(line length), no
 //! allocation proportional to the file.
@@ -30,7 +30,7 @@ const BAR_BG: Color = Color::Indexed(236);
 const DIM: Color = Color::Indexed(244);
 const ACCENT: Color = Color::Cyan;
 const CURSOR_BG: Color = Color::Indexed(237);
-/// Tint for source-alignment cross-highlights (TODO 9.2).
+/// Tint for source-alignment cross-highlights.
 const ALIGN_BG: Color = Color::Indexed(23);
 
 pub fn render(frame: &mut Frame, app: &mut App) {
@@ -52,7 +52,7 @@ pub fn render(frame: &mut Frame, app: &mut App) {
     let [sidebar, viewport] =
         Layout::horizontal([Constraint::Length(sidebar_width), Constraint::Min(1)]).areas(body);
 
-    // Pane areas: the split halves the viewport region (TODO 7.1).
+    // Pane areas: the split halves the viewport region.
     let (area0, area1) = match app.split {
         None => (viewport, None),
         Some(SplitDir::Vertical) => {
@@ -67,7 +67,7 @@ pub fn render(frame: &mut Frame, app: &mut App) {
         }
     };
 
-    // The source alignment pane (TODO 9.2) takes the right half; it and
+    // The source alignment pane takes the right half; it and
     // the v/s split are mutually exclusive (toggle enforces it).
     let (area0, src_area) = match (&app.source_pane, app.split, app.diff) {
         (Some(_), None, false) => {
@@ -116,7 +116,7 @@ pub fn render(frame: &mut Frame, app: &mut App) {
         app.cursor = vm.len().saturating_sub(1);
     }
 
-    // Alignment data (TODO 9.2): the trace cursor's source line, and — when
+    // Alignment data: the trace cursor's source line, and — when
     // the source pane is focused — the trace rows aligned with its cursor.
     let mut src_hl_line: Option<usize> = None;
     let mut aligned_rows: Option<HashSet<usize>> = None;
@@ -206,7 +206,7 @@ pub fn render(frame: &mut Frame, app: &mut App) {
 }
 
 // ---------------------------------------------------------------------------
-// Telemetry bar (TODO 3.2)
+// Telemetry bar
 // ---------------------------------------------------------------------------
 
 fn telemetry_bar(app: &App) -> Paragraph<'static> {
@@ -278,7 +278,7 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
     if deopts > 0 {
         stats.push_str(&format!(" · {deopts} deopts"));
     }
-    // Dual-run comparison (TODO 9.3): the other run's headline numbers,
+    // Dual-run comparison: the other run's headline numbers,
     // right next to this one's.
     if app.sources.len() > 1 {
         let other = (app.active + 1) % app.sources.len();
@@ -318,7 +318,7 @@ fn telemetry_bar(app: &App) -> Paragraph<'static> {
 }
 
 // ---------------------------------------------------------------------------
-// Sidebar (TODO 3.3, 4.7)
+// Sidebar
 // ---------------------------------------------------------------------------
 
 /// The strip left behind by a hidden sidebar: a dim rule with an accent `▸`
@@ -341,7 +341,7 @@ fn render_sidebar_strip(frame: &mut Frame, area: Rect) {
     frame.render_widget(Paragraph::new(lines), area);
 }
 
-/// The JS source alignment pane (TODO 9.1/9.2). Follows the trace cursor
+/// The JS source alignment pane. Follows the trace cursor
 /// (the aligned line stays centred) unless focused, where it scrolls on its
 /// own and Enter jumps back into the trace.
 fn render_source_pane(frame: &mut Frame, app: &mut App, area: Rect, hl: Option<usize>) {
@@ -459,7 +459,7 @@ fn render_sidebar(frame: &mut Frame, app: &mut App, area: Rect) {
     render_scrollbar(frame, area, app.sidebar_scroll, rows.len(), height);
 }
 
-/// A minimal proportional scrollbar on the right edge (TODO 3.3).
+/// A minimal proportional scrollbar on the right edge.
 fn render_scrollbar(frame: &mut Frame, area: Rect, scroll: usize, total: usize, height: usize) {
     if total <= height || height == 0 || area.width == 0 {
         return;
@@ -554,7 +554,7 @@ fn sidebar_row(app: &App, row: &Row, selected: bool, focused: bool) -> Line<'sta
             spans.push(Span::styled(label, Style::new().fg(DIM)));
         }
         Row::Event(i) => {
-            // Severity colours (TODO 6.3): deopts red, completions green,
+            // Severity colours: deopts red, completions green,
             // OSR yellow, bookkeeping dim.
             let event = &idx.events[*i];
             let style = match &event.kind {
@@ -588,7 +588,7 @@ fn sidebar_row(app: &App, row: &Row, selected: bool, focused: bool) -> Line<'sta
 }
 
 // ---------------------------------------------------------------------------
-// Token classes and palette (TODO 4.1)
+// Token classes and palette
 // ---------------------------------------------------------------------------
 
 /// How many distinct control-flow track colours before they cycle.
@@ -623,7 +623,7 @@ enum Class {
     SearchHl,
 }
 
-/// Colour-depth detection (TODO 4.1): 256-colour indexes where available,
+/// Colour-depth detection: 256-colour indexes where available,
 /// named ANSI colours otherwise. Truecolor terminals accept both.
 #[derive(Debug, Clone, Copy)]
 pub struct Palette {
@@ -784,7 +784,7 @@ const JS_KEYWORDS: &[&str] = &[
     "yield",
 ];
 
-/// A deliberately small JS tokenizer for the `Raw source` block (TODO 8.10):
+/// A deliberately small JS tokenizer for the `Raw source` block:
 /// keywords, strings, numbers and line comments — enough to read the code,
 /// not a grammar. Per line only: a `/* … */` spanning lines styles as code
 /// on the following lines, which V8's one-function dumps rarely contain.
@@ -842,7 +842,7 @@ fn paint_js(text: &str, paint: &mut [Class]) {
 
 /// Shape-based styling for lines the graph parser never sees — raw sections,
 /// which is where lifecycle events and the `--trace-deopt-verbose` frame
-/// dumps live (TODO 6.5). Display-only: a stray program line that happens to
+/// dumps live. Display-only: a stray program line that happens to
 /// match one of these shapes just picks up a harmless colour.
 fn raw_line_class(text: &str) -> Option<Class> {
     let t = text.trim_start();
@@ -884,13 +884,13 @@ fn raw_line_class(text: &str) -> Option<Class> {
     None
 }
 
-/// The cursor node's def-use context (TODO 4.4), computed once per frame.
+/// The cursor node's def-use context, computed once per frame.
 struct DefUse {
     node: NodeId,
     inputs: HashSet<NodeId>,
 }
 
-/// Cursor-linked highlighting for bytecode listings (TODO 8.5), the def-use
+/// Cursor-linked highlighting for bytecode listings, the def-use
 /// overlay's counterpart. When the cursor sits on a bytecode row, the rows
 /// its operands point at light up; when it sits on a feedback slot, pool
 /// entry, or jump-target row, the operands referencing it light up.
@@ -904,7 +904,7 @@ struct BcHl {
     def_offset: Option<u32>,
     def_slot: Option<u32>,
     def_pool: Option<u32>,
-    /// Disassembly (TODO 8.9): where the cursor row branches to…
+    /// Disassembly: where the cursor row branches to…
     insn_offsets: HashSet<u32>,
     insn_addrs: HashSet<u64>,
     /// …and what it is, for lighting up the branches that land on it.
@@ -947,7 +947,7 @@ fn bc_highlight(vm: &ViewModel, cursor: usize) -> Option<BcHl> {
 }
 
 // ---------------------------------------------------------------------------
-// Viewport (TODO 3.4, 4.x)
+// Viewport
 // ---------------------------------------------------------------------------
 
 /// Renders one viewport pane. `state` is the pane's own navigation state
@@ -1095,7 +1095,7 @@ fn render_viewport(
 }
 
 // ---------------------------------------------------------------------------
-// Phase diff rendering (TODO 7.4)
+// Phase diff rendering
 // ---------------------------------------------------------------------------
 
 /// Row background tints for diff statuses. 256-colour only; the 16-colour
@@ -1326,7 +1326,7 @@ fn paint_line(
                 // A bytecode-array dump row is primary content: address and
                 // encoding columns dim, offset picked out, mnemonic styled by
                 // the same shape rules as graph opcodes, operand refs in the
-                // node-ref / block-ref colours (TODO 8.5).
+                // node-ref / block-ref colours.
                 paint.fill(Class::Dim);
                 fill(&bc.offset_span, Class::NodeDef, &mut paint);
                 let name = text.get(bc.mnemonic.start as usize..bc.mnemonic.end as usize);
@@ -1387,8 +1387,8 @@ fn paint_line(
         }) => {
             // Address and encoding columns dim, mnemonic emphasised, branch
             // target and reloc comment picked out — everything else (the
-            // operands) as-emitted (TODO 8.2). A branch destination keeps
-            // its offset visible: it is the label jumps land on (TODO 8.9).
+            // operands) as-emitted. A branch destination keeps
+            // its offset visible: it is the label jumps land on.
             fill(&(0..mnemonic.start), Class::Dim, &mut paint);
             if *labeled {
                 fill(offset_span, Class::NodeDef, &mut paint);
@@ -1440,7 +1440,7 @@ fn paint_line(
         }
     }
 
-    // Def-use overlay (TODO 4.4): definition, inputs, and consumers of the
+    // Def-use overlay: definition, inputs, and consumers of the
     // cursor node in distinct styles — from the parsed graph, not regex.
     if let (Some(du), Some(LineInfo::Node(node))) = (defuse, info) {
         if node.id == du.node {
@@ -1469,7 +1469,7 @@ fn paint_line(
         }
     }
 
-    // Bytecode-listing overlay (TODO 8.5): the cursor row's operand refs
+    // Bytecode-listing overlay: the cursor row's operand refs
     // light up the rows they point at (InputHl on the definition token), and
     // a slot / pool-entry / jump-target row under the cursor lights up the
     // operands that reference it (ConsumerHl on the ref spans).
@@ -1533,7 +1533,7 @@ fn paint_line(
         }
     }
 
-    // Search overlay (TODO 4.6) — wins over everything.
+    // Search overlay — wins over everything.
     if let Some(re) = search {
         for m in re.find_iter(text) {
             let range = m.start() as u32..m.end() as u32;
@@ -1578,7 +1578,7 @@ fn digits(mut n: usize) -> usize {
 }
 
 // ---------------------------------------------------------------------------
-// Status line (with the input prompt and cursor-node tracking, TODO 4.3)
+// Status line (with the input prompt and cursor-node tracking)
 // ---------------------------------------------------------------------------
 
 fn status_line(
@@ -1601,7 +1601,7 @@ fn status_line(
             ),
             Span::styled("█", Style::new().fg(ACCENT)),
         ];
-        // The palette shows its matching commands live (TODO 6.1); a unique
+        // The palette shows its matching commands live; a unique
         // match shows that command's one-line description instead.
         if input.prompt == Prompt::Command && !input.buffer.contains(' ') {
             let matches: Vec<&(&str, &str)> = COMMANDS
@@ -1671,7 +1671,7 @@ fn status_line(
         left.push_str(&format!("  /{}", re.as_str()));
     }
 
-    // Cursor node tracking (TODO 4.3).
+    // Cursor node tracking.
     let mut node_info = String::new();
     if let Some(node) = app.cursor_node(vm) {
         if let Some(parsed) = vm.parsed() {
@@ -1698,10 +1698,10 @@ fn status_line(
 }
 
 // ---------------------------------------------------------------------------
-// Help modal (TODO 3.6)
+// Help modal
 // ---------------------------------------------------------------------------
 
-/// The inlining-decisions panel (TODO 9.5): every ⚡ INLINE / ❌ SKIP the
+/// The inlining-decisions panel: every ⚡ INLINE / ❌ SKIP the
 /// trace recorded for the current compilation, with reasons; Enter jumps to
 /// the decision line.
 fn render_inline_panel(frame: &mut Frame, app: &mut App, sel: usize, screen: Rect) {

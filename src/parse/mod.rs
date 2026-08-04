@@ -1,4 +1,4 @@
-//! Lazy per-compilation parsing (TODO 2.3).
+//! Lazy per-compilation parsing.
 //!
 //! The indexer records section boundaries; nothing inside a compilation is
 //! parsed until someone actually views it. Parsed results are cached, keyed by

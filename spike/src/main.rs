@@ -1,4 +1,4 @@
-//! Throwaway parse spike (TODO 0.3).
+//! Throwaway parse spike.
 //!
 //! Splits a d8 trace into compilations -> phases -> blocks and prints the tree,
 //! then reports every line it could *not* classify, grouped by normalized shape.
