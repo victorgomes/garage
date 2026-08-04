@@ -172,7 +172,8 @@ Each feature entry explains:
 - **Actions in Garage**:
   - `w` (`Action::ToggleWrap`): Toggle line wrapping on/off.
   - `<` / `>` (`Action::ScrollLeft` / `Action::ScrollRight`): Scroll horizontally when line wrapping is disabled.
-  - `j` / `k`, `PgUp` / `PgDn`, `Ctrl+D` / `Ctrl+U`, `g` / `G`: Scroll vertically through the viewport.
+  - `j` / `k`, `g` / `G`: Scroll vertically through the viewport.
+  - `PgUp` / `PgDn`, `Ctrl+D` / `Ctrl+U`: Scroll vertically by page/half-page through the viewport (when pressed in the sidebar, immediately switches focus to the viewport).
 
 ---
 

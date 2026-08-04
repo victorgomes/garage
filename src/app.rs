@@ -956,10 +956,30 @@ impl App {
 
             Action::Up => self.move_by(-1),
             Action::Down => self.move_by(1),
-            Action::HalfPageDown => self.move_by(self.half_page()),
-            Action::HalfPageUp => self.move_by(-self.half_page()),
-            Action::PageDown => self.move_by(self.page()),
-            Action::PageUp => self.move_by(-self.page()),
+            Action::HalfPageDown => {
+                if self.focus == Pane::Sidebar {
+                    self.focus = Pane::Viewport;
+                }
+                self.move_by(self.half_page());
+            }
+            Action::HalfPageUp => {
+                if self.focus == Pane::Sidebar {
+                    self.focus = Pane::Viewport;
+                }
+                self.move_by(-self.half_page());
+            }
+            Action::PageDown => {
+                if self.focus == Pane::Sidebar {
+                    self.focus = Pane::Viewport;
+                }
+                self.move_by(self.page());
+            }
+            Action::PageUp => {
+                if self.focus == Pane::Sidebar {
+                    self.focus = Pane::Viewport;
+                }
+                self.move_by(-self.page());
+            }
             Action::Top => self.jump_top(),
             Action::Bottom => self.jump_bottom(),
 
@@ -3910,6 +3930,23 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
             vm.row(app.cursor).unwrap().kind,
             RowKind::BlockFold { block: 0, .. }
         ));
+    }
+
+    #[test]
+    fn paging_keys_switch_focus_from_sidebar_to_viewport() {
+        let mut app = app_with(BRANCH_TRACE);
+        app.follow = false;
+        app.selected = 1;
+        app.focus = Pane::Sidebar;
+
+        key(&mut app, KeyCode::PageDown);
+        assert_eq!(app.focus, Pane::Viewport);
+        assert_eq!(app.selected, 1, "sidebar selection unchanged");
+
+        app.focus = Pane::Sidebar;
+        ctrl(&mut app, 'd'); // HalfPageDown
+        assert_eq!(app.focus, Pane::Viewport);
+        assert_eq!(app.selected, 1);
     }
 
     const DISASM_TRACE: &str = "\
