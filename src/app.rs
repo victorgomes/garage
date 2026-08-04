@@ -1543,6 +1543,29 @@ impl App {
     // Command palette
     // -----------------------------------------------------------------------
 
+    /// Resolves a command name against `COMMANDS` by exact match or unique prefix.
+    ///
+    /// Returns `Ok(canonical_name)` when the prefix is unique (or an exact match),
+    /// `Err(status_message)` when unknown or ambiguous.
+    fn resolve_command(&self, name: &str) -> Result<&'static str, String> {
+        if name.is_empty() {
+            return Ok("");
+        }
+        if let Some(&(cmd, _)) = COMMANDS.iter().find(|(cmd, _)| *cmd == name) {
+            return Ok(cmd);
+        }
+        let matches: Vec<&str> = COMMANDS
+            .iter()
+            .map(|(cmd, _)| *cmd)
+            .filter(|cmd| cmd.starts_with(name))
+            .collect();
+        match matches.as_slice() {
+            [] => Err(format!("unknown command :{name} (Tab lists commands)")),
+            [only] => Ok(only),
+            several => Err(format!("ambiguous command :{name} (matches: {})", several.join(", "))),
+        }
+    }
+
     /// Executes one committed `:` command. The status line is the message
     /// line: every branch ends in a message, including the unknown-command
     /// case.
@@ -1551,7 +1574,14 @@ impl App {
             Some((n, a)) => (n, a.trim()),
             None => (text.as_str(), ""),
         };
-        match name {
+        let canonical = match self.resolve_command(name) {
+            Ok(cmd) => cmd,
+            Err(msg) => {
+                self.status = msg;
+                return;
+            }
+        };
+        match canonical {
             "" => self.status = "empty command".to_string(),
             "q" | "quit" => self.quit = true,
             "checks" => self.toggle_lens(Lens::Checks),
@@ -4509,6 +4539,39 @@ Compiling 0x1 <JSFunction f (sfi = 0x10)> with Maglev
         }
         key(&mut app, KeyCode::Enter);
         assert!(app.quit);
+    }
+
+    #[test]
+    fn command_palette_accepts_prefixes_and_reports_ambiguity() {
+        let mut app = app_with(EVENTS_TRACE);
+        app.follow = false;
+        app.selected = 1;
+
+        // Unique prefix :che resolves to :checks without Tab
+        key(&mut app, KeyCode::Char(':'));
+        for c in "che".chars() {
+            key(&mut app, KeyCode::Char(c));
+        }
+        key(&mut app, KeyCode::Enter);
+        assert_eq!(app.lens, Some(Lens::Checks));
+
+        // Unique prefix :fun <arg> resolves to :function
+        key(&mut app, KeyCode::Char(':'));
+        for c in "fun ^process".chars() {
+            key(&mut app, KeyCode::Char(c));
+        }
+        key(&mut app, KeyCode::Enter);
+        assert!(app.sidebar_filter.is_some());
+
+        // Ambiguous prefix :c reports ambiguity and does not execute
+        key(&mut app, KeyCode::Char(':'));
+        key(&mut app, KeyCode::Char('c'));
+        key(&mut app, KeyCode::Enter);
+        assert!(
+            app.status.contains("ambiguous command :c (matches: checks, clear, copy)"),
+            "{}",
+            app.status
+        );
     }
 
     #[test]

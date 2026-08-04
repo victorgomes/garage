@@ -337,6 +337,8 @@ Each feature entry explains:
 
 Lenses filter the modeled IR or bytecode viewport down to a structural skeleton (banner headers and basic block headers) plus only lines matching specific compiler phenomena. A live match count is displayed in the footer status line.
 
+*(Note: The command palette accepts any unambiguous command prefix—for example, `:che` for `:checks`, `:exp` for `:export`, `:fun` for `:function`. If a prefix is ambiguous, such as `:c`, `garage` displays all matching candidates in the status line).*
+
 ### 6.1. Guard & Check Node Lens (`:checks`)
 - **Purpose & What You Can See**: Isolates all guard nodes (`Check*`, `Assert*`, `*Deopt*`), showing exactly where the compiler inserted runtime safety checks and potential deoptimization bailouts.
 - **How to Enable**: Open any IR graph phase in the viewport.

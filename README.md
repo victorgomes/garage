@@ -115,7 +115,7 @@ compilation at the deopt's bytecode offset, per the `(SFI, tier, ordinal)`
 rule in `docs/correlation-keys.md`. Events that cannot be resolved honestly
 (no graph in the trace, Turbofan-only deopts) say so instead of guessing.
 
-`:` opens the command palette (Tab completes, the status line shows live
+`:` opens the command palette (Tab completes, unambiguous prefixes are accepted, the status line shows live
 candidates):
 
 | Command | Effect |
